@@ -1,3 +1,5 @@
+import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
+import {validateReviewedContract} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {createProtocolWorkspace} from '../../../packages/sutra-inference/protocol-workspace.js';
 import {admitProofCase} from '../../../packages/sutra-knowledge/agent-bridge.js';
 import {runAgentCouncil} from '../../../packages/sutra-knowledge/agent-council.js';
@@ -18,8 +20,8 @@ const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'s
 const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt'),versionButton=by('studio-export-version');
 let active=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null,reviewEpoch=0,reviewExport=null;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
-function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
-function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
+function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-offer-version').disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
+function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
 function invalidate(){epoch++;active?.abort();clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
@@ -164,7 +166,7 @@ form.addEventListener('submit',async event=>{
   current={version:'sutra-local-council-trace/v1',configuration:{...config,connections:config.connections.map(({endpoint,...c})=>c)},result:r,calls};
   status('Local council completed: '+r.termination+'. '+r.agreement+'. No live inference or decision authority.','complete');
  }catch{if(ticket===epoch&&!controller.signal.aborted)status('Council refused. Check connection descriptors, reviewed input, pin and disclosure.','refused');}
- finally{if(active===controller){active=null;busy(false);exportButton.disabled=!current;receiptButton.disabled=!(current?.configuration.mode==='expression'&&current.result.candidates.length);versionButton.disabled=!(current?.configuration.mode==='expression'&&current.result.uniqueCompiledProposals>=2);}}
+ finally{if(active===controller){active=null;busy(false);exportButton.disabled=!current;receiptButton.disabled=!(current?.configuration.mode==='expression'&&current.result.candidates.length);versionButton.disabled=!(current?.configuration.mode==='expression'&&current.result.uniqueCompiledProposals>=2);by('studio-offer-version').disabled=versionButton.disabled;}}
 });
 exportButton.addEventListener('click',()=>{
  if(!current||active)return;
@@ -287,3 +289,40 @@ by('studio-review-preview').addEventListener('click',async()=>{
  finally{if(ticket===reviewEpoch&&runTicket===epoch)by('studio-review-preview').disabled=false;}
 });
 by('studio-review-export').addEventListener('click',()=>{if(!reviewExport||!current||active)return;const url=URL.createObjectURL(new Blob([JSON.stringify(reviewExport,null,2)],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-expression-review-answers.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+
+reviewedContractHandoff.subscribe(offer=>{
+ by('studio-handoff').hidden=!offer;
+ by('studio-handoff-status').textContent=offer?'Immutable evidence snapshot '+offer.pin+' · review and explicitly load.':'No offered evidence.';
+ by('studio-handoff-load').disabled=!!active;by('studio-handoff-dismiss').disabled=!!active;
+});
+by('studio-handoff-dismiss').addEventListener('click',()=>{if(!active)reviewedContractHandoff.clear(reviewedContractHandoff.read());});
+by('studio-handoff-load').addEventListener('click',async()=>{
+ const offer=reviewedContractHandoff.read(),ticket=epoch;if(!offer||active)return;
+ by('studio-handoff-load').disabled=true;
+ try{
+  await validateReviewedContract(offer.text,offer.pin);
+  const c=JSON.parse(offer.text);if(!c.bindings.length||c.question.text.length>2000)throw Error('HANDOFF_PROFILE');
+  if(ticket!==epoch||active||reviewedContractHandoff.read()!==offer)return;
+  revoke();invalidate();by('studio-mode').value='expression';by('studio-contract').value=offer.text;by('studio-contract-pin').value=offer.pin;
+  // Do not choose an arbitrary subset of a large contract or grant disclosure.
+  by('studio-bindings').value=c.bindings.length<=16?c.bindings.map(b=>b.id).join(','):'';
+  by('studio-include-values').checked=false;by('studio-custom-scopes').checked=false;
+  for(const slot of ['a','b']){by('studio-scope-'+slot).value='';by('studio-values-'+slot).checked=false;by('studio-peer-'+slot).checked=false;}
+  showMode();showScopes();reviewedContractHandoff.clear(offer);
+  status('Offered contract replayed and loaded in this tab. '+(c.bindings.length>16?'Select at most 16 binding IDs. ':'Review the selected binding IDs. ')+'Fresh disclosure approval is required; no model called.','idle');
+ }catch{if(ticket===epoch&&reviewedContractHandoff.read()===offer)by('studio-handoff-status').textContent='Offer refused: exact reviewed contract or supported profile required.';}
+ finally{if(!active)by('studio-handoff-load').disabled=false;}
+});
+by('studio-offer-version').addEventListener('click',async()=>{
+ if(!current||active||current.configuration.mode!=='expression'||current.result.uniqueCompiledProposals<2)return;
+ const snapshot=current,ticket=epoch;by('studio-offer-version').disabled=true;
+ try{
+  const c=snapshot.configuration,r=await createExpressionReviewReceipt({contractText:c.contractText,contractPin:c.contractPin,bindingIds:c.disclosure.bindingIds,expressions:snapshot.result.candidates.map(x=>x.expression)});
+  const sealed=await sealExpressionInvestigation({contractText:c.contractText,contractPin:c.contractPin,receiptText:r.receiptText,receiptPin:r.receiptPin});
+  if(ticket!==epoch||current!==snapshot||active)return;
+  investigationHandoff.offer(sealed.version.versionText,sealed.version.digest);
+  const receiver=by('reviewed-workspace');receiver.open=true;const panel=by('review-handoff');panel.scrollIntoView({block:'center'});by('review-handoff-preview').focus({preventScroll:true});
+  status('Exact version offered for explicit replay in the evidence workspace. No interpretation adopted.','complete');
+ }catch{if(ticket===epoch&&current===snapshot)status('Investigation offer refused. Check the distinct candidates and artifact size.','refused');}
+ finally{if(ticket===epoch&&current===snapshot)by('studio-offer-version').disabled=false;}
+});

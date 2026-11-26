@@ -53,3 +53,5 @@ header a.studio-entry{letter-spacing:0;font-size:.8rem;white-space:normal;text-a
 #studio-local-transfer input{width:100%;min-width:0;max-width:100%}#studio-transfer-status{overflow-wrap:anywhere;font-size:.84rem}#studio-transfer-status[data-state=refused]{color:#a32c29}
 
 #studio-review-steps label{display:block;margin:8px 0 4px}#studio-review-steps select{width:100%;max-width:100%;margin-bottom:12px}#studio-review-candidates .studio-method[data-compatibility=DIFFERS_FROM_REVIEW_ANSWER]{border-left:3px solid #b86c47}#studio-review-candidates .studio-method[data-compatibility=MATCHES_REVIEW_ANSWERS]{border-left:3px solid var(--accent)}
+
+.studio-handoff{margin:16px 0;padding:14px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;overflow-wrap:anywhere}.studio-handoff pre{white-space:pre-wrap;overflow-wrap:anywhere}.studio-handoff[hidden]{display:none}

@@ -1,3 +1,4 @@
+import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
 import {makeEvidencePinCard,readEvidencePinCard} from '../../../packages/sutra-knowledge/evidence-checkpoint-pins.js';
 import {exportEvidenceRecovery,openEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
@@ -29,6 +30,7 @@ import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.j
 import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
+let handoffPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
@@ -44,13 +46,14 @@ const tableFields=['table-text','table-source','table-lineage','table-inspect','
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
+ by('offer-contract').disabled=busy||!sealed||!bindings.length;handoffControl();
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  semanticControl();tableControl();questionControl();textFileControl();
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
 }
-function invalidate(message){epoch++;clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearHandoffPreview();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function clearWithdrawalPreview(){withdrawalPreview=null;by('source-withdraw-summary').textContent='No withdrawal preview.';by('source-withdraw-version-result').textContent='';}
@@ -1196,3 +1199,41 @@ by('impact-export').onclick=()=>work(async ticket=>{
  download(JSON.stringify({beforeVersion:base.versionText,beforeDigest:base.digest,afterVersion:version.versionText,afterDigest:version.digest,impact}),'sutra-investigation-impact.json','application/json');
 });
 renderBatch();refresh();baselineState();control();
+
+// Same-tab offers are not auto-applied, even if they came from the Studio.
+// Snapshot both the offered version and the current editable/retained state.
+function clearHandoffPreview(){handoffPreview=null;by('handoff-detail').textContent='';by('handoff-confirm').disabled=true;}
+function handoffControl(){const offered=investigationHandoff.read();by('handoff-preview').disabled=busy||!offered;by('handoff-dismiss').disabled=busy||!offered;by('handoff-confirm').disabled=busy||!handoffPreview||handoffPreview.offer!==offered||handoffPreview.epoch!==epoch||handoffPreview.baseline!==baseline||handoffPreview.current!==semanticCurrent||handoffPreview.wire!==draft();}
+by('offer-contract').onclick=()=>{
+ if(busy||!sealed||!bindings.length)return;
+ try{reviewedContractHandoff.offer(sealed.contractText,sealed.pin);const panel=document.getElementById('studio-handoff');panel.scrollIntoView({block:'center'});document.getElementById('studio-handoff-load').focus({preventScroll:true});status('sealed','Exact reviewed contract offered to Agent Studio. No model request or disclosure approval.');}
+ catch{status('refused','Reviewed evidence offer refused by the bounded profile.');}
+};
+investigationHandoff.subscribe(offer=>{clearHandoffPreview();by('handoff').hidden=!offer;by('handoff-status').textContent=offer?'Immutable investigation snapshot '+offer.pin+' · replay before confirmation.':'No offered investigation.';handoffControl();});
+by('handoff-dismiss').onclick=()=>{if(!busy)investigationHandoff.clear(investigationHandoff.read());};
+by('handoff-preview').onclick=()=>work(async ticket=>{
+ const offer=investigationHandoff.read();if(!offer)return;clearHandoffPreview();const wire=draft(),prior=baseline,previous=semanticCurrent;
+ try{
+  const session=createInvestigationReplaySession(),replayed=await session.replay(offer.text,offer.pin),restored=await restoreReviewedSourceDraft(offer.text,offer.pin);
+  if(ticket!==epoch||offer!==investigationHandoff.read()||wire!==draft()||prior!==baseline||previous!==semanticCurrent)return;
+  if(!restored.exactContractBytes||replayed.report.previousDigest!==null)throw Error('RESTORE_HANDOFF_PROFILE');
+  handoffPreview={offer,epoch:ticket,wire,baseline:prior,current:previous,session,restored,version:{versionText:offer.text,digest:offer.pin,report:replayed.report}};
+  by('handoff-detail').textContent=semanticText(handoffPreview.version)+'\n'+restored.draft.sources.length+' sources · '+restored.draft.bindings.length+' exact selections. No change applied. Confirm to replace the current draft and retained baseline.';
+  by('handoff-status').textContent='Exact root replayed. Confirm explicitly or dismiss.';status('handoff_preview','Offered investigation reproduced without a model call.');
+ }catch{if(ticket===epoch&&offer===investigationHandoff.read()){by('handoff-status').textContent='Offer refused. Exact root and editable contract profile required.';clearHandoffPreview();}}
+});
+by('handoff-confirm').onclick=()=>work(async ticket=>{
+ const p=handoffPreview;
+ if(!p||p.epoch!==ticket||p.offer!==investigationHandoff.read()||p.wire!==draft()||p.baseline!==baseline||p.current!==semanticCurrent){clearHandoffPreview();return;}
+ // Reuse the current exact source reconstruction, replayed candidate bytes and
+ // session. Root has no parent impact; do not invent one.
+ const child=p.version,v=JSON.parse(child.versionText),b=JSON.parse(v.batchText),a=JSON.parse(v.annotationText),d=p.restored.draft;
+ sources=structuredClone(d.sources);bindings=structuredClone(d.bindings);by('question').value=d.question;
+ invalidate('Offered root confirmed as current draft and retained baseline.');refresh();
+ sealed={contractText:v.contractText,pin:v.contractPin};stagedProposals=structuredClone(b.proposals);
+ annotations=new Map(a.candidates.map(c=>[c.id,{meaning:c.meaning,binding:c.facets.definition?.references.find(x=>x.kind==='binding')?.id??'',facets:Object.fromEntries(Object.entries(c.facets).filter(([k,f])=>k!=='definition'&&f).map(([k,f])=>[k,{statement:f.statement,binding:f.references.find(x=>x.kind==='binding')?.id??''}])),generatedFacets:structuredClone(c.facets)}]));
+ by('pin').textContent=sealed.pin;by('contract').textContent=sealed.contractText;by('proposal').value=stagedProposals[0].proposalText;renderBatch();
+ semanticCurrent=child;currentReplay=p.session;baseline=child;baselineReplay=p.session.fork();impactCurrent=null;renderWorldAxes();
+ by('semantic-pin').textContent=child.digest;by('semantic-result').textContent=semanticText(child);by('impact-result').textContent='';baselineState();
+ investigationHandoff.clear(p.offer);status('semantic_ready','Exact offered root retained. Revise or withdraw evidence against this baseline; no semantic adoption or model call.');
+});

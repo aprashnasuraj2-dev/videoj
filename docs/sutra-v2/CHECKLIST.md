@@ -1053,3 +1053,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-169 scheduler candidate:** bounded waves, retained unknown reservations, same-round feedback barrier, deterministic order and cancellation; exact CI pending.
 
 - [ ] **V2-170 candidate:** human answer comparison over replayed council receipt, unknowns preserved, original branches unchanged, scoped CI diagnostics; exact CI pending.
+
+- [ ] **V2-171 candidate:** same-tab exact offers with replay, explicit baseline replacement and fresh disclosure approval; browser syntax repair; exact CI pending.

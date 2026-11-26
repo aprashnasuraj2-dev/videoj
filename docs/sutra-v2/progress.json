@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-170",
+  "session": "V2-171",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: reversible human review lens; preceding knowledge runs blocked by pinned TLC checksum failure.",
+  "state": "Candidate: same-tab integrated evidence/council/revision journey and browser syntax repair.",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-171",
+    "parent": "698a810e1f01570fe6353e2b7cb158d97344e193",
+    "description": "### V2-171 — same-tab evidence-to-council-to-revision handoff (candidate)\nAdd bounded immutable offers between existing workspaces. Explicitly replay and load a sealed evidence contract into Studio, clearing previous consent and raw value grants; large binding sets require manual subset. Offer a distinct-candidate root for explicit replay, editable-source reconstruction and confirmation as current/retained baseline; no model call, semantic adoption, automatic replacement or persistence. Browser candidate checks exact root pin, two candidates, round-trip contract pin and revoked approval. Fix V2-170 browser test syntax collision (job 139653511463) without changing assertions. V2-170 scoped council/orchestration step succeeded (job 139653510942); full formal gate still pending at observation. Exact V2-171 CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-170",
     "parent": "5e3620e7411c979f7d129a8e2420cd38bc60289d",
     "description": "### V2-170 — reversible human review answers and scoped CI diagnostics (candidate)\nConnect council review prompts to explicit human answers over a separately pinned and recomputed expression receipt. Exact comparison choices only; candidates outside compared pairs remain unknown, original dissent and receipt remain intact, no semantic approval or automatic adoption. Studio supports preview/reset and export of replayable answer comparison; browser checks both matching and conflicting branches. Add early scoped council integration step without removing any existing unit/formal gates. V2-168 and V2-169 knowledge jobs 139651382343 and 139652112443 both stopped on pinned TLC download checksum mismatch before the full knowledge tests, not a demonstrated code regression. No pin change or bypass; scoped results cannot close full CI gate. V2-168 browser passed; V2-169 browser pending at observation. Exact new CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-169",
-    "parent": "328b0a122c844dfbe9161b373a55157cf2d3807c",
-    "description": "### V2-169 — capacity-aware council waves (candidate)\nSUTRA schedules bounded same-round waves from actual ledger concurrency and remaining call/output reservation capacity rather than treating a selected four-agent team as four simultaneous calls. Global and profile admission remain in the ledger; actual wire bytes are checked there, no retry or hidden fallback. Preserve stable trace order and frozen previous-round feedback across waves; unknown charges hold slots and can block remaining agents, cancellation prevents later waves. Tests exercise 4 agents/2 slots (8 of 8 calls), 2 shared-profile agents/1 slot, unknown charge and cancellation. Capacity hints do not prove production scheduling or currency budget; contention can still cause a refusal. V2-168 exact CI pending at observation. Exact V2-169 CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -874,6 +874,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45742945338/job/139652112443",
       "reason": "Pinned TLC JAR SHA-256 mismatch before full knowledge tests",
       "resolutionStatus": "Unresolved external artifact integrity gate. Early scoped council tests added; no checksum bypass."
+    },
+    {
+      "sourceRevision": "698a810e1f01570fe6353e2b7cb158d97344e193",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743377490",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743377490/job/139653511463",
+      "reason": "Browser harness duplicate reviewDownload variable declaration",
+      "resolutionStatus": "V2-171 unique variable name; exact browser CI pending."
     }
   ],
   "reconciledDurableCandidate": {

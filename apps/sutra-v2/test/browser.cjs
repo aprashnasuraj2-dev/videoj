@@ -117,8 +117,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(await page.locator('#studio-review-candidates [data-compatibility="MATCHES_REVIEW_ANSWERS"]').count(),1);
   assert.equal(await page.locator('#studio-review-candidates [data-compatibility="DIFFERS_FROM_REVIEW_ANSWER"]').count(),1);
   assert.match(await page.locator('#studio-review-status').innerText(),/Original disagreement is retained/);
-  const [reviewDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export answer comparison'}).click()]);
-  const reviewFile=JSON.parse(fs.readFileSync(await reviewDownload.path(),'utf8'));assert.equal(reviewFile.preview.originalState,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(reviewFile.preview.decisionAuthority,'NONE');
+  const [studioAnswerDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export answer comparison'}).click()]);
+  const reviewFile=JSON.parse(fs.readFileSync(await studioAnswerDownload.path(),'utf8'));assert.equal(reviewFile.preview.originalState,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(reviewFile.preview.decisionAuthority,'NONE');
   await page.getByRole('button',{name:'Reset review answers'}).click();assert.equal(await page.locator('#studio-review-candidates article').count(),0);assert.equal(await page.getByRole('button',{name:'Export answer comparison'}).isDisabled(),true);
   assert.equal(await page.locator('#studio-methods .studio-method').count(),2);
   const [receiptDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export computation receipt'}).click()]);
@@ -137,6 +137,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(JSON.parse(version.batchText).proposals.length,2);
   assert.ok(JSON.parse(version.annotationText).candidates.every(c=>Object.values(c.facets).every(x=>x===null)));
   assert.equal(await page.evaluate(async({text,pin})=>'sha256:'+Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),v=>v.toString(16).padStart(2,'0')).join('')===pin,{text:versionText,pin:versionPin}),true);
+  // Same-tab exact handoff: explicit replay and confirmation, then return the
+  // retained contract to Studio without carrying any disclosure approval.
+  await page.getByRole('button',{name:'Offer investigation for revision'}).click();
+  await page.waitForFunction(()=>!document.querySelector('#review-handoff').hidden);
+  assert.equal(await page.locator('#review-handoff-confirm').isDisabled(),true);
+  await page.getByRole('button',{name:'Replay offered investigation'}).click();
+  await page.waitForFunction(()=>!document.querySelector('#review-handoff-confirm').disabled);
+  assert.match(await page.locator('#review-handoff-detail').innerText(),/No change applied/);
+  await page.getByRole('button',{name:'Confirm as current and retained baseline'}).click();
+  await page.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='semantic_ready');
+  assert.equal(await page.locator('#review-semantic-pin').innerText(),versionPin);
+  assert.match(await page.locator('#review-baseline-state').innerText(),new RegExp(versionPin));
+  assert.equal(await page.locator('#review-studio-cards .studio-card').count(),2);
+  await page.getByRole('button',{name:'Offer sealed evidence to Agent Studio'}).click();
+  await page.waitForFunction(()=>!document.querySelector('#studio-handoff').hidden);
+  await page.getByRole('button',{name:'Load offered reviewed contract'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-handoff').hidden);
+  assert.equal(await page.locator('#studio-contract-pin').inputValue(),version.contractPin);
+  assert.equal(await page.locator('#studio-expression-share').isChecked(),false);
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  // Reload exact receipt inputs (loading the contract invalidates earlier UI state).
+  await page.getByLabel('Computation receipt JSON').fill(receiptText);
+  await page.getByLabel('Retained receipt SHA-256').fill(receiptPin);
   await page.getByLabel('Computation receipt JSON').fill(receiptText+' ');
   await page.getByRole('button',{name:'Replay computation receipt'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-replay-status').dataset.state==='refused');
