@@ -4,24 +4,27 @@ import {parseUniqueJson} from './strict-json.js';
 const fail=code=>{const error=new Error('Epistemic answer rejected ('+code+').');error.code=code;throw error;};
 const text=(value,max)=>typeof value==='string'&&value.trim()&&value.length<=max&&!/[\u0000\u007f]/.test(value);
 const exact=(value,keys,limit=keys.length)=>{
- const row=snapshotDataRecord(value,limit);
+ let row;try{row=snapshotDataRecord(value,limit);}catch{fail('ANSWER_FORMAT');}
  if(Object.keys(row).sort().join(',')!==[...keys].sort().join(','))fail('ANSWER_FORMAT');
  return row;
 };
+const answerArray=(value,max)=>{try{return snapshotDataArray(value,max);}catch{fail('ANSWER_FORMAT');}};
+const evidenceArray=(value,max)=>{try{return snapshotDataArray(value,max);}catch{fail('EVIDENCE_FORMAT');}};
+const evidenceRecord=(value,max)=>{try{return snapshotDataRecord(value,max);}catch{fail('EVIDENCE_FORMAT');}};
 const lessonKey=(sourceId,cueId)=>sourceId+'\u0000'+cueId;
 
 export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]}={}){
  let root;try{root=parseUniqueJson(answer,{maxChars:12000,maxDepth:12});}catch{fail('ANSWER_FORMAT');}
  root=exact(root,['claims']);
- const claims=snapshotDataArray(root.claims,12);if(!claims.length)fail('ANSWER_FORMAT');
+ const claims=answerArray(root.claims,12);if(!claims.length)fail('ANSWER_FORMAT');
  const lessons=new Map(),web=new Map();
- for(const raw of snapshotDataArray(lessonReceipts,20)){
-  const r=snapshotDataRecord(raw,32);
+ for(const raw of evidenceArray(lessonReceipts,20)){
+  const r=evidenceRecord(raw,32);
   if(!text(r.sourceId,160)||!text(r.cueId,160)||!text(r.excerpt,4000))fail('EVIDENCE_FORMAT');
   lessons.set(lessonKey(r.sourceId,r.cueId),r);
  }
- for(const raw of snapshotDataArray(webReceipts,6)){
-  const r=snapshotDataRecord(raw,16);
+ for(const raw of evidenceArray(webReceipts,6)){
+  const r=evidenceRecord(raw,16);
   if(!text(r.sourceId,32)||!text(r.url,2048)||!text(r.excerpt,3000))fail('EVIDENCE_FORMAT');
   let url;try{url=new URL(r.url);}catch{fail('EVIDENCE_FORMAT');}
   if(!['https:','http:'].includes(url.protocol))fail('EVIDENCE_FORMAT');
@@ -31,11 +34,11 @@ export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]
  for(const raw of claims){
   const claim=exact(raw,['kind','text','citations']);
   if(!['source_claim','inference','conflict','uncertainty'].includes(claim.kind)||!text(claim.text,1000))fail('ANSWER_FORMAT');
-  const citations=snapshotDataArray(claim.citations,4),seen=new Set(),clean=[],authorities=new Set();
+  const citations=answerArray(claim.citations,4),seen=new Set(),clean=[],authorities=new Set();
   if(['source_claim','conflict'].includes(claim.kind)&&!citations.length)fail('CITATION_REQUIRED');
   if(['inference','uncertainty'].includes(claim.kind)&&citations.length)fail('CITATION_FORBIDDEN');
   for(const rawCitation of citations){
-   const base=snapshotDataRecord(rawCitation,4);
+   const base=(()=>{try{return snapshotDataRecord(rawCitation,4);}catch{fail('ANSWER_FORMAT');}})();
    if(base.kind==='lesson'){
     const c=exact(base,['kind','sourceId','cueId','quote'],4),r=lessons.get(lessonKey(c.sourceId,c.cueId));
     if(!r||!text(c.quote,500)||c.quote.trim().length<12||!r.excerpt.includes(c.quote))fail('CITATION_INVALID');
