@@ -137,3 +137,12 @@ test('escaped credential forming a valid expression is refused before computatio
  assert.equal(s.seen.length,3);assert.equal(JSON.stringify(r).includes(secret),false);
  assert.equal(JSON.stringify(s.seen[2].operation.feedback).includes(secret),false);
 });
+
+import {prepareCouncil,runCouncilRounds} from '../council-scheduler.js';
+test('credential generation change during asynchronous verification refuses the entire downstream council publication',async()=>{
+ const s=setup(()=>proposal(alternative),()=>proposal(correct)),config=prepareCouncil({routes:s.routes,workspace:s.workspace,shareScope:scope,maxRounds:2,maxOutputTokens:128});
+ let begin,release;const started=new Promise(r=>begin=r),wait=new Promise(r=>release=r);
+ const pending=runCouncilRounds(config,{operation:()=>({question:'synthetic'}),admit:text=>JSON.parse(text).expression,async verify(candidate){begin();await wait;return {candidate};},feedbackRow:()=>({})});
+ await started;s.workspace.removeProfile(s.routes[1].handle);release();
+ await assert.rejects(pending,e=>e.code==='PROFILE_SET_CHANGED'&&!e.message.includes(B));assert.equal(s.seen.length,2);
+});

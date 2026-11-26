@@ -113,6 +113,9 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
   dispatchCapacity(){ledger.prune(readClock());return ledger.snapshot();},
   // Trusted adapter pre-encoding check, before escaping or serializing data.
   admitOperation,
+  // A host-held fence spans downstream decoding and asynchronous computation.
+  // It captures only an opaque generation, never a credential or handle.
+  capturePublicationFence(){const observed=profileSetToken;return ()=>{if(observed!==profileSetToken)stop('PROFILE_SET_CHANGED');};},
   async execute(input={}){
    if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation']))stop('REQUEST');
    const {handle,model,inputBytes,maxOutputTokens,operation}=input;

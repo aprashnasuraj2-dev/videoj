@@ -23,3 +23,7 @@ Refuse in-flight provider completion if any enrolled credential is added or remo
 
 ## CI adversary correction
 Run 45751715482, job 139680814020 failed on the new test's incorrect immediate-retry expectation. An unknown reservation correctly keeps its per-profile active slot. Correct the test to assert BUDGET on same-profile retry and settlement on a distinct eligible profile under remaining global capacity. No weakening to ledger or credential-set fence. Prior failure retained; new exact CI pending.
+
+
+## V2-182 candidate — downstream publication fence
+Capture an opaque credential-set generation across council setup, dispatch, decoded output, asynchronous verification, peer rounds and final triage publication; source suggestion plan and final preview use the same guard. No credential retained in fence. Actual scheduler test changes enrollment while verification awaits; all publication refused, no subsequent round. Entire affected council refused rather than leaking prior artifacts. Not remote cancellation or protection after completed publication; exact child CI pending.
