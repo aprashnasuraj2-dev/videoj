@@ -1,111 +1,121 @@
-# “Continue with SUTRA” — SUTRA2 execution procedure
+# “Continue with SUTRA” — active V2 execution contract
 
-This is the active SUTRA2 continuation contract. It inherits the durable checkpoint, evidence, release-gate and stop/continuation principles in [SUTRA1 CONTINUE.md](../sutra/CONTINUE.md) while making `docs/sutra-v2/` the active product roadmap.
+> **Binding queue reset — 2026-11-26.** The user retired the 379 remaining SUTRA1 pending tasks. The **sole active execution checklist is [CHECKLIST.md](CHECKLIST.md)**. SUTRA1 remains historical evidence/reusable implementation only. Never resume an old SUTRA1 pending/next task unless the user explicitly asks to inspect or restore that historical task.
 
-The phrases **“continue sutra”**, **“continue with sutra”**, capitalization variants, and equivalent unambiguous continuation wording mean: **resume the latest remote SUTRA work and keep engineering**. They do not mean restart from the last chat summary, merely inspect status, or create a background automation.
+The phrases **“continue sutra”**, **“continue with sutra”**, capitalization variants and equivalent unambiguous wording mean:
 
-## Product priority (V2-053)
+> **Resolve the latest remote V2 state, reconcile exact CI/branch drift, then keep implementing the next dependency-ready unchecked task from `docs/sutra-v2/CHECKLIST.md`.**
 
-SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
+They do not mean: resume the old V1 queue, repeat a status summary, restart from chat memory, create a background automation, merge/release, spend money, use real credentials, deploy publicly or contact third parties.
 
-Read [LIVING-KNOWLEDGE.md](LIVING-KNOWLEDGE.md) before choosing tasks. Follow the three-track queue and its semantic, persistent revision, comparative evidence and UX priorities; preserve unfinished SUTRA1 and SUTRA2 work. Start from exact remote CI; fix or track failed candidates without erasing evidence. First integrated target: question and evidence → materially distinct reviewed alternatives → conditional computation → minimal clarification → persistent investigation → changed evidence → impact report → independently replayable export in two domains. No competition-centric work takes precedence over human value. No automatic authority or unsupported semantic/empirical claim.
+## 1. Product mission
 
-## 1. Resume the real current state
+Read [LIVING-KNOWLEDGE.md](LIVING-KNOWLEDGE.md) first. SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
-1. Read root `AGENTS.md`, this file, README, PLAN, MIGRATION, CHECKLIST, ROADMAP, `roadmap.json`, `progress.json` and the latest SESSIONS entries.
-2. Read [`docs/sutra/CONTINUE.md`](../sutra/CONTINUE.md) and any SUTRA1 source/evidence/decision files relevant to the active v2 dependency. Preserve the old workspace; do not rewrite history to make v2 look cleaner.
-3. Resolve the actual remote branch and PR HEAD. The prior chat handoff SHA is a hint, never an assumption.
-4. Compare the remote HEAD with the last recorded candidate/verified SHA. Reconcile every material intervening commit before taking new credit.
-5. Inspect exact-source workflow state and relevant job logs. A newer SHA cannot inherit an older SHA's green result.
+The integrated product target is:
 
-## 2. Continue engineering, not reporting
+**question/evidence → materially distinct interpretations → review → conditional computation → consequential clarification → persistent investigation → challenge/counterexample → changed evidence → impact report → independently replayable export**
 
-After reconciliation, continue the current active task if it is still valid. Otherwise select the next dependency-ready incomplete task from the v2 roadmap.
+At least two specialist domains must use the same architecture. Models remain replaceable proposals, not authority.
 
-A continuation turn is not complete because a status summary exists. While safe, authorized, dependency-ready engineering remains, continue the loop:
+## 2. Sole work-selection source
 
-**inspect → implement → challenge → verify → register → commit → re-read remote → continue**
+Use [CHECKLIST.md](CHECKLIST.md) as the only active work cursor.
 
-Use adversarial counterexamples, failure injection and independent checks where appropriate. Component success does not imply system success. Preserve counterexamples as permanent regression evidence when they expose a real boundary.
+1. Reconcile the live central branch, PR #50, child PRs #51–#60 and validation-only #61 before selecting work.
+2. Compare current remote heads with the baseline recorded in the checklist and `progress.json`.
+3. Inspect exact-head workflow outcomes. A newer SHA never inherits an older green result.
+4. Resume the current `[~]` task if still valid. Otherwise select the first dependency-ready `[ ]` task in the checklist’s default execution order.
+5. If a task depends on a genuine `[!]` external blocker, continue another independent dependency-ready task instead of fabricating evidence.
+6. Newly discovered concrete work is added to the V2 checklist with a stable V2 task ID and acceptance condition.
+7. Never use former SUTRA1 phase order, old `next_task`, old pending count or old release/submission work as the default queue.
 
-Do not ask the user to re-authorize ordinary reversible work already inside the established SUTRA scope. Stop dependent work only for a genuine external/user-owned input, an authorization boundary, a safety issue, or an explicit instruction to stop.
+The V1 workspace under `docs/sutra/` may be consulted only for reusable source, exact evidence, security constraints and counterexamples needed by the selected V2 task.
 
-## 3. Synchronized checkpoint transaction
+## 3. Execution loop
 
-Implementation and registers move together. After each material implementation/evidence change, update the affected records in the same logical checkpoint:
+A continuation turn is not complete because a status report exists. While safe, authorized, dependency-ready engineering remains:
 
-1. Product/source/formal-model/test changes.
-2. `CHECKLIST.md`: mark only evidence-supported state; add newly discovered concrete work instead of hiding it.
-3. `roadmap.json` and `ROADMAP.md`: status, dependencies, evidence and known limitations for affected gates.
-4. `progress.json`: exact pending/verified source SHA, workflow observations, failures, current state and next queue.
-5. `SESSIONS.md`: append what changed, exact evidence observed, unresolved counterexamples and next engineering action.
-6. `DECISIONS.md` or equivalent decision register when architecture, scope, authority, release interpretation or omission changes.
-7. Commit the checkpoint meaningfully and read the remote result before claiming it is saved.
+**inspect → design → implement → adversarially challenge → verify exact source → register → commit → re-read remote → continue**
 
-Do not defer register maintenance until the end of a long engineering sequence. A code commit that materially changes a tracked gate must be followed by synchronized register reconciliation; if its CI is pending, record it as **candidate/pending**, not verified.
+Prefer reuse/adapters over duplicate implementations. Component success ≠ system success. Preserve counterexamples and failed revisions.
 
-## 4. Candidate versus verified evidence
+Do not ask the user to re-authorize ordinary reversible engineering already inside scope. Stop dependent work only for:
+- a genuine external/user-owned input;
+- a safety or authority boundary;
+- a destructive/irreversible action outside established scope;
+- an explicit instruction to stop.
 
-- **Candidate:** implementation exists, but exact required CI/evidence is incomplete or still running.
-- **Verified within stated scope:** exact immutable source revision has the required passing evidence and no unresolved contradictory result for the claimed scope.
-- Failed revisions remain append-only evidence. Fixing a later revision does not erase the failure.
-- If later code invalidates earlier verification, reopen the affected gate and retain the old result as historical evidence.
-- Never mark a broad roadmap gate complete because one component, model, browser, synthetic fixture or happy-path test passed.
+## 4. Exact evidence states
 
-## 5. SUTRA1 compatibility and inheritance
+- **Candidate:** implementation exists but required exact-source evidence is incomplete/cancelled/running.
+- **Scoped verified:** exact immutable source has passing evidence for the stated component scope.
+- **Integrated verified:** current combined source has required integration evidence.
+- **Externally validated:** required human/device/provider/public/expert evidence was actually collected.
 
-SUTRA1 is still part of the project history and implementation base.
+Never promote one state to another by inference. Cancelled CI is incomplete evidence, not a passing result and not automatically a code failure. Older green combined revisions do not certify newer manifests.
 
-- Keep `docs/sutra/`, its 1,000-task register, decisions, evidence and source logic intact.
-- Inherit its continuation behavior: exact remote reconciliation, dependency checks, checkpoint transactions, failure preservation, evidence freshness and no-soft-exit behavior.
-- Reuse SUTRA1 implementation/evidence when a v2 adapter or dependency actually builds on it; cite the exact source/evidence rather than recreating it.
-- SUTRA2's roadmap determines new priority. Do **not** mechanically resume old learner tasks or copy old completion counts into v2.
-- A v2 architectural change that supersedes a v1 assumption must be recorded explicitly; it does not delete the v1 record.
+## 5. Checkpoint transaction
 
-## 6. CI drift and cross-session work
+After each material implementation/evidence change, update together:
 
-SUTRA development may advance while a session is checking CI. Treat each source SHA independently.
+1. source/tests/formal model;
+2. `CHECKLIST.md` task state and any newly discovered task;
+3. `progress.json` current task/next queue/exact heads/evidence;
+4. `roadmap.json` + `ROADMAP.md` only when a broad gate status/scope changes;
+5. `PARALLEL-WORKSTREAMS.md` when child ownership/head/evidence changes;
+6. `SESSIONS.md` with exact observed evidence/failures/next action;
+7. `DECISIONS.md` when architecture/scope/authority/work-selection rules change.
 
-When the branch advances:
-1. identify the intervening commits;
-2. inspect their affected gates;
-3. reconcile their workflow outcomes;
-4. update the pending candidate;
-5. keep the previous fully verified SHA separately;
-6. continue from the newest valid remote state.
+Read back the remote commit before claiming the checkpoint is saved. A checkpoint commit cannot contain its own SHA; record tested source/parent, then cite the checkpoint commit in the handoff.
 
-Never move `lastVerifiedKernelSource` merely because the branch HEAD advanced. Never leave new branch work absent from the progress/checklist/session registers.
+## 6. Parallel branch discipline
 
-## 7. Release and authority boundaries
+- PRs #51–#60 remain independent child workstreams until deliberately integrated.
+- Resolve exact head, base drift, changed paths and CI before editing a child.
+- Preserve branch-specific failure/correction history.
+- Scoped child green does not close a broad Living Knowledge gate.
+- PR #61 is **validation-only / DO NOT MERGE**. Rebuild it from exact child heads when needed; it is not the integration merge vehicle.
+- The central V2 branch is the coordination/integration line. Integrate reviewed child capabilities there deliberately, with exact combined evidence.
 
-Continuation does not authorize:
-- merge or release;
-- paid inference;
-- real provider credentials;
-- production/DNS/domain changes;
-- public deployment or promotion;
-- outreach to testers or third parties;
-- competition submission.
+## 7. V1 retirement and inheritance
 
-Those require their own applicable gates and authorization. Existing SUTRA1 release restrictions remain in force unless explicitly superseded by a stricter v2 rule.
+The 379 former V1 pending tasks are retired and removed from the current legacy checklist files.
 
-## 8. Handoff behavior
+Retain:
+- verified V1 task/evidence history;
+- omissions and historical blocker records;
+- reusable runtime/consent/privacy/replay/browser/evidence/Open-Kit code;
+- real failures and counterexamples.
 
-A handoff should state the exact current branch HEAD, last fully verified source, pending candidate, checks actually observed, open counterexamples, files/registers changed and the next dependency-ready engineering action.
+Do not retain as active work:
+- former V1 `[ ]` items;
+- former V1 `next_task` or ready queue;
+- V1 completion percentages;
+- old competition/release sequencing unless a V2 task explicitly needs the inherited boundary.
 
-But the handoff is not the goal. If the user said **continue with SUTRA** and the session still has workable engineering capacity, continue working rather than wrapping after the handoff.
+Retirement is not completion or waiver. If V2 still needs a capability formerly described by V1, it must appear in the active V2 checklist/roadmap.
 
-Do not create a scheduled/background task from this phrase.
+## 8. Release and authority boundaries
 
-## Parallel child workstreams (V2-180)
+“Continue with SUTRA” does **not** authorize:
+- merge to production/default branch;
+- paid inference or real provider credentials;
+- DNS/domain/public deployment or promotion;
+- outreach to users/testers/experts/third parties;
+- official release/submission;
+- fabricated human, physical-device, source-rights, provider or real-world evidence.
 
-Read [PARALLEL-WORKSTREAMS.md](PARALLEL-WORKSTREAMS.md), resolve every open child draft PR and exact CI, and resume independent pending segments without overwriting concurrent changes. Child records belong under workstreams/; update shared registers on integration, preserving original evidence. No automatic merge or release.
+Use the explicit external blockers in the active checklist. Continue independent engineering around them.
 
+## 9. Handoff
 
-### V2-181 parallel resumption discipline
+Report:
+- exact current central/child/validation heads relevant to the work;
+- tasks completed/advanced by active V2 task ID;
+- exact checks actually observed;
+- retained failures/counterexamples;
+- genuine external blockers;
+- next dependency-ready V2 checklist item.
 
-Resolve current open PRs #51–60 (and newly authorized child PRs), exact heads, base drift, mergeability and per-head workflow results before editing. Allocate deepest effort to persistent knowledge (#52), semantic compilation (#53), security (#57), unified workspace (#58), in that order, while progressing other dependency-ready tracks in the same batch. Use sibling branches and non-overlapping ownership; no global gate promotion from child-only CI. For each independent batch: inspect → implement → adversarial test → append workstream record → lease-checked commit → re-read exact remote head and CI → update central parallel registry. Preserve prior checkpoints, failures and unmet acceptance. If a child fails, track/fix it while other branches continue; do not merge as a shortcut. Full integrated and independent replay gates remain mandatory. Session duration is not an evidence claim; no background work without explicit supported execution.
-
-
-### V2-182 validation-only draft
-Reconcile PR #61 separately from #51–60. It is **DO NOT MERGE**: use exact immutable child head blobs, verify disjoint path ownership, preserve earlier snapshot manifests and workflow failure evidence, and compare unchanged canonical job bodies. If child heads advance, their new SHA cannot inherit #61 green; refresh snapshot and observe exact CI, retaining former evidence. No combined result promotes a primary branch or release gate without separate applicable authorization and full integration verification.
+But if the user said **continue with SUTRA** and further authorized engineering is possible in the current session, keep working rather than stopping at the handoff.
