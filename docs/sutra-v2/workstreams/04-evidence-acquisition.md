@@ -28,3 +28,7 @@ Exact child CI pending.
 ## V2-182 candidate
 Exact source-bound declared observation receipts for finite acquisition traces. Each event must cite the exact label in independently pinned text at a specific span; stale text, invalid spans and missing receipts fail. No external authentication or real measurement applicability; this is a prerequisite not an authority grant.
 Exact child CI pending.
+
+
+## V2-183 candidate — authenticated external observation receipts
+Add an Ed25519 receipt protocol over exact source bytes, action/source identity and a caller-generated 256-bit challenge. The collection client requires HTTPS except loopback tests, bounded no-redirect responses and a caller-pinned signer key; replay verifies every signature before converting receipts into the existing exact source-span path. A real separate HTTP signer process is exercised; repinned body tamper, wrong signer, challenge mismatch and remote cleartext transport fail. Authentication proves the configured signer and challenged bytes only—not calibration, observation independence, causal relevance or real-world truth. No physical action or provider credential is involved. Exact child CI pending.
