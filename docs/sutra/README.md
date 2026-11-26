@@ -27,6 +27,7 @@ When the user says **“continue with sutra”** (case-insensitive), read the re
 | [JUDGING_AVAILABILITY_RUNBOOK.md](JUDGING_AVAILABILITY_RUNBOOK.md) | Official judging-window conversion, residual availability risks and manual recovery plan |
 | [MEASUREMENT_PROTOCOLS.md](MEASUREMENT_PROTOCOLS.md) | Pre-registered live-run success definition and equivalent manual transcript baseline |
 | [PERMISSION_ASSET_INVENTORY.md](PERMISSION_ASSET_INVENTORY.md) | Permission-sensitive asset categories and default exclusion rule; not permission evidence |
+| [PARTICIPANT_HANDOFF.md](PARTICIPANT_HANDOFF.md) | Public-safe eligibility/availability status and genuine-human handoff tasks |
 | [REMAINING_GATE_MAP.md](REMAINING_GATE_MAP.md) | Remaining external/final-state gate classes and their real re-open conditions |
 | [evidence/README.md](evidence/README.md) | Evidence conventions without private data or fabricated outcomes |
 
