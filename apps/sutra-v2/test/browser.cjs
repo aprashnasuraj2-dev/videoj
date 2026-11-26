@@ -1160,6 +1160,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const bytes=await save('recovery-export','living-recovery.json'),pin=(await save('recovery-export-pin','living-recovery.sha256')).toString().trim();
    assert.equal(pin,'sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex'));
    const report=JSON.parse(bytes);assert.equal(report.childDigest,await loc('semantic-pin').innerText());assert.equal(report.parentDigest,parent);
+    assert.equal((await save('semantic-export-pin','living-recovery-child.sha256')).toString().trim(),report.childDigest);
    const a=JSON.parse(JSON.parse(report.childVersion).annotationText);assert.deepEqual(a.candidates.find(x=>x.id==='after_capital').facets.definition.references,[]);
    assert.equal(await loc('recovery-preview').isDisabled(),true);
    await click('baseline-restore');await state('restored');assert.match(await loc('staged').innerText(),/1 staged source.*2 reviewed binding/);assert.equal(await loc('recovery-export').isDisabled(),true);
@@ -1192,6 +1193,27 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await click('recovery-apply');await state('semantic_ready');assert.notEqual(await loc('semantic-pin').innerText(),report.childDigest);
    assert.match(await loc('baseline-state').innerText(),new RegExp(report.childDigest));
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
+  // Reopen a completed recovery in a fresh tab, preserving its exact comparison baseline.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#reviewed-workspace > summary').click();await p.locator('#review-sample-panel > summary').click();
+   const loc=id=>p.locator('#review-'+id),click=id=>loc(id).click(),state=s=>p.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x&&!document.querySelector('#review-reset').disabled,s);
+   await click('sample-engineering');await state('sample_ready');await click('semantic-run');await state('semantic_ready');const untouched=await loc('semantic-pin').innerText();
+   await p.locator('#review-transaction-panel > summary').click();await p.locator('#review-recovery-panel > summary').click();await p.locator('#review-recovery-import-panel > summary').click();
+   const file=path.join(output,'living-recovery.json'),bytes=fs.readFileSync(file),report=JSON.parse(bytes),input=JSON.parse(fs.readFileSync(path.join(output,'living-recovery-input-pins.json'),'utf8'));
+   const pin=fs.readFileSync(path.join(output,'living-recovery.sha256'),'utf8').trim(),child=fs.readFileSync(path.join(output,'living-recovery-child.sha256'),'utf8').trim();
+   await loc('recovery-import-mode').selectOption('recovery');await loc('recovery-import-file').setInputFiles(file);
+   for(const [id,value] of [['snapshot',pin],['ancestor',input.ancestorDigest],['plan',input.revisionPlanDigest],['child',input.parentDigest],['recovery-plan',input.recoveryPlanDigest],['final','sha256:'+'0'.repeat(64)]])await loc('recovery-import-'+id).fill(value);
+   await click('recovery-import-preview');await state('refused');assert.equal(await loc('semantic-pin').innerText(),untouched);assert.equal(await loc('recovery-import-apply').isDisabled(),true);
+   await loc('recovery-import-final').fill(child);await click('recovery-import-preview');await state('recovery_import_preview');assert.equal(await loc('semantic-pin').innerText(),untouched);
+   await loc('recovery-import-mode').selectOption('revision');assert.equal(await loc('recovery-import-apply').isDisabled(),true);
+   await loc('recovery-import-mode').selectOption('recovery');await click('recovery-import-preview');await state('recovery_import_preview');
+   await click('recovery-import-apply');await state('semantic_ready');assert.equal(await loc('semantic-pin').innerText(),child);assert.match(await loc('baseline-state').innerText(),new RegExp(input.parentDigest));
+   assert.equal(await loc('recovery-stage').isDisabled(),true);assert.equal(await loc('recovery-preview').isDisabled(),true);assert.match(await loc('recovery-import-result').innerText(),/No further recovery/);
+   const d=p.waitForEvent('download');await click('recovery-export');assert.deepEqual(fs.readFileSync(await (await d).path()),bytes);
+   assert.equal(report.childDigest,child);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
   }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];

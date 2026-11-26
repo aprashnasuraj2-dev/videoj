@@ -1,5 +1,5 @@
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
-import {exportEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
+import {exportEvidenceRecovery,openEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
 import {exportEvidenceRevision,openEvidenceRevision} from '../../../packages/sutra-knowledge/evidence-revision-transaction.js';
 import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
@@ -428,9 +428,10 @@ function startRecoveryContext(ancestor,planText,planPin,r){
 }
 function clearRecoveryImport(clearFields=false){
  recoveryImport=null;by('recovery-import-result').textContent='';
- if(clearFields){by('recovery-import-file').value='';for(const id of ['snapshot','ancestor','plan','child'])by('recovery-import-'+id).value='';}
+ if(clearFields){by('recovery-import-file').value='';by('recovery-import-mode').value='revision';for(const id of ['snapshot','ancestor','plan','child','recovery-plan','final'])by('recovery-import-'+id).value='';}
 }
-function recoveryImportPins(){return ['snapshot','ancestor','plan','child'].map(id=>by('recovery-import-'+id).value.trim());}
+function recoveryImportMode(){return by('recovery-import-mode').value;}
+function recoveryImportPins(){const ids=['snapshot','ancestor','plan','child'];if(recoveryImportMode()==='recovery')ids.push('recovery-plan','final');return ids.map(id=>by('recovery-import-'+id).value.trim());}
 function clearRecoveryPreview(){
  recoveryPreview=null;by('recovery-result').textContent='';if(!recoveryExport)by('recovery-plan-pin').textContent='';
 }
@@ -460,29 +461,46 @@ function recoveryControl(){
  by('recovery-apply').disabled=busy||!ready||!recoveryPreview;
  for(const id of ['recovery-export','recovery-export-pin'])by(id).disabled=busy||!recoveryExport;
  by('recovery-input-pins').disabled=busy||!(recoveryPreview||recoveryExport);
- const file=by('recovery-import-file').files?.[0];for(const id of ['file','snapshot','ancestor','plan','child'])by('recovery-import-'+id).disabled=busy;
+ const file=by('recovery-import-file').files?.[0],isRecovery=recoveryImportMode()==='recovery';
+ by('recovery-import-extra').hidden=!isRecovery;
+ for(const id of ['file','snapshot','ancestor','plan','child','mode'])by('recovery-import-'+id).disabled=busy;
+ for(const id of ['recovery-plan','final'])by('recovery-import-'+id).disabled=busy||!isRecovery;
  by('recovery-import-preview').disabled=busy||!file||!recoveryImportPins().every(p=>/^sha256:[a-f0-9]{64}$/.test(p));
  by('recovery-import-apply').disabled=busy||!recoveryImport;
 }
-for(const id of ['file','snapshot','ancestor','plan','child'])by('recovery-import-'+id).addEventListener('input',()=>{clearRecoveryImport();recoveryControl();});
+for(const id of ['file','snapshot','ancestor','plan','child','mode','recovery-plan','final'])by('recovery-import-'+id).addEventListener('input',()=>{clearRecoveryImport();recoveryControl();});
+ by('recovery-import-mode').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
 by('recovery-import-file').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
 by('recovery-import-preview').onclick=()=>work(async ticket=>{
- clearRecoveryImport();const file=by('recovery-import-file').files?.[0],pins=recoveryImportPins();
+ clearRecoveryImport();const file=by('recovery-import-file').files?.[0],pins=recoveryImportPins(),mode=recoveryImportMode();
  if(!file||file.size<1||file.size>262144)throw Error('REVISION_TRANSACTION_IMPORT_SIZE');
  const bytes=await file.arrayBuffer(),text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes);
- const opened=await openEvidenceRevision(text,...pins),r=opened.exported.revision;
- if(!r.missingBindingIds.length)throw Error('REVISION_TRANSACTION_IMPORT_NO_MISSING');
+ const opened=mode==='recovery'?await openEvidenceRecovery(text,...pins):await openEvidenceRevision(text,...pins),r=mode==='recovery'?opened.exported.recovery:opened.exported.revision;
+ if(mode==='revision'&&!r.missingBindingIds.length)throw Error('REVISION_TRANSACTION_IMPORT_NO_MISSING');
  const restored=await restoreReviewedSourceDraft(r.child.versionText,r.child.digest);
  if(!restored.exactContractBytes)throw Error('REVISION_TRANSACTION_EDITABLE_CONTRACT');
- if(ticket!==epoch||file!==by('recovery-import-file').files?.[0]||JSON.stringify(pins)!==JSON.stringify(recoveryImportPins()))return;
- recoveryImport={opened,draft:restored.draft,file,pins,wire:draft(),current:semanticCurrent,baseline};
- by('recovery-import-result').textContent=['Replayed original: '+opened.ancestor.digest,'Replayed revision: '+r.child.digest,'Missing reviewed inputs: '+r.missingBindingIds.join(', '),...r.changes.map(c=>c.id+' · '+c.before+' → '+c.after),'Nothing applied. Confirm to replace current workspace and its retained comparison baseline.'].join('\n');
- status('recovery_import_preview','Exact saved transaction replayed. Explicit confirmation required.');
+ if(ticket!==epoch||file!==by('recovery-import-file').files?.[0]||mode!==recoveryImportMode()||JSON.stringify(pins)!==JSON.stringify(recoveryImportPins()))return;
+ recoveryImport={opened,draft:restored.draft,file,pins,mode,wire:draft(),current:semanticCurrent,baseline};
+ const detail=mode==='recovery'?['Replayed revision: '+r.parentDigest,'Replayed recovered child: '+r.child.digest,'Still missing: '+(r.stillMissingBindingIds.join(', ')||'none'),'No further recovery under this immediate-only protocol.']:['Replayed revision: '+r.child.digest,'Missing reviewed inputs: '+r.missingBindingIds.join(', ')];
+ by('recovery-import-result').textContent=['Replayed original: '+opened.ancestor.digest,...detail,...r.changes.map(c=>c.id+' · '+c.before+' → '+c.after),'Nothing applied. Confirm to replace current workspace and its retained comparison baseline.'].join('\n');
+ status('recovery_import_preview','Exact saved report replayed. Explicit confirmation required.');
 });
 by('recovery-import-apply').onclick=()=>work(async ticket=>{
  const p=recoveryImport;
- if(!p||p.file!==by('recovery-import-file').files?.[0]||JSON.stringify(p.pins)!==JSON.stringify(recoveryImportPins())||p.wire!==draft()||p.current!==semanticCurrent||p.baseline!==baseline)throw Error('REVISION_TRANSACTION_IMPORT_SCOPE');
+ if(!p||p.file!==by('recovery-import-file').files?.[0]||p.mode!==recoveryImportMode()||JSON.stringify(p.pins)!==JSON.stringify(recoveryImportPins())||p.wire!==draft()||p.current!==semanticCurrent||p.baseline!==baseline)throw Error('REVISION_TRANSACTION_IMPORT_SCOPE');
  if(ticket!==epoch)return;
+ if(p.mode==='recovery'){
+  const {prior,exported:e}=p.opened,r=e.recovery;
+  baseline=prior.revision.child;baselineReplay=null;
+  adoptReviewedChild(r.child,p.draft,r.impact,'Saved recovery reopened after explicit confirmation.');baselineState();
+  by('recovery-import-result').textContent='Exact saved recovery reopened. No further recovery is enabled.';
+  by('recovery-result').textContent='Reopened '+r.recoveredBindingIds.length+' recovered input(s). Still missing: '+(r.stillMissingBindingIds.join(', ')||'none')+'. Former semantic links remain removed.';
+  by('recovery-disclosure').textContent=e.byteLength+' bytes. Includes historical source text, including withdrawals. Local download only; review before sharing.';
+  recoveryExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,pins:{ancestorDigest:r.ancestorDigest,revisionPlanDigest:r.revisionPlanDigest,parentDigest:r.parentDigest,recoveryPlanDigest:r.recoveryPlanDigest}};
+  by('recovery-snapshot-pin').textContent=e.snapshotPin;by('recovery-plan-pin').textContent=r.recoveryPlanDigest;
+  status('semantic_ready','Saved recovery reopened; no source truth or intended meaning established.');
+  return;
+ }
  const {ancestor,planText,planPin,exported}=p.opened,r=exported.revision;
  baseline=ancestor;baselineReplay=null;adoptReviewedChild(r.child,p.draft,r.impact,'Saved atomic revision reopened after explicit confirmation.');baselineState();
  startRecoveryContext(ancestor,planText,planPin,r);
