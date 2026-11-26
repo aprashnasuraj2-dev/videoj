@@ -11,3 +11,8 @@ State: implementation candidate; exact CI pending.
 Acceptance: Freeze matched budgets and held-out cases before comparison; preserve all failures, report confidence and no unsupported superiority.
 
 No merge, release, live inference or external contact authorized. Child JS CI is scoped; full integration gates remain mandatory. Record exact source and CI evidence here.
+
+
+## Parallel session candidate
+Add strict pinned common per-case budget protocol and usage admission for both paired arms. Missing, duplicated, unknown or over-cap cases refuse. Distinguish declared held-out split/caps from actual frozen benchmark, metering and independent annotation. Next: independently annotated case manifest, actual run logs and comparison against seven baselines.
+Exact child CI pending.
