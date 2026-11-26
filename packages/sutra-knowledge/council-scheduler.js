@@ -8,7 +8,7 @@ export const councilInt=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 export const denseCouncilArray=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
 const publicFailure=e=>['HANDLE','MODEL','TRANSPORT','BUDGET','PROFILE_DISABLED','USAGE','PROVIDER_UNKNOWN','SECRET_ECHO','PROVIDER_RESULT','REQUEST','OPERATION','REQUEST_SIZE','CLOCK'].includes(e?.code)?e.code:'PROPOSAL_REFUSED';
 export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutputTokens=256,timeoutMs=15000,signal,maxSlots=12}={}){
- if(!Array.isArray(routes)||routes.length<1||routes.length>4||!denseCouncilArray(routes)||!councilInt(maxRounds,1,3)||!councilInt(maxOutputTokens,1,1024)||!councilInt(timeoutMs,1,30000)||routes.length*maxRounds>maxSlots||workspace?.mode!=='provider-workspace-laboratory'||typeof workspace.execute!=='function'||typeof workspace.list!=='function')councilFail('CONFIG');
+ if(!Array.isArray(routes)||routes.length<1||routes.length>4||!denseCouncilArray(routes)||!councilInt(maxRounds,1,3)||!councilInt(maxOutputTokens,1,1024)||!councilInt(timeoutMs,1,30000)||routes.length*maxRounds>maxSlots||workspace?.mode!=='provider-workspace-laboratory'||typeof workspace.execute!=='function'||typeof workspace.list!=='function'||typeof workspace.admitOperation!=='function')councilFail('CONFIG');
  const ids=new Set(),profiles=workspace.list();
  const team=routes.map(r=>{
   if(!councilClosed(r,['id','role','handle','model','shareScope'])||typeof r.id!=='string'||!ID.test(r.id)||ids.has(r.id)||!councilText(r.role,200)||typeof r.model!=='string'||r.shareScope!==shareScope)councilFail('ROUTE');
@@ -16,12 +16,12 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
   if(!profile||!profile.models.includes(r.model))councilFail('ROUTE');
   ids.add(r.id);return Object.freeze({id:r.id,role:r.role,handle:r.handle,model:r.model,providerId:profile.providerId,profileId:profile.profileId});
  });
- return Object.freeze({team:Object.freeze(team),execute:workspace.execute.bind(workspace),capacity:typeof workspace.dispatchCapacity==='function'?workspace.dispatchCapacity.bind(workspace):null,maxRounds,maxOutputTokens,timeoutMs,signal});
+ return Object.freeze({team:Object.freeze(team),execute:workspace.execute.bind(workspace),admitOperation:workspace.admitOperation.bind(workspace),capacity:typeof workspace.dispatchCapacity==='function'?workspace.dispatchCapacity.bind(workspace):null,maxRounds,maxOutputTokens,timeoutMs,signal});
 }
 // Policies are trusted internal code. The only model-controlled value they
 // receive is bounded untrusted text; route handles never enter their operations.
 export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow,progressIdentity=null}){
- const {team,execute,capacity,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
+ const {team,execute,admitOperation,capacity,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
  const cancelled=()=>controller.abort();if(signal?.aborted)cancelled();else signal?.addEventListener('abort',cancelled,{once:true});
  const timer=setTimeout(cancelled,timeoutMs);
  let abortListener;const cancelledPromise=new Promise(resolve=>{abortListener=()=>resolve(null);if(controller.signal.aborted)abortListener();else controller.signal.addEventListener('abort',abortListener,{once:true});});
@@ -44,6 +44,9 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      const candidate=admit(value.text,publicRoute);
      if(candidate===null)return {...base,status:'ABSTAINED'};
      if(!councilText(candidate,4096))councilFail('PROPOSAL_REFUSED');
+     // The policy has decoded the inner JSON. Recheck this value before it
+     // becomes a trace key, compiler input, or cross-agent feedback.
+     admitOperation(candidate);
      return {...base,status:'PROPOSED',candidateKey:candidate};
     }catch(e){return {...base,status:'REFUSED',reason:publicFailure(e)};}
    };

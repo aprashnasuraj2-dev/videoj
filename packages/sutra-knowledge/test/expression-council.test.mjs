@@ -7,12 +7,12 @@ const A='EXPRESSION_CANARY_A_123456',B='EXPRESSION_CANARY_B_678901',scope='revie
 const correct='([ocf26] - [ppe26]) > ([ocf25] - [ppe25])',alternative='[ocf26] > [ocf25]';
 const proposal=(expression,extra={})=>JSON.stringify({version:1,kind:'expression',expression,...extra});
 const bindings=['ocf25','ppe25','ocf26','ppe26'];
-function setup(a,b,{cap=8}={}){
+function setup(a,b,{cap=8,credentialA=A}={}){
  let seed=1;const seen=[];
  const limits={maxCalls:cap,maxInputBytes:100000,maxOutputTokens:8192,maxConcurrent:Math.min(2,cap)};
  const transport=(providerId,fn)=>({providerId,send:async input=>{seen.push(input);return {actualInputBytes:1,actualOutputTokens:1,value:{text:await fn(input.operation)}};}});
  const workspace=createProviderWorkspace({catalog:[{id:'my-llm',label:'My private LLM',models:['custom/a']},{id:'other-llm',label:'Other API',models:['custom/b']}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,transports:[transport('my-llm',a),transport('other-llm',b)]});
- const pa=workspace.addProfile({providerId:'my-llm',label:'A',credential:A}),pb=workspace.addProfile({providerId:'other-llm',label:'B',credential:B});
+ const pa=workspace.addProfile({providerId:'my-llm',label:'A',credential:credentialA}),pb=workspace.addProfile({providerId:'other-llm',label:'B',credential:B});
  return {workspace,seen,routes:[{id:'director',role:'Interpret the user question',handle:pa.handle,model:'custom/a',shareScope:scope},{id:'challenger',role:'Challenge interpretations',handle:pb.handle,model:'custom/b',shareScope:scope}]};
 }
 async function run(s,overrides={}){
@@ -124,4 +124,16 @@ test('agent-specific guessed hidden binding refuses despite a wider team envelop
  const t=setup(()=>proposal(correct),()=>proposal(correct));
  for(const scopes of [d.agentScopes.slice(0,1),[d.agentScopes[0],{...d.agentScopes[1],includeValues:true}],[d.agentScopes[0],{...d.agentScopes[1],bindingIds:['not_present']}],[d.agentScopes[0],{...d.agentScopes[1],feedbackFrom:['challenger']}]])await assert.rejects(run(t,{disclosure:{...d,agentScopes:scopes}}),e=>e.code==='DISCLOSURE');
  assert.equal(t.seen.length,0);
+});
+
+test('escaped credential forming a valid expression is refused before computation, trace or cross-agent feedback',async()=>{
+ const secret=alternative,wire=proposal(secret).replace(secret,'\\u005b'+secret.slice(1));
+ assert.equal(wire.includes(secret),false);assert.equal(JSON.parse(wire).expression,secret);
+ // The other profile holds the credential; the malicious route does not.
+ const s=setup(()=>proposal(correct),()=>wire,{credentialA:secret});
+ const r=await run(s);
+ assert.equal(r.rounds[0].agents[1].reason,'SECRET_ECHO');assert.equal(r.rounds[0].agents[1].status,'REFUSED');
+ assert.equal(r.candidates.length,1);assert.equal(r.candidates[0].expression,correct);
+ assert.equal(s.seen.length,3);assert.equal(JSON.stringify(r).includes(secret),false);
+ assert.equal(JSON.stringify(s.seen[2].operation.feedback).includes(secret),false);
 });

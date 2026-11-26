@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-177",
+  "session": "V2-178",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3617,74 +3617,64 @@
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711349644/job/139546278286",
-          "description": "Exact V2-103 10/10 green; hostile TSV markup/instruction and same-origin sentinel preserved inert, zero sentinel/external requests, fresh browser context/reload source isolation and stale export disclosure. Kernel Unicode/control adversaries green. No backend account or provider isolation claim.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact V2-103 10/10 green; hostile TSV markup/instruction and same-origin sentinel preserved inert, zero sentinel/external requests, fresh browser context/reload source isolation and stale export disclosure. Kernel Unicode/control adversaries green. No backend account or provider isolation claim."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "c28a42099673ef2ef5d6d51b5a6b75a6929624c8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45717919649",
-          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "52125f0e930ac7fbf14ca4e04486f42a67b80fe6",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45718126155/job/139569315442",
-          "description": "V2-117 exact nine returned PR workflows green; actual atomic browser correction/withdrawal and downloaded independent verifier, stale guards and 360px/no external contact. Broader gate open.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "V2-117 exact nine returned PR workflows green; actual atomic browser correction/withdrawal and downloaded independent verifier, stale guards and 360px/no external contact. Broader gate open."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "3f82d277cdc214a3c8e6b7741fa2f7516eeedeca",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45725240845/job/139593324969",
-          "description": "Exact 9/9 returned PR workflows; immediate recovery kernel and independent verifier accepted 4/4, refused 52/52 tamper/pin cases, matched 4/4 isolated archive outputs. No arbitrary ancestry or source/semantic authentication.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact 9/9 returned PR workflows; immediate recovery kernel and independent verifier accepted 4/4, refused 52/52 tamper/pin cases, matched 4/4 isolated archive outputs. No arbitrary ancestry or source/semantic authentication."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "088d3f3162b5aa3627a96eca4864c06b1ee0406d",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45725620769/job/139594608390",
-          "description": "Exact nine PR workflows green. Actual 360px recovery through confirmed withdrawal, explicit reselection, stale preview invalidation, baseline restoration, local downloads and independently replayed artifact; isolated archive matched, 6 tamper/pin attempts refused. Immediate-only, no restored semantic authority.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact nine PR workflows green. Actual 360px recovery through confirmed withdrawal, explicit reselection, stale preview invalidation, baseline restoration, local downloads and independently replayed artifact; isolated archive matched, 6 tamper/pin attempts refused. Immediate-only, no restored semantic authority."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "c5f6dba9049df6fb40113fff6e2b1994499345ff",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45726374744/job/139597168368",
-          "description": "Exact V2-135 9/9 returned PR workflows green, saved transaction reopening and existing independent recovery replay; broad gate remains open.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact V2-135 9/9 returned PR workflows green, saved transaction reopening and existing independent recovery replay; broad gate remains open."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "48c0879c37f83a03a05c9e3ef61724cd3eacb9c9",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45730873222/job/139612253862",
-          "description": "Exact kernel and browser jobs passed; strict recovery import kernel only. Broader gate remains open.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact kernel and browser jobs passed; strict recovery import kernel only. Broader gate remains open."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "9e744cd22e6b2b81c115c96d4d93d3fb45a31221",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45730986474/job/139612622667",
-          "description": "Exact 9/9 returned PR workflows; saved recovery fresh-tab reopening, independent six pins and explicit confirmation; no recursive recovery.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Exact 9/9 returned PR workflows; saved recovery fresh-tab reopening, independent six pins and explicit confirmation; no recursive recovery."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "d4487fc715e433ce962e6f7ba705c2e710f2480e",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45731460671/job/139614221186",
-          "description": "Actual browser and kernel jobs green, pin-card local intake, explicit confirmation, no authentication claim.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "Actual browser and kernel jobs green, pin-card local intake, explicit confirmation, no authentication claim."
         },
         {
           "id": "V2-LK19-TRUST-BOUNDARY",
           "sourceRevision": "b7a7a996d80ba51d1d2179eae14825ee96718ad4",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45731784695/job/139615315490",
-          "description": "20/20 frozen synthetic replay cases matched; 16 invalid, strict/structural 0 false accepts, hash-only 14, declared-pins 8; two intentional contract differences. No authentication.",
-          "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+          "description": "20/20 frozen synthetic replay cases matched; 16 invalid, strict/structural 0 false accepts, hash-only 14, declared-pins 8; two intentional contract differences. No authentication."
         }
       ],
-      "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md."
+      "knownLimitations": "\nV2-177 decoded extraction credential checks candidate; no new verification credit. See SESSIONS.md.\nV2-178 council decoded candidate scan candidate, exact CI pending; no general DLP."
     },
     {
       "id": "V2-LK20-REPOSITORY-ISOLATION",
