@@ -987,3 +987,7 @@ Actual compiler produces withdrawal and partial recovery bundles; frozen blob e2
 
 ### V2-144 — freeze 40 semantic development cases before evaluator
 Eight families × five explicit cases: period, inclusive threshold, denominator, operator, relative change, direction, population and equivalent expressions. Frozen baseline/counterfactual vectors, duplicate-copy pressure, intended-formula labels, and signature-distinguishability controls. These labels are synthetic developer specifications, not inferred semantics or independent review. Evaluation pending. This completes the specified size of the synthetic 200-case development design, not the external/held-out benchmark gate. V2-140 adaptive branch test passed exact knowledge job 139613709973, 9/9 returned workflows. V2-141 actual browser and kernel jobs 139614221186 and 139614221269 passed; 9/9 returned workflows. No superiority claim.
+
+
+### V2-145 — execute frozen semantic development corpus (candidate)
+Forty developer-labeled cases through actual reviewed expression compiler and finite semantic challenge engine; pinned manifest blob 609ad48d3d18c2ff620abeae7a3b52747aae78c1. Independent Python Fraction oracle dispatches eight closed families, verifies expected and observed vectors, newly distinguishing pairs, raw/deduplicated vote selections and wrong-only/abstention/mixed metrics. All methods receive matched programs/scenarios; retain-all does not select intended meaning. No source truth, open-ended language accuracy, independent labels or external superiority. Exact CI pending.

@@ -134,6 +134,11 @@ jobs:
           node packages/sutra-knowledge/evaluation/replay-development-pilot.mjs > sutra-v2-replay-development.json
           python3 packages/sutra-knowledge/evaluation/verify-replay-development.py < sutra-v2-replay-development.json > sutra-v2-replay-independent.json
           cat sutra-v2-replay-independent.json
+      - name: Execute frozen 40-case semantic development benchmark and independent oracle
+        run: |
+          node packages/sutra-knowledge/evaluation/semantic-development.mjs > sutra-v2-semantic-development.json
+          python3 packages/sutra-knowledge/evaluation/verify-semantic-development.py < sutra-v2-semantic-development.json > sutra-v2-semantic-independent.json
+          cat sutra-v2-semantic-independent.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -172,6 +177,8 @@ jobs:
             sutra-v2-acquisition-independent.json
             sutra-v2-replay-development.json
             sutra-v2-replay-independent.json
+            sutra-v2-semantic-development.json
+            sutra-v2-semantic-independent.json
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json
