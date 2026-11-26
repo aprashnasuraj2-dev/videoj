@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-193
+# Dependency-aware engineering roadmap — V2-195
 
 > **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
 
@@ -1522,3 +1522,20 @@ Web access is a standalone optional future capability, disabled and unregistered
 Observed central source `66440d22c457a819eebba666e8c74837f9eac382`. #58 `ba24ce6fbda97b76a85bce929659fb0f278d1f13`: [exact browser/accessibility job 139794191354](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416592/job/139794191354) passed the 320px keyboard and enlarged-font reflow assertions, 360px enlarged/restored checks, focus, accessible names, reduced motion and no external/storage. Credit N003 scoped only; no human or integrated evidence. Parallel #58 passed run 45786416609. Publisher [job 139794191333](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416590/job/139794191333) failed during apt font dependency setup, before generated starter browser execution; exact retry requested, prior failure retained. All nine other child scoped workflows success. All ten children 37 behind observed central, ahead respectively 5, 10, 7, 6, 4, 6, 5, 13, 6, 5. Refreshed validation-only `f58473523181779fca3e13f0127bb18469ea76da` pins central `66440d22c457a819eebba666e8c74837f9eac382` and all ten children: 38 exact changed path blobs checked for overlaps, 41 total changed entries including manifest/workflow. Canonical job bodies identical apart from exact head guards; no merge into central. Combined 45786666581, parallel 45786657638 and workspace 45786657934 in progress at observation; stale after subsequent central correction, refresh again. Old cancellation history preserved.
 
 Central runs 45785358772 and 45786325753 failed queue audit because uppercase-only parser rejected stable V2-F11b and V2-F12d, causing count mismatch; separate browser jobs passed. Correct grammar for uppercase/hyphenated identifiers plus one lowercase suffix, preserve stable IDs, add positive/negative regressions and optional-web register/dependency invariants. No CI credit for this candidate yet. N004 active, N007/N008/N012 pending. 163 remaining engineering items including 159 foundation and four optional, six external blockers. Explicit priority counts only: {"P0":11,"P1":16,"P2":3,"unclassified":133}; no invented labels for unclassified tasks. No provider, external action, merge, release or deployment.
+
+## V2-195 — verified central and scoped combined evidence; register normalization (2026-11-26)
+
+Central `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24` [run 45786919479](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786919479) both knowledge and browser jobs passed; queue audit 6/6. #61 `ca2fa3516b6dcfc69b94e4180c28b411a7548cc9` exact combined knowledge job 139796246998, parallel run 45787019038 and workspace run 45787019111 passed; canonical browser job 139796247554 in_progress at observation. Credit N004 only for its three specified checks and N012 for exact central revision. N005 active pending all exact remaining validation evidence. #58 publisher retry 45786416590 attempt 2 passed; attempt 1 apt dependency failure retained. Exact central divergence 38 behind for all ten children. 161 remaining including 157 foundation and four optional, six external blockers. Explicit roadmap/checklist priority counts {"P0":11,"P1":16,"P2":3,"unclassified":131}. New register consistency checks and Living Knowledge closure authority are candidates pending exact CI; do not close N007/N008/N009/N010/N011 merely from implementation. No merge, release or external authority.
+
+| PR | Observed exact child | Ahead/behind | Scoped run |
+|---|---|---|---|
+| #51 | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | 5/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
+| #52 | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | 10/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994) |
+| #53 | `0065b48dc5181f549845303d1569b88d94bc2ddf` | 7/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
+| #54 | `2336566c64c4ce461042bec8b34c01c22356aba3` | 6/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957) |
+| #55 | `1a429e24a4fca63affccedf138150480b3ee87c2` | 4/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
+| #56 | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | 6/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
+| #57 | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | 5/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
+| #58 | `ba24ce6fbda97b76a85bce929659fb0f278d1f13` | 13/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416609) |
+| #59 | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | 6/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
+| #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | 5/38 | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |

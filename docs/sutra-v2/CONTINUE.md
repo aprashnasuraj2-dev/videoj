@@ -50,6 +50,8 @@ Do not ask the user to re-authorize ordinary reversible engineering already insi
 
 ## 4. Exact evidence states
 
+Historical registers (including reuse-first snapshots and prior `next` fields) are reference only. The current machine reconciliation, parallel head registry, roadmap observation and active checklist must agree. Full Living Knowledge closure is controlled only by the active checklist and exact acceptance evidence.
+
 - **Candidate:** implementation exists but required exact-source evidence is incomplete/cancelled/running.
 - **Scoped verified:** exact immutable source has passing evidence for the stated component scope.
 - **Integrated verified:** current combined source has required integration evidence.
