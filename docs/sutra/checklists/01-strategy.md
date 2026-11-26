@@ -19,10 +19,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [ ] `SUTRA-P001-01` Record entrant country/residence and legal-age eligibility privately, without publishing identity documents
 - [ ] `SUTRA-P001-02` Confirm individual/team representation and name the actual human narrator
-- [ ] `SUTRA-P001-03` Identify all pre-existing components and the competition-period contribution boundary
+- [x] `SUTRA-P001-03` Identify all pre-existing components and the competition-period contribution boundary
 - [ ] `SUTRA-P001-04` Review ownership of DHAGO imports and original/new training material
 - [ ] `SUTRA-P001-05` List employer/third-party assets requiring permission before public inclusion
-- [ ] `SUTRA-P001-06` Record applicable competition exclusions and unresolved questions with official sources
+- [x] `SUTRA-P001-06` Record applicable competition exclusions and unresolved questions with official sources
 - [ ] `SUTRA-P001-07` Keep eligibility uncertainties separate from engineering work that can proceed
 - [ ] `SUTRA-P001-08` Log only eligibility outcome and blockers publicly, with no private documents
 - [ ] `SUTRA-P001-09` Produce and review the phase artifact: Private eligibility checklist; public ownership/attribution notes.
