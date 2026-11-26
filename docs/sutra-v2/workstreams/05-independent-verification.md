@@ -18,3 +18,8 @@ Independent implementation rejects forged receipt, missing input and stale pins;
 
 ## Verification boundary
 Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session candidate
+Execute existing independently implemented Python Fraction/hashlib verifier from child JS CI on 13 generated positive and 12 forged receipt cases. Cover zero division, propagated blocking, negative rationals, dimensional incompatibility and actual fresh/cache parity. Same-project independent algorithm, not external independent operation. Next: independent domain semantic and interval profiles.
+Exact child CI pending.
