@@ -462,46 +462,9 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
 
-  await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).click();
-  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
-  assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
-  const guideLink=page.getByRole('link',{name:'Open written source excerpt'});
-  assert.equal(await guideLink.count(),1);
-  const guideHref=await guideLink.getAttribute('href');assert.match(guideHref,/\/guides\/synthetic-comparison-guide\.html#signature-count$/);
-  await page.getByRole('button',{name:'Check written source integrity'}).click();
-  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('bytes and anchored excerpt match'));
-  assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/does not establish factual truth/);
-  const guideText=await page.evaluate(async href=>(await fetch(href,{credentials:'omit'})).text(),guideHref);
-  assert.match(guideText,/In this invented example, the handover needs three signatures\./);
-  await page.route('**/guides/synthetic-comparison-guide.html*',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><p id="signature-count">altered source</p>'}));
-  await page.getByRole('button',{name:'Check written source integrity'}).click();
-  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
-  await page.unroute('**/guides/synthetic-comparison-guide.html*');
-  // Hold a valid guide response, then switch the comparison before completion.
-  let releaseGuide,observeGuide,finishGuide,guideRequests=0;const guideStarted=new Promise(r=>observeGuide=r),guideFinished=new Promise(r=>finishGuide=r);
-  await page.route('**/guides/synthetic-comparison-guide.html*',async route=>{guideRequests++;if(guideRequests>1){await route.abort();return;}observeGuide();await new Promise(r=>releaseGuide=r);try{await route.fulfill({contentType:'text/html',body:guideText});}catch{}finally{finishGuide();}});
-  const heldGuide=page.getByRole('button',{name:'Check written source integrity'});
-  await heldGuide.focus();await page.keyboard.press('Enter');await guideStarted;
-  assert.equal(await heldGuide.getAttribute('aria-busy'),'true');
-  assert.equal(await heldGuide.evaluate(button=>document.activeElement===button&&!button.disabled),true);
-  await page.keyboard.press('Enter');await page.keyboard.press('Space');
-  assert.equal(guideRequests,1,'held guide integrity check does not repeat transport under keyboard activation');
-  assert.equal(await heldGuide.evaluate(button=>document.activeElement===button),true);
-  await page.getByRole('button',{name:'Inspect available evidence'}).click();releaseGuide();await guideFinished;
-  await page.unroute('**/guides/synthetic-comparison-guide.html*');
-  assert.equal(await page.locator('#comparison-body .comparison-seek-status').innerText(),'','obsolete guide completion must not attach to the new comparison');
-  // Controlled lifecycle injection: old guide bytes must not certify a result after navigation revocation.
-  await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).click();
-  let navRelease,navStart,navFinish;const navStarted=new Promise(r=>navStart=r),navFinished=new Promise(r=>navFinish=r);
-  await page.route('**/guides/synthetic-comparison-guide.html*',async route=>{navStart();await new Promise(r=>navRelease=r);try{await route.fulfill({contentType:'text/html',body:guideText});}catch{}finally{navFinish();}});
-  await page.getByRole('button',{name:'Check written source integrity'}).click();await navStarted;
-  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
-  navRelease();await navFinished;await page.unroute('**/guides/synthetic-comparison-guide.html*');
-  assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/cancelled on navigation/);
-  await page.getByRole('button',{name:'Check written source integrity'}).click();
-  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('bytes and anchored excerpt match'));
-  await page.getByRole('button',{name:'Inspect available evidence'}).click();
+  assert.equal(await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).count(),0,'production hero must not expose the synthetic contradiction fixture');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
 
   // The local citation-only question path is usable without model, provider, or media.
   const localQuestion=page.getByRole('searchbox',{name:'Question for local source lookup'});
