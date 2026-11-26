@@ -230,7 +230,9 @@ test('enrollment during dispatch invalidates publication even with harmless resp
  const w=make(async()=>{await wait;return {actualInputBytes:1,actualOutputTokens:1,value:'safe'};});
  const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
  const pending=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'test'}});
- w.addProfile({providerId:'provider-b',label:'B',credential:beta});release();
+ const added=w.addProfile({providerId:'provider-b',label:'B',credential:beta});release();
  await assert.rejects(pending,e=>e.code==='PROFILE_SET_CHANGED');assert.equal(w.budgetSnapshot().global.used.unknown,1);
- const next=await w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}});assert.equal(next.lease.state,'settled');
+ // Unknown reservation retains its concurrency slot; no retry bypass.
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}}),e=>e.code==='BUDGET');
+ const next=await w.execute({handle:added.handle,model:'beta-fast',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}});assert.equal(next.lease.state,'settled');assert.equal(w.budgetSnapshot().global.used.unknown,1);
 });
