@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-168",
+  "session": "V2-169",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -595,7 +595,7 @@
             "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
             "description": "Single durable upstream authority enforces a bounded effect count through recovery; budget-exhausted second dispatch is terminally CLOSED and admission aborted without local acknowledgement."
           },
-          "knownLimitations": "Not provider-global spend/billing authority; clone/rollback can reset the synthetic budget and no real provider reconciliation is integrated.\nV2-152 candidate: completion-clock concurrency repair and cross-profile exact credential canary scans; no live/durable/global budget or general DLP claim. Exact CI pending."
+          "knownLimitations": "Not provider-global spend/billing authority; clone/rollback can reset the synthetic budget and no real provider reconciliation is integrated.\nV2-152 candidate: completion-clock concurrency repair and cross-profile exact credential canary scans; no live/durable/global budget or general DLP claim. Exact CI pending.\nV2-169 capacity-aware local council dispatch candidate: no retry, independent ledger authority, no monetary or cross-tenant accounting. Exact CI pending."
         },
         {
           "id": "V2-P14-BYOK-UX",

@@ -16,12 +16,12 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
   if(!profile||!profile.models.includes(r.model))councilFail('ROUTE');
   ids.add(r.id);return Object.freeze({id:r.id,role:r.role,handle:r.handle,model:r.model,providerId:profile.providerId,profileId:profile.profileId});
  });
- return Object.freeze({team:Object.freeze(team),execute:workspace.execute.bind(workspace),maxRounds,maxOutputTokens,timeoutMs,signal});
+ return Object.freeze({team:Object.freeze(team),execute:workspace.execute.bind(workspace),capacity:typeof workspace.dispatchCapacity==='function'?workspace.dispatchCapacity.bind(workspace):null,maxRounds,maxOutputTokens,timeoutMs,signal});
 }
 // Policies are trusted internal code. The only model-controlled value they
 // receive is bounded untrusted text; route handles never enter their operations.
 export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow,progressIdentity=null}){
- const {team,execute,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
+ const {team,execute,capacity,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
  const cancelled=()=>controller.abort();if(signal?.aborted)cancelled();else signal?.addEventListener('abort',cancelled,{once:true});
  const timer=setTimeout(cancelled,timeoutMs);
  let abortListener;const cancelledPromise=new Promise(resolve=>{abortListener=()=>resolve(null);if(controller.signal.aborted)abortListener();else controller.signal.addEventListener('abort',abortListener,{once:true});});
@@ -30,7 +30,7 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
   for(let round=1;round<=maxRounds;round++){
    if(controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
    const feedback=trace.flatMap(row=>row.agents.filter(x=>x.status==='PROPOSED').map(x=>feedbackRow(row.round,x,verified.get(x.candidateKey))));
-   const pending=Promise.all(active.map(async route=>{
+   const invoke=async route=>{
     const base={agentId:route.id,providerId:route.providerId,model:route.model};
     if(controller.signal.aborted)return {...base,status:'REFUSED',reason:'CANCELLED'};
     try{
@@ -46,8 +46,11 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      if(!councilText(candidate,4096))councilFail('PROPOSAL_REFUSED');
      return {...base,status:'PROPOSED',candidateKey:candidate};
     }catch(e){return {...base,status:'REFUSED',reason:publicFailure(e)};}
-   }));
-   const rows=await Promise.race([pending,cancelledPromise]);
+   };
+   // A round can contain more agents than the admitted concurrent capacity.
+   // Schedule bounded waves, using the same previous-round feedback for all
+   // of them. No wait/retry for unrelated or unknown active reservations.
+   const rows=await dispatchWaves(active,invoke,capacity,maxOutputTokens,controller.signal,cancelledPromise);
    if(rows===null||controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
    for(const row of rows){
     if(row.status!=='PROPOSED'||verified.has(row.candidateKey))continue;
@@ -70,4 +73,38 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
   const used=new Set(trace.flatMap(x=>x.agents.filter(y=>y.status==='PROPOSED').map(y=>y.candidateKey)));
   return Object.freeze({rounds:Object.freeze(trace),artifacts:Object.freeze([...verified].filter(([key])=>used.has(key)).map(([,value])=>value)),termination,agreement:termination==='CANCELLED_OR_TIMEOUT'||proposals.length!==team.length?'INCOMPLETE':distinct.size===1?'SAME_CANDIDATE':'DISTINCT_CANDIDATES'});
  }finally{clearTimeout(timer);controller.signal.removeEventListener('abort',abortListener);signal?.removeEventListener('abort',cancelled);}
+}
+
+// Capacity is only a conservative scheduling hint: the ledger still reserves
+// exact request bytes and enforces every cap on actual dispatch. A third-party
+// concurrent operation can consume a hinted slot; do not retry that refusal.
+function slots(bucket,tokens){
+ const {limits,used}=bucket;
+ return Math.max(0,Math.min(limits.maxConcurrent-used.active,limits.maxCalls-used.calls,Math.floor((limits.maxOutputTokens-used.outputTokens)/tokens)));
+}
+const refuse=(route,reason)=>({agentId:route.id,providerId:route.providerId,model:route.model,status:'REFUSED',reason});
+async function dispatchWaves(active,invoke,capacity,tokens,signal,cancelledPromise){
+ if(!capacity)return Promise.race([Promise.all(active.map(invoke)),cancelledPromise]);
+ let queue=active.slice();const results=new Map();
+ while(queue.length){
+  if(signal.aborted)return null;
+  let snapshot;
+  try{snapshot=capacity();}catch(e){for(const r of queue)results.set(r.id,refuse(r,publicFailure(e)));break;}
+  let global=slots(snapshot.global,tokens);const available=new Map(snapshot.profiles.map(p=>[p.profileId,p.enabled?slots(p,tokens):0]));
+  const wave=[],rest=[];
+  for(const r of queue){
+   if(global>0&&(available.get(r.profileId)??0)>0){wave.push(r);global--;available.set(r.profileId,available.get(r.profileId)-1);}
+   else rest.push(r);
+  }
+  if(!wave.length){
+   for(const r of rest){const p=snapshot.profiles.find(x=>x.profileId===r.profileId);results.set(r.id,refuse(r,!p||!p.enabled?'PROFILE_DISABLED':'BUDGET'));}
+   break;
+  }
+  const rows=await Promise.race([Promise.all(wave.map(invoke)),cancelledPromise]);
+  if(rows===null||signal.aborted)return null;
+  for(const row of rows)results.set(row.agentId,row);
+  queue=rest;
+ }
+ // Stable original route order independent of wave or completion order.
+ return active.map(r=>results.get(r.id));
 }

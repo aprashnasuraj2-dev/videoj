@@ -67,3 +67,37 @@ test('council works through heterogeneous wire protocol adapters without changin
  const routes=[{id:'planner',role:'propose',handle:a.handle,model:'custom/a',shareScope:scope},{id:'critic',role:'challenge',handle:b.handle,model:'custom/b',shareScope:scope}];
  const result=await invoke({workspace,routes});assert.equal(result.methods.length,2);assert.equal(result.agreement,'DISTINCT_METHODS');assert.equal(seen.length,4);assert.equal(seen[2].operation.feedback.length,2);assert.equal(workspace.budgetSnapshot().global.used.actualOutputTokens,12);
 });
+
+test('four-agent council respects two concurrent slots without dropping agents or leaking same-round feedback',async()=>{
+ let active=0,peak=0;
+ const send=async op=>{active++;peak=Math.max(peak,active);await new Promise(resolve=>setTimeout(resolve,5));active--;return proposal(op.agentId==='planner'?'section_declared':'section_derived');};
+ const s=setup(send,send,{calls:8,concurrent:2}),routes=[s.routes[0],s.routes[1],{...s.routes[0],id:'analyst'},{...s.routes[1],id:'reviewer'}];
+ const result=await invoke(s,{routes});
+ assert.equal(peak,2);assert.equal(s.seen.length,8);assert.equal(result.rounds.length,2);assert.equal(result.agreement,'DISTINCT_METHODS');
+ for(const row of result.rounds){assert.deepEqual(row.agents.map(x=>x.agentId),routes.map(x=>x.id));assert.ok(row.agents.every(x=>x.status==='PROPOSED'));}
+ assert.ok(s.seen.slice(0,4).every(x=>x.operation.feedback.length===0));assert.ok(s.seen.slice(4).every(x=>x.operation.feedback.length===4));
+ assert.equal(s.workspace.budgetSnapshot().global.used.calls,8);
+});
+test('single concurrent slot serializes a shared-profile team, preserving original order and no extra calls',async()=>{
+ let active=0,peak=0;
+ const send=async()=>{active++;peak=Math.max(peak,active);await new Promise(resolve=>setTimeout(resolve,3));active--;return proposal('section_declared');};
+ const s=setup(send,send,{calls:4,concurrent:1}),routes=[s.routes[0],{...s.routes[0],id:'other'}];
+ const r=await invoke(s,{routes});assert.equal(peak,1);assert.equal(s.seen.length,4);assert.equal(r.agreement,'SAME_METHOD');
+ assert.deepEqual(r.rounds.map(x=>x.agents.map(y=>y.agentId)),[['planner','other'],['planner','other']]);
+});
+test('unknown charge holds a slot, other profile can still proceed, no retries or over-admission',async()=>{
+ const s=setup(async()=>{throw Error('unknown provider completion');},async()=>proposal('section_derived'),{calls:8,concurrent:1});
+ // With one global slot, the unknown first completion blocks remaining routes.
+ const r=await invoke(s);
+ assert.equal(s.seen.length,1);assert.equal(r.rounds[0].agents[0].reason,'PROVIDER_UNKNOWN');assert.equal(r.rounds[0].agents[1].reason,'BUDGET');assert.equal(r.termination,'NO_ADMITTED_PROPOSALS');
+ assert.equal(s.workspace.budgetSnapshot().global.used.active,1);
+ // With two slots the independent route completes, while its next same-round
+ // wave cannot reuse the failed provider's still-active reservation.
+ const t=setup(async()=>{throw Error('unknown');},async()=>proposal('section_derived'),{calls:8,concurrent:2});
+ const routes=[t.routes[0],t.routes[1],{...t.routes[1],id:'other'}];
+ const x=await invoke(t,{routes,maxRounds:1});assert.equal(t.seen.length,3);assert.equal(x.rounds[0].agents[0].status,'REFUSED');assert.equal(x.rounds[0].agents[2].status,'PROPOSED');assert.equal(x.agreement,'INCOMPLETE');
+});
+test('cancelled wave never dispatches waiting agents',async()=>{
+ const s=setup(()=>new Promise(()=>{}),()=>proposal('section_derived'),{calls:4,concurrent:1});
+ const r=await invoke(s,{timeoutMs:15});assert.equal(s.seen.length,1);assert.equal(r.rounds.length,0);assert.equal(r.termination,'CANCELLED_OR_TIMEOUT');
+});

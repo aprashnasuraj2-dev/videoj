@@ -103,6 +103,8 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    })));
   },
   budgetSnapshot(){return ledger.snapshot();},
+  // Trusted scheduler hint only. Actual reservations remain authoritative.
+  dispatchCapacity(){ledger.prune(readClock());return ledger.snapshot();},
   // Trusted adapter pre-encoding check, before escaping or serializing data.
   admitOperation,
   async execute(input={}){
