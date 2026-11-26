@@ -3,16 +3,18 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-198-first-foundation-source-integration",
+  "session": "V2-199-durable-typed-history-candidate",
   "next": [
     "V2-HIST-002",
-    "V2-HIST-003",
+    "V2-HIST-007",
+    "V2-HIST-008",
+    "V2-HIST-009",
     "V2-HIST-010",
     "V2-SEM-004",
     "V2-UX-002",
     "V2-UX-003"
   ],
-  "state": "N005 and UX001 scoped exact acceptance observed; first central source integration candidate, HIST002 active. No broad gate closure.",
+  "state": "V2-198 exact integrated CI passed; HIST003–006 exact integrated evidence closed; HIST002 durable typed graph adapter candidate active pending exact CI",
   "verified": [
     {
       "id": "V2-M01",
@@ -510,6 +512,30 @@
       "sourceRevision": "8d12e8e15ff54c42910948a6a691eb41d631be15",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350020",
       "description": "Exact combined workspace browser and accessibility passed; exact #58 child 45786416592 also passed. Automated profile only, not human/device acceptance."
+    },
+    {
+      "id": "V2-HIST-003",
+      "sourceRevision": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45789101493/job/139803298563",
+      "description": "Exact integrated central regression passed simultaneous correction+withdrawal through shared descendants; invalid dangling graph refused; incremental/fresh/restored reports exact."
+    },
+    {
+      "id": "V2-HIST-004",
+      "sourceRevision": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45789101493/job/139803298563",
+      "description": "Exact integrated multi-generation history, historical fork, sibling conflict and exact restore regression passed; conflicts remain explicit and no merge/authority inferred."
+    },
+    {
+      "id": "V2-HIST-005",
+      "sourceRevision": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45789101493/job/139803298563",
+      "description": "Exact integrated separate-process challenge-bound monotonic witness tests passed, including retained-view freshness and bounded one-step lost-response recovery without blind local retry."
+    },
+    {
+      "id": "V2-HIST-006",
+      "sourceRevision": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45789101493/job/139803298563",
+      "description": "Exact integrated rollback adversaries passed: local rollback, stale retained view, witness process rollback with same key, real SIGKILL publication boundaries and stale-head refusal. Coordinated compromise remains outside guarantee."
     }
   ],
   "release": "not_authorized",
@@ -11950,18 +11976,18 @@
     "validationPr": 61,
     "validationMergeAllowed": false,
     "activeTask": "V2-HIST-002",
-    "remainingTasks": 153,
+    "remainingTasks": 149,
     "activeTasks": 1,
-    "completedSinceReset": 15,
-    "remainingIncludingActive": 154,
+    "completedSinceReset": 19,
+    "remainingIncludingActive": 150,
     "externalBlockers": 6,
     "optionalRemainingTasks": 4,
-    "foundationRemainingIncludingActive": 150,
+    "foundationRemainingIncludingActive": 146,
     "explicitPriorityCounts": {
       "P0": 11,
       "P1": 16,
       "P2": 3,
-      "unclassified": 124
+      "unclassified": 120
     },
     "priorityCountQualification": "Explicit roadmap/checklist priorities only; unclassified checklist tasks use dependency order, no inferred priority labels."
   },
@@ -11973,14 +11999,14 @@
     "activePath": "docs/sutra-v2/CHECKLIST.md"
   },
   "currentReconciliation": {
-    "session": "V2-198-first-foundation-source-integration",
-    "centralSource": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+    "session": "V2-199-durable-typed-history-candidate",
+    "centralSource": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
     "centralRun": {
-      "id": 45787710589,
+      "id": 45789101493,
       "knowledge": "success",
       "browser": "success",
-      "knowledgeJob": 139798616046,
-      "browserJob": 139798616376
+      "knowledgeJob": 139803298563,
+      "browserJob": 139803298938
     },
     "validation": {
       "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",

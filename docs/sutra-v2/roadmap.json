@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-198-first-foundation-source-integration",
+  "session": "V2-199-durable-typed-history-candidate",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -4952,5 +4952,17 @@
       ],
       "qualification": "22 exact individually selected child blobs and two reviewed composition blobs; no validation PR merge, no external provider contact. Full central exact CI required. Host durable storage, browser checkpoint and mapping contracts composed; browser semantic review and host durable transport not yet wired."
     }
-  ]
+  ],
+  "integrationCandidate": {
+    "session": "V2-199-durable-typed-history-candidate",
+    "parent": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
+    "task": "V2-HIST-002",
+    "implementation": [
+      "packages/sutra-knowledge/durable-investigation-history.mjs",
+      "packages/sutra-knowledge/test/durable-investigation-history.test.mjs"
+    ],
+    "acceptance": "Persist and restart the full replayed typed investigation graph through the real Linux CAS store; preserve branches/conflicts and refuse stale concurrent advancement.",
+    "verification": "pending exact central CI",
+    "qualification": "No semantic truth or external freshness; local Linux private filesystem only."
+  }
 }
