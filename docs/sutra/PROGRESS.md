@@ -1,5 +1,7 @@
 # SUTRA progress register
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** All counts and “pending/next” statements below are historical observations only. The 379 remaining unchecked V1 tasks were retired and removed from the active checklist. Current work is controlled by [`docs/sutra-v2/CHECKLIST.md`](../sutra-v2/CHECKLIST.md).
+
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
 ## Session 0045 — 2026-11-24
