@@ -18,3 +18,8 @@ No invented probabilities or independent ancestry; no automatic external contact
 
 ## Verification boundary
 Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session candidate
+Add exact-pinned declared observation trace replay over recomputed finite acquisition policy, including surviving worlds, accumulated upper costs and exposure, invalid/out-of-order outcomes and no authority. Next: separately authenticated actual observation receipt and noise/applicability policy.
+Exact child CI pending.

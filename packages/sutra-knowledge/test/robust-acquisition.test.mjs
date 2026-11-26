@@ -143,3 +143,12 @@ test('branch-dependent evidence acquisition strictly beats matched fixed subsets
  f.policy.exposureBudget=3;f.policy.actions[0].outcomes.forEach(o=>o.labels.push('failed'));
  const failed=await run(f);assert.equal(failed.plan.kind,'stop');assert.equal(failed.plan.worstObjective,6);
 });
+
+import {replayAcquisitionPath} from '../acquisition-path.js';
+async function path(f,events){const policyText=JSON.stringify(f.policy),policyPin=await casePin(policyText),traceText=JSON.stringify({version:1,policyPin,events});return replayAcquisitionPath({versionText:f.v.versionText,versionPin:f.v.digest,gridText:f.gridText,gridPin:f.gridPin,policyText,policyPin,traceText,tracePin:await casePin(traceText)});}
+test('replay an explicitly declared observation path, preserve surviving worlds and charge shared costs',async()=>{
+ const f=await fixture(),initial=await path(f,[]),r=await path(f,[{actionId:'read',outcome:'high'}]);
+ assert.equal(initial.status,'AWAITING_DECLARED_OBSERVATION');assert.equal(r.status,'DECLARED_TERMINAL');assert.equal(r.declaredDecision,'choose_true');assert.equal(r.survivingCells.length,2);assert.equal(r.costUpper,2);assert.equal(r.exposure,1);assert.equal(r.decisionAuthority,'NONE');
+ for(const events of [[{actionId:'read',outcome:'unknown'}],[{actionId:'forged',outcome:'high'}],[{actionId:'read',outcome:'high'},{actionId:'read',outcome:'low'}]])await assert.rejects(path(f,events),/ACQUISITION_PATH_/);
+ const g=await fixture();g.policy.exposureBudget=0;await assert.rejects(path(g,[{actionId:'read',outcome:'high'}]),/ACQUISITION_PATH_/);
+});
