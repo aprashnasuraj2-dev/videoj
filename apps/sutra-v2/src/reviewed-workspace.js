@@ -10,6 +10,7 @@ import {exportEvidenceRevision,openEvidenceRevision} from '../../../packages/sut
 import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
+import {exportQuestionMappingReview} from '../../../packages/sutra-knowledge/question-mapping-review.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
 import {evaluateReviewedIntervals} from '../../../packages/sutra-knowledge/reviewed-interval.js';
@@ -41,7 +42,7 @@ let baselineReplay=null,currentReplay=null;
 let recoveryContext=null,recoveryQueue=[],recoverySelections=[],recoveryPreview=null,recoveryExport=null,recoveryImport=null;
 let transactionQueue=[],transactionSelections=[],transactionPreview=null,transactionExport=null,probeCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null,threshold:null};
+let questionCurrent=null,questionExport=null,questionPathPin=null,questionPlanText=null,questionPlanPin=null,questionReview=null,questionReviewExport=null,questionSelections={left:null,right:null,threshold:null};
 const questionSides=['left','right','threshold'];
 const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
@@ -270,7 +271,29 @@ by('text-file-stage').onclick=()=>work(async ticket=>{
  clearTextFilePreview({clearFile:true});for(const id of ['text-file-source','text-file-lineage'])by(id).value='';
  invalidate(preview.mode==='replace'?'Exact source replaced. Reselect invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'.':'Exact local file staged; zero automatically admitted quantities. Select and declare relevant numeric tokens.');refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
 });
-function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';}
+function clearQuestionReview({keepRows=false,message='No mapping review recorded.'}={}){
+ questionReview=null;questionReviewExport=null;
+ if(!keepRows)by('question-path-review-list').replaceChildren();
+ by('question-path-review-pin').textContent='';by('question-path-review-status').textContent=message;
+}
+function renderQuestionReview(){
+ clearQuestionReview();
+ const root=by('question-path-review-list');
+ if(!questionCurrent){control();return;}
+ for(const candidate of questionCurrent.candidates){
+  const card=document.createElement('div'),description=document.createElement('p'),label=document.createElement('label'),menu=document.createElement('select');
+  description.textContent=candidate.id+' · '+candidate.meaning+' · '+candidate.conditionalState+' · '+candidate.expression;
+  menu.dataset.candidateId=candidate.id;menu.setAttribute('aria-label','Mapping judgment for '+candidate.id);
+  for(const [value,text] of [['unresolved','Unresolved'],['plausible','Plausible declaration'],['excluded','Excluded declaration']]){const option=document.createElement('option');option.value=value;option.textContent=text;menu.append(option);}
+  label.append(document.createTextNode('Judgment for '+candidate.id+' '),menu);card.append(description,label);root.append(card);
+  menu.onchange=()=>{clearQuestionReview({keepRows:true,message:'Judgments changed; record a new pinned review.'});control();};
+ }
+ by('question-path-review-status').textContent='All candidate judgments start unresolved. Record a review to pin this declaration without adopting it as truth.';
+}
+function clearQuestionPreview(){
+ questionCurrent=null;questionExport=null;questionPlanText=null;questionPlanPin=null;clearQuestionReview();
+ by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';
+}
 function resetQuestionSelections(){
  questionSelections={left:null,right:null,threshold:null};clearQuestionPreview();
  for(const side of questionSides){
@@ -299,6 +322,9 @@ function questionControl(){
  by('question-path-run').disabled=busy||!sealed||!active.every(side=>questionSelections[side]&&mapped(side));
  by('question-path-stage').disabled=busy||!sealed||!questionCurrent||questionCurrent.contractDigest!==pin;
  for(const id of ['question-path-export','question-path-export-pin'])by(id).disabled=busy||!questionExport;
+ for(const menu of by('question-path-review-list').querySelectorAll('select'))menu.disabled=busy||!questionCurrent;
+ by('question-path-review-run').disabled=busy||!sealed||!questionCurrent||questionCurrent.contractDigest!==pin||!questionPlanText||!questionPlanPin;
+ for(const id of ['question-path-review-export','question-path-review-export-pin'])by(id).disabled=busy||!questionReviewExport;
 }
 by('question-path-mode').onchange=()=>{resetQuestionSelections();control();};
 for(const side of questionSides){
@@ -316,9 +342,9 @@ by('question-path-run').onclick=()=>work(async ticket=>{
  clearQuestionPreview();
  const operand=side=>({...questionSelections[side],bindingIds:Array.from(by('question-path-'+side+'-binding').selectedOptions,o=>o.value)});
  const plan=JSON.stringify(questionMode()?{version:2,contractDigest:sealed.pin,baseline:operand('left'),current:operand('right'),threshold:operand('threshold')}:{version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
- const exported=await exportReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan)),result=exported.result;
+ const planPin=await casePin(plan),exported=await exportReviewedQuestion(sealed.contractText,sealed.pin,plan,planPin),result=exported.result;
  if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
- questionCurrent=result;
+ questionCurrent=result;questionPlanText=plan;questionPlanPin=planPin;renderQuestionReview();
  const sourceInventory=JSON.parse(sealed.contractText).sources.map(s=>s.id+' ('+new TextEncoder().encode(s.text).length+' source bytes)');
  by('question-path-disclosure').textContent=exported.byteLength+' report bytes; includes original question, full reviewed source text from '+(sourceInventory.join(', ')||'no sources')+', all mappings and conditional results. '+(exported.portable?'Local download only; review before sharing.':'Exceeds the portable limit; no download.');
  if(exported.portable){questionExport={bytes:new TextEncoder().encode(exported.bundleText),digest:exported.snapshotPin};by('question-path-snapshot-pin').textContent=exported.snapshotPin;by('question-path-plan-pin').textContent=result.planDigest;}
@@ -327,6 +353,22 @@ by('question-path-run').onclick=()=>work(async ticket=>{
 });
 by('question-path-export').onclick=()=>{if(!busy&&questionExport)download(questionExport.bytes,'sutra-reviewed-question.json','application/json');};
 by('question-path-export-pin').onclick=()=>{if(!busy&&questionExport)download(questionExport.digest+'\n','sutra-reviewed-question.sha256','text/plain');};
+by('question-path-review-run').onclick=()=>work(async ticket=>{
+ const current=questionCurrent,contractText=sealed?.contractText,contractPin=sealed?.pin,planText=questionPlanText,planPin=questionPlanPin;
+ if(!current||!contractText||current.contractDigest!==contractPin||!planText||!planPin)return;
+ const menus=[...by('question-path-review-list').querySelectorAll('select[data-candidate-id]')];
+ if(menus.length!==current.candidates.length)throw TypeError('MAPPING_REVIEW_BROWSER_STATE');
+ const choices=menus.map(menu=>({id:menu.dataset.candidateId,judgment:menu.value}));
+ const reviewText=JSON.stringify({version:1,contractPin,planPin,choices}),reviewPin=await casePin(reviewText);
+ const exported=await exportQuestionMappingReview({contractText,contractPin,planText,planPin,reviewText,reviewPin});
+ if(ticket!==epoch||current!==questionCurrent||sealed?.pin!==contractPin||questionPlanText!==planText||questionPlanPin!==planPin)return;
+ questionReview=exported.result;questionReviewExport=exported;
+ const counts=Object.fromEntries(['plausible','excluded','unresolved'].map(j=>[j,questionReview.rows.filter(row=>row.judgment===j).length]));
+ by('question-path-review-status').textContent=questionReview.status+' · '+questionReview.semanticInterpretation+' · plausible '+counts.plausible+', excluded '+counts.excluded+', unresolved '+counts.unresolved+'. No judgment is automatically adopted.';
+ by('question-path-review-pin').textContent=exported.snapshotPin;control();
+});
+by('question-path-review-export').onclick=()=>{if(!busy&&questionReviewExport)download(questionReviewExport.snapshotText,'sutra-question-mapping-review.json','application/json');};
+by('question-path-review-export-pin').onclick=()=>{if(!busy&&questionReviewExport)download(questionReviewExport.snapshotPin+'\n','sutra-question-mapping-review.sha256','text/plain');};
 by('question-path-stage').onclick=()=>{
  const r=questionCurrent;
  if(busy||!sealed||!r||r.contractDigest!==sealed.pin)return;
@@ -401,7 +443,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|BINDING_SUGGESTION)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|BINDING_SUGGESTION|MAPPING_REVIEW)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){

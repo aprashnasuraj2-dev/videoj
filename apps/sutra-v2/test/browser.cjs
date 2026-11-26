@@ -1226,7 +1226,17 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await tablePage.locator('#review-question-path-left-binding').selectOption('new_rev');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-export').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-disclosure').innerText(),'No mapping export available.');
    await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');
    assert.match(await tablePage.locator('#review-batch-count').innerText(),/1 \/ 8/);assert.equal(await tablePage.locator('#review-semantic-run').isDisabled(),true);
-   await tablePage.locator('#review-question-path-left-binding').selectOption(['new_rev','old_exp']);await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');
+   await tablePage.locator('#review-question-path-left-binding').selectOption(['new_rev','old_exp']);await click('question-path-run');await state('question_ready');
+   const mappingJudgments=tablePage.locator('#review-question-path-review-list select');assert.equal(await mappingJudgments.count(),2);
+   assert.deepEqual(await mappingJudgments.evaluateAll(xs=>xs.map(x=>x.value)),['unresolved','unresolved']);assert.match(await tablePage.locator('#review-question-path-review-status').innerText(),/start unresolved/);
+   await mappingJudgments.nth(0).selectOption('plausible');await click('question-path-review-run');
+   assert.match(await tablePage.locator('#review-question-path-review-status').innerText(),/REVIEW_INCOMPLETE · UNVERIFIED/);
+   assert.match(await tablePage.locator('#review-question-path-review-pin').innerText(),/^sha256:[a-f0-9]{64}$/);
+   const mappingReviewFile=tablePage.waitForEvent('download');await click('question-path-review-export');await (await mappingReviewFile).saveAs(path.join(output,'question-mapping-review.json'));
+   const mappingReviewPinFile=tablePage.waitForEvent('download');await click('question-path-review-export-pin');await (await mappingReviewPinFile).saveAs(path.join(output,'question-mapping-review.sha256'));
+   await mappingJudgments.nth(1).selectOption('excluded');assert.equal(await tablePage.locator('#review-question-path-review-export').isDisabled(),true);assert.match(await tablePage.locator('#review-question-path-review-status').innerText(),/Judgments changed/);
+   await click('question-path-review-run');assert.match(await tablePage.locator('#review-question-path-review-status').innerText(),/ONE_DECLARED_PLAUSIBLE · UNVERIFIED/);
+   await click('question-path-stage');await state('question_staged');
    assert.match(await tablePage.locator('#review-batch-count').innerText(),/2 \/ 8/);
    await click('semantic-run');await state('semantic_ready');
    const semantic=await tablePage.locator('#review-semantic-result').innerText();assert.match(semantic,/CONDITIONALLY_SATISFIED/);assert.match(semantic,/CONDITIONALLY_REFUTED/);
@@ -1234,7 +1244,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.match(await tablePage.locator('#review-semantic-list').innerText(),/claim:relation_phrase/);
    await fill('facet-question_1-negation','Caller revised negation declaration');assert.equal(await tablePage.locator('#review-semantic-export').isDisabled(),true);
    await click('semantic-run');await state('semantic_ready');
-   await fill('question','Is current revenue higher than prior revenue?');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
+   await fill('question','Is current revenue higher than prior revenue?');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-review-export').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-review-pin').innerText(),'');
    // The same mapping workspace preserves absolute-unit and ratio alternatives.
    await fill('question','Is the change from 前期売上 to 今期売上 greater than limit?');
    await fill('source-id','thresholds');await fill('lineage','declared_limit');await fill('source-text','Amount: 15; Ratio: 1/4;');await click('source-add');await state('draft');
