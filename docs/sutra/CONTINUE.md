@@ -8,11 +8,11 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0053
+## Latest implementation checkpoint — 0054
 
-**761/1,107 overall verified; 655/1,000 original; 339 pending; six omissions; one hardware blocker.** P076-08, P083-08 and P084-07 are newly verified as claim-boundary tasks from Open Kit run 45808726066/job 139870685754. They do not establish independent adoption, production release or npm publication. `REMAINING_GATE_MAP.md` classifies the remaining external/final-state backlog and its real re-open conditions.
+**768/1,107 overall verified; 662/1,000 original; 332 pending; six omissions; one hardware blocker.** P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 are newly verified. The permission inventory and measurement protocols are precondition artifacts only. Exact source `69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b` had all relevant non-browser learner checks green at checkpoint; Chromium was still running and not used as evidence. P018-06 remains pending because the optional synthetic-conflict demonstration is still visible in the normal learner UI.
 
-Next: remaining core work requires genuine participant/rights/human/provider/hardware/public-production or final-candidate/release/submission evidence. Keep synthetic/local/CI evidence in its current class and do not simulate external gates. No public release, paid inference or human-acceptance claim.
+Next: remaining work requires genuine participant/rights/human/provider/hardware/public-production or final-candidate/release/submission evidence unless a narrowly independent control can be proven without reclassifying synthetic/local results. Follow `REMAINING_GATE_MAP.md`. No public release, paid inference or human-acceptance claim.
 
 ## Resume sequence
 
