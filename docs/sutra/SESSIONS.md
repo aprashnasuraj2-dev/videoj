@@ -1,5 +1,13 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0058 — 2026-11-26
+
+- 2026-11-26T19:56:56+05:45 — **777/1,107 overall verified; 671/1,000 original; 323 pending; six omissions; one hardware blocker.**
+- P065-08 verified from read-only Cloudflare Workers Observability. Privacy-projected request samples map concrete GET paths to `patro`, `aafnai-library-phase1` and `patro-date-pages` Worker services.
+- 24-hour observability event counts were 30,996 / 1,882 / 593 respectively. They are explicitly **not** treated as billed invocation counts or quota headroom.
+- P065-07 remains pending for account-wide usage/limit/retry headroom; P065-10 remains pending for actual SUTRA production route behavior and separate inference accounting.
+- No Worker, route, DNS, deployment, secret, billing, cache, release or submission setting was changed.
+
 ## SUTRA-SESSION-0057 — 2026-11-26
 
 - 2026-11-26T19:50:53+05:45 — **776/1,107 overall verified; 670/1,000 original; 324 pending; six omissions; one hardware blocker.**
