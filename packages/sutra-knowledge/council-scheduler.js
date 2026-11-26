@@ -6,7 +6,7 @@ export const councilText=(v,n)=>typeof v==='string'&&v.trim().length>0&&v.length
 export const councilClosed=(x,keys)=>x!==null&&typeof x==='object'&&[Object.prototype,null].includes(Object.getPrototypeOf(x))&&Reflect.ownKeys(x).length===keys.length&&keys.every(k=>{const d=Object.getOwnPropertyDescriptor(x,k);return d?.enumerable&&Object.hasOwn(d,'value');});
 export const councilInt=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 export const denseCouncilArray=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
-const publicFailure=e=>['HANDLE','MODEL','TRANSPORT','BUDGET','PROFILE_DISABLED','USAGE','PROVIDER_UNKNOWN','SECRET_ECHO','PROVIDER_RESULT','REQUEST','OPERATION','REQUEST_SIZE'].includes(e?.code)?e.code:'PROPOSAL_REFUSED';
+const publicFailure=e=>['HANDLE','MODEL','TRANSPORT','BUDGET','PROFILE_DISABLED','USAGE','PROVIDER_UNKNOWN','SECRET_ECHO','PROVIDER_RESULT','REQUEST','OPERATION','REQUEST_SIZE','CLOCK'].includes(e?.code)?e.code:'PROPOSAL_REFUSED';
 export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutputTokens=256,timeoutMs=15000,signal,maxSlots=12}={}){
  if(!Array.isArray(routes)||routes.length<1||routes.length>4||!denseCouncilArray(routes)||!councilInt(maxRounds,1,3)||!councilInt(maxOutputTokens,1,1024)||!councilInt(timeoutMs,1,30000)||routes.length*maxRounds>maxSlots||workspace?.mode!=='provider-workspace-laboratory'||typeof workspace.execute!=='function'||typeof workspace.list!=='function')councilFail('CONFIG');
  const ids=new Set(),profiles=workspace.list();

@@ -48,3 +48,12 @@ test('wire-byte budget prevents understated caller estimate from contacting inje
  const w=setup(async()=>{seen++;return {status:200,bodyText:JSON.stringify(open())};},{globalLimits:small,defaultProfileLimits:small});const p=profile(w,0,A);
  await assert.rejects(call(w,p,'org/custom-1'),e=>e.code==='BUDGET');assert.equal(seen,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
 });
+
+
+test('pre-encoding scan refuses another profile secret even when JSON would escape the literal',async()=>{
+ const secret='OTHER_"ESCAPED"\\_SECRET_123';let seen=0;
+ const w=setup(async()=>{seen++;return {status:200,bodyText:JSON.stringify(open())};});
+ const a=profile(w,0,A);profile(w,1,secret);
+ await assert.rejects(call(w,a,'org/custom-1',{kind:'chat',request:secret}),e=>e.code==='SECRET_ECHO');
+ assert.equal(seen,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+});

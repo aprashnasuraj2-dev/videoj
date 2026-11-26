@@ -17,6 +17,7 @@ const closed=(value,keys)=>{
  const actual=Reflect.ownKeys(value);
  return actual.length===keys.length&&actual.every(k=>typeof k==='string'&&keys.includes(k));
 };
+const dense=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
 const providerPattern=/^[a-z][a-z0-9-]{0,31}$/;
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 const labelPattern=/^[^\u0000-\u001f\u007f]{1,64}$/;
@@ -24,11 +25,11 @@ const secretValid=secret=>typeof secret==='string'&&secret.length>=8&&secret.len
 const bytesToHex=bytes=>Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
 
 function normalizeCatalog(catalog){
- if(!Array.isArray(catalog)||catalog.length<1||catalog.length>8)stop('CATALOG');
+ if(!Array.isArray(catalog)||catalog.length<1||catalog.length>8||!dense(catalog))stop('CATALOG');
  const seen=new Set();
  return Object.freeze(catalog.map(entry=>{
-  if(!closed(entry,['id','label','models'])||!providerPattern.test(entry.id)||!labelPattern.test(entry.label)||
-   !Array.isArray(entry.models)||entry.models.length<1||entry.models.length>16||
+  if(!closed(entry,['id','label','models'])||typeof entry.id!=='string'||!providerPattern.test(entry.id)||typeof entry.label!=='string'||!labelPattern.test(entry.label)||
+   !Array.isArray(entry.models)||entry.models.length<1||entry.models.length>16||!dense(entry.models)||
    entry.models.some(model=>typeof model!=='string'||!modelPattern.test(model))||
    new Set(entry.models).size!==entry.models.length||seen.has(entry.id))stop('CATALOG');
   seen.add(entry.id);
@@ -72,22 +73,28 @@ export function createEphemeralCredentialVault({catalog,randomBytes}={}){
   return profile;
  };
  const listProfiles=()=>Object.freeze([...profiles.values()].map(metadata));
+ const containsSecret=text=>typeof text==='string'&&[...profiles.values()].some(p=>text.includes(p.secret));
+ const publicFields=()=>['sutra-credential-handle-v1',...providers.flatMap(p=>[p.id,p.label,...p.models]),...[...profiles.values()].flatMap(p=>[p.id,p.label])];
 
  return Object.freeze({
   mode:'ephemeral-credential-vault',
   providers,
   addProfile(input){
-   if(!closed(input,['providerId','label','credential'])||!providerById.has(input.providerId)||!labelPattern.test(input.label)||!secretValid(input.credential))stop('PROFILE');
+   if(!closed(input,['providerId','label','credential'])||typeof input.providerId!=='string'||!providerById.has(input.providerId)||typeof input.label!=='string'||!labelPattern.test(input.label)||!secretValid(input.credential))stop('PROFILE');
    if(input.label.includes(input.credential))stop('SECRET_LABEL');
-   for(const profile of profiles.values())if(input.label.includes(profile.secret))stop('SECRET_LABEL');
+   if(containsSecret(input.label))stop('SECRET_LABEL');
+   if(publicFields().some(x=>x.includes(input.credential)))stop('SECRET_METADATA');
    if(profiles.size>=8)stop('PROFILE_LIMIT');
    const id=allocateId(),provider=providerById.get(input.providerId);
+   if(id.includes(input.credential)||containsSecret(id))stop('SECRET_METADATA');
    const handle=Object.freeze(Object.assign(Object.create(null),{kind:'sutra-credential-handle-v1',profileId:id}));
    const profile={id,provider,label:input.label,secret:input.credential,handle};
    profiles.set(id,profile);handles.set(handle,id);
    return Object.freeze({handle,profile:metadata(profile)});
   },
   list(){return listProfiles();},
+  // Host-only exact canary check, no secret value is returned. Not DLP or encoded-secret detection.
+  containsSecret,
   getHandle(profileId){
    if(typeof profileId!=='string'||!profiles.has(profileId))stop('MISSING');
    return profiles.get(profileId).handle;

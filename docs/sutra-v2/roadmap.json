@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-151",
+  "session": "V2-152",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -595,7 +595,7 @@
             "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
             "description": "Single durable upstream authority enforces a bounded effect count through recovery; budget-exhausted second dispatch is terminally CLOSED and admission aborted without local acknowledgement."
           },
-          "knownLimitations": "Not provider-global spend/billing authority; clone/rollback can reset the synthetic budget and no real provider reconciliation is integrated."
+          "knownLimitations": "Not provider-global spend/billing authority; clone/rollback can reset the synthetic budget and no real provider reconciliation is integrated.\nV2-152 candidate: completion-clock concurrency repair and cross-profile exact credential canary scans; no live/durable/global budget or general DLP claim. Exact CI pending."
         },
         {
           "id": "V2-P14-BYOK-UX",
@@ -623,9 +623,14 @@
               "sourceRevision": "950b95002c3fe93f387441434ab94fc27ae98ea6",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734410157/job/139624048147",
               "description": "Exact 9/9 PR workflows; bounded two arbitrary-provider council with real conditional proof feedback, five adversarial/behavior tests. Injected mock only."
+            },
+            {
+              "sourceRevision": "3c33317318e469dd59e26ef4ce7e9f7a2b0efab6",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45735088667/job/139626283068",
+              "description": "Scoped knowledge job passed 59 inference and 263 kernel unit tests including two built-in and custom mock protocol adapters and heterogeneous council; browser failed concurrent reservation test. No full revision credit."
             }
           ],
-          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending.\nV2-149: primary local Agent Studio candidate; two arbitrary mock connections with independently assigned roles, real conditional feedback, per-run limits and trace. No real endpoint/keys or general question compilation; exact CI pending.\nV2-150 candidate: OpenAI-compatible and Anthropic Messages bounded JSON profiles plus custom trusted adapters, mandatory injected transport; no live endpoint/egress/credentials. Exact CI pending.\nV2-151: shared scheduler and model-generated reviewed expressions; no actual provider integration or general semantic approval. Exact CI pending."
+          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending.\nV2-149: primary local Agent Studio candidate; two arbitrary mock connections with independently assigned roles, real conditional feedback, per-run limits and trace. No real endpoint/keys or general question compilation; exact CI pending.\nV2-150 candidate: OpenAI-compatible and Anthropic Messages bounded JSON profiles plus custom trusted adapters, mandatory injected transport; no live endpoint/egress/credentials. Exact CI pending.\nV2-151: shared scheduler and model-generated reviewed expressions; no actual provider integration or general semantic approval. Exact CI pending.\nV2-152 candidate: completion-clock concurrency repair and cross-profile exact credential canary scans; no live/durable/global budget or general DLP claim. Exact CI pending."
         }
       ]
     },

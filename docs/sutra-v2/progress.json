@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-151",
+  "session": "V2-152",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: shared bounded council scheduler and generative reviewed-expression proposal pathway; exact CI pending.",
+  "state": "Candidate: completion-time monotonic ledger settlement, all-profile exact canary scan; exact CI pending.",
   "verified": [
     {
       "id": "V2-M01",
@@ -392,6 +392,12 @@
       "sourceRevision": "950b95002c3fe93f387441434ab94fc27ae98ea6",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734410157/job/139624048147",
       "description": "200/200 heterogeneous frozen developer cases matched in manifest-bound ledger; zero expert/held-out; no external superiority."
+    },
+    {
+      "id": "V2-P14-BYOK-UX",
+      "sourceRevision": "3c33317318e469dd59e26ef4ce7e9f7a2b0efab6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45735088667/job/139626283068",
+      "description": "Scoped knowledge job passed 59 inference and 263 kernel unit tests; custom/heterogeneous protocol adapter tests passed; browser failed."
     }
   ],
   "release": "not_authorized",
@@ -413,14 +419,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-152",
+    "parent": "b480266470b8def1670f3fe9a2d547badabacc0b",
+    "description": "### V2-152 — concurrent budget settlement and cross-profile credential isolation (candidate)\nV2-150 knowledge job 139626283068 succeeded: 59 inference tests, 263 kernel tests, all 200 development cases matched; built-in/custom protocol and heterogeneous council tests passed. Browser job 139626282749 failed with 3 instead of 4 reserved calls in the two-round Studio. Root mechanism: each request settled using its captured reservation tick; a parallel reservation could advance ledger time first, causing earlier settlement/unknown marking to refuse. Use current completion tick and monotonic process clock; fail closed on injected rollback with conservative unknown reservation. Remove async gap after handle check, scan all active credentials (not only selected profile) before dispatch and before publication, check before protocol encoding, refuse public metadata aliases and array accessors. Add deterministic forward/reverse completion, rollback, cross-profile and escaped-canary tests. Exact literal canary detection is not general DLP; removed keys, transformations, malicious trusted transports, distributed budgets and real egress remain outside this guarantee. V2-151 exact CI pending at observation; no live contact or release."
+  },
+  "previousPendingCandidate": {
     "session": "V2-151",
     "parent": "3c33317318e469dd59e26ef4ce7e9f7a2b0efab6",
     "description": "### V2-151 — generative expression council over reviewed evidence (candidate)\nRefactor the host-owned bounded round scheduler for reuse without changing reviewed-method result shape. Add model-generated expressions (not preselected method IDs), explicit original question and selected binding descriptor/value disclosure, independently compiled conditional arithmetic, cross-agent feedback, abstention, distinct formula history, dedup by compiled bytes and existing semantic triage. Reject guessed undisclosed IDs, code/literals, extra verdict fields, duplicate JSON, stale contract pins and over-cap teams; no raw invalid output forwarded. Distinct conditional outcomes remain review-worthy after later convergence. Exact expression author is model proposal, semantic review always required. Conditional feedback can leak relations among approved binding values even when raw values not shared. No open-ended general semantic authority, paid calls or real provider integration. V2-150 CI pending at observation; V2-149 failure retained. New tests cover actual historical normalized cash-flow fixture, divergent formulas, scoped values, adversaries, abstention and timeout. Next: integrate expression council into browser and independently review provider boundaries."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-150",
-    "parent": "23edc323151ef03ec97e9ddc81912f76a73183e0",
-    "description": "### V2-150 — heterogeneous protocol registry and first-viewport repair (candidate)\nV2-148 exact 9/9 PR workflows passed: knowledge job 139624048147, 262/262 unit tests including five council cases, 200/200 frozen development ledger matched; zero held-out/expert labels. V2-149 browser job 139624980167 reached the existing first-screen regression but failed because the full Studio preceded the guided challenge. Preserve the test, restore debugger first and keep Studio prominent via direct header navigation. Add a trusted extensible protocol workspace composing existing vault and budget ledger: bounded nonstream OpenAI-compatible and Anthropic Messages JSON, custom trusted adapter contract, arbitrary connection labels/model IDs, explicit hosted/local transport descriptors and mandatory injected exchange. No default network, URL proxy, real key or new endpoint; DNS/egress/tenant gates remain open. Actual encoded body bytes reserved; incomplete, malformed, tool-bearing or over-budget responses refuse. Add heterogeneous council integration through both wire shapes and custom-adapter tests; exact CI pending. Next: model-generated reviewed expression proposals and general intent path."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -810,6 +816,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734696851/job/139624980167",
       "reason": "Primary guided action below 360x800 first viewport after inserting full Agent Studio before debugger.",
       "resolutionStatus": "V2-150 restores debugger first and keeps header navigation; exact browser CI pending."
+    },
+    {
+      "sourceRevision": "3c33317318e469dd59e26ef4ce7e9f7a2b0efab6",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45735088667",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45735088667/job/139626282749",
+      "reason": "Browser council reserved 3 versus 4 calls; stale captured reservation tick at parallel settlement is root mechanism.",
+      "resolutionStatus": "V2-152 completion-clock fix and deterministic regression candidate; exact CI pending."
     }
   ],
   "reconciledDurableCandidate": {

@@ -125,3 +125,15 @@ test('credential copied into a public profile label is rejected, including a pri
  assert.equal(JSON.stringify(v.exportMetadata()).includes(canaryA),false);
  assert.strictEqual(v.getHandle(first.profile.profileId),first.handle);
 });
+
+
+test('new credentials cannot alias existing public provider/model metadata or earlier profile labels',()=>{
+ const v=vault();const a=v.addProfile({providerId:'provider-a',label:'Existing public alias',credential:canaryA});
+ for(const credential of ['provider-a','alpha-small','Existing public alias','sutra-credential-handle-v1',a.profile.profileId])assert.throws(()=>v.addProfile({providerId:'provider-b',label:'Other',credential}),e=>e.code==='SECRET_METADATA');
+ assert.equal(v.list().length,1);assert.equal(v.containsSecret('prefix '+canaryA),true);assert.equal(v.containsSecret(canaryB),false);
+});
+test('catalog arrays are dense own data and accessor model IDs never run',()=>{
+ let ran=0;const models=['alpha-small'];Object.defineProperty(models,'0',{enumerable:true,get(){ran++;return 'alpha-small';}});
+ assert.throws(()=>createEphemeralCredentialVault({catalog:[{id:'provider-a',label:'Provider A',models}],randomBytes}),e=>e.code==='CATALOG');
+ assert.equal(ran,0);
+});

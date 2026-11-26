@@ -177,3 +177,40 @@ test('removing a profile during an in-flight provider call fails the result clos
  assert.equal(row.enabled,false);assert.equal(row.used.calls,1);assert.equal(row.used.unknown,1);assert.equal(row.used.active,1);
  assert.equal(JSON.stringify(row).includes(alpha),false);
 });
+
+
+test('parallel requests settle against completion ticks, including earlier reservation finishing after later dispatch',async()=>{
+ for(const reverse of [false,true]){
+  let tick=100,releaseA,releaseB;
+  const gateA=new Promise(r=>{releaseA=r;}),gateB=new Promise(r=>{releaseB=r;});
+  const w=createProviderWorkspace({catalog,globalLimits,defaultProfileLimits:limits,leaseTicks:100,randomBytes,clock:()=>tick,transports:[
+   {providerId:'provider-a',send:async()=>{await gateA;return {actualInputBytes:10,actualOutputTokens:2,value:{text:'A'}};}},
+   {providerId:'provider-b',send:async()=>{await gateB;return {actualInputBytes:10,actualOutputTokens:3,value:{text:'B'}};}}
+  ]});
+  const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha}),b=w.addProfile({providerId:'provider-b',label:'B',credential:beta});
+  const first=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'a'}});
+  tick=101;const second=w.execute({handle:b.handle,model:'beta-fast',inputBytes:100,maxOutputTokens:20,operation:{q:'b'}});
+  assert.equal(w.budgetSnapshot().global.used.active,2);
+  tick=102;if(reverse){releaseB();assert.equal((await second).lease.state,'settled');}else{releaseA();assert.equal((await first).lease.state,'settled');}
+  tick=103;if(reverse){releaseA();assert.equal((await first).lease.state,'settled');}else{releaseB();assert.equal((await second).lease.state,'settled');}
+  const used=w.budgetSnapshot().global.used;assert.equal(used.calls,2);assert.equal(used.active,0);assert.equal(used.unknown,0);assert.equal(used.actualOutputTokens,5);
+ }
+});
+test('clock rollback during completion refuses publication and retains conservative unknown reservation',async()=>{
+ let tick=10,release;const pending=new Promise(r=>{release=r;});
+ const w=createProviderWorkspace({catalog,globalLimits,defaultProfileLimits:limits,leaseTicks:100,randomBytes,clock:()=>tick,transports:[{providerId:'provider-a',send:async()=>{await pending;return {actualInputBytes:1,actualOutputTokens:1,value:'ok'};}}]});
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
+ const p=w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'a'}});
+ tick=9;release();await assert.rejects(p,e=>e.code==='CLOCK');
+ const used=w.budgetSnapshot().global.used;assert.equal(used.calls,1);assert.equal(used.unknown,1);assert.equal(used.actualOutputTokens,0);
+});
+test('cross-profile exact credential canaries and array accessors refuse before transmission or publication',async()=>{
+ let contacts=0,ran=0;
+ const w=make(async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:{text:beta}};});
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});w.addProfile({providerId:'provider-b',label:'B',credential:beta});
+ const send=operation=>w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation});
+ await assert.rejects(send({q:beta}),e=>e.code==='SECRET_ECHO');assert.equal(contacts,0);
+ const bad=['x'];Object.defineProperty(bad,'0',{enumerable:true,get(){ran++;return beta;}});
+ await assert.rejects(send({q:bad}),e=>e.code==='PROVIDER_RESULT');assert.equal(ran,0);assert.equal(contacts,0);
+ await assert.rejects(send({q:'safe'}),e=>e.code==='SECRET_ECHO');assert.equal(contacts,1);assert.equal(w.budgetSnapshot().global.used.unknown,1);
+});

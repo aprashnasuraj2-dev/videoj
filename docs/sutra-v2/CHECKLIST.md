@@ -1009,3 +1009,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-150 protocol candidate:** extensible trusted protocol registry, arbitrary model IDs, bounded wire adapters, byte-accounted exchange and heterogeneous council; no live transport. Restore first viewport without dropping regression. Exact CI pending.
 
 - [ ] **V2-151 model proposal pathway:** new closed expressions over explicitly approved binding subset, actual compiler feedback, divergence/abstention, semantic review; candidate pending CI, not arbitrary text-to-truth.
+
+- [ ] **V2-152 concurrency/security candidate:** completion-clock settlement, monotonic rollback refusal, all-profile pre/post canary scans, metadata alias and accessor tests. No distributed budget or production credential guarantee; exact CI pending.
