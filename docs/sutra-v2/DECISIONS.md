@@ -396,3 +396,7 @@ Real compiler + sealed semantic investigation + structural audit on all 30 froze
 
 ### V2-134 — independently replayable structural exposure
 V2-131 exact nine PR workflows green; actual Chromium recovery download independently verified, isolated archive matched, six tamper/pin attempts refused (job 139594608390). V2-134 candidate adds exact structural-exposure report pin, 256 KiB portable bound, separate version pin, independent Python traversal and cut reconstruction from real sealed investigation, standalone --exposure profile, all 30 corpus exports and 2 actual browser downloads with repinned summary/authority/ancestry attacks. Existing bundle shape preserved. No independence, actual physical failure, causal completeness, or release claim; exact CI pending.
+
+
+### V2-135 — reopen exact atomic transaction after restart
+Candidate strict local import of the original portable transaction bytes with separately retained report, ancestor, revision-plan and child pins. Recompute transaction from original version and plan; exact producer report bytes must match, no reliance on imported summary or mere JSON equivalence. Browser preview nonmutating, confirmation explicitly replaces draft and retained baseline, then activates immediate-only recovery. Fresh Chromium page test uses previously downloaded transaction, wrong pin, stale preview, unrelated current investigation and actual recovered child. No browser persistence, arbitrary ancestry or new source authentication. Exact CI pending.

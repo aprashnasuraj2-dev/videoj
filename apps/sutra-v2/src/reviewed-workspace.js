@@ -1,6 +1,6 @@
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
 import {exportEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
-import {exportEvidenceRevision} from '../../../packages/sutra-knowledge/evidence-revision-transaction.js';
+import {exportEvidenceRevision,openEvidenceRevision} from '../../../packages/sutra-knowledge/evidence-revision-transaction.js';
 import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
@@ -31,7 +31,7 @@ const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
-let recoveryContext=null,recoveryQueue=[],recoverySelections=[],recoveryPreview=null,recoveryExport=null;
+let recoveryContext=null,recoveryQueue=[],recoverySelections=[],recoveryPreview=null,recoveryExport=null,recoveryImport=null;
 let transactionQueue=[],transactionSelections=[],transactionPreview=null,transactionExport=null,probeCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null,threshold:null};
@@ -412,23 +412,30 @@ by('transaction-apply').onclick=()=>work(async ticket=>{
  by('transaction-result').textContent='Confirmed '+r.sourceChanges.length+' source revision(s). Retained baseline unchanged. Review new conditional states and removed semantic links.';
  by('transaction-disclosure').textContent=e.byteLength+' report bytes; includes original and corrected source text, including withdrawals: '+r.sourceChanges.map(x=>x.sourceId+' ('+x.kind+')').join(', ')+'. '+(e.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no report download.');
  if(e.portable){transactionExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,planPin:p.planPin};by('transaction-snapshot-pin').textContent=e.snapshotPin;by('transaction-plan-pin').textContent=p.planPin;}
- if(r.missingBindingIds.length){
-  const old=JSON.parse(JSON.parse(p.parent.versionText).contractText);
-  recoveryContext={ancestor:p.parent,revisionPlanText:p.planText,revisionPlanPin:p.planPin,parent:r.child,old,missing:r.missingBindingIds,wire:draft()};
-  options(by('recovery-source'),old.sources.filter(s=>old.bindings.some(b=>b.span.sourceId===s.id&&r.missingBindingIds.includes(b.id))).map(s=>s.id));
-  resetRecoveryEditor();renderRecoveryQueue();
-  by('recovery-context').textContent='Immediate revision eligible for recovery: '+r.missingBindingIds.join(', ')+'. Select all desired missing inputs before confirming; this exact context is not retained after another edit.';
- }
+ startRecoveryContext(p.parent,p.planText,p.planPin,r);
  status('semantic_ready','Atomic revision child confirmed. No source truth or intended meaning established.');
 });
 by('transaction-export').onclick=()=>{if(!busy&&transactionExport)download(transactionExport.bundleText,'sutra-evidence-transaction.json','application/json');};
 by('transaction-export-pin').onclick=()=>{if(!busy&&transactionExport)download(transactionExport.snapshotPin+'\n','sutra-evidence-transaction.sha256','text/plain');};
 by('transaction-plan-pin-export').onclick=()=>{if(!busy&&(transactionPreview||transactionExport))download((transactionPreview?.planPin??transactionExport.planPin)+'\n','sutra-evidence-transaction-plan.sha256','text/plain');};
+function startRecoveryContext(ancestor,planText,planPin,r){
+ if(!r.missingBindingIds.length)return;
+ const old=JSON.parse(JSON.parse(ancestor.versionText).contractText);
+ recoveryContext={ancestor,revisionPlanText:planText,revisionPlanPin:planPin,parent:r.child,old,missing:r.missingBindingIds,wire:draft()};
+ options(by('recovery-source'),old.sources.filter(s=>old.bindings.some(b=>b.span.sourceId===s.id&&r.missingBindingIds.includes(b.id))).map(s=>s.id));
+ resetRecoveryEditor();renderRecoveryQueue();
+ by('recovery-context').textContent='Immediate revision eligible for recovery: '+r.missingBindingIds.join(', ')+'. Select all desired missing inputs before confirming; this exact context is not retained after another edit.';
+}
+function clearRecoveryImport(clearFields=false){
+ recoveryImport=null;by('recovery-import-result').textContent='';
+ if(clearFields){by('recovery-import-file').value='';for(const id of ['snapshot','ancestor','plan','child'])by('recovery-import-'+id).value='';}
+}
+function recoveryImportPins(){return ['snapshot','ancestor','plan','child'].map(id=>by('recovery-import-'+id).value.trim());}
 function clearRecoveryPreview(){
  recoveryPreview=null;by('recovery-result').textContent='';if(!recoveryExport)by('recovery-plan-pin').textContent='';
 }
 function clearRecovery(){
- recoveryContext=null;recoveryQueue=[];recoverySelections=[];recoveryExport=null;clearRecoveryPreview();
+ clearRecoveryImport(true);recoveryContext=null;recoveryQueue=[];recoverySelections=[];recoveryExport=null;clearRecoveryPreview();
  options(by('recovery-source'),[]);options(by('recovery-binding'),[]);by('recovery-text').value='';
  for(const id of ['recovery-type','recovery-selections','recovery-snapshot-pin','recovery-plan-pin'])by(id).textContent='';
  by('recovery-context').textContent='Confirm an atomic revision with missing inputs to enable recovery.';
@@ -453,7 +460,35 @@ function recoveryControl(){
  by('recovery-apply').disabled=busy||!ready||!recoveryPreview;
  for(const id of ['recovery-export','recovery-export-pin'])by(id).disabled=busy||!recoveryExport;
  by('recovery-input-pins').disabled=busy||!(recoveryPreview||recoveryExport);
+ const file=by('recovery-import-file').files?.[0];for(const id of ['file','snapshot','ancestor','plan','child'])by('recovery-import-'+id).disabled=busy;
+ by('recovery-import-preview').disabled=busy||!file||!recoveryImportPins().every(p=>/^sha256:[a-f0-9]{64}$/.test(p));
+ by('recovery-import-apply').disabled=busy||!recoveryImport;
 }
+for(const id of ['file','snapshot','ancestor','plan','child'])by('recovery-import-'+id).addEventListener('input',()=>{clearRecoveryImport();recoveryControl();});
+by('recovery-import-file').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
+by('recovery-import-preview').onclick=()=>work(async ticket=>{
+ clearRecoveryImport();const file=by('recovery-import-file').files?.[0],pins=recoveryImportPins();
+ if(!file||file.size<1||file.size>262144)throw Error('REVISION_TRANSACTION_IMPORT_SIZE');
+ const bytes=await file.arrayBuffer(),text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes);
+ const opened=await openEvidenceRevision(text,...pins),r=opened.exported.revision;
+ if(!r.missingBindingIds.length)throw Error('REVISION_TRANSACTION_IMPORT_NO_MISSING');
+ const restored=await restoreReviewedSourceDraft(r.child.versionText,r.child.digest);
+ if(!restored.exactContractBytes)throw Error('REVISION_TRANSACTION_EDITABLE_CONTRACT');
+ if(ticket!==epoch||file!==by('recovery-import-file').files?.[0]||JSON.stringify(pins)!==JSON.stringify(recoveryImportPins()))return;
+ recoveryImport={opened,draft:restored.draft,file,pins,wire:draft(),current:semanticCurrent,baseline};
+ by('recovery-import-result').textContent=['Replayed original: '+opened.ancestor.digest,'Replayed revision: '+r.child.digest,'Missing reviewed inputs: '+r.missingBindingIds.join(', '),...r.changes.map(c=>c.id+' · '+c.before+' → '+c.after),'Nothing applied. Confirm to replace current workspace and its retained comparison baseline.'].join('\n');
+ status('recovery_import_preview','Exact saved transaction replayed. Explicit confirmation required.');
+});
+by('recovery-import-apply').onclick=()=>work(async ticket=>{
+ const p=recoveryImport;
+ if(!p||p.file!==by('recovery-import-file').files?.[0]||JSON.stringify(p.pins)!==JSON.stringify(recoveryImportPins())||p.wire!==draft()||p.current!==semanticCurrent||p.baseline!==baseline)throw Error('REVISION_TRANSACTION_IMPORT_SCOPE');
+ if(ticket!==epoch)return;
+ const {ancestor,planText,planPin,exported}=p.opened,r=exported.revision;
+ baseline=ancestor;baselineReplay=null;adoptReviewedChild(r.child,p.draft,r.impact,'Saved atomic revision reopened after explicit confirmation.');baselineState();
+ startRecoveryContext(ancestor,planText,planPin,r);
+ by('recovery-import-result').textContent='Exact saved revision reopened. Missing inputs remain unknown until explicitly selected and confirmed.';
+ status('semantic_ready','Saved atomic revision reopened; no source truth or intended meaning established.');
+});
 by('recovery-source').onchange=()=>{resetRecoveryEditor();recoveryControl();};
 by('recovery-binding').onchange=()=>{recoveryType();clearRecoveryPreview();recoveryControl();};
 by('recovery-text').oninput=()=>{recoverySelections=[];by('recovery-selections').textContent='';clearRecoveryPreview();recoveryControl();};

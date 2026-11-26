@@ -1165,6 +1165,34 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await click('baseline-restore');await state('restored');assert.match(await loc('staged').innerText(),/1 staged source.*2 reviewed binding/);assert.equal(await loc('recovery-export').isDisabled(),true);
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
   }
+  // Fresh page reopens a separately pinned exact transaction; bad pins and stale preview cannot replace a draft.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#reviewed-workspace > summary').click();await p.locator('#review-sample-panel > summary').click();
+   const loc=id=>p.locator('#review-'+id),click=id=>loc(id).click(),state=s=>p.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x&&!document.querySelector('#review-reset').disabled,s);
+   await click('sample-engineering');await state('sample_ready');await click('semantic-run');await state('semantic_ready');const untouched=await loc('semantic-pin').innerText();
+   await p.locator('#review-transaction-panel > summary').click();await p.locator('#review-recovery-panel > summary').click();await p.locator('#review-recovery-import-panel > summary').click();
+   const file=path.join(output,'living-transaction.json'),report=JSON.parse(fs.readFileSync(file,'utf8'));
+   const pin=fs.readFileSync(path.join(output,'living-transaction.sha256'),'utf8').trim(),ancestor=fs.readFileSync(path.join(output,'living-transaction-parent.sha256'),'utf8').trim(),plan=fs.readFileSync(path.join(output,'living-transaction-plan.sha256'),'utf8').trim();
+   await loc('recovery-import-file').setInputFiles(file);
+   for(const [id,value] of [['snapshot',pin],['ancestor',ancestor],['plan',plan],['child','sha256:'+'0'.repeat(64)]])await loc('recovery-import-'+id).fill(value);
+   await click('recovery-import-preview');await state('refused');assert.equal(await loc('semantic-pin').innerText(),untouched);assert.equal(await loc('recovery-import-apply').isDisabled(),true);
+   await loc('recovery-import-child').fill(report.childDigest);await click('recovery-import-preview');await state('recovery_import_preview');
+   assert.equal(await loc('semantic-pin').innerText(),untouched);assert.match(await loc('recovery-import-result').innerText(),/capex_now/);
+   await loc('recovery-import-plan').fill('sha256:'+'0'.repeat(64));assert.equal(await loc('recovery-import-apply').isDisabled(),true);
+   await loc('recovery-import-plan').fill(plan);await click('recovery-import-preview');await state('recovery_import_preview');await click('recovery-import-apply');await state('semantic_ready');
+   assert.equal(await loc('semantic-pin').innerText(),report.childDigest);assert.match(await loc('baseline-state').innerText(),new RegExp(ancestor));assert.match(await loc('staged').innerText(),/1 staged source.*2 reviewed binding/);
+   assert.equal(await loc('recovery-text').inputValue(),'');await loc('recovery-text').fill('Earlier capital spending: 30; Current capital spending: 70; ');
+   for(const [id,token] of [['capex_before','30'],['capex_now','70']]){
+    await loc('recovery-binding').selectOption(id);await loc('recovery-text').evaluate((el,t)=>{const i=el.value.indexOf(t);el.focus();el.setSelectionRange(i,i+t.length);},token);await click('recovery-select');await state('recovery_selection');
+   }
+   await click('recovery-stage');await state('recovery_queued');await click('recovery-preview');await state('recovery_preview');
+   assert.match(await loc('recovery-result').innerText(),/after_capital · TARGET_INPUT_RECOVERED · BLOCKED_MISSING_INPUT → CONDITIONALLY_REFUTED/);
+   await click('recovery-apply');await state('semantic_ready');assert.notEqual(await loc('semantic-pin').innerText(),report.childDigest);
+   assert.match(await loc('baseline-state').innerText(),new RegExp(report.childDigest));
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

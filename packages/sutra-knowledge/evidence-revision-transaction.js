@@ -98,3 +98,16 @@ export async function exportEvidenceRevision(versionText,versionPin,planText,pla
  // Oversize reports are not pinned or exported; the admitted child is still usable.
  return freeze({revision,bundleText:portable?bundleText:null,byteLength,portable,snapshotPin:portable?await casePin(bundleText):null,planDigest:planPin});
 }
+
+// Open only exact portable producer bytes, never a trusted-looking report summary.
+// All four pins are independently supplied. Recompute the full transformation.
+export async function openEvidenceRevision(bundleText,snapshotPin,parentPin,planPin,childPin){
+ if(typeof bundleText!=='string'||!bundleText.length||new TextEncoder().encode(bundleText).length>262144)fail('IMPORT_SIZE');
+ if(![snapshotPin,parentPin,planPin,childPin].every(pin)||await casePin(bundleText)!==snapshotPin)fail('IMPORT_PIN');
+ const b=parse(bundleText,40);
+ if(b.version!==VERSION||b.parentDigest!==parentPin||b.planDigest!==planPin||b.childDigest!==childPin||typeof b.parentVersion!=='string'||typeof b.planText!=='string')fail('IMPORT_SCOPE');
+ const e=await exportEvidenceRevision(b.parentVersion,parentPin,b.planText,planPin);
+ if(!e.portable||e.snapshotPin!==snapshotPin||e.bundleText!==bundleText||e.revision.child.digest!==childPin)fail('IMPORT_REPLAY');
+ const ancestor={versionText:b.parentVersion,digest:parentPin,report:await replayInvestigationVersion(b.parentVersion,parentPin)};
+ return freeze({ancestor,planText:b.planText,planPin,exported:e});
+}

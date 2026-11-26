@@ -4,7 +4,7 @@ import {casePin} from '../pinned-investigation.js';
 import {livingFixture} from '../examples/living-investigation.mjs';
 import {selectedSpan} from '../reviewed-draft.js';
 import {replayInvestigationVersion,sealInvestigationVersion,createInvestigationReplaySession} from '../investigation-revision.js';
-import {prepareEvidenceRevision,exportEvidenceRevision} from '../evidence-revision-transaction.js';
+import {prepareEvidenceRevision,exportEvidenceRevision,openEvidenceRevision} from '../evidence-revision-transaction.js';
 const contract=v=>JSON.parse(JSON.parse(v.versionText).contractText);
 const source=(v,id)=>contract(v).sources.find(s=>s.id===id);
 const withdraw=(v,id)=>({kind:'withdraw',sourceId:id,previousDigest:source(v,id).digest});
@@ -58,4 +58,17 @@ test('a revised exact quotation is removed rather than silently relocated; refus
  assert.equal(r.changes[0].classification,'REFUSED_PARENT_QUARANTINED');assert.equal(r.changes[0].after,'REFUSED');
  assert.equal(r.changes[1].classification,'CONTEXT_OR_NONTARGET_REVISED');assert.deepEqual(r.changes[1].removedClaims,['old_quote']);assert.equal(r.changes[1].removedReferences.length,1);
  assert.equal(r.changes[1].before,r.changes[1].after);
+});
+
+test('reopen exact portable transaction using independently retained snapshot, ancestor, plan and child pins',async()=>{
+ const v=await livingFixture(),args=await plan(v,[withdraw(v,'secondary')]),e=await exportEvidenceRevision(...args),r=e.revision;
+ const pins=[e.snapshotPin,v.digest,args[3],r.child.digest],opened=await openEvidenceRevision(e.bundleText,...pins);
+ assert.deepEqual(opened.ancestor,v);assert.deepEqual(opened.exported,e);assert.equal(opened.planText,args[2]);
+ for(let i=0;i<pins.length;i++){const bad=pins.slice();bad[i]='sha256:'+'0'.repeat(64);await assert.rejects(openEvidenceRevision(e.bundleText,...bad),/IMPORT_(PIN|SCOPE)/);}
+ const obj=JSON.parse(e.bundleText);obj.missingBindingIds=[];const wire=JSON.stringify(obj);
+ await assert.rejects(openEvidenceRevision(wire,await casePin(wire),...pins.slice(1)),/IMPORT_REPLAY/);
+ const reserialized=JSON.stringify(JSON.parse(e.bundleText),null,2);
+ await assert.rejects(openEvidenceRevision(reserialized,await casePin(reserialized),...pins.slice(1)),/IMPORT_REPLAY/);
+ await assert.rejects(openEvidenceRevision('x'.repeat(262145),...pins),/IMPORT_SIZE/);
+ assert.deepEqual(await replayInvestigationVersion(v.versionText,v.digest),v.report);
 });
