@@ -2,7 +2,7 @@
 
 SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
-[Binding product mandate](LIVING-KNOWLEDGE.md) · [Continuation](CONTINUE.md) · [Checklist](CHECKLIST.md) · [Roadmap](ROADMAP.md) · [Sessions](SESSIONS.md) · [Machine progress](progress.json)
+[Binding product mandate](LIVING-KNOWLEDGE.md) · [Open model connectivity](OPEN-MODEL-CONNECTIVITY.md) · [Continuation](CONTINUE.md) · [Checklist](CHECKLIST.md) · [Roadmap](ROADMAP.md) · [Sessions](SESSIONS.md) · [Machine progress](progress.json)
 
 The following earlier product snapshot is retained as engineering history; current priorities follow the binding mandate and active queue, not the historical competition objective.
 

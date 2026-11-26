@@ -608,9 +608,9 @@
           "priority": "P0",
           "risk": "critical",
           "implementationLocation": "apps/sutra-v2; packages/sutra-inference; packages/sutra-runtime; services/sutra-api",
-          "acceptanceCriteria": "At least two fixed provider profiles can coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; user can remove a credential cleanly",
+          "acceptanceCriteria": "An extensible connection registry supports arbitrary provider labels, custom compatible endpoints/manual model IDs, multiple credential/model profiles, and provider-independent agent assignments; at least two mock profiles coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; user can remove a credential cleanly",
           "positiveTests": "Fake provider profiles with masked onboarding, provider/model switching and independent bounded reservations; no live paid inference",
-          "adversarialTests": "Credential canary, malicious peer/model asks for key, arbitrary endpoint, model-selected provider switch, stale credential handle, reload/export/log/DOM leakage and cross-profile confusion",
+          "adversarialTests": "Credential canary, malicious peer/model asks for key, unapproved endpoint/redirect/DNS rebinding/private network access, model-selected provider switch, stale credential handle, reload/export/log/DOM leakage and cross-profile confusion; see docs/sutra-v2/OPEN-MODEL-CONNECTIVITY.md",
           "verificationMethod": "Browser integration, fake-provider relay/adapter tests, credential-canary scans and backend budget contract; authorized real provider only in a later separately approved gate",
           "status": "Implementation in progress",
           "evidence": [

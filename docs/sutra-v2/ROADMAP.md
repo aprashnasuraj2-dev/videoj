@@ -276,9 +276,9 @@ Prior IDs: V2-RUNTIME-04.
 
 - **Status:** Not started. **Priority/risk:** P0/critical. **Dependencies:** V2-P14-BUDGET, V2-P03-TAINT, V2-P04-CONSENT.
 - **Implementation:** `apps/sutra-v2; packages/sutra-inference; packages/sutra-runtime; services/sutra-api`.
-- **Acceptance:** At least two fixed provider profiles can coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; removal clears the credential handle.
+- **Acceptance:** An extensible connection registry supports arbitrary provider labels, custom compatible endpoints/manual model IDs, multiple credential/model profiles, and provider-independent agent assignments; at least two mock profiles coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; removal clears the credential handle.
 - **Positive tests:** Fake provider profiles, masked onboarding, provider/model switching and independent bounded reservations; no live paid inference.
-- **Adversarial tests:** Credential canary, malicious peer/model asks for key, arbitrary endpoint, model-selected provider switch, stale handle, reload/export/log/DOM leakage and cross-profile confusion.
+- **Adversarial tests:** Credential canary, malicious peer/model asks for key, unapproved endpoint/redirect/DNS rebinding/private network access, model-selected provider switch, stale handle, reload/export/log/DOM leakage and cross-profile confusion. See [open model connectivity](OPEN-MODEL-CONNECTIVITY.md).
 - **Verification:** Browser integration + fake-provider relay/adapter + credential-canary scans + backend budget contract. Any real-provider validation is a separate authorized gate.
 - **Evidence:** None; no credit claimed.
 - **Limitations:** Current service intentionally reports `byok:false` and rejects visitor credentials. Vault/relay design, XSS/browser-extension exposure, CORS, persistence and provider billing semantics require threat review.
