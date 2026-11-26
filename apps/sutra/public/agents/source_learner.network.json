@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "description": "SUTRA learner/evidence network with bounded source retrieval. Development content remains synthetic; factual truth is not established."
+    "description": "SUTRA direct learner with model-directed bounded lesson source tools and quotation-bound epistemic claims. Catalog consistency does not establish factual truth."
   },
   "max_steps": 4,
   "tools": [
     {
       "name": "learner",
       "function": {
-        "description": "Route a learning question to the evidence agent and preserve source uncertainty.",
+        "description": "Answer a learning question by deciding whether lesson evidence is needed, then label source claims, inference, conflict or uncertainty explicitly.",
         "parameters": {
           "type": "object",
           "properties": {
@@ -23,31 +23,7 @@
           "additionalProperties": false
         }
       },
-      "instructions": "Delegate every source-dependent question to evidence. Caller-owned playback/cue metadata and prior conversation turns are context only; prior assistant explanations are unverified and must never be treated as evidence. Use that context to formulate a precise evidence request, but do not answer source facts from model memory. Preserve uncertainty. If evidence is absent or reports a truncated search, do not imply complete coverage; abstain or ask for a narrower source query.",
-      "tools": [
-        "evidence"
-      ]
-    },
-    {
-      "name": "evidence",
-      "function": {
-        "description": "Inspect source reference consistency and clearly separate it from factual truth.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "request": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 2000
-            }
-          },
-          "required": [
-            "request"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "instructions": "Use the registered read-only source tools before making any source-specific statement. Return exact cue receipts and explain that catalog consistency does not establish factual truth. Broad source searches are mechanically refused when more than five cues match. Use a specific query; never imply exhaustive coverage from a truncated result. If no receipt is returned, abstain. Prior model explanations are not source evidence. Development catalog content is synthetic.",
+      "instructions": "Decide whether the question requires lesson evidence instead of following a predetermined delegation sequence. Caller-owned playback/cue metadata and prior conversation turns are context only; prior assistant explanations are unverified and must never become evidence by repetition. When making a statement about the lesson, use search_lesson or read_cue and cite only a receipt actually returned in this run. Broad searches that exceed the bounded evidence view must be refined rather than treated as complete. Return strict JSON only with exactly this shape: {\"claims\":[{\"kind\":\"source_claim|inference|conflict|uncertainty\",\"text\":\"statement\",\"citations\":[]}]}. For lesson evidence cite {\"kind\":\"lesson\",\"sourceId\":\"exact sourceId\",\"cueId\":\"exact cueId\",\"quote\":\"exact receipt excerpt substring of at least 12 characters\"}. A source_claim requires at least one citation. A conflict requires citations from at least two distinct evidence authorities. Inference and uncertainty must have no citations. Never cite prior assistant text, model memory or an unread receipt. Never invent quotation text or claim verification. If the answer relies only on model reasoning, label it inference; if available evidence cannot support an answer, use uncertainty. Development catalog content may itself be synthetic.",
       "tools": [
         {
           "url": "/api/source-tools"

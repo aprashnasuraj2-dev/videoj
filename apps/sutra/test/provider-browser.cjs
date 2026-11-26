@@ -50,9 +50,14 @@ const path=require('node:path');const net=require('node:net');const fs=require('
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
    if(mode==='quota'||mode==='partial'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}
    const names=body.tools.map(t=>t.function.name),hasResult=body.messages.some(m=>m.role==='tool');let data;
-   if(names.includes('evidence')&&!hasResult)data=chunk({tool_calls:[{index:0,id:'delegate-1',type:'function',function:{name:'evidence',arguments:JSON.stringify({request:'Find timing marker'})}}]},'tool_calls');
-   else if(names.includes('mcp_search_lesson')&&!hasResult)data=chunk({tool_calls:[{index:0,id:'read-1',type:'function',function:{name:'mcp_search_lesson',arguments:'{"query":"timing"}'}}]},'tool_calls');
-   else data=chunk({content:'Synthetic provider fixture interpretation; unverified.'},'stop');
+   if(names.includes('mcp_search_lesson')&&!hasResult)data=chunk({tool_calls:[{index:0,id:'read-1',type:'function',function:{name:'mcp_search_lesson',arguments:'{"query":"timing"}'}}]},'tool_calls');
+   else{
+    const sourceTool=body.messages.filter(m=>m.role==='tool'&&m.name==='mcp_search_lesson').at(-1);
+    if(sourceTool){
+     const observed=JSON.parse(sourceTool.content),receipt=observed.receipts?.[0];assert.ok(receipt?.sourceId&&receipt?.cueId&&typeof receipt.excerpt==='string'&&receipt.excerpt.length>=12);
+     data=chunk({content:JSON.stringify({claims:[{kind:'source_claim',text:'Synthetic provider fixture cites the retrieved lesson cue.',citations:[{kind:'lesson',sourceId:receipt.sourceId,cueId:receipt.cueId,quote:receipt.excerpt}]}]})},'stop');
+    }else data=chunk({content:JSON.stringify({claims:[{kind:'uncertainty',text:'No source evidence was available.',citations:[]}]})},'stop');
+   }
    await r.fulfill({contentType:'text/event-stream',body:sse([data,{choices:[],usage:{prompt_tokens:20,completion_tokens:5,total_tokens:25}}])});
   });
   await page.getByRole('button',{name:'Check inference availability'}).click();
@@ -115,23 +120,23 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(firstQuestion,exactQuestion,'consented question and current model user message must agree byte for byte');
    assert.equal(firstLearningContext,await page.locator('#provider-consent-context').textContent(),'consented learning-state bytes and model context message must agree byte for byte');
-  assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
+  assert.equal(calls,2);assert.match(await page.locator('#provider-answer').textContent(),/Source claim: Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/40\/10\/50/);
   // Opening then cancelling a later run preserves the completed answer and creates no model traffic.
   const completedAnswer=await page.locator('#provider-answer').textContent();
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
-  assert.equal(calls,4);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
-  assert.equal(calls,4);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.equal(calls,2);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
+  assert.equal(calls,2);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
   // A model result grants neither media transfer nor persistence.
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Cue seek unavailable'));
-  assert.equal(calls,4);
+  assert.equal(calls,2);
   await page.getByRole('button',{name:'Preview retrieved review card'}).click();
   const preview=JSON.parse(await page.locator('#review-preview').textContent());
   assert.equal(preview.args.receipt.cueId,'timing-marker');
   assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Confirm local save'}).click();
   await page.waitForFunction(()=>document.querySelector('#review-list').children.length===1);
-  assert.equal(calls,4);
+  assert.equal(calls,2);
   const oldReview=await page.getByRole('button',{name:'Preview retrieved review card'}).elementHandle();
   // Editing the next question must not silently discard or relabel the old result.
   const oldQuestion=await page.getByLabel('Question about the source lesson').inputValue();
@@ -143,13 +148,13 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await oldReview.evaluate(button=>{button.disabled=false;button.click();});assert.equal(await page.locator('#review-dialog').evaluate(dialog=>dialog.open),false,'even a forcibly enabled earlier action is inert');
   await oldReview.evaluate(button=>button.disabled=true);
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
-  await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(calls,4);
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(calls,2);
   assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
   assert.equal(await page.locator('#provider-output').isHidden(),false);
   await page.getByLabel('Question about the source lesson').fill(oldQuestion);
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
-  assert.equal(calls,4);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.equal(calls,2);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
   assert.match(await page.locator('#provider-result-context').textContent(),/Not a result from the current configuration/);
   assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).isDisabled(),true,'editing back and rediscovering cannot resurrect an earlier action');
   // Cancellation after explicit approval but before the first model POST
@@ -160,38 +165,38 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Cancel inference'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');
   holdStatus=false;
-  assert.equal(calls,4);assert.match(await page.locator('#provider-status').textContent(),/before a model request/);
+  assert.equal(calls,2);assert.match(await page.locator('#provider-status').textContent(),/before a model request/);
   assert.equal(await page.locator('#provider-output').isHidden(),false);
   assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
   assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   mode='no-receipt';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='empty');
   await oldReview.evaluate(button=>button.click());assert.equal(await page.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
-  assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/interpretation was discarded/);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  assert.equal(calls,3);assert.match(await page.locator('#provider-status').textContent(),/interpretation was discarded/);assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByLabel('Question about the source lesson').fill('Locate the timing marker again.');
   assert.equal(await page.locator('#provider-output').isHidden(),true);
   assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).count(),0);
-  mode='partial';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,10);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
+  mode='partial';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,5);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
   // Incomplete interpretation preserves independently retrieved receipts and local actions.
   await page.getByRole('button',{name:'Preview retrieved review card'}).click();
   assert.match(await page.locator('#review-preview').textContent(),/timing-marker/);
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
   assert.equal(await page.locator('#review-list li').count(),1);
-  assert.equal(calls,10);
+  assert.equal(calls,5);
   await page.getByRole('button',{name:'Load source media'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Native media reached'));
-  assert.equal(calls,10);
-  mode='quota';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,11);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  assert.equal(calls,5);
+  mode='quota';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,6);assert.equal(await page.locator('#provider-output').isHidden(),true);
   mode='hold';await runOnce();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
-  for(let i=0;i<50&&calls<12;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,12);
+  for(let i=0;i<50&&calls<7;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,7);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);
   const beforeSourceQuota=calls;mode='source-quota';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='denied');
-  assert.equal(calls,beforeSourceQuota+2,'source read quota stops before a completed evidence-agent answer');assert.match(await page.locator('#provider-status').textContent(),/source-read allowance/);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  assert.equal(calls,beforeSourceQuota+1,'source read quota stops after the direct learner requests evidence but before any post-retrieval model call');assert.match(await page.locator('#provider-status').textContent(),/source-read allowance/);assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','local cached evidence remains usable after source API quota denial');
   await page.getByRole('button',{name:'Inspect featured source cue'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
   mode='catalog-drift';await runOnce();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the lesson version'));
-  assert.equal(calls,beforeSourceQuota+5,'source quota adds two model attempts; later catalog drift still stops at the third model attempt with no retry');
+  assert.equal(calls,beforeSourceQuota+3,'source quota adds one model attempt; later catalog drift stops at the second model attempt with no retry');
   assert.equal(await page.locator('#provider-run').isDisabled(),true);
   assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
   assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
@@ -199,7 +204,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   const beforeContractDrift=calls;mode='contract-drift';await runOnce();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the approved inference configuration'));
-  assert.equal(calls,beforeContractDrift+3);assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  assert.equal(calls,beforeContractDrift+2);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
   assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   // Exercise the persisted page lifecycle handler, not a claim of actual browser BFCache eligibility.

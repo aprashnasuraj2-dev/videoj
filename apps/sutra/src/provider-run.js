@@ -182,18 +182,6 @@ async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
  return data;
 }
 
-export function evaluateEvidenceAcceptance({webResearchEnabled=false,lessonReceipts=[],webResearch=null}={}){
- if(typeof webResearchEnabled!=='boolean'||!Array.isArray(lessonReceipts))throw Error('Invalid evidence acceptance input');
- const lessonCount=lessonReceipts.length;
- const webReceipts=webResearch?.receipts;
- if(webReceipts!==undefined&&!Array.isArray(webReceipts))throw Error('Invalid web evidence snapshot');
- const webCount=Array.isArray(webReceipts)?webReceipts.length:0;
- if(lessonCount>20||webCount>6)throw Error('Evidence acceptance bounds exceeded');
- if(lessonCount>0)return Object.freeze({accepted:true,basis:webCount>0?'lesson_and_web':'lesson',lessonCount,webCount});
- if(webResearchEnabled&&webCount>0)return Object.freeze({accepted:true,basis:'web',lessonCount,webCount});
- return Object.freeze({accepted:false,basis:'none',lessonCount,webCount,code:webResearchEnabled?'EVIDENCE_REQUIRED':'SOURCE_EVIDENCE_REQUIRED'});
-}
-
 export async function discoverProvider({origin,loadedContent,peerUrl=null,fetchImpl=fetch,signal}={}){
  if(!validOrigin(origin))throw Error('Invalid caller origin');
  const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,5000);
@@ -319,14 +307,9 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
   const webResearch=result.webResearch??null,peerResearch=result.peerResearch??null;
-  if(approvedContract.webResearch==='configured'||peer){
-   let epistemic;try{epistemic=validateEpistemicAnswer(result.text,{lessonReceipts:evidence.receipts,webReceipts:webResearch?.receipts??[],peerReceipts:peerResearch?.receipts??[]});}
-   catch(error){const rejected=Error('Research answer failed epistemic receipt binding.');rejected.code=typeof error?.code==='string'?error.code:'ANSWER_FORMAT';throw rejected;}
-   return {model,text:formatEpistemicAnswer(epistemic),epistemicClaims:epistemic.claims,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,peerResearch,evidenceBasis:epistemic.basis,quotationIntegrity:epistemic.verification,usage:usage.snapshot(),truthStatus:'unverified'};
-  }
-  const acceptance=evaluateEvidenceAcceptance({webResearchEnabled:false,lessonReceipts:evidence.receipts,webResearch:null});
-  if(!acceptance.accepted){const missing=Error('No independently catalog-matched lesson receipt was available for the completed interpretation.');missing.code=acceptance.code;throw missing;}
-  return {model,text:result.text,epistemicClaims:null,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch:null,evidenceBasis:acceptance.basis,quotationIntegrity:null,usage:usage.snapshot(),truthStatus:'unverified'};
+  let epistemic;try{epistemic=validateEpistemicAnswer(result.text,{lessonReceipts:evidence.receipts,webReceipts:webResearch?.receipts??[],peerReceipts:peerResearch?.receipts??[]});}
+  catch(error){const rejected=Error('Model answer failed epistemic receipt binding.');rejected.code=typeof error?.code==='string'?error.code:'ANSWER_FORMAT';throw rejected;}
+  return {model,text:formatEpistemicAnswer(epistemic),epistemicClaims:epistemic.claims,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,peerResearch,evidenceBasis:epistemic.basis,quotationIntegrity:epistemic.verification,usage:usage.snapshot(),truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';

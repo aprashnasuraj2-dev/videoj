@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "description": "SUTRA direct learner with model-directed bounded lesson source tools and quotation-bound epistemic claims. Catalog consistency does not establish factual truth."
+  },
+  "max_steps": 4,
+  "tools": [
+    {
+      "name": "learner",
+      "function": {
+        "description": "Answer a learning question by deciding whether lesson evidence is needed, then label source claims, inference, conflict or uncertainty explicitly.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Decide whether the question requires lesson evidence instead of following a predetermined delegation sequence. Caller-owned playback/cue metadata and prior conversation turns are context only; prior assistant explanations are unverified and must never become evidence by repetition. When making a statement about the lesson, use search_lesson or read_cue and cite only a receipt actually returned in this run. Broad searches that exceed the bounded evidence view must be refined rather than treated as complete. Return strict JSON only with exactly this shape: {\"claims\":[{\"kind\":\"source_claim|inference|conflict|uncertainty\",\"text\":\"statement\",\"citations\":[]}]}. For lesson evidence cite {\"kind\":\"lesson\",\"sourceId\":\"exact sourceId\",\"cueId\":\"exact cueId\",\"quote\":\"exact receipt excerpt substring of at least 12 characters\"}. A source_claim requires at least one citation. A conflict requires citations from at least two distinct evidence authorities. Inference and uncertainty must have no citations. Never cite prior assistant text, model memory or an unread receipt. Never invent quotation text or claim verification. If the answer relies only on model reasoning, label it inference; if available evidence cannot support an answer, use uncertainty. Development catalog content may itself be synthetic.",
+      "tools": [
+        {
+          "url": "/api/source-tools"
+        }
+      ]
+    }
+  ]
+}

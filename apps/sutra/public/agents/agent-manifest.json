@@ -9,8 +9,8 @@
     {
       "name": "source_learner",
       "front_man": "learner",
-      "hocon": "./v/d36734b9a15909190495fcd8a29bf821902bd6dc/source_learner.network.json",
-      "description": "Bounded source retrieval with mechanical broad-search refusal and abstention semantics; development catalog remains synthetic."
+      "hocon": "./v/085a65783ee5badd8464b6dbcfd341f3a02183ab/source_learner.network.json",
+      "description": "Direct model-directed lesson evidence with quotation-bound source claims and explicit inference/conflict/uncertainty labels."
     },
     {
       "name": "linked_learner",
