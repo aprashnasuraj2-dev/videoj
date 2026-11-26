@@ -17,9 +17,9 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-190 observation | Current evidence boundary |
+| PR | Workstream | Current head at V2-193 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `3d33e6466e9a997c0c0151780cf8fbc405898c34` | exact [knowledge run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation |
+| #50 | central V2 | `66440d22c457a819eebba666e8c74837f9eac382` | [queue audit failed, browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786325753); corrected parser candidate follows |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -27,12 +27,12 @@
 | #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
 | #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
 | #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
-| #58 | unified workspace | `e163e9a9a293a4be9c713f2b2967de33d91b07bd` | [failure: 200% text resize 384px at 320px](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631); baseline browser passed |
+| #58 | unified workspace | `ba24ce6fbda97b76a85bce929659fb0f278d1f13` | [exact accessibility and browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416592/job/139794191354); parallel passed; publisher setup failure retained, retry requested |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
-| #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; combined/parallel reruns cancelled; workspace cancelled; accessibility failure retained; manifest stale; **DO NOT MERGE** |
+| #61 | validation-only combined tree | `f58473523181779fca3e13f0127bb18469ea76da` | refreshed manifest pins all 10 child heads and central `66440d22c457a819eebba666e8c74837f9eac382`; [combined](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786666581), [parallel](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786657638), [workspace](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786657934) in progress at observation; **DO NOT MERGE** |
 
-If any head changes, replace the stale row during reconciliation before claiming work against it. V2-186 comparison: all ten children 32 commits behind observed central source; #61 24 behind. See session evidence.
+If any head changes, replace the stale row during reconciliation before claiming work against it. V2-193 comparison at observed central `66440d22c457a819eebba666e8c74837f9eac382`: all ten children 37 commits behind (ahead counts #51–#60: 5, 10, 7, 6, 4, 6, 5, 13, 6, 5). Refreshed validation-only #61 includes that central source as ancestry; subsequent central register/parser corrections require an exact refresh. See session evidence.
 
 ---
 
@@ -42,8 +42,8 @@ These items are first in the execution queue because later integrated claims dep
 
 - [x] `V2-N001` Reconcile PR #52 exact head CI. Re-run or otherwise obtain completed exact-head scoped evidence for the external history-witness implementation; inspect cancelled job cause before rerun and retain failure/cancellation history.
 - [x] `V2-N002` Reconcile PR #54 exact head CI for authenticated observation acquisition; confirm the separate-process Ed25519 receipt path completes on the exact current head.
-- [~] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
-- [ ] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
+- [x] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
+- [~] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
 - [ ] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
 - [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
 - [ ] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
