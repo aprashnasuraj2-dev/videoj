@@ -1469,3 +1469,6 @@ User authorized separate draft PRs for all ten critical workstreams. Branches ar
 
 
 V2-181: all ten child PRs #51–60 advanced with executable slices; #52 and #58 advanced twice. Exact heads and actual CI observations in PARALLEL-WORKSTREAMS.md and progress.json. Nine scoped JS successes, latest workspace CI running with dedicated browser job. All observed mergeable; no integration or broad gate credit. Next parallel priority order 52, 53, 57, 58, with remaining tracks independently actionable. Preserve V1/older PRs as historical dependencies; no release.
+
+
+V2-181 final: 17 child commits across #51–60; all latest scoped JS green; workspace actual Chromium green at ecbc9653. PR #52 cross-process CAS green, #53 portable mapping replay green, #57 intermediate test failure retained and corrected at d89cc968, #58 source CR normalization refusal green. Exact heads/CI/next acceptance in PARALLEL-WORKSTREAMS.md and machine register. Central parent e17ce32c had nine exact PR workflows pass, not combined child implementation verification. All original broader gates remain open.

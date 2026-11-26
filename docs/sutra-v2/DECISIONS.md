@@ -584,3 +584,7 @@ A lost browser-memory plan no longer forces a model rerun. Add pure exact plan r
 
 ### V2-180 — parallel workstream integration hub
 User authorized separate draft PRs for all ten critical workstreams. Branches are sibling children of the active V2 integration branch, never of production; each owns a separate workstream file and narrowly scoped implementation. Full existing formal/browser/release gates remain mandatory on integration. New lightweight PR workflow executes JS knowledge and inference regressions on child PRs; no standalone merge/release authorization. Existing candidate V2-179 has 7/9 observed PR workflows successful at planning; knowledge and learner still running. Do not infer cross-branch verification or use a green child PR as release approval. See PARALLEL-WORKSTREAMS.md.
+
+
+### V2-181 parallel architecture and evidence
+Persist investigation history in a trusted Linux private directory using immutable snapshots and atomic expected-head CAS; do not claim external freshness or automatic crash-lock recovery. Semantic review remains a portable declaration with independently retained pins and recomputation. Credential-set changes refuse late publication without retaining removed secret bytes; unknown charge keeps its reservation. Browser draft import refuses CR normalization; explicit restore revokes prior results. Scope-specific child CI never promotes shared integration gates. See parallel registry for exact successful and failed revisions.
