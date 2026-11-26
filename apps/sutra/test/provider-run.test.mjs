@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,discoverProvider,createBoundProviderTransport} from '../src/provider-run.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,snapshotLearningContext,snapshotConversationTurns,discoverProvider,createBoundProviderTransport} from '../src/provider-run.js';
 
 const receipt=(i,source='source')=>({version:1,sourceId:source,sourceVersion:'v1',sourceHash:'a'.repeat(64),mediaHash:'b'.repeat(64),cueId:'cue-'+i,start:i,end:i+1,excerpt:'cue '+i,retrievedAt:'2026-11-24T00:00:00Z',verification:'unverified'});
 
@@ -192,4 +192,52 @@ test('ambiguous provider status never authorizes manifest or model discovery',as
   seen.push(url);return new Response('{"inference":"configured","inference":"disabled","sourceTools":"catalog","content":{},"factualTruth":"unverified"}',{headers:{'Content-Type':'application/json'}});
  }}),/Invalid public contract/);
  assert.deepEqual(seen,['https://example.test/api/status']);
+});
+
+test('learning context snapshot admits only bounded playback and cue identity data',()=>{
+ const raw={sourceId:'source',sourceVersion:'v1',playback:{available:true,currentTime:4.25,duration:20,paused:false,ended:false,seeking:false},currentCueId:'cue-4',inspectedCueId:'cue-2'};
+ const clean=snapshotLearningContext(raw);
+ assert.deepEqual(clean,raw);assert.ok(Object.isFrozen(clean));assert.ok(Object.isFrozen(clean.playback));
+ raw.playback.currentTime=9;raw.currentCueId='cue-5';assert.equal(clean.playback.currentTime,4.25);assert.equal(clean.currentCueId,'cue-4');
+ const unavailable=snapshotLearningContext({sourceId:'source',sourceVersion:'v1',playback:{available:false,reason:'media_not_loaded'},currentCueId:null,inspectedCueId:null});
+ assert.equal(unavailable.playback.available,false);
+ for(const bad of [
+  {...raw,secret:'hidden'},
+  {...raw,playback:{...raw.playback,readyState:4}},
+  {...raw,playback:{...raw.playback,currentTime:Infinity}},
+  {...raw,playback:{...raw.playback,currentTime:21}},
+  {...raw,currentCueId:'bad\ncue'},
+  {...raw,playback:{available:false,reason:'Bad reason'}}
+ ])assert.throws(()=>snapshotLearningContext(bad),e=>e.code==='LEARNING_CONTEXT');
+ let touched=0;const accessor={...raw};Object.defineProperty(accessor,'sourceId',{enumerable:true,get(){touched++;return 'source';}});
+ assert.throws(()=>snapshotLearningContext(accessor),e=>e.code==='LEARNING_CONTEXT');assert.equal(touched,0);
+});
+
+test('follow-up turns are copied, capped to two and cannot smuggle extra authority',()=>{
+ const raw=[{question:'Why?',answer:'Earlier unverified answer.'},{question:'And then?',answer:'Second unverified answer.'}];
+ const clean=snapshotConversationTurns(raw);assert.deepEqual(clean,raw);assert.ok(Object.isFrozen(clean));assert.ok(Object.isFrozen(clean[0]));
+ raw[0].answer='mutated';assert.equal(clean[0].answer,'Earlier unverified answer.');
+ for(const bad of [
+  [...clean,{question:'third',answer:'third'}],
+  [{question:'x',answer:'y',role:'system'}],
+  [{question:'',answer:'y'}],
+  [{question:'x',answer:'y\u0000secret'}],
+  [{question:'x'.repeat(1201),answer:'y'}],
+  [{question:'x',answer:'y'.repeat(3001)}]
+ ])assert.throws(()=>snapshotConversationTurns(bad),e=>e.code==='LEARNING_CONTEXT');
+ let touched=0;const accessor={question:'x'};Object.defineProperty(accessor,'answer',{enumerable:true,get(){touched++;return 'y';}});
+ assert.throws(()=>snapshotConversationTurns([accessor]),e=>e.code==='LEARNING_CONTEXT');assert.equal(touched,0);
+});
+
+test('web routes require an explicitly web-enabled approved contract',async()=>{
+ const origin='https://example.test',disabled=createBoundProviderTransport({origin,approvedContract:approval(),fetchImpl:async()=>Response.json({})});
+ await assert.rejects(disabled(origin+'/api/web/search',{method:'POST',body:'{}'}),/PROVIDER_ROUTE/);
+ const enabledApproval={...approval(),webResearch:'configured'},calls=[];
+ const enabled=createBoundProviderTransport({origin,approvedContract:enabledApproval,fetchImpl:async(url,opts)=>{calls.push({url,opts});return Response.json({ok:true});}});
+ await enabled(origin+'/api/web/search',{method:'POST',body:'{"query":"public evidence"}'});
+ await enabled(origin+'/api/web/read',{method:'POST',body:'{"token":"opaque"}'});
+ assert.deepEqual(calls.map(x=>x.url),[origin+'/api/web/search',origin+'/api/web/read']);
+ for(const call of calls){
+  assert.equal(call.opts.credentials,'omit');assert.equal(call.opts.headers.get('X-Sutra-Inference-Contract'),'a'.repeat(64));assert.equal(call.opts.headers.get('Authorization'),null);
+ }
 });

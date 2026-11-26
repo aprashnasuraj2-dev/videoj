@@ -138,3 +138,11 @@ test('HTML loading shell changes invalidate the first viewer, browser, performan
  assert.ok(result.requiredWorkflows.includes('Validate SUTRA learner shell'));
  assert.ok(result.requiredWorkflows.includes('Validate SUTRA browser compatibility matrix'));
 });
+
+test('model-directed research tooling is mapped to grounding, provider-cost and security verification',()=>{
+ const r=classifyChangedFiles(['tools/sutra-research/run.mjs','tools/sutra-research/firecrawl.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);
+ for(const id of ['grounding-evaluation','provider-cost','security-boundary'])assert.ok(r.affectedSuites.includes(id),id);
+ for(const workflow of ['Validate SUTRA engineering evaluation','Validate SUTRA provider measurement gate','Validate SUTRA Cloudflare ingress'])assert.ok(r.requiredWorkflows.includes(workflow),workflow);
+ for(const metric of ['engineering_baseline','provider_cost','security_boundary'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
+});

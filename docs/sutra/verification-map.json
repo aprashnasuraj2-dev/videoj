@@ -26,7 +26,8 @@
         "apps/sutra/public/guides/",
         "packages/sutra-content-profile/",
         "apps/sutra/public/content/",
-        "apps/sutra/public/transcripts/"
+        "apps/sutra/public/transcripts/",
+        "tools/sutra-research/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA engineering evaluation",
@@ -145,7 +146,8 @@
         "packages/sutra-content-profile/",
         "apps/sutra/public/content/",
         "apps/sutra/public/transcripts/",
-        "tools/sutra-local-measurement/"
+        "tools/sutra-local-measurement/",
+        "tools/sutra-research/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
@@ -193,7 +195,8 @@
         "services/sutra-api/",
         "deploy/sutra-pages/",
         "apps/sutra/public/_headers",
-        "apps/sutra/public/_routes"
+        "apps/sutra/public/_routes",
+        "tools/sutra-research/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
