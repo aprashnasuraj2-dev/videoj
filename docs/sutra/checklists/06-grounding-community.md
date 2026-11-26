@@ -1,5 +1,7 @@
 # 06. Grounding and community tools
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **16-20 Dec 2026**. This is a target window, not proof of work.
@@ -53,16 +55,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Author 40 cases: 20 answerable, 10 unanswerable and 10 conflicting/adversarial cases. Freeze expected evidence and refusal behavior before final prompt tuning.
 - **Phase exit:** Each case has a human-reviewed expected result; test-set leakage and later modifications are disclosed.
 
-- [ ] `SUTRA-P053-01` Create 20 answerable cases with human-reviewed expected cue references
-- [ ] `SUTRA-P053-02` Create 10 unanswerable cases that require abstention
-- [ ] `SUTRA-P053-03` Create 10 conflict or adversarial cases with expected safe handling
 - [x] `SUTRA-P053-04` Define supported-claim precision and citation validity denominators
-- [ ] `SUTRA-P053-05` Freeze cases and rubric before final prompt tuning
 - [x] `SUTRA-P053-06` Separate development examples from the held-out evaluation set
-- [ ] `SUTRA-P053-07` Version later corrections and explain why expectations changed
 - [x] `SUTRA-P053-08` Preserve failures rather than removing difficult cases from scoring
-- [ ] `SUTRA-P053-09` Produce and review the phase artifact: Versioned evaluation set and scoring rubric.
-- [ ] `SUTRA-P053-10` Close phase 053 only after its applicable tasks have evidence and its exit condition is observed: Each case has a human-reviewed expected result; test-set leakage and later modifications are disclosed.
 
 ## Phase 054 - Tune delegation for useful work
 
@@ -71,7 +66,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Use agents only when a separate source or verification role adds value. Reduce redundant model calls and enforce concise structured returns. Compare with direct transcript search.
 - **Phase exit:** The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.
 
-- [ ] `SUTRA-P054-01` Measure the baseline number of model calls and token usage
 - [x] `SUTRA-P054-02` Compare agent coordination against direct transcript lookup
 - [x] `SUTRA-P054-03` Restrict delegation to source selection and useful verification roles
 - [x] `SUTRA-P054-04` Remove redundant agent hops and repeated large context
@@ -80,7 +74,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
 - [x] `SUTRA-P054-08` Do not use the number of agents as a quality metric
 - [x] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
-- [ ] `SUTRA-P054-10` Close phase 054 only after its applicable tasks have evidence and its exit condition is observed: The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.
 
 ## Phase 055 - Handle uncertainty and conflicting sources
 
@@ -94,11 +87,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P055-03` Keep multiple conflicting source identities inspectable
 - [x] `SUTRA-P055-04` Label inference and interpretation rather than calling them verified facts
 - [x] `SUTRA-P055-05` Avoid unsupported technical certification or operational guarantees
-- [ ] `SUTRA-P055-06` Test all unanswerable and conflicting evaluation fixtures
 - [x] `SUTRA-P055-07` Verify the assistant does not fabricate citations to avoid refusal
 - [x] `SUTRA-P055-08` Explain next useful human step without overstating source reliability
 - [x] `SUTRA-P055-09` Produce and review the phase artifact: Uncertainty states and conflict-resolution guidance.
-- [ ] `SUTRA-P055-10` Close phase 055 only after its applicable tasks have evidence and its exit condition is observed: All unanswerable/conflicting evaluation cases avoid fabricated citations; disagreements retain separate source identities.
 
 ## Phase 056 - Add stale-source and media-drift checks
 
