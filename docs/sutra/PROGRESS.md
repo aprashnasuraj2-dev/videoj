@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0052 — 2026-11-26
+
+**758/1,107 overall verified; 652/1,000 original; 342 pending; six omissions; one hardware blocker.** P084-02/04/05, P087-04/08 and P089-06/07/08 are verified from corrected Open Kit run 45807667772/job 139867065204: 6/6 documentation/package tests plus clean distribution/vendor/starter checks. [Evidence](evidence/implementation/SESSION-0052.md).
+
+This is pre-release evidence only. Public Open Kit URLs/releases, final-candidate reproducibility, staging rollback, funded judging headroom and public-site availability remain pending.
+
 ## Session 0051 — 2026-11-26
 
 **750/1,107 overall verified; 644/1,000 original; 350 pending; six omissions; one hardware blocker.** P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 are verified from the pre-release technical/community artifacts plus Open Kit run 45806619487/job 139863464177 (5/5 tests; clean distribution checks). The technical report now uses the checklist-requested `Technical_Report.md` filename via a byte-preserving rename. [Evidence](evidence/implementation/SESSION-0051.md).
