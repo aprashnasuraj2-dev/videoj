@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-141",
+  "session": "V2-142",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "separate checkpoint pin card candidate; exact CI pending",
+  "state": "Frozen 20-case replay/tamper spec; executable differential evaluator pending; acquisition exact CI reconciled.",
   "verified": [
     {
       "id": "V2-M01",
@@ -391,7 +391,7 @@
     "reason": "Actual browser invalid UTF-8 test: kernel refused correctly but UI sanitizer omitted digits in permitted error-code suffix, so TEXT_FILE_UTF8 became a generic refusal.",
     "resolutionStatus": "V2-107 exact nine returned PR workflows green including Chromium 139551497664; separate push run unobserved; historical failure retained."
   },
-  "lastVerifiedKernelSource": "48c0879c37f83a03a05c9e3ef61724cd3eacb9c9",
+  "lastVerifiedKernelSource": "86b315bbf42ebda189008cf5c6072353b0338651",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-142",
+    "parent": "d4487fc715e433ce962e6f7ba705c2e710f2480e",
+    "description": "### V2-142 — frozen replay/tamper development specification and exact CI reconciliation\nV2-137, V2-138 and V2-139 each 9/9 returned PR workflows green; separate push run not exposed. V2-137 saved recovery reopening browser job 139612622667 passed. V2-139 actual planner and independent Python oracle job 139613273989: 30/30 acquisition cases matched, summed abstract worst objective no observation 180, one read 147, exact 126, fixed nonadaptive 126; strict improvements 15, 8, 0 respectively. No superiority over fixed-subset baseline in this corpus, no empirical cost. Freeze 20 developer-labeled replay/tamper cases before evaluator. Two producer-exact positives, two pretty reserialization cases intentionally accepted only by structural verifier with new outer pin, 16 expected dual refusals, including independently pinned child and semantically revived link. Structural oracle must check separately retained child digest as a wrapper, not misrepresent existing CLI signature. No gate closure. V2-140/141 CI reconciliation remains separate."
+  },
+  "previousPendingCandidate": {
     "session": "V2-141",
     "parent": "d988f0a068c0af5cbf87c0a5d0a1346f6d76da3f",
     "description": "### V2-141 — separately retained pin card for revision and recovery (candidate)\nReduce four/six manual digest copies with a closed, named local JSON pin card. Card contains only digests, no source text, and is generated only for a confirmed portable export. Strict duplicate-key/profile/field/size validation; no report replay or state mutation upon card intake. Report and card are separate downloads; a card from the same untrusted sender does not establish authenticity. Existing manual entry and independent Python verifier inputs preserved. Browser regression uses actual saved card in fresh tab, duplicate-key refusal, wrong final pin, nonmutating field fill and explicit confirmation. Exact revision reopening also preserves its report/card for re-export. No storage, automatic trust or broad gate closure. CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-140",
-    "parent": "86b315bbf42ebda189008cf5c6072353b0338651",
-    "description": "### V2-140 — adversarial adaptive-versus-fixed acquisition regression (candidate)\nV2-136 exact commit 48c0879c37f83a03a05c9e3ef61724cd3eacb9c9: all nine returned PR workflows successful; actual knowledge job 139612253862 and Chromium job 139612253419 passed. Strict six-pin recovery opening thus verified within kernel scope, not arbitrary ancestry or authority. V2-138 frozen manifest also matched 30/30 in a separate preliminary array enumeration (declared objective totals 126 versus one-read 147 and no observation 180); not execution of V2-139 actual compiler/planner or its Python oracle. Add separate, non-corpus regression at maximum 16 candidate-world cells: x selects y or z through explicit arithmetic; optimal branch-dependent policy reads x then the relevant quantity. Exhaustive fixed-subset baseline has objective 6 at exposure cap 2 and 3 at cap 3, whereas expected adaptive objective 2; cap 1 and possible selector failure must abstain. Tests check every compiled cell against independent direct truth table, independent recursive oracle and fixed subsets. This is an explicit synthetic counterexample to blanket equivalence of adaptive and nonadaptive collection, not a field advantage. V2-137/139 exact CI pending at authoring."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -6548,6 +6548,189 @@
         {
           "id": 45730873198,
           "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
+    },
+    {
+      "sourceRevision": "9e744cd22e6b2b81c115c96d4d93d3fb45a31221",
+      "runs": [
+        {
+          "id": 45730985649,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985745,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985671,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985725,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985646,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985698,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985937,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730985690,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730986474,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
+    },
+    {
+      "sourceRevision": "ffa0625f24690217e6e17e488685e78895136d0d",
+      "runs": [
+        {
+          "id": 45731087390,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087354,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087338,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087378,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087352,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087374,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087401,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087303,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731087396,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
+    },
+    {
+      "sourceRevision": "86b315bbf42ebda189008cf5c6072353b0338651",
+      "runs": [
+        {
+          "id": 45731180939,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731181078,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731180999,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731180945,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731180881,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731181056,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731180906,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731181024,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45731180849,
+          "name": "Validate SUTRA publisher starter",
           "status": "completed",
           "conclusion": "success"
         }

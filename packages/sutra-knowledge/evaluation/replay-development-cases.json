@@ -1,0 +1,190 @@
+{
+  "profile": "sutra-replay-development/v1",
+  "qualification": "Frozen developer-specified synthetic cases. Not external annotations, source authentication, or held-out evidence. Structural verification includes an explicitly retained final-child digest check; strict reopening additionally requires producer-byte equality. Pretty JSON with new outer pin intentionally separates the two contracts.",
+  "fixture": {
+    "revision": "withdraw_secondary",
+    "recovery": "restore_only_second_binding"
+  },
+  "cases": [
+    {
+      "id": "revision_exact",
+      "kind": "revision",
+      "mutation": "exact",
+      "expected": {
+        "strict": "accept",
+        "structural": "accept"
+      }
+    },
+    {
+      "id": "revision_pretty",
+      "kind": "revision",
+      "mutation": "pretty",
+      "expected": {
+        "strict": "refuse",
+        "structural": "accept"
+      }
+    },
+    {
+      "id": "revision_wrong_snapshot",
+      "kind": "revision",
+      "mutation": "wrong_snapshot",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_wrong_ancestor",
+      "kind": "revision",
+      "mutation": "wrong_ancestor",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_wrong_plan",
+      "kind": "revision",
+      "mutation": "wrong_plan",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_wrong_child",
+      "kind": "revision",
+      "mutation": "wrong_child",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_missing_list_omitted",
+      "kind": "revision",
+      "mutation": "missing_list_omitted",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_authority_changed",
+      "kind": "revision",
+      "mutation": "authority_changed",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_duplicate_key",
+      "kind": "revision",
+      "mutation": "duplicate_key",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "revision_forged_child_version",
+      "kind": "revision",
+      "mutation": "forged_child_version",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_exact",
+      "kind": "recovery",
+      "mutation": "exact",
+      "expected": {
+        "strict": "accept",
+        "structural": "accept"
+      }
+    },
+    {
+      "id": "recovery_pretty",
+      "kind": "recovery",
+      "mutation": "pretty",
+      "expected": {
+        "strict": "refuse",
+        "structural": "accept"
+      }
+    },
+    {
+      "id": "recovery_wrong_snapshot",
+      "kind": "recovery",
+      "mutation": "wrong_snapshot",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_wrong_current",
+      "kind": "recovery",
+      "mutation": "wrong_current",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_wrong_recovery_plan",
+      "kind": "recovery",
+      "mutation": "wrong_recovery_plan",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_wrong_child",
+      "kind": "recovery",
+      "mutation": "wrong_child",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_missing_list_omitted",
+      "kind": "recovery",
+      "mutation": "missing_list_omitted",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_nested_missing_list_omitted",
+      "kind": "recovery",
+      "mutation": "nested_missing_list_omitted",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_authority_changed",
+      "kind": "recovery",
+      "mutation": "authority_changed",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    },
+    {
+      "id": "recovery_revived_semantic_link",
+      "kind": "recovery",
+      "mutation": "revived_semantic_link",
+      "expected": {
+        "strict": "refuse",
+        "structural": "refuse"
+      }
+    }
+  ]
+}
