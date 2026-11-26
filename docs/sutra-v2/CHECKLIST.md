@@ -17,22 +17,22 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at checklist reset | Current evidence boundary |
+| PR | Workstream | Current head at V2-186 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `deb40e01ea02d48d290790ea751039f519b85e8d` | central exact workflows observed green before this checklist reset |
-| #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | scoped green |
-| #52 | persistent knowledge | `8caac249b3e3a6844fbef9fd9b189996d4d8566b` | newest scoped workstream run cancelled; needs exact reconciliation |
-| #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | scoped green |
-| #54 | evidence acquisition | `0a781904d90a101b7f74a5b471d521ad8a024d05` | newest scoped workstream run cancelled; needs exact reconciliation |
-| #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | scoped green |
-| #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | scoped green |
-| #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | scoped green |
-| #58 | unified workspace | `7690ca6d874f61f8da98418c9c6e8b766b313e56` | main scoped suite green; newest workspace accessibility browser path cancelled |
-| #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | scoped green |
-| #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | scoped + FinQA benchmark green |
-| #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | browser succeeded; combined knowledge, parallel regression and workspace accessibility paths cancelled; **DO NOT MERGE** |
+| #50 | central V2 | `93ece692b610542f11d0ca7ff2cd08dcf9b44c6e` | knowledge passed; browser pending at observation |
+| #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
+| #52 | persistent knowledge | `82009e27fb07bbb8039af5c6341e004113a2c4d6` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778757664) |
+| #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
+| #54 | evidence acquisition | `0818f78b4551fcfcdd2ff08bf50f1c519d2842c1` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778763117) |
+| #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
+| #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
+| #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
+| #58 | unified workspace | `bef407d18994f5cf4557124c1aadeab38d4d994d` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782354); accessibility diagnostics pending, product reflow open |
+| #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
+| #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
+| #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; knowledge/parallel reruns requested; accessibility assertion failed; manifest stale; **DO NOT MERGE** |
 
-If any head changes, replace the stale row during reconciliation before claiming work against it.
+If any head changes, replace the stale row during reconciliation before claiming work against it. V2-186 comparison: all ten children 32 commits behind observed central source; #61 24 behind. See session evidence.
 
 ---
 
@@ -40,12 +40,12 @@ If any head changes, replace the stale row during reconciliation before claiming
 
 These items are first in the execution queue because later integrated claims depend on them.
 
-- [ ] `V2-N001` Reconcile PR #52 exact head CI. Re-run or otherwise obtain completed exact-head scoped evidence for the external history-witness implementation; inspect cancelled job cause before rerun and retain failure/cancellation history.
+- [~] `V2-N001` Reconcile PR #52 exact head CI. Re-run or otherwise obtain completed exact-head scoped evidence for the external history-witness implementation; inspect cancelled job cause before rerun and retain failure/cancellation history.
 - [ ] `V2-N002` Reconcile PR #54 exact head CI for authenticated observation acquisition; confirm the separate-process Ed25519 receipt path completes on the exact current head.
 - [ ] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
 - [ ] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
 - [ ] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
-- [ ] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
+- [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
 - [ ] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
 - [ ] `V2-N008` Make all machine/readable queues reference this remaining-work checklist and remove any automatic fallback to SUTRA1 pending IDs.
 - [ ] `V2-N009` Reconcile broad Living Knowledge gate wording against scoped machine statuses so unit/scoped evidence cannot be mistaken for full gate closure.
@@ -304,7 +304,7 @@ Unless exact remote reconciliation shows a dependency change, execute in this or
 2. `V2-N002` #54 exact CI.
 3. `V2-N003` #58 browser/accessibility CI.
 4. `V2-N004` #61 current combined validation.
-5. `V2-N006`–`V2-N012` normalize branches/registers and prepare reviewed integration.
+5. `V2-N005` confirm manifest-bound evidence; `V2-N006`–`V2-N012` normalize branches/registers and prepare reviewed integration.
 6. Integrate `#52 history + #53 semantic review → #58 workspace`.
 7. Integrate #57 trust boundaries and #51 operator/model approval around that path.
 8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation.

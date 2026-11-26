@@ -131,3 +131,28 @@ Validation-only PR #61 refreshed to `c34dc954f7a35857e24a9d5f8795f3e61fc359dd` f
 | #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer | End-to-end natural-language reasoning, matched actual model metering |
 
 Next: observe exact CI; integrate #52 persistent knowledge and #53 semantic review into #58 unified workspace using existing APIs; extend independent interval/statistical replay and end-to-end benchmark. No real provider, human, physical hardware, public deployment or release evidence claimed.
+
+## V2-186 — exact-head reconciliation and bounded fixture repairs (26 November 2026)
+
+Central source observed: `93ece692b610542f11d0ca7ff2cd08dcf9b44c6e`. [45777994160](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45777994160) knowledge job 139766262422 passed, browser job 139766262682 in progress at observation; no full central gate credit. All child PRs remain open drafts. Compare API: children share merge base `092c7971602ee9e294e467efbb0d72c44121e480`, each 32 commits behind. #61 is 24 behind/10 ahead, merge base `deb40e01ea02d48d290790ea751039f519b85e8d`; its manifest lacks the three new corrections.
+
+| PR | Exact observed head | Scoped workflow | Ahead/behind central observed source |
+| --- | --- | --- | --- |
+| #51 | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) | 5/32 |
+| #52 | `82009e27fb07bbb8039af5c6341e004113a2c4d6` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778757664) | 9/32 |
+| #53 | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) | 7/32 |
+| #54 | `0818f78b4551fcfcdd2ff08bf50f1c519d2842c1` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778763117) | 5/32 |
+| #55 | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) | 4/32 |
+| #56 | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) | 6/32 |
+| #57 | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) | 5/32 |
+| #58 | `bef407d18994f5cf4557124c1aadeab38d4d994d` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782354) | 10/32 |
+| #59 | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) | 6/32 |
+| #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | 5/32 |
+
+- N001 / #52: job 139721389913 (run 45757208682) cancelled after prolonged silence. Double-escaped subprocess readiness regex/newline and signature domains, double-hashed fixture context pin. Corrected these, bounded readiness to five seconds, registered teardown before readiness. Exact new candidate CI pending.
+- N002 / #54: job 139721402756 (run 45757527623) cancelled after prolonged silence. Same readiness/domain escape bug; bounded startup/teardown, awaited cleartext rejection assertion. Exact new candidate CI pending.
+- N003 / #58: job 139721412626 (run 45760669191) showed actual assertion failure at workspace-accessibility.cjs:23 (200% root-font resize overflow), then orphaned Chromium due to shadowed outer browser variable. Corrected teardown and added overflowing-element diagnostics; product reflow fix remains open. New browser run [45778782419](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782419) pending.
+- N004/N005 / #61: head `ad295ae83bcafb48d489ef96475c80a22bac3c16`; combined browser 139723844439 passed, knowledge 139723844819 and parallel 139723844344 cancelled, workspace 139723845163 shows same reflow assertion. Requested reruns 45757208682, 45757527623, 45765046894 and 45765046841 before corrections; no credit for newer sources. #61 remains validation-only; refresh manifest after fixes.
+- N006: reconciled ten heads and documented drift against immutable central source. N007/N008: added missing N005 in machine next/default order and normalized current child register; remaining cross-register audits open. No broad gate credit.
+
+Next active: N001 passing exact CI on corrected witness fixture; independently advance N002/N003 then refresh and verify #61. Preserve all previous failures; no merge, release, external action or fabricated evidence.
