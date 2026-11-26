@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T19:50:53+05:45",
+  "updated_at": "2026-11-26T19:56:56+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "f8c3da48a4d99a6311910b99a40b23d0ea9fa63c",
-  "last_session_id": "SUTRA-SESSION-0057",
+  "last_session_id": "SUTRA-SESSION-0058",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -14,7 +14,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Session 0057 closes P018-06, P019-02, P019-06, Phase 041 and Phase 050 from exact-source 19/19 CI. Remaining open originals are dominated by participant/rights/human/provider/hardware/public-production or final-candidate evidence. Follow REMAINING_GATE_MAP.md; do not convert gate-harness CI into the missing external event. Keep release, deployment and paid inference closed.",
+  "next_action": "Session 0058 verifies P065-08 from a dated read-only Cloudflare Worker request sample. P065-07 remains pending because Workers Observability events are not billed invocation/headroom evidence, and P065-10 remains pending until an actual SUTRA production static visit and separate inference accounting are observed. Other open originals remain dominated by participant/rights/human/provider/hardware/public-production/final-candidate evidence. Keep release, deployment and paid inference closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13601,6 +13601,19 @@
           "observed_at": "2026-11-26T19:50:53+05:45"
         }
       ]
+    },
+    "SUTRA-P065-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T19:56:56+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0058.md",
+          "description": "Read-only Workers Observability query records a dated privacy-projected sample mapping request paths to existing Worker services. Raw IP/header/identifier metadata is intentionally excluded; event counts are not treated as billing/invocation headroom.",
+          "result": "pass",
+          "source_revision": "f8c3da48a4d99a6311910b99a40b23d0ea9fa63c",
+          "observed_at": "2026-11-26T19:56:56+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13722,6 +13735,7 @@
     "Session 0054: P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 verified. Exact source 69d57d5... had build/app/package/runtime/peer steps green at checkpoint; Chromium was still running and not used as evidence. Counts 768/1107 overall, 662/1000 original, 332 pending, six omissions, one hardware blocker.",
     "Session 0055: P001-08 and P007-02 verified from PARTICIPANT_HANDOFF.md. Exact learner run 45809483294/job 139873282707 later completed fully green, strengthening Session 0054 without additional credit. Counts 770/1107 overall, 664/1000 original, 330 pending, six omissions, one hardware blocker.",
     "Session 0056: P087-07 verified from learner run 45809483294/job 139873282707: npm ci and vendor verification succeeded; 10 upstream nsDeploy modules matched pinned commit 486ecf26.... Counts 771/1107 overall, 665/1000 original, 329 pending, six omissions, one hardware blocker.",
-    "Session 0057: P018-06, P019-02, P019-06, P041-10 and P050-10 verified from exact source f8c3da48a4d99a6311910b99a40b23d0ea9fa63c. All 19 workflows passed; learner job 139962008840 passed 161 app, 171 package/API, 182 runtime, 8 peer tests and complete Chromium. Counts 776/1107 overall, 670/1000 original, 324 pending, six omissions, one hardware blocker. Phase 041 and Phase 050 close. No real-content, human, live-provider, deployment, release or submission claim."
+    "Session 0057: P018-06, P019-02, P019-06, P041-10 and P050-10 verified from exact source f8c3da48a4d99a6311910b99a40b23d0ea9fa63c. All 19 workflows passed; learner job 139962008840 passed 161 app, 171 package/API, 182 runtime, 8 peer tests and complete Chromium. Counts 776/1107 overall, 670/1000 original, 324 pending, six omissions, one hardware blocker. Phase 041 and Phase 050 close. No real-content, human, live-provider, deployment, release or submission claim.",
+    "Session 0058: P065-08 verified from a 2026-11-26 read-only Workers Observability sample with privacy projection. 24h event counts: patro 30,996; aafnai-library-phase1 1,882; patro-date-pages 593. Event counts are not billed invocation counts, so P065-07/P065-10 remain open. Counts 777/1107 overall, 671/1000 original, 323 pending, six omissions, one hardware blocker."
   ]
 }
