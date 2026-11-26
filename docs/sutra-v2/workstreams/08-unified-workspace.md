@@ -23,3 +23,7 @@ Add dedicated workspace-child CI job running the actual canonical build, vendore
 
 ## Editable source normalization boundary
 Reject carriage returns in restored source text as well as question text, so textarea normalization cannot make browser selection offsets disagree with restored bytes. Add exact pinned CRLF regression. Prior actual Chromium workflow passed at 54882b7; new exact child CI pending.
+
+
+## V2-182 candidate — coherent portable workspace restore
+Export a bounded exact local workspace containing draft, optional retained baseline and optional history. Replay all included inputs before preview, require separate outer digest and explicit replacement, invalidate stale previews on any of three state changes. Restore clears current candidate/result and execution approval; no provider settings/credentials, no freshness. Unit tests tamper nested baseline and authority field; Chromium journey saves three-version/two-branch history, clears state, rejects stale confirmation and restores without current results. 256 KiB envelope cap may refuse large histories. Exact CI pending.

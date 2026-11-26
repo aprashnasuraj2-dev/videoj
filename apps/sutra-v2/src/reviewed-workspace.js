@@ -1,3 +1,4 @@
+import {openWorkspaceCheckpoint,exportWorkspaceCheckpoint} from '../../../packages/sutra-knowledge/workspace-checkpoint.js';
 import {openDraftCheckpoint,exportDraftCheckpoint} from '../../../packages/sutra-knowledge/draft-checkpoint.js';
 import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
@@ -33,7 +34,7 @@ import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.j
 import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
-let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null;
+let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null,sessionSaved=null,sessionPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
@@ -49,7 +50,7 @@ const tableFields=['table-text','table-source','table-lineage','table-inspect','
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
- draftCheckpointControl();
+ draftCheckpointControl();sessionCheckpointControl();
  by('offer-contract').disabled=busy||!sealed||!bindings.length;handoffControl();bindingSuggestionControl();
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
@@ -57,7 +58,7 @@ function control(){
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
 }
-function invalidate(message){epoch++;clearDraftCheckpoint();clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearDraftCheckpoint();clearSessionCheckpoint();clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function clearDraftPreview(){draftPreview=null;by('draft-preview').textContent='';by('draft-confirm').checked=false;}
 function clearDraftCheckpoint(){draftSaved=null;by('draft-saved-pin').textContent='';clearDraftPreview();}
@@ -90,6 +91,45 @@ by('draft-restore').onclick=()=>work(async ticket=>{
  const d=structuredClone(p.draft);sources=d.sources;bindings=d.bindings;by('question').value=d.question;
  invalidate('Saved editable draft restored; re-seal and review before using any result.');refresh();by('draft-file').value='';by('draft-pin').value='';
  status('draft_restored','Exact editable draft restored. No model contacted and no verified result restored.');
+});
+function sessionIdentity(){return JSON.stringify([draft(),history?.snapshot().digest??null,baseline?.digest??null]);}
+function clearSessionPreview(){sessionPreview=null;by('session-preview').textContent='';by('session-confirm').checked=false;}
+function clearSessionCheckpoint(){sessionSaved=null;by('session-saved-pin').textContent='';clearSessionPreview();}
+function sessionCheckpointControl(){
+ const identity=sessionIdentity();
+ if(sessionPreview&&sessionPreview.identity!==identity)clearSessionPreview();
+ if(sessionSaved&&sessionSaved.identity!==identity){sessionSaved=null;by('session-saved-pin').textContent='';}
+ by('session-save').disabled=busy||!by('question').value.trim();
+ by('session-save-pin').disabled=busy||!sessionSaved;
+ for(const id of ['session-file','session-pin'])by(id).disabled=busy;
+ by('session-check').disabled=busy||!by('session-file').files?.length||!by('session-pin').value.trim();
+ by('session-confirm').disabled=busy||!sessionPreview;by('session-restore').disabled=busy||!sessionPreview||!by('session-confirm').checked;
+}
+for(const id of ['session-file','session-pin'])for(const event of ['input','change'])by(id).addEventListener(event,()=>{clearSessionPreview();sessionCheckpointControl();});
+by('session-confirm').onchange=sessionCheckpointControl;
+by('session-save').onclick=()=>work(async ticket=>{
+ const identity=sessionIdentity(),h=history?.snapshot(),b=baseline;
+ const p=await exportWorkspaceCheckpoint({draftText:draft(),history:h?{text:h.historyText,pin:h.digest}:null,baseline:b?{text:b.versionText,pin:b.digest}:null});
+ if(ticket!==epoch||identity!==sessionIdentity())return;sessionSaved={p,identity};
+ by('session-saved-pin').textContent=p.pin;download(p.text,'sutra-workspace-checkpoint.json','application/json');status('session_saved','Exact workspace exported. Keep its digest separately.');
+});
+by('session-save-pin').onclick=()=>{if(!busy&&sessionSaved?.identity===sessionIdentity())download(sessionSaved.p.pin+'\n','sutra-workspace-checkpoint.sha256','text/plain');};
+by('session-check').onclick=()=>work(async ticket=>{
+ clearSessionPreview();const identity=sessionIdentity(),file=by('session-file').files?.[0],pin=by('session-pin').value.trim();
+ if(!file||file.size<1||file.size>262144)throw Error('WORKSPACE_CHECKPOINT_SIZE');
+ const text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()),p=await openWorkspaceCheckpoint(text,pin);
+ if(ticket!==epoch||identity!==sessionIdentity()||file!==by('session-file').files?.[0]||pin!==by('session-pin').value.trim())return;
+ sessionPreview={p,identity,file,pin};const s=p.summary;
+ by('session-preview').textContent=s.question+'\n'+s.sourceCount+' source(s), '+s.bindingCount+' binding(s)\n'+s.versions+' history version(s), '+s.branches+' branch(es)\nBaseline: '+(s.baselinePin??'none')+'\nHistory: '+(s.historyPin??'none')+'\n'+p.pin;
+ status('session_checked','Workspace checked. Existing draft, history and baseline unchanged.');
+});
+by('session-restore').onclick=()=>work(async ticket=>{
+ const r=sessionPreview;if(!r||!by('session-confirm').checked||r.identity!==sessionIdentity()||r.file!==by('session-file').files?.[0]||r.pin!==by('session-pin').value.trim())return;
+ const p=await openWorkspaceCheckpoint(r.p.text,r.pin),h=p.history?await openInvestigationHistory(p.history.text,p.history.pin):null;
+ if(ticket!==epoch||r!==sessionPreview||r.identity!==sessionIdentity()||r.file!==by('session-file').files?.[0]||r.pin!==by('session-pin').value.trim()||!by('session-confirm').checked)return;
+ const d=structuredClone(p.draft.draft);sources=d.sources;bindings=d.bindings;by('question').value=d.question;
+ history=h;baseline=p.baseline;baselineReplay=null;invalidate('Workspace restored; re-seal and explicitly review current proposals.');refresh();baselineState();renderHistory();by('session-file').value='';by('session-pin').value='';
+ status('session_restored','Exact draft, baseline and history restored. No current result or execution approval restored.');
 });
 const localBindingFields=['sources','model','protocol','endpoint','auth','env'];
 function clearLocalBindingPlan(){
