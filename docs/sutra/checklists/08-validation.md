@@ -54,7 +54,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Target >=19/20 successful journeys and p95 <=25 seconds; sample size and provider conditions remain visible.
 
 - [ ] `SUTRA-P073-01` Run the hero task in 20 fresh sessions under stated conditions
-- [ ] `SUTRA-P073-02` Define success before collecting the measurements
+- [x] `SUTRA-P073-02` Define success before collecting the measurements
 - [ ] `SUTRA-P073-03` Record p50/p95 latency and the sample percentile method
 - [ ] `SUTRA-P073-04` Record run cost, retries and contacted origins
 - [ ] `SUTRA-P073-05` Check that user action and evidence validation actually complete
@@ -89,7 +89,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Counterbalance manual transcript search and SUTRA task order where feasible. Measure time-to-valid-evidence and errors; do not infer long-term learning from a short session.
 - **Phase exit:** Target >=30% median task-time reduction with no evidence-accuracy loss; a worse result triggers workflow revision, not selective exclusion.
 
-- [ ] `SUTRA-P075-01` Define an equivalent manual transcript-search baseline task
+- [x] `SUTRA-P075-01` Define an equivalent manual transcript-search baseline task
 - [ ] `SUTRA-P075-02` Counterbalance task order where feasible to reduce learning effects
 - [ ] `SUTRA-P075-03` Compare time to valid evidence rather than time to any answer
 - [ ] `SUTRA-P075-04` Record errors and evidence accuracy for both workflows
