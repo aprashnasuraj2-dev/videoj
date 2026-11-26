@@ -147,9 +147,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P018-02` Assign immutable source IDs and stable publicly explainable labels
 - [ ] `SUTRA-P018-03` Record source license, publication date and content version
 - [ ] `SUTRA-P018-04` Ensure each hero claim can point to an actual source excerpt
-- [ ] `SUTRA-P018-05` Create a clearly marked conflicting-source fixture for testing
+- [x] `SUTRA-P018-05` Create a clearly marked conflicting-source fixture for testing
 - [ ] `SUTRA-P018-06` Separate attack fixtures and synthetic contradictions from default learner content
-- [ ] `SUTRA-P018-07` Bound corpus size and avoid arbitrary live web crawling
+- [x] `SUTRA-P018-07` Bound corpus size and avoid arbitrary live web crawling
 - [ ] `SUTRA-P018-08` Record the corpus manifest and reproducible content hashes
 - [ ] `SUTRA-P018-09` Produce and review the phase artifact: Corpus index and fixture provenance list.
 - [ ] `SUTRA-P018-10` Close phase 018 only after its applicable tasks have evidence and its exit condition is observed: Every public answerable claim has a source; synthetic conflict fixtures are clearly labeled.
