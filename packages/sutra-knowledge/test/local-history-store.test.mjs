@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,rm,writeFile,readFile,chmod} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {spawn} from 'node:child_process';
 import {livingFixture} from '../examples/living-investigation.mjs';
 import {createInvestigationHistory} from '../investigation-history.js';
 import {openLocalHistoryStore} from '../local-history-store.mjs';
@@ -35,3 +36,19 @@ test('orphan immutable snapshot is reusable; crashed writer lock fails closed; m
  await writeFile(snap,(await readFile(snap,'utf8'))+' ');await assert.rejects(s.read(next.digest),/HISTORY_PIN/);
 });
 test('shared directory is refused',async t=>{const dir=await mkdtemp(join(tmpdir(),'sutra-history-'));t.after(()=>rm(dir,{recursive:true,force:true}));await chmod(dir,0o755);await assert.rejects(openLocalHistoryStore(dir),/HISTORY_STORE_PRIVATE_DIRECTORY/);});
+
+// Each writer owns its own process and module state. No shared JS mutex.
+function subprocessAppend(dir,args){
+ const moduleUrl=new URL('../local-history-store.mjs',import.meta.url).href;
+ const code="import {openLocalHistoryStore} from "+JSON.stringify(moduleUrl)+";\nlet input='';for await(const c of process.stdin)input+=c;\ntry{const store=await openLocalHistoryStore(process.argv[1]);const result=await store.append(JSON.parse(input));process.stdout.write(JSON.stringify({ok:true,digest:result.digest}));}catch(e){process.stdout.write(JSON.stringify({ok:false,code:e.message}));}";
+ return new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--input-type=module','-e',code,dir],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stdout.on('data',d=>stdout+=d);child.stderr.on('data',d=>stderr+=d);child.on('error',reject);child.on('close',code=>{try{assert.equal(code,0,stderr);resolve(JSON.parse(stdout));}catch(e){reject(e);}});child.stdin.end(JSON.stringify(args));});
+}
+test('separate OS processes cannot both publish different descendants of the same durable head',async t=>{
+ const {dir,a,b}=await setup(t),store=await openLocalHistoryStore(dir);await store.initialize(a.root.historyText,a.root.digest);
+ const request=s=>({expectedHead:a.root.digest,nextText:s.historyText,nextPin:s.digest});
+ const results=await Promise.all([subprocessAppend(dir,request(a.child)),subprocessAppend(dir,request(b.child))]);
+ assert.equal(results.filter(r=>r.ok).length,1);const winner=results.find(r=>r.ok),loser=results.find(r=>!r.ok);
+ assert.match(loser.code,/HISTORY_STORE_(BUSY_OR_CRASHED_LOCK|STALE_OR_ROLLED_BACK_HEAD)/);
+ assert.ok([a.child.digest,b.child.digest].includes(winner.digest));assert.equal((await store.read(winner.digest)).digest,winner.digest);
+ const retry=await subprocessAppend(dir,request(winner.digest===a.child.digest?b.child:a.child));assert.equal(retry.ok,false);assert.match(retry.code,/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
+});

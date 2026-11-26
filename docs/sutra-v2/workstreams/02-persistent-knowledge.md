@@ -27,3 +27,7 @@ Exact child CI pending.
 
 ## Durable local history candidate
 Actual Linux private-directory store with immutable pinned snapshots, O_EXCL writer lock, separately retained expected HEAD, replay before commit, fsync barriers and atomic HEAD rename. Concurrent two-instance CAS, restart, orphan reuse, tamper, stale lock and coordinated rollback counterexample tests. A killed process can leave a lock requiring operator recovery; no automatic lock stealing, hostile same-user filesystem, NFS, Windows or external freshness claim. Publication can be ambiguous on I/O failure after rename; inspect using independently retained pins rather than blind retry. Exact child CI pending.
+
+
+## Cross-process durability adversary
+Run two separate Node OS processes against the same private filesystem history head, each proposing a different valid descendant. Exactly one may commit; the loser must refuse due to an existing lock or changed head, and an explicit stale retry must refuse. This tests local process isolation and CAS rather than shared in-memory serialization. Actual power loss and cross-host filesystem remain unverified. Exact CI pending.
