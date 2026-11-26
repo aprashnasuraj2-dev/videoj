@@ -2,7 +2,7 @@
 // Immutable snapshots, an exclusive writer lock and atomic HEAD publication.
 // A crashed writer may leave a lock; do not automatically steal it.
 import {constants} from 'node:fs';
-import {open,lstat,rename,unlink} from 'node:fs/promises';
+import {open,lstat,rename,unlink,link} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {replayInvestigationHistory} from './investigation-history.js';
@@ -12,7 +12,7 @@ const fail=c=>{throw TypeError('HISTORY_STORE_'+c);};
 const checked=p=>{if(typeof p!=='string'||!PIN.test(p))fail('PIN');return p;};
 const absent=e=>e?.code==='ENOENT';
 async function boundedRead(path,cap){
- const f=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW);
+ const f=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);
  try{
   const s=await f.stat();if(!s.isFile()||s.size<1||s.size>cap)fail('SIZE');
   const b=Buffer.alloc(cap+1);let n=0;
@@ -42,9 +42,17 @@ export async function openLocalHistoryStore(directory){
   return Object.freeze({historyText,digest:pin,view});
  }
  async function publish(pin,text){
-  // Reuse only an exact immutable orphan from an interrupted prior write.
-  try{await durableNew(snapshotPath(pin),text);}
-  catch(e){if(e?.code!=='EEXIST')throw e;if(await boundedRead(snapshotPath(pin),MAX)!==text)fail('SNAPSHOT_CONFLICT');}
+  // Never write directly to the content-addressed final name: interruption
+  // during a write must not poison the immutable namespace with partial bytes.
+  if(Buffer.byteLength(text,'utf8')>MAX)fail('SIZE');
+  const final=snapshotPath(pin),staged=join(dir,'SNAPSHOT.tmp-'+randomUUID());
+  try{
+   await durableNew(staged,text);
+   try{await link(staged,final);}catch(e){if(e?.code!=='EEXIST')throw e;if(await boundedRead(final,MAX)!==text)fail('SNAPSHOT_CONFLICT');}
+   // An existing exact orphan may have been written by an older store version.
+   // Flush its inode before a new HEAD can point to it.
+   const f=await open(final,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);try{await f.sync();}finally{await f.close();}
+  }finally{try{await unlink(staged);}catch(e){if(!absent(e))throw e;}}
   // Directory barrier before HEAD can reference the immutable file.
   await syncDirectory();
   const temp=join(dir,'HEAD.tmp-'+randomUUID());

@@ -31,3 +31,8 @@ Actual Linux private-directory store with immutable pinned snapshots, O_EXCL wri
 
 ## Cross-process durability adversary
 Run two separate Node OS processes against the same private filesystem history head, each proposing a different valid descendant. Exactly one may commit; the loser must refuse due to an existing lock or changed head, and an explicit stale retry must refuse. This tests local process isolation and CAS rather than shared in-memory serialization. Actual power loss and cross-host filesystem remain unverified. Exact CI pending.
+
+
+## V2-182 candidate
+Content-addressed snapshot publication now fsyncs a unique staging inode and links it exclusively into the immutable namespace before HEAD publication; partial writes cannot poison the final name. Reused exact orphan inode fsynced, byte-cap preflight, nonblocking reads refuse nonregular files. Regression covers corrupt final refusal without overwriting, retained partial stage and explicit offline correction. Simulated artifact state, not actual power-loss proof. Linux trusted private directory only; stale lock operator recovery and external freshness remain open.
+Exact child CI pending.

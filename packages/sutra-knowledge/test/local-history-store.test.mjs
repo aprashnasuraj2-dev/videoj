@@ -52,3 +52,13 @@ test('separate OS processes cannot both publish different descendants of the sam
  assert.ok([a.child.digest,b.child.digest].includes(winner.digest));assert.equal((await store.read(winner.digest)).digest,winner.digest);
  const retry=await subprocessAppend(dir,request(winner.digest===a.child.digest?b.child:a.child));assert.equal(retry.ok,false);assert.match(retry.code,/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
 });
+
+test('partial staging artifact cannot poison immutable final name; preexisting conflicting final refuses',async t=>{
+ const {dir,a}=await setup(t),s=await openLocalHistoryStore(dir);await s.initialize(a.root.historyText,a.root.digest);
+ const staged=join(dir,'SNAPSHOT.tmp-interrupted'),final=join(dir,'history-'+a.child.digest.slice(7)+'.json');
+ await writeFile(staged,'partial',{mode:0o600});await writeFile(final,'corrupt',{mode:0o600});
+ const args={expectedHead:a.root.digest,nextText:a.child.historyText,nextPin:a.child.digest};
+ await assert.rejects(s.append(args),/HISTORY_STORE_SNAPSHOT_CONFLICT/);assert.equal((await s.read(a.root.digest)).digest,a.root.digest);assert.equal(await readFile(final,'utf8'),'corrupt');
+ // Deliberate offline operator correction, not automated destructive recovery.
+ await rm(final);const next=await s.append(args);assert.equal(next.digest,a.child.digest);assert.equal(await readFile(final,'utf8'),a.child.historyText);assert.equal(await readFile(staged,'utf8'),'partial');
+});
