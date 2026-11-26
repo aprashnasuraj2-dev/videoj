@@ -1,15 +1,17 @@
-import {discoverProvider,runProviderLesson} from './provider-run.js';
+import {discoverProvider,runProviderLesson,snapshotLearningContext,snapshotConversationTurns} from './provider-run.js';
 import {applyScreenState} from './status-state.js';
 import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 
-export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin,onTelemetry=()=>{}}){
+export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin,onTelemetry=()=>{},getLearningContext=()=>null}){
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
  const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),webList=$('provider-web-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
- const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentQuestion=$('provider-consent-question'),consentBudget=$('provider-consent-budget'),consentResearch=$('provider-consent-research'),consentData=$('provider-consent-data'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
+ const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentQuestion=$('provider-consent-question'),consentBudget=$('provider-consent-budget'),consentResearch=$('provider-consent-research'),consentContext=$('provider-consent-context'),consentData=$('provider-consent-data'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
  const runtimeBounds=executionLimits();
- let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false;
+ let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false,turns=[];
+ if(typeof getLearningContext!=='function')throw Error('Learning context reader is required.');
+ const continuityKey=contract=>contract?contract.inferenceContractId+':'+contract.graphSha256+':'+contract.content.catalogSha256:'';
  const set=(s,m)=>applyScreenState(status,s,m);
  const seekScope=createReceiptSeekScope();
  const clear=()=>{seekScope.cancel();epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();webList.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
@@ -76,11 +78,12 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   const operation={kind:'run',controller:new AbortController(),started:false};active=operation;controls();
   set('running','Rechecking the approved configuration. Previous results remain visible until a new model request starts…');
   try{
-   const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,signal:operation.controller.signal,onModelStart:()=>{if(active!==operation)return;operation.started=true;clear();set('running','Running the configured model and bounded source tools…');}});
+   const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,history:approval.history,learningContext:approval.learningContext,signal:operation.controller.signal,onModelStart:()=>{if(active!==operation)return;operation.started=true;clear();set('running','Running the configured model and bounded source tools…');}});
    if(active!==operation)return;
    if(operation.controller.signal.aborted)throw Error('cancelled');
    identifyResult(approval,true);answer.textContent=result.text;
    renderReceipts(result.receipts);renderWebResearch(result.webResearch);
+   turns=[...turns,{question:approval.question,answer:result.text.slice(0,3000)}].slice(-2);
    const u=result.usage,w=result.webResearch;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' Public web capability: '+(w?String(w.providerCalls)+' provider calls, '+String(w.receipts?.length??0)+' sources read.':'disabled or unused')+'. Per-call latency: '+u.requests.map(row=>row.latencyMs+' ms').join(', ')+'. No automatic retries.';
    try{onTelemetry({outcome:'completed',backend:approval.contract.backend,model:result.model,usage:u});}catch{}
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
@@ -88,8 +91,8 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(active!==operation)return;
    if(operation.started)clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
    try{onTelemetry({outcome:cancelled?'cancelled':'failed',backend:approval.contract.backend,model:approval.contract.model,usage:partial?.usage??{calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0,requests:[]}});}catch{}
-   if(code==='CONTENT_CHANGED'||code==='CONTRACT_CHANGED'){model=null;approvedContract=null;set('error',code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before using inference. No model request was made.':'Provider publication changed. Check inference availability again. No model request was made.');return;}
-   if(code==='CONTENT_CHANGED_DURING_RUN'||code==='CONTRACT_CHANGED_DURING_RUN'){model=null;approvedContract=null;}
+   if(code==='CONTENT_CHANGED'||code==='CONTRACT_CHANGED'){model=null;approvedContract=null;turns=[];set('error',code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before using inference. No model request was made.':'Provider publication changed. Check inference availability again. No model request was made.');return;}
+   if(code==='CONTENT_CHANGED_DURING_RUN'||code==='CONTRACT_CHANGED_DURING_RUN'){model=null;approvedContract=null;turns=[];}
    if(partial?.receipts?.length){identifyResult(approval,false);answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}
    if(code==='CONTENT_CHANGED_DURING_RUN'){set('error','The server rejected the lesson version during this run. Earlier calls may have occurred. No completed answer is claimed; reload the lesson before checking inference again.');return;}
    if(code==='CONTRACT_CHANGED_DURING_RUN'){set('error','The server rejected the approved inference configuration during this run. Earlier calls may have occurred. No completed answer is claimed; check inference availability again.');return;}
@@ -104,12 +107,12 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   }finally{if(active===operation){active=null;controls();(run.disabled?check:run).focus();}}
  }
  check.addEventListener('click',async()=>{
-  if(active||pendingApproval)return;revokeResultActions();model=null;approvedContract=null;
+  if(active||pendingApproval)return;revokeResultActions();const previousContract=approvedContract;model=null;approvedContract=null;
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
    if(active!==operation||operation.controller.signal.aborted)return;
-   if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). '+(found.contract.webResearch==='configured'?'Bounded public web research is available when the model decides lesson evidence is insufficient. ':'External web research is disabled; this run is limited to lesson evidence. ')+'A run may still be refused by quota or provider availability. No personal key is needed.');}
-   else set('denied','Optional site-operated inference is disabled. The no-model source question, transcript and local review remain available.');
+   if(found.state==='configured'){if(previousContract&&continuityKey(previousContract)!==continuityKey(found.contract))turns=[];model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). '+(found.contract.webResearch==='configured'?'Bounded public web research is available when the model decides lesson evidence is insufficient. ':'External web research is disabled; this run is limited to lesson evidence. ')+'A run may still be refused by quota or provider availability. No personal key is needed.');}
+   else{turns=[];set('denied','Optional site-operated inference is disabled. The no-model source question, transcript and local review remain available.');}
   }catch(error){if(active!==operation)return;set('error',error?.code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before checking inference again. No model request was made.':'Inference configuration could not be confirmed. No model request was made.');}
   finally{if(active===operation){active=null;controls();}}
  });
@@ -118,14 +121,21 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   const value=question.value;
   if(!value.trim()||value.length>1200){set('input_error','Enter a question of 1–1200 characters.');return;}
   if(seekScope.cancel())actionStatus.textContent='Earlier cue seek cancelled; no seek success is claimed.';
-  pendingApproval=Object.freeze({question:value,model,contract:approvedContract});
+  let learningContext,history;
+  try{learningContext=snapshotLearningContext(getLearningContext());history=snapshotConversationTurns(turns);}
+  catch{set('error','Learning context could not be safely captured. No model request was made.');return;}
+  pendingApproval=Object.freeze({question:value,model,contract:approvedContract,learningContext,history});
   consentBackend.textContent=approvedContract.backend==='self_hosted'?'Operator self-hosted gateway':'External hosted provider';
   consentModel.textContent=model;
   consentChars.textContent=String(value.length);consentQuestion.textContent=value;
   consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
+  const playback=learningContext?.playback;
+  consentContext.textContent=playback?.available?
+   'Playback '+playback.currentTime.toFixed(2)+'s of '+playback.duration.toFixed(2)+'s; current cue '+(learningContext.currentCueId??'none')+'; inspected cue '+(learningContext.inspectedCueId??'none')+'; '+history.length+' prior completed turn'+(history.length===1?'':'s')+' included.':
+   'Media context unavailable ('+(playback?.reason??'not captured')+'); inspected cue '+(learningContext?.inspectedCueId??'none')+'; '+history.length+' prior completed turn'+(history.length===1?'':'s')+' included.';
   const webEnabled=approvedContract.webResearch==='configured';
   consentResearch.textContent=webEnabled?'Available for this run. The model may choose bounded public search/read calls through this SUTRA site when lesson evidence is insufficient. Retrieved webpages are untrusted and may be wrong or malicious.':'Disabled for this run. Only the lesson source capability is granted.';
-  consentData.textContent=webEnabled?'Question text, bounded agent instructions/messages, catalog-matched lesson results, and public research queries plus discovered public source URLs only when the model requests research.':'Question text, bounded agent instructions/messages, and catalog-matched lesson source results requested during this run.';
+  consentData.textContent=(webEnabled?'Question text, bounded agent instructions/messages, approved playback/cue metadata, up to two prior completed question/answer turns, catalog-matched lesson results, and public research queries plus discovered public source URLs only when the model requests research.':'Question text, bounded agent instructions/messages, approved playback/cue metadata, up to two prior completed question/answer turns, and catalog-matched lesson source results requested during this run.');
   controls();
   set('consent','Review the inference data flow. No model request has been made yet.');
   try{consentDialog.showModal();consentDeny.focus();}catch{closeConsent();set('error','Approval could not be displayed. No model request was made.');}
@@ -145,6 +155,6 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   if(!active){labelResult();if(model)set('idle','Question changed. Any visible earlier result belongs to its previous run. Submit explicitly to retrieve new model results.');}
  });
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
- window.addEventListener('pagehide',()=>{const previous=active;active=null;previous?.controller.abort();closeConsent();model=null;approvedContract=null;clear();controls();set('idle','Inference approval cleared when leaving this page. Check availability again before a new run.');});
+ window.addEventListener('pagehide',()=>{const previous=active;active=null;previous?.controller.abort();closeConsent();model=null;approvedContract=null;turns=[];clear();controls();set('idle','Inference approval cleared when leaving this page. Check availability again before a new run.');});
  controls();
 }
