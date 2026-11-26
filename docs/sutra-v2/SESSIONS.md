@@ -1094,3 +1094,7 @@ V2-137, V2-138 and V2-139 each 9/9 returned PR workflows green; separate push ru
 
 ### V2-143 — execute frozen differential replay benchmark (candidate)
 Actual compiler produces withdrawal and partial recovery bundles; frozen blob e27ca033a7d7bc7d248ffb1e2b509465adb87e5d; 20 cases run strict producer reopening and separate Python structural reconstruction plus retained final-child digest. Compare hash-only and hash-plus-declared-fields controls; count false accepts only on 16 explicitly invalid transformations/pins. Two pretty cases intentionally distinguish contracts; nested mutation and restored semantic link are repinned, not merely corrupt hashes. CI pending; no new gate credit, no external annotations.
+
+
+### V2-144 — freeze 40 semantic development cases before evaluator
+Eight families × five explicit cases: period, inclusive threshold, denominator, operator, relative change, direction, population and equivalent expressions. Frozen baseline/counterfactual vectors, duplicate-copy pressure, intended-formula labels, and signature-distinguishability controls. These labels are synthetic developer specifications, not inferred semantics or independent review. Evaluation pending. This completes the specified size of the synthetic 200-case development design, not the external/held-out benchmark gate. V2-140 adaptive branch test passed exact knowledge job 139613709973, 9/9 returned workflows. V2-141 actual browser and kernel jobs 139614221186 and 139614221269 passed; 9/9 returned workflows. No superiority claim.

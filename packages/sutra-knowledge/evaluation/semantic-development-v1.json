@@ -1,0 +1,1639 @@
+{
+  "schemaVersion": 1,
+  "dataset": "semantic-development-v1",
+  "split": "development_synthetic",
+  "annotation": "Developer-specified intended formulas and explicit expected baseline/counterfactual execution vectors. Not independent annotations, natural-language parser accuracy, or held-out data. Synthetic rates are uncalibrated units. Copy counts are deliberate duplicate pressure, not independent votes.",
+  "cases": [
+    {
+      "id": "period_1",
+      "family": "period",
+      "question": "Does the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "12",
+        "prior": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "8/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "period_2",
+      "family": "period",
+      "question": "Does the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "8",
+        "prior": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "prior": "8/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "period_3",
+      "family": "period",
+      "question": "Does the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "10",
+        "prior": "10",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "11/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "period_4",
+      "family": "period",
+      "question": "Does the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "9",
+        "prior": "9",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "8/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "period_5",
+      "family": "period",
+      "question": "Does the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "14",
+        "prior": "9",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "prior": "12/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "inclusive_1",
+      "family": "inclusive",
+      "question": "Does the measured amount meet or exceed the inclusive threshold?",
+      "inputs": {
+        "value": "10",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[value]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "value": "11/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "inclusive_2",
+      "family": "inclusive",
+      "question": "Does the measured amount meet or exceed the inclusive threshold?",
+      "inputs": {
+        "value": "9",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[value]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "value": "10/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "inclusive_3",
+      "family": "inclusive",
+      "question": "Does the measured amount meet or exceed the inclusive threshold?",
+      "inputs": {
+        "value": "11",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[value]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "value": "9/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "inclusive_4",
+      "family": "inclusive",
+      "question": "Does the measured amount meet or exceed the inclusive threshold?",
+      "inputs": {
+        "value": "10",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[value]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "value": "9/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "inclusive_5",
+      "family": "inclusive",
+      "question": "Does the measured amount meet or exceed the inclusive threshold?",
+      "inputs": {
+        "value": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[value]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "value": "10/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "denominator_1",
+      "family": "denominator",
+      "question": "Does the outcome fraction using the current population exceed the benchmark?",
+      "inputs": {
+        "outcome": "60",
+        "population": "100",
+        "prior_population": "100",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "population": "200/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "denominator_2",
+      "family": "denominator",
+      "question": "Does the outcome fraction using the current population exceed the benchmark?",
+      "inputs": {
+        "outcome": "40",
+        "population": "100",
+        "prior_population": "60",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "prior_population": "100/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "denominator_3",
+      "family": "denominator",
+      "question": "Does the outcome fraction using the current population exceed the benchmark?",
+      "inputs": {
+        "outcome": "50",
+        "population": "100",
+        "prior_population": "100",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "population": "80/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "denominator_4",
+      "family": "denominator",
+      "question": "Does the outcome fraction using the current population exceed the benchmark?",
+      "inputs": {
+        "outcome": "20",
+        "population": "100",
+        "prior_population": "100",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "outcome": "80/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "denominator_5",
+      "family": "denominator",
+      "question": "Does the outcome fraction using the current population exceed the benchmark?",
+      "inputs": {
+        "outcome": "70",
+        "population": "100",
+        "prior_population": "200",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "prior_population": "120/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "operator_1",
+      "family": "operator",
+      "question": "Does the product of X and Y exceed the limit?",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[x]+[y]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "x": "4/1",
+            "y": "4/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "operator_2",
+      "family": "operator",
+      "question": "Does the product of X and Y exceed the limit?",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "3"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[x]+[y]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "5/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "operator_3",
+      "family": "operator",
+      "question": "Does the product of X and Y exceed the limit?",
+      "inputs": {
+        "x": "1",
+        "y": "5",
+        "limit": "5"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[x]+[y]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "x": "2/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "operator_4",
+      "family": "operator",
+      "question": "Does the product of X and Y exceed the limit?",
+      "inputs": {
+        "x": "4",
+        "y": "4",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[x]+[y]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "x": "1/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "operator_5",
+      "family": "operator",
+      "question": "Does the product of X and Y exceed the limit?",
+      "inputs": {
+        "x": "3",
+        "y": "3",
+        "limit": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[x]+[y]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "9/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "relative_1",
+      "family": "relative",
+      "question": "Does relative growth from the old amount exceed the fractional growth threshold?",
+      "inputs": {
+        "new": "120",
+        "old": "100",
+        "limit": "0.1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[new]-[old]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "([new]-[old])/[old]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "new": "105/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "relative_2",
+      "family": "relative",
+      "question": "Does relative growth from the old amount exceed the fractional growth threshold?",
+      "inputs": {
+        "new": "100",
+        "old": "100",
+        "limit": "0.1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[new]-[old]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "([new]-[old])/[old]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "new": "110/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "relative_3",
+      "family": "relative",
+      "question": "Does relative growth from the old amount exceed the fractional growth threshold?",
+      "inputs": {
+        "new": "90",
+        "old": "100",
+        "limit": "0.1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[new]-[old]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "([new]-[old])/[old]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "new": "115/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "relative_4",
+      "family": "relative",
+      "question": "Does relative growth from the old amount exceed the fractional growth threshold?",
+      "inputs": {
+        "new": "1.15",
+        "old": "1",
+        "limit": "0.1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[new]-[old]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "([new]-[old])/[old]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "old": "11/10"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "relative_5",
+      "family": "relative",
+      "question": "Does relative growth from the old amount exceed the fractional growth threshold?",
+      "inputs": {
+        "new": "102",
+        "old": "100",
+        "limit": "0.1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[new]-[old]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "([new]-[old])/[old]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "1/100"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "direction_1",
+      "family": "direction",
+      "question": "Did the measured latency strictly decrease?",
+      "inputs": {
+        "current": "5",
+        "prior": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[current]>[prior]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]<[prior]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "7/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "direction_2",
+      "family": "direction",
+      "question": "Did the measured latency strictly decrease?",
+      "inputs": {
+        "current": "6",
+        "prior": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[current]>[prior]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]<[prior]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "5/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "direction_3",
+      "family": "direction",
+      "question": "Did the measured latency strictly decrease?",
+      "inputs": {
+        "current": "7",
+        "prior": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[current]>[prior]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]<[prior]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "6/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "direction_4",
+      "family": "direction",
+      "question": "Did the measured latency strictly decrease?",
+      "inputs": {
+        "current": "8",
+        "prior": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[current]>[prior]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]<[prior]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "current": "9/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "direction_5",
+      "family": "direction",
+      "question": "Did the measured latency strictly decrease?",
+      "inputs": {
+        "current": "6",
+        "prior": "6"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[current]>[prior]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[current]<[prior]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "prior": "7/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "population_1",
+      "family": "population",
+      "question": "Does the specified subgroup rate exceed the threshold?",
+      "inputs": {
+        "aggregate": "25",
+        "subgroup": "15",
+        "limit": "20"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[aggregate]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[subgroup]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "subgroup": "22/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "population_2",
+      "family": "population",
+      "question": "Does the specified subgroup rate exceed the threshold?",
+      "inputs": {
+        "aggregate": "15",
+        "subgroup": "25",
+        "limit": "20"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[aggregate]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[subgroup]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "aggregate": "18/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "population_3",
+      "family": "population",
+      "question": "Does the specified subgroup rate exceed the threshold?",
+      "inputs": {
+        "aggregate": "20",
+        "subgroup": "20",
+        "limit": "20"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[aggregate]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 2,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[subgroup]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "subgroup": "21/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "population_4",
+      "family": "population",
+      "question": "Does the specified subgroup rate exceed the threshold?",
+      "inputs": {
+        "aggregate": "30",
+        "subgroup": "30",
+        "limit": "20"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[aggregate]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[subgroup]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "35/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "population_5",
+      "family": "population",
+      "question": "Does the specified subgroup rate exceed the threshold?",
+      "inputs": {
+        "aggregate": "10",
+        "subgroup": "30",
+        "limit": "20"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[aggregate]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[subgroup]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "5/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": true
+    },
+    {
+      "id": "equivalent_1",
+      "family": "equivalent",
+      "question": "Does X strictly exceed the threshold?",
+      "inputs": {
+        "x": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "x": "8/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "equivalent_2",
+      "family": "equivalent",
+      "question": "Does X strictly exceed the threshold?",
+      "inputs": {
+        "x": "10",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "x": "11/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "equivalent_3",
+      "family": "equivalent",
+      "question": "Does X strictly exceed the threshold?",
+      "inputs": {
+        "x": "0",
+        "limit": "0"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 2,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "1/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "equivalent_4",
+      "family": "equivalent",
+      "question": "Does X strictly exceed the threshold?",
+      "inputs": {
+        "x": "3",
+        "limit": "1"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "2/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    },
+    {
+      "id": "equivalent_5",
+      "family": "equivalent",
+      "question": "Does X strictly exceed the threshold?",
+      "inputs": {
+        "x": "2",
+        "limit": "3"
+      },
+      "programs": [
+        {
+          "id": "a",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        },
+        {
+          "id": "b",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "changed",
+          "replacements": {
+            "limit": "1/1"
+          }
+        }
+      ],
+      "expectedDistinctSignature": false
+    }
+  ]
+}
