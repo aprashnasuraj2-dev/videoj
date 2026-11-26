@@ -2,11 +2,13 @@
 
 - Deployment completed: 2026-11-27T00:03:20+05:45 (2026-11-26T18:18:20.291972Z).
 - Explicit participant instruction in this session: deploy SUTRA directly to the connected **CloudflareB** account and use a `.dev` domain.
-- Deployed Git revision: `f322757d0ebfbc149aae2ba930c0acf826e08c18`.
+- Initial direct deployment revision: `f322757d0ebfbc149aae2ba930c0acf826e08c18`.
+- Final canonical production deployment revision after one already-queued documentation push: `2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d`.
 - Source: `aprashnasuraj2-dev/videoj`, branch `sutra/caller-peer-failure-boundary`, root `apps/sutra`.
 - Cloudflare Pages project: `sutra`.
 - Managed production hostname: `https://sutra-c70.pages.dev/`.
-- Deployment ID: `56a0b903-147b-497d-9ba1-6ecb39eaf78e`.
+- Initial direct deployment ID: `56a0b903-147b-497d-9ba1-6ecb39eaf78e`.
+- Final canonical deployment ID: `f2209727-cff2-4142-ad1d-966c42770e48`.
 - No merge, paid inference, provider secret, domain purchase, Devpost submission or npm publication occurred.
 
 ## CloudflareB account/domain observation
@@ -31,7 +33,7 @@ Created Pages project `sutra` with:
 - automatic production deployments enabled for that branch;
 - preview deployments disabled.
 
-The first production deployment cloned exact revision `f322757d0ebfbc149aae2ba930c0acf826e08c18`.
+The first production deployment cloned exact revision `f322757d0ebfbc149aae2ba930c0acf826e08c18`. Before automatic production deployments were disabled, one already-queued GitHub push built documentation-only revision `2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d`; it completed successfully and became canonical.
 
 Observed build/deploy log:
 
@@ -44,6 +46,20 @@ Observed build/deploy log:
 - **87/87 files uploaded**;
 - final Pages stage: **success**;
 - Cloudflare log: `Success: Your site was deployed!`.
+
+## Deployment-control correction
+
+The Pages project initially had production branch auto-deploy enabled. Because SUTRA checkpoint documentation is committed on the same branch, this could create unnecessary production rebuilds. Automatic production deployments were disabled after the first deployment. One push-triggered deployment had already entered the queue; it completed successfully as deployment `f2209727-cff2-4142-ad1d-966c42770e48` at revision `2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d`.
+
+Cloudflare file hashes for the first and final deployments are identical for the selected production-critical artifacts:
+
+- `/index.html` → `4c0cf9a610a8140555e1e662668c5d45`;
+- `/agents/agent-manifest.json` → `d7f01dcca4c06b63df18e5b11a3372d2`;
+- `/agents/learner.network.json` → `c375a7e2b457b37e635c4af72270a026`;
+- `/content/content-profile.json` → `b71b285df4fc896694de7ca46e34d83b`;
+- `/runtime/sutra-runtime.js` → `f22caa7fefae8f4665a0875002f0166c`.
+
+This establishes that the documentation-only auto-deploy did not change those published app artifacts. Future branch commits do not automatically deploy.
 
 ## External public verification
 
