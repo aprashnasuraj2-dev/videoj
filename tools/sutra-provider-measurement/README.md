@@ -27,3 +27,12 @@ The measurement tool is offline:
 Exit 0 means the supplied record has complete token usage and cost arithmetic was produced. Exit 3 means the JSON is structurally valid but cost completeness is false because at least one request has unknown usage. Exit 2 is invalid input/usage. Input is capped at 512 KiB. Timestamps require an explicit timezone.
 
 `example.synthetic.json` is deliberately fake data with provider/model labels that cannot be confused with a live sample. Never cite its costs.
+
+
+## Schema 2 interoperability evidence
+
+Current measurement input uses `schema: 2` and adds `backend` (`hosted` or `self_hosted`), the fixed browser-facing `routerPath: "/api/v1/chat/completions"`, and an observed integer `latencyMs` on every provider request. The report preserves each request's outcome, retry flag, latency, usage completeness and calculated USD cost, then calculates request-latency mean/p95.
+
+The browser runtime captures the same per-call token/latency tuple after an explicitly approved run. It can be persisted only through the optional local journey-diagnostics consent gate; prompts, completions, URLs, request bodies, headers and credentials are excluded from that storage schema.
+
+Schema 1 remains accepted for historical cost arithmetic, but its backend/router/latency evidence is null and it cannot establish current interoperability latency. Live provider/model evidence still requires participant-approved provider/model/spend and actual calls. Synthetic tests verify routing and arithmetic only; they do not satisfy that external gate.

@@ -16,6 +16,29 @@ const contentError=()=>Object.assign(Error('Published content changed; reload th
 const contractError=()=>Object.assign(Error('Provider publication changed; check availability again.'),{code:'CONTRACT_CHANGED'});
 const contentIdentity=content=>({profileSha256:content.artifacts.profileSha256,catalogSha256:content.artifacts.catalogSha256,transcriptSha256:content.artifacts.transcriptSha256,contentVersion:content.profile.contentVersion,contentMode:content.profile.mode,primarySourceId:content.profile.primarySourceId});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+export function createProviderUsageLedger({clock=()=>globalThis.performance?.now?.()??Date.now()}={}){
+ if(typeof clock!=='function')throw Error('Invalid usage clock');
+ let next=0;const open=new Map(),requests=[];let reported=0,promptTokens=0,completionTokens=0,totalTokens=0;
+ const time=()=>{const value=Number(clock());if(!Number.isFinite(value))throw Error('Invalid usage clock');return value;};
+ return Object.freeze({
+  begin(){const sequence=++next;if(sequence>32)throw Error('Provider request limit exceeded');open.set(sequence,time());return sequence;},
+  finish(sequence,{outcome,usage=null,retry=false}={}){
+   if(!open.has(sequence)||!['completed','failed','cancelled'].includes(outcome)||typeof retry!=='boolean')throw Error('Invalid provider telemetry');
+   let clean=null;
+   if(usage!==null){
+    if(!['prompt_tokens','completion_tokens','total_tokens'].every(key=>Number.isSafeInteger(usage?.[key])&&usage[key]>=0&&usage[key]<=1000000)||usage.prompt_tokens+usage.completion_tokens!==usage.total_tokens)throw Error('Invalid provider usage');
+    clean=Object.freeze({promptTokens:usage.prompt_tokens,completionTokens:usage.completion_tokens,totalTokens:usage.total_tokens});
+   }
+   const started=open.get(sequence),latencyMs=Math.max(0,Math.min(120000,Math.round(time()-started)));open.delete(sequence);
+   if(clean){reported++;promptTokens+=clean.promptTokens;completionTokens+=clean.completionTokens;totalTokens+=clean.totalTokens;}
+   const row=Object.freeze({sequence,outcome,retry,latencyMs,usage:clean});requests.push(row);return row;
+  },
+  snapshot(){
+   return Object.freeze({calls:next,reported,promptTokens,completionTokens,totalTokens,complete:open.size===0&&reported===next,
+    requests:Object.freeze(requests.map(row=>Object.freeze({...row,usage:row.usage?Object.freeze({...row.usage}):null})))});
+  }
+ });
+}
 function assertContractOrigin(contract,origin){
  if(!validOrigin(origin)||contract.router!==origin+'/api/v1')throw contractError();
  let graph;try{graph=new URL(contract.graphUrl);}catch{throw contractError();}
@@ -177,7 +200,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  assertContractOrigin(approvedContract,origin);
  if(typeof onModelStart!=='function')throw contractError();
  const controller=new AbortController(),abort=()=>controller.abort();
- const receiptCollector=createReceiptCollector({sources:loadedContent.sources}),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
+ const receiptCollector=createReceiptCollector({sources:loadedContent.sources}),usage=createProviderUsageLedger();
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
  let catalogRejected=false,contractRejected=false,modelDispatched=false;
@@ -186,10 +209,9 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   onModelDispatch:()=>{if(!modelDispatched){modelDispatched=true;onModelStart();}}});
  const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
  const measured={...adapter,async chat(args){
-  controller.signal.throwIfAborted();
-  usage.calls++;const answer=await adapter.chat(args);
-  if(answer.usage){usage.reported++;usage.promptTokens+=answer.usage.prompt_tokens;usage.completionTokens+=answer.usage.completion_tokens;usage.totalTokens+=answer.usage.total_tokens;}
-  return answer;
+  controller.signal.throwIfAborted();const sequence=usage.begin();
+  try{const answer=await adapter.chat(args);usage.finish(sequence,{outcome:'completed',usage:answer.usage??null,retry:false});return answer;}
+  catch(error){usage.finish(sequence,{outcome:controller.signal.aborted?'cancelled':'failed',usage:null,retry:false});throw error;}
  }};
  // Complete synchronous setup before installing the run's cancellation listener.
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
@@ -208,12 +230,13 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
   if(!evidence.receipts.length){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
-  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
+  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:usage.snapshot(),truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
   const stopped=new Error('Provider lesson stopped');stopped.code=code;
-  stopped.partial=Object.freeze({receipts:receiptCollector.snapshot().receipts,usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
+  const partialUsage=usage.snapshot();
+  stopped.partial=Object.freeze({receipts:receiptCollector.snapshot().receipts,usage:Object.freeze({...partialUsage,complete:false}),agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??partialUsage.calls});
   throw stopped;
  }finally{signal?.removeEventListener('abort',abort);controller.abort();}
 }

@@ -3,7 +3,7 @@ import {applyScreenState} from './status-state.js';
 import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 
-export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin}){
+export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin,onTelemetry=()=>{}}){
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
  const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
@@ -67,11 +67,13 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(operation.controller.signal.aborted)throw Error('cancelled');
    identifyResult(approval,true);answer.textContent=result.text;
    renderReceipts(result.receipts);
-   const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' No automatic retries.';
+   const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' Per-call latency: '+u.requests.map(row=>row.latencyMs+' ms').join(', ')+'. No automatic retries.';
+   try{onTelemetry({outcome:'completed',backend:approval.contract.backend,model:result.model,usage:u});}catch{}
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
   }catch(error){
    if(active!==operation)return;
    if(operation.started)clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
+   try{onTelemetry({outcome:cancelled?'cancelled':'failed',backend:approval.contract.backend,model:approval.contract.model,usage:partial?.usage??{calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0,requests:[]}});}catch{}
    if(code==='CONTENT_CHANGED'||code==='CONTRACT_CHANGED'){model=null;approvedContract=null;set('error',code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before using inference. No model request was made.':'Provider publication changed. Check inference availability again. No model request was made.');return;}
    if(code==='CONTENT_CHANGED_DURING_RUN'||code==='CONTRACT_CHANGED_DURING_RUN'){model=null;approvedContract=null;}
    if(partial?.receipts?.length){identifyResult(approval,false);answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}

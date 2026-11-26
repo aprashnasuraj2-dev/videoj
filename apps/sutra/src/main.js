@@ -360,7 +360,7 @@ async function seekReceipt(receipt,options){
 mountWorkspaceControls({anchor:document.querySelector('.developer-divider'),workspace:workspaceIntegration});
 mountDirectLookup({root:document.querySelector('#direct-lookup'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
 mountLocalAnswer({root:document.querySelector('#local-answer'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor,onMapping:found=>workspaceIntegration.recordMapping(found)});
-mountProviderPanel({loadedContent:content,seekTo:seekReceipt,prepareReview:prepareReviewFor});
+mountProviderPanel({loadedContent:content,seekTo:seekReceipt,prepareReview:prepareReviewFor,onTelemetry:sample=>workspaceIntegration.recordProviderTelemetry(sample)});
 mountPeerWorkbench({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href});
 
 const consentDialog=document.querySelector('#consent-dialog'),consentStatus=document.querySelector('#consent-status'),consentEvents=document.querySelector('#consent-events');

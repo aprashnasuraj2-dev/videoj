@@ -2,6 +2,7 @@ export const WORKSPACE_STORAGE_KEY='sutra.workspace-history.v1';
 const MAX_EVENTS=256,MAX_BYTES=65536;
 const ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const SAFE=/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/;
+const MODEL=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/;
 const clone=v=>JSON.parse(JSON.stringify(v));
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&[Object.prototype,null].includes(Object.getPrototypeOf(v));
 const exact=(v,keys)=>plain(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
@@ -22,6 +23,10 @@ function validateEvent(e){
  }else if(e.kind==='mapping'){
   if(!exact(e,[...b,'state','candidateCount','displayedCount','fallback','mappings'])||!SAFE.test(e.state)||!Number.isSafeInteger(e.candidateCount)||e.candidateCount<0||e.candidateCount>10000||!Number.isSafeInteger(e.displayedCount)||e.displayedCount<0||e.displayedCount>5||!['select_unique','abstain'].includes(e.fallback)||!Array.isArray(e.mappings)||e.mappings.length!==e.displayedCount)throw Error('WORKSPACE_EVENT');
   for(const r of e.mappings)if(!exact(r,['rank','sourceId','cueId','confidence','basis'])||!Number.isInteger(r.rank)||r.rank<1||r.rank>5||!SAFE.test(r.sourceId)||!SAFE.test(r.cueId)||typeof r.confidence!=='number'||!Number.isFinite(r.confidence)||r.confidence<0||r.confidence>1||r.basis!=='lexical_support')throw Error('WORKSPACE_EVENT');
+ }else if(e.kind==='provider'){
+  if(!exact(e,[...b,'outcome','backend','model','calls','reported','promptTokens','completionTokens','totalTokens','requests'])||!['completed','failed','cancelled'].includes(e.outcome)||!['hosted','self_hosted'].includes(e.backend)||!MODEL.test(e.model)||!Number.isSafeInteger(e.calls)||e.calls<0||e.calls>32||!Number.isSafeInteger(e.reported)||e.reported<0||e.reported>e.calls||
+   ![e.promptTokens,e.completionTokens,e.totalTokens].every(v=>Number.isSafeInteger(v)&&v>=0&&v<=32000000)||e.promptTokens+e.completionTokens!==e.totalTokens||!Array.isArray(e.requests)||e.requests.length>e.calls)throw Error('WORKSPACE_EVENT');
+  for(const r of e.requests)if(!exact(r,['sequence','outcome','retry','latencyMs','usageReported','promptTokens','completionTokens','totalTokens'])||!Number.isSafeInteger(r.sequence)||r.sequence<1||r.sequence>32||!['completed','failed','cancelled'].includes(r.outcome)||typeof r.retry!=='boolean'||!finiteMs(r.latencyMs)||typeof r.usageReported!=='boolean'||![r.promptTokens,r.completionTokens,r.totalTokens].every(v=>Number.isSafeInteger(v)&&v>=0&&v<=1000000)||r.promptTokens+r.completionTokens!==r.totalTokens||(r.usageReported===false&&r.totalTokens!==0))throw Error('WORKSPACE_EVENT');
  }else throw Error('WORKSPACE_EVENT');
  return e;
 }
@@ -64,7 +69,12 @@ export function createWorkspaceIntegration({win=globalThis.window,doc=globalThis
  return Object.freeze({
   inspect:()=>history.inspect(),enable(){history.enable();start();return history.inspect();},resume(){try{return history.inspect().consentedAt?start():false;}catch{return false;}},disableAndClear(){stop();history.clear();},
   get active(){return active;},get paused(){return paused;},
-  recordMapping(found){if(!found||!plain(found.disambiguation)||!Array.isArray(found.mappings))return false;return record({kind:'mapping',state:safe(found.state),candidateCount:found.disambiguation.candidateCount,displayedCount:found.mappings.length,fallback:found.disambiguation.fallback,mappings:found.mappings.map(r=>({rank:r.rank,sourceId:safe(r.sourceId),cueId:safe(r.cueId),confidence:r.confidence,basis:'lexical_support'}))});}
+  recordMapping(found){if(!found||!plain(found.disambiguation)||!Array.isArray(found.mappings))return false;return record({kind:'mapping',state:safe(found.state),candidateCount:found.disambiguation.candidateCount,displayedCount:found.mappings.length,fallback:found.disambiguation.fallback,mappings:found.mappings.map(r=>({rank:r.rank,sourceId:safe(r.sourceId),cueId:safe(r.cueId),confidence:r.confidence,basis:'lexical_support'}))});},
+  recordProviderTelemetry(sample){
+   const u=sample?.usage;if(!plain(sample)||!plain(u)||!['completed','failed','cancelled'].includes(sample.outcome)||!['hosted','self_hosted'].includes(sample.backend)||typeof sample.model!=='string'||!MODEL.test(sample.model)||!Array.isArray(u.requests))return false;
+   const requests=u.requests.map(r=>({sequence:r.sequence,outcome:r.outcome,retry:r.retry===true,latencyMs:r.latencyMs,usageReported:r.usage!==null,promptTokens:r.usage?.promptTokens??0,completionTokens:r.usage?.completionTokens??0,totalTokens:r.usage?.totalTokens??0}));
+   return record({kind:'provider',outcome:sample.outcome,backend:sample.backend,model:sample.model,calls:u.calls??0,reported:u.reported??0,promptTokens:u.promptTokens??0,completionTokens:u.completionTokens??0,totalTokens:u.totalTokens??0,requests});
+  }
  });
 }
 export function mountWorkspaceControls({anchor,workspace}={}){
