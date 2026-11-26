@@ -63,7 +63,7 @@ header a.studio-entry{letter-spacing:0;font-size:.8rem;white-space:normal;text-a
 @media(max-width:420px){
  header{flex-wrap:wrap;align-items:flex-start}
  header .brand{flex:0 1 auto;max-width:100%;overflow-wrap:anywhere}
- header .studio-nav{flex:1 1 100%;width:100%;flex-wrap:wrap;justify-content:flex-start}
+ header .studio-nav{flex:0 1 auto;min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-start}
  header .studio-nav .studio-entry{flex:0 1 auto;min-width:0;max-width:100%;overflow-wrap:anywhere}
  .guide-heading{flex-wrap:wrap;overflow-wrap:anywhere}
  main,main>*{min-width:0;max-width:100%}
@@ -73,6 +73,6 @@ header a.studio-entry{letter-spacing:0;font-size:.8rem;white-space:normal;text-a
  #reviewed-workspace button,#reviewed-workspace select,#reviewed-workspace textarea,#reviewed-workspace input{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
  #reviewed-workspace textarea{width:100%}
  #reviewed-workspace input[type=file]{width:100%}
- .studio-metrics,.debug-metrics{grid-template-columns:minmax(0,1fr)}
+ .studio-metrics,.debug-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
  .studio-metrics>div,.debug-metrics>div{min-width:0;overflow-wrap:anywhere}
 }
