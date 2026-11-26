@@ -25,5 +25,7 @@ export function applyScreenState(node,state,message){
   if(typeof message!=='string')throw new TypeError('Status message must be text.');
   node.textContent=message;
  }
+ const E=node.ownerDocument?.defaultView?.CustomEvent;
+ if(typeof E==='function')node.dispatchEvent(new E('sutra:state-change',{bubbles:true,detail:{target:node.id||'anonymous',state,tone:meta.tone,busy:meta.busy}}));
  return meta;
 }

@@ -18,7 +18,10 @@ import {mountDirectLookup} from './direct-lookup.js';
 import {mountLocalAnswer} from './local-answer.js';
 import {applyLocale,localeMeta} from './localization.js';
 import {loadContentProfile,receiptForFeatured,receiptForCue,readVerifiedLessonMedia,deriveReviewedTracks} from '../../../packages/sutra-content-profile/index.js';
+import {createWorkspaceIntegration,mountWorkspaceControls} from './workspace-integration.js';
 
+const workspaceIntegration=createWorkspaceIntegration();
+workspaceIntegration.resume();
 const contentBase=new URL(`${import.meta.env.BASE_URL}content/`,location.origin).href;
 let content;
 try{content=await loadContentProfile({baseUrl:contentBase});}
@@ -354,8 +357,9 @@ async function seekReceipt(receipt,options){
  if(timingPlayer!==player||!isNativeCueReached(actual,receipt.start,receipt.end))throw Error('Native playback did not reach the exact cue interval');
  return actual;
 }
+mountWorkspaceControls({anchor:document.querySelector('.developer-divider'),workspace:workspaceIntegration});
 mountDirectLookup({root:document.querySelector('#direct-lookup'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
-mountLocalAnswer({root:document.querySelector('#local-answer'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
+mountLocalAnswer({root:document.querySelector('#local-answer'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor,onMapping:found=>workspaceIntegration.recordMapping(found)});
 mountProviderPanel({loadedContent:content,seekTo:seekReceipt,prepareReview:prepareReviewFor});
 mountPeerWorkbench({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href});
 

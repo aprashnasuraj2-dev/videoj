@@ -10,6 +10,16 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1280,height:1050}});const errors=[],external=[],requests=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{requests.push(r.url());if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
   await page.goto(base);await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.workspace-history.v1')),null,'journey capture is inert before consent');
+  await page.getByRole('button',{name:'Enable local journey diagnostics'}).click();assert.match(await page.locator('#workspace-status').innerText(),/Diagnostics enabled/);
+  const diagnosticsCanary='WORKSPACE_PRIVATE_QUERY_CANARY';
+  await page.locator('#local-answer-query').fill('timing marker');await page.locator('#local-answer-form button[type=submit]').click();
+  await page.evaluate(async canary=>{try{await fetch('/api/status?token='+canary,{headers:{Authorization:'Bearer '+canary}});}catch{}},diagnosticsCanary);
+  const diagnostics=await page.evaluate(()=>JSON.parse(localStorage.getItem('sutra.workspace-history.v1')));
+  assert.equal(diagnostics.schema,1);assert.ok(diagnostics.events.some(x=>x.kind==='mapping'));assert.ok(diagnostics.events.some(x=>x.kind==='network'));assert.equal(JSON.stringify(diagnostics).includes(diagnosticsCanary),false);assert.equal(JSON.stringify(diagnostics).includes('Authorization'),false);
+  const diagnosticCount=diagnostics.events.length;await page.reload();await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();const afterReload=await page.evaluate(()=>JSON.parse(localStorage.getItem('sutra.workspace-history.v1')));assert.ok(afterReload.events.length>=diagnosticCount,'consented sanitized history survives reload');assert.match(await page.locator('#workspace-status').innerText(),/Diagnostics enabled/);
+  await page.getByRole('button',{name:'Disable and clear diagnostics'}).click();assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.workspace-history.v1')),null);
+
   assert.equal(await page.locator('#network-result').getAttribute('data-state'),'empty');assert.equal(await page.locator('#source-network-result').getAttribute('data-state'),'empty');assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'empty');
   // Text-first path stays usable before the optional MP4 is requested.
   const initialTranscript=page.getByRole('searchbox',{name:'Search source transcript'});

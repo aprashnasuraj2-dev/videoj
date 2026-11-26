@@ -24,10 +24,12 @@ const normalizeTerm=word=>{
 };
 const termsOf=text=>[...(text.normalize('NFKC').match(WORDS)??[])].map(normalizeTerm).filter(w=>!STOP.has(w));
 const toks=text=>termsOf(text).filter(w=>w.length<=48);
+const defaultDisambiguation=Object.freeze({candidateCount:0,displayedCount:0,reason:'no_supported_mapping',fallback:'abstain',scoreMargin:null});
 const snapshot=(state,receipts=[],extra={})=>Object.freeze({
- state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,
+ state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),mappings:Object.freeze([]),disambiguation:defaultDisambiguation,modelCalls:0,networkRequests:0,
  truthStatus:'unverified',generation:'none',...extra
 });
+const mappingConfidence=(score,phrase)=>Number(Math.min(.99,.5+Math.min(.34,Math.max(0,score-100)/120)+(phrase?.08:0)).toFixed(3));
 export function createLocalAnswer({sources,now}={}){
  // Own a complete primitive snapshot. Never revalidate against caller-owned cue
  // references; they may mutate after registration without changing the index.
@@ -84,6 +86,9 @@ export function createLocalAnswer({sources,now}={}){
   // Phrase ranking changes display order, not whether alternatives exist.
   // Cap rendered receipts while retaining the complete match count.
   const close=scored.slice(0,5);
+  const mappings=Object.freeze(close.map(({row,score},index)=>Object.freeze({rank:index+1,sourceId:row.sourceId,cueId:row.cueId,confidence:mappingConfidence(score,row.folded.includes(queryTokens.join(' '))),basis:'lexical_support'})));
+  const margin=scored.length>1?Number((scored[0].score-scored[1].score).toFixed(6)):null;
+  const disambiguation=Object.freeze({candidateCount:scored.length,displayedCount:close.length,reason:scored.length===1?'unique_supported_mapping':'multiple_supported_mappings',fallback:scored.length===1?'select_unique':'abstain',scoreMargin:margin});
   try{
    const receipts=close.map(({row})=>{
     const receipt=tools.call('read_cue',{sourceId:row.sourceId,cueId:row.cueId}).receipts[0];
@@ -91,13 +96,13 @@ export function createLocalAnswer({sources,now}={}){
     return receipt;
    });
    return snapshot(scored.length===1?'matched':'ambiguous',receipts,{
-    matchCount:scored.length,truncated:scored.length>close.length,
+    mappings,disambiguation,matchCount:scored.length,truncated:scored.length>close.length,
     explanation:scored.length===1?'One lexically matching source excerpt; relevance and factual truth are unverified.':'Multiple lexical excerpts; up to five shown; no single answer selected.'
    });
   }catch{return snapshot('unavailable');}
  }});
 }
-export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
+export function mountLocalAnswer({root,sources,seekTo,prepareReview,onMapping=()=>{}}){
  const $=id=>root.querySelector('#'+id);
  const form=$('local-answer-form'),input=$('local-answer-query'),status=$('local-answer-status'),list=$('local-answer-results'),actionStatus=$('local-answer-action-status');
  let lookup=null,unavailable=false,epoch=0;
@@ -119,6 +124,7 @@ export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
   if(unavailable){show('error','local.status.index');return;}
   if(!lookup){try{lookup=createLocalAnswer({sources});}catch{unavailable=true;show('error','local.status.index');return;}}
   const found=lookup.query(input.value);
+  try{onMapping(found);}catch{}
   const messages={
    invalid_query:['input_error','local.status.invalid'],
    unsupported:['empty','local.status.unsupported'],
