@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-150",
+  "session": "V2-151",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -625,7 +625,7 @@
               "description": "Exact 9/9 PR workflows; bounded two arbitrary-provider council with real conditional proof feedback, five adversarial/behavior tests. Injected mock only."
             }
           ],
-          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending.\nV2-149: primary local Agent Studio candidate; two arbitrary mock connections with independently assigned roles, real conditional feedback, per-run limits and trace. No real endpoint/keys or general question compilation; exact CI pending.\nV2-150 candidate: OpenAI-compatible and Anthropic Messages bounded JSON profiles plus custom trusted adapters, mandatory injected transport; no live endpoint/egress/credentials. Exact CI pending."
+          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending.\nV2-149: primary local Agent Studio candidate; two arbitrary mock connections with independently assigned roles, real conditional feedback, per-run limits and trace. No real endpoint/keys or general question compilation; exact CI pending.\nV2-150 candidate: OpenAI-compatible and Anthropic Messages bounded JSON profiles plus custom trusted adapters, mandatory injected transport; no live endpoint/egress/credentials. Exact CI pending.\nV2-151: shared scheduler and model-generated reviewed expressions; no actual provider integration or general semantic approval. Exact CI pending."
         }
       ]
     },
