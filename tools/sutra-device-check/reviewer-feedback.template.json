@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "reviewerId": "R01",
+  "deviceId": "D01",
+  "sourceRevision": null,
+  "deviceRecordHash": null,
+  "observedAt": null,
+  "steps": {
+    "findSource": {
+      "status": "blocked",
+      "detail": "Replace with the observed result."
+    },
+    "compareEvidence": {
+      "status": "blocked",
+      "detail": "Replace with the observed result."
+    },
+    "saveReview": {
+      "status": "blocked",
+      "detail": "Replace with the observed result."
+    },
+    "consentBoundary": {
+      "status": "blocked",
+      "detail": "Replace with the observed result."
+    }
+  },
+  "overall": "blocked",
+  "notes": "TEMPLATE ONLY — not human acceptance evidence until completed against a validated physical-device record."
+}
