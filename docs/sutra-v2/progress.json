@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-164",
+  "session": "V2-165",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: shared local preflight and Agent Studio operator config export; V2-162 exact 9/9 green.",
+  "state": "Candidate: compact local operator result return and independently recomputed root version; V2-164 pending.",
   "verified": [
     {
       "id": "V2-M01",
@@ -443,14 +443,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-165",
+    "parent": "78f874b0d17c559c07cc0099fd5e9df482740951",
+    "description": "### V2-165 — compact local result round-trip into living investigation (candidate)\nV2-163 knowledge job 139638337117 and browser 139638337391 passed; V2-164 exact CI pending. Add optional CLI portable output omitting unverified transcript, model/contact and resource claims. Keep strict 256 KiB transfer cap, receipt and optional exact root. Import in Agent Studio with separately retained plan/contract/receipt/version pins; recompute receipt and re-seal expected version, reject unrelated self-repinned root or forged receipt, no model call. Download only independently recomputed version for existing revision workspace. Receipt-only supported; no authentication, semantic or empirical authority. Actual local TCP fixture and Chromium file import/download tests plus adversaries. Exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-164",
     "parent": "a2956c86d6f1ef4278cb898fec898b4f9872e304",
     "description": "### V2-164 — browser to actual local operator plan handoff (candidate)\nV2-162 exact nine PR workflows green (knowledge job 139637358617, browser 139637358862). V2-163 exact CI running. Extract pure shared local-route/config admission from Node runner; same validator now used in Agent Studio export and CLI, preview creates no network workspace. Browser exports explicitly approved full-contract local plan with chosen model/role/protocol, separate literal loopback addresses, auth mode/credential environment alias, scopes, fixed disclosed resource defaults, exact pin and commands. No API key input, no provider contact, no automatic CLI execution. Existing CLI re-admits exact bytes. Tests cover shared preflight, native Ollama, invalid route, permission and pin, actual Chromium download/no contact/mobile overflow. No real model, hosted relay or production enablement. Exact candidate CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-163",
-    "parent": "e0d464ffcf00929722a74607d9a5a9ff036af293",
-    "description": "### V2-163 — Agent Studio per-agent evidence permission editor (candidate)\nV2-161 exact nine PR workflows green, including public route policy tests (knowledge job 139636499461, browser 139636499149); V2-162 CI pending at observation. Add optional nontechnical per-agent evidence permissions UI with separate binding lists, value toggles, directed feedback, live policy preview and applied trace cards. Reuse actual scope admission, revoke consent/exports on edits, refuse downward feedback before setup. Existing uniform workflow retained. Actual Chromium candidate checks blocked direction, allowed upward flow, distinct outcomes after scoped reconsideration, scoped trace export, value-cap refusal, 360px overflow and existing no-network controls. No live AI, new corpus or strong noninterference claim. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

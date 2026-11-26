@@ -7,6 +7,7 @@ import {compilerFinanceFixture} from '../examples/reviewed-compiler.mjs';
 import {casePin} from '../pinned-investigation.js';
 import {replayInvestigationVersion} from '../investigation-revision.js';
 import {verifyExpressionReviewReceipt} from '../expression-review-receipt.js';
+import {verifyLocalCouncilTransfer} from '../local-council-transfer.js';
 const cli=fileURLToPath(new URL('../../../apps/sutra-v2/local-council.mjs',import.meta.url));
 const token='LOCAL_RUNNER_TEST_TOKEN_1234';
 const approved=async config=>['--execute-local','--approve-local-disclosure','--approve-plan',await casePin(JSON.stringify(config))];
@@ -80,4 +81,12 @@ test('local operator preview binds directional per-agent disclosure, rejects dow
  const x=await run(c,await approved(c),{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(x.code,0,x.stderr);
  const low=requests.filter(r=>r.path==='/chat').map(r=>r.op),high=requests.filter(r=>r.path==='/messages').map(r=>r.op);
  assert.equal(low[1].feedback.length,1);assert.equal(high[1].feedback.length,2);assert.equal(JSON.stringify(low).includes('ppe25'),false);assert.equal(JSON.stringify(low).includes('136162'),false);
+});
+
+test('actual local CLI portable output omits transcript, credentials and budget and replays exact root',async t=>{
+ const {requests,config}=await fixture(t),args=await approved(config);
+ const out=await run(config,[...args,'--export-version','--portable-output'],{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(out.code,0,out.stderr);
+ const x=JSON.parse(out.stdout);assert.equal(x.version,'sutra-local-council-transfer/v1');assert.equal(x.result,undefined);assert.equal(x.budget,undefined);assert.equal(out.stdout.includes(token),false);assert.equal(requests.length,4);
+ const verified=await verifyLocalCouncilTransfer({transferText:out.stdout,contractText:config.contractText,contractPin:config.contractPin,expectedPlanPin:args[3],expectedReceiptPin:x.receipt.receiptPin,expectedVersionPin:x.investigation.versionPin});
+ assert.equal(verified.state,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(verified.version.versionText,x.investigation.versionText);assert.equal(verified.decisionAuthority,'NONE');
 });

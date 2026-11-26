@@ -200,6 +200,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(await page.locator('#studio-local-plan-status').innerText(),new RegExp(localPlanPin));
   assert.match(await page.locator('#studio-local-plan-commands').innerText(),new RegExp('--approve-plan '+localPlanPin));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  // Portable handoff tests verify computation, not a claim of actual model execution.
+  const transfer={version:'sutra-local-council-transfer/v1',planPin:localPlanPin,contractPin:localPlan.contractPin,receipt:{receiptText,receiptPin},investigation:{versionText,versionPin}};
+  await page.locator('#studio-local-transfer > summary').click();
+  await page.getByLabel('Portable local result JSON (up to 256 KiB)').setInputFiles({name:'local-result.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
+  await page.getByLabel('Retained local plan SHA-256').fill(localPlanPin);
+  await page.getByLabel('Retained local receipt SHA-256').fill(receiptPin);
+  await page.getByLabel('Retained local version SHA-256 (if present)').fill(versionPin);
+  await page.getByRole('button',{name:'Verify local result'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-transfer-status').dataset.state==='reproduced');
+  assert.match(await page.locator('#studio-transfer-status').innerText(),/exact root version reproduced/);
+  const [reopenedVersion]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Download verified investigation version'}).click()]);
+  assert.equal(fs.readFileSync(await reopenedVersion.path(),'utf8'),versionText);
+  await page.getByLabel('Retained local version SHA-256 (if present)').fill('sha256:'+'0'.repeat(64));
+  assert.equal(await page.getByRole('button',{name:'Download verified investigation version'}).isDisabled(),true);
+  await page.getByRole('button',{name:'Verify local result'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-transfer-status').dataset.state==='refused');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');

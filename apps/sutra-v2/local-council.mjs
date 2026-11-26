@@ -8,6 +8,7 @@ import {sealExpressionInvestigation} from '../../packages/sutra-knowledge/expres
 import {casePin} from '../../packages/sutra-knowledge/pinned-investigation.js';
 import {projectCouncilBindings} from '../../packages/sutra-knowledge/council-disclosure.js';
 import {admitLocalCouncilConfig,LOCAL_COUNCIL_VERSION} from '../../packages/sutra-knowledge/local-council-config.js';
+import {createLocalCouncilTransfer} from '../../packages/sutra-knowledge/local-council-transfer.js';
 const VERSION=LOCAL_COUNCIL_VERSION,MAX=262144;
 const fail=code=>{const e=new Error('Local council refused ('+code+').');e.code=code;throw e;};
 async function input(){
@@ -19,7 +20,7 @@ async function input(){
 }
 async function main(){
  const args=process.argv.slice(2),preview=args.length===0||args.length===1&&args[0]==='--plan';
- const execute=(args.length===4||args.length===5&&args[4]==='--export-version')&&args[0]==='--execute-local'&&args[1]==='--approve-local-disclosure'&&args[2]==='--approve-plan'&&/^sha256:[a-f0-9]{64}$/.test(args[3]);
+ const extras=args.slice(4),execute=args.length>=4&&args.length<=6&&new Set(extras).size===extras.length&&extras.every(x=>['--export-version','--portable-output'].includes(x))&&args[0]==='--execute-local'&&args[1]==='--approve-local-disclosure'&&args[2]==='--approve-plan'&&/^sha256:[a-f0-9]{64}$/.test(args[3]);
  if(!execute&&!preview)fail('EXPLICIT_APPROVAL_REQUIRED');
  const {wire,planPin}=await input();
  // Exact input-byte approval binds routes, credential aliases, question, source
@@ -90,13 +91,21 @@ async function main(){
    // serialized artifact strings. The decoded source contract was checked above.
    if(receipt)guardExport(parseUniqueJson(receipt.receiptText,{maxChars:MAX,maxDepth:32}));
    if(investigation)guardExport(parseUniqueJson(investigation.versionText,{maxChars:MAX,maxDepth:12}));
-   const encoded=JSON.stringify(output);if(Buffer.byteLength(encoded,'utf8')>4000000)fail('EXPORT_SIZE');
-   process.stdout.write(encoded+'\n');
+   if(args.includes('--portable-output')){
+    if(cancelled())return;
+    if(!receipt)fail('PORTABLE_RECEIPT_REQUIRED');
+    const transfer=await createLocalCouncilTransfer({planPin,contractPin:config.contractPin,receipt,investigation});
+    if(cancelled()){process.exitCode=130;return;}
+    guardExport(transfer.transferText);process.stdout.write(transfer.transferText);
+   }else{
+    const encoded=JSON.stringify(output);if(Buffer.byteLength(encoded,'utf8')>4000000)fail('EXPORT_SIZE');
+    process.stdout.write(encoded+'\n');
+   }
   }finally{process.removeListener('SIGINT',cancel);process.removeListener('SIGTERM',cancel);local.close();}
  }finally{local.close();}
 }
 main().catch(error=>{
  // Do not print untrusted provider text, input, stack, endpoint or credential.
- const known=['INPUT_SIZE','INPUT_ENCODING','CONFIG','BUDGET','TEAM','CONNECTION','AGENT','UNUSED_CONNECTION','DISCLOSURE','DISCLOSURE_FLOW','EXPLICIT_APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','EXPORT_SIZE','EXPORT_SHAPE','LOCAL_CREDENTIAL_REQUIRED','ENDPOINT','ROUTE','PROFILE','REQUEST','SECRET_ECHO','PROVIDER_RESULT','AUTH'];
+ const known=['INPUT_SIZE','INPUT_ENCODING','CONFIG','BUDGET','TEAM','CONNECTION','AGENT','UNUSED_CONNECTION','DISCLOSURE','DISCLOSURE_FLOW','EXPLICIT_APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','EXPORT_SIZE','EXPORT_SHAPE','PORTABLE_RECEIPT_REQUIRED','TRANSFER_SIZE','LOCAL_CREDENTIAL_REQUIRED','ENDPOINT','ROUTE','PROFILE','REQUEST','SECRET_ECHO','PROVIDER_RESULT','AUTH'];
  process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(error?.code)?error.code:'LOCAL_COUNCIL_REFUSED'})+'\n');process.exitCode=1;
 });

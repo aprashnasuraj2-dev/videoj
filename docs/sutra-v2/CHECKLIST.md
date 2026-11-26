@@ -1041,3 +1041,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-163 Agent Studio scope editor:** visible per-agent permissions, blocked-flow explanation, fresh consent and applied trace; actual browser CI pending.
 
 - [ ] **V2-164 local handoff:** shared pure preflight and exact browser-exported local operator plan, explicit full-contract consent, no browser provider contact; exact CI pending.
+
+- [ ] **V2-165 local result return:** compact CLI transfer, strict independent receipt/root replay, browser file import and verified version download; exact CI pending.

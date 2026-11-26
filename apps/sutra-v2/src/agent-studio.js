@@ -4,6 +4,7 @@ import {runAgentCouncil} from '../../../packages/sutra-knowledge/agent-council.j
 import {runExpressionCouncil} from '../../../packages/sutra-knowledge/expression-council.js';
 import {admitCouncilDisclosure} from '../../../packages/sutra-knowledge/council-disclosure.js';
 import {admitLocalCouncilConfig,LOCAL_COUNCIL_VERSION} from '../../../packages/sutra-knowledge/local-council-config.js';
+import {verifyLocalCouncilTransfer} from '../../../packages/sutra-knowledge/local-council-transfer.js';
 import {createExpressionReviewReceipt,verifyExpressionReviewReceipt} from '../../../packages/sutra-knowledge/expression-review-receipt.js';
 import {sealExpressionInvestigation} from '../../../packages/sutra-knowledge/expression-investigation.js';
 import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
@@ -13,13 +14,13 @@ const form=by('studio-form'),runButton=by('studio-run'),cancelButton=by('studio-
 const fields=[...form.querySelectorAll('input,select,textarea'),by('studio-reset-case'),by('studio-load-finance')];
 const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'stiffer_assumption',constraintId:'deflection_limit',graphText:beamGraph('10000000000')},{id:'softer_assumption',constraintId:'deflection_limit',graphText:beamGraph('2500000000')}]});
 const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt'),versionButton=by('studio-export-version');
-let active=null,current=null,epoch=0,replayEpoch=0;
+let active=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
 function clear(){current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
-function invalidate(){epoch++;active?.abort();clear();resetReplay();status('Configuration changed. Run a fresh council.','idle');}
+function invalidate(){epoch++;active?.abort();clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
 function showMode(){const expression=by('studio-mode').value==='expression';for(const id of ['studio-method-question','studio-method-case','studio-method-consent'])by(id).hidden=expression;by('studio-expression-fields').hidden=!expression;}
 const bindingList=id=>by(id).value.split(',').map(x=>x.trim()).filter(Boolean);
 function readDisclosure(){
@@ -223,9 +224,33 @@ localPlanButton.addEventListener('click',async()=>{
   if(ticket!==epoch||active)return;
   const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-local-council-config.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   el.dataset.state='complete';el.textContent='Configuration export requested. No endpoint contact. Review CLI preview before executing. Retain plan pin: '+admitted.planPin;
-  commands.textContent='node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+admitted.planPin+' --export-version < sutra-local-council-config.json';
+  commands.textContent='node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+admitted.planPin+' --export-version --portable-output < sutra-local-council-config.json > sutra-local-result.json';
   commands.hidden=false;
  }catch{if(ticket===epoch){el.dataset.state='refused';el.textContent='Local configuration refused. Check reviewed contract/pin, scopes, literal loopback endpoints, protocols and environment names.';}}
  finally{exportingPlan=false;localPlanButton.disabled=false;}
+});
+function resetTransfer(){
+ transferEpoch++;verifiedTransfer=null;by('studio-transfer-download').disabled=true;by('studio-transfer-help').hidden=true;by('studio-transfer-verify').disabled=false;
+ const el=by('studio-transfer-status');el.dataset.state='idle';el.textContent='Inputs changed. Verify the portable result again.';
+}
+for(const id of ['studio-transfer-file','studio-transfer-plan-pin','studio-transfer-receipt-pin','studio-transfer-version-pin'])by(id).addEventListener('input',resetTransfer);
+by('studio-transfer-verify').addEventListener('click',async()=>{
+ const ticket=++transferEpoch,el=by('studio-transfer-status'),button=by('studio-transfer-verify');verifiedTransfer=null;by('studio-transfer-download').disabled=true;by('studio-transfer-help').hidden=true;button.disabled=true;el.dataset.state='busy';el.textContent='Recomputing conditional evidence locally…';
+ try{
+  const file=by('studio-transfer-file').files[0];if(!file||file.size<1||file.size>262144)throw Error('TRANSFER_SIZE');
+  const contractText=by('studio-contract').value,contractPin=by('studio-contract-pin').value.trim(),expectedPlanPin=by('studio-transfer-plan-pin').value.trim(),expectedReceiptPin=by('studio-transfer-receipt-pin').value.trim(),expectedVersionPin=by('studio-transfer-version-pin').value.trim()||null;
+  const transferText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer());
+  if(ticket!==transferEpoch)return;
+  const result=await verifyLocalCouncilTransfer({transferText,contractText,contractPin,expectedPlanPin,expectedReceiptPin,expectedVersionPin});
+  if(ticket!==transferEpoch)return;
+  verifiedTransfer=result;el.dataset.state='reproduced';el.textContent=result.status+' · '+result.candidateCount+' candidates · '+result.state+(result.version?' · exact root version reproduced':' · receipt only')+' · semantic review required. No model authorship verified.';
+  by('studio-transfer-download').disabled=!result.version;by('studio-transfer-help').hidden=!result.version;
+ }catch{if(ticket===transferEpoch){el.dataset.state='refused';el.textContent='Portable result refused. Check the exact reviewed contract, retained plan/receipt/version pins and recomputed root.';}}
+ finally{if(ticket===transferEpoch)button.disabled=false;}
+});
+by('studio-transfer-download').addEventListener('click',()=>{
+ const version=verifiedTransfer?.version;if(!version)return;
+ const url=URL.createObjectURL(new Blob([version.versionText],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-verified-local-investigation.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ by('studio-transfer-status').textContent='Verified version download requested. Retain its pin separately: '+version.versionPin;
 });
 by('studio-case').value=fixture();showMode();showScopes();
