@@ -24,7 +24,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P001-05` List employer/third-party assets requiring permission before public inclusion
 - [x] `SUTRA-P001-06` Record applicable competition exclusions and unresolved questions with official sources
 - [x] `SUTRA-P001-07` Keep eligibility uncertainties separate from engineering work that can proceed
-- [ ] `SUTRA-P001-08` Log only eligibility outcome and blockers publicly, with no private documents
+- [x] `SUTRA-P001-08` Log only eligibility outcome and blockers publicly, with no private documents
 - [ ] `SUTRA-P001-09` Produce and review the phase artifact: Private eligibility checklist; public ownership/attribution notes.
 - [ ] `SUTRA-P001-10` Close phase 001 only after its applicable tasks have evidence and its exit condition is observed: Every entrant and reused component has a known eligibility or rights basis; unresolved items are named.
 
@@ -126,7 +126,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** The calendar has a named daily capacity; model cost assumptions and unknown provider prices are shown separately.
 
 - [x] `SUTRA-P007-01` Sum person-hour estimates and add a named integration contingency
-- [ ] `SUTRA-P007-02` Record participant availability and tasks requiring genuine human involvement
+- [x] `SUTRA-P007-02` Record participant availability and tasks requiring genuine human involvement
 - [x] `SUTRA-P007-03` Separate inference, media, hosting and optional service cost assumptions
 - [ ] `SUTRA-P007-04` Select an approved spend ceiling before enabling funded inference
 - [x] `SUTRA-P007-05` Calculate baseline capacity and sensitivity to doubled token/retry usage
