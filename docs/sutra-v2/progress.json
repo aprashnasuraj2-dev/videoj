@@ -9417,52 +9417,122 @@
       {
         "id": "01-model-orchestration",
         "branch": "sutra/v2-parallel/01-model-orchestration",
-        "state": "planned"
+        "state": "implementation-or-executable-regression",
+        "pr": 51,
+        "head": "49eb1f56352b95cbff5135fa3f368d77e4f8d339",
+        "ci": {
+          "run": 45750028185,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "02-persistent-knowledge",
         "branch": "sutra/v2-parallel/02-persistent-knowledge",
-        "state": "planned"
+        "state": "implementation-or-executable-regression",
+        "pr": 52,
+        "head": "538e399b37cfac793f324d63f6ded73c8334373d",
+        "ci": {
+          "run": 45750033050,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "03-semantic-compilation",
         "branch": "sutra/v2-parallel/03-semantic-compilation",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 53,
+        "head": "2526cde01130541471b067afe0deed63088d8fa8",
+        "ci": {
+          "run": 45750039080,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "04-evidence-acquisition",
         "branch": "sutra/v2-parallel/04-evidence-acquisition",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 54,
+        "head": "00fed563af6a3b5e79e007ced4d01264183a2d6c",
+        "ci": {
+          "run": 45750042028,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "05-independent-verification",
         "branch": "sutra/v2-parallel/05-independent-verification",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 55,
+        "head": "575efab451cfdb4e41aa3487e83a166f2168cd86",
+        "ci": {
+          "run": 45750087991,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "06-counterfactuals",
         "branch": "sutra/v2-parallel/06-counterfactuals",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 56,
+        "head": "11873ae54add4625e89a3ab353532f78524b59ff",
+        "ci": {
+          "run": 45750147430,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "07-security-recovery",
         "branch": "sutra/v2-parallel/07-security-recovery",
-        "state": "planned"
+        "state": "implementation-or-executable-regression",
+        "pr": 57,
+        "head": "6f2532d2b3119287c97d7ca089d63db5d386c201",
+        "ci": {
+          "run": 45750150946,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "08-unified-workspace",
         "branch": "sutra/v2-parallel/08-unified-workspace",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 58,
+        "head": "78bd9509ac01e06951fbab33d089fd847b435b7c",
+        "ci": {
+          "run": 45750155401,
+          "observed": "success",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "09-specialist-domains",
         "branch": "sutra/v2-parallel/09-specialist-domains",
-        "state": "planned"
+        "state": "acceptance-contract-only",
+        "pr": 59,
+        "head": "357891e20374441e8af242928cdb6793ca465152",
+        "ci": {
+          "run": 45750211579,
+          "observed": "in_progress",
+          "scope": "child JS only"
+        }
       },
       {
         "id": "10-benchmark",
         "branch": "sutra/v2-parallel/10-benchmark",
-        "state": "planned"
+        "state": "implementation-or-executable-regression",
+        "pr": 60,
+        "head": "bc3a06d9241b6f1671f036601d5c037f8e30d5b7",
+        "ci": {
+          "run": 45750217798,
+          "observed": "in_progress",
+          "scope": "child JS only"
+        }
       }
     ],
     "qualification": "No new gate credit; child PR CI separate from full integration."

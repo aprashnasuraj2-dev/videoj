@@ -16,3 +16,20 @@ Integration target: `sutra/v2-knowledge-compiler` (draft PR #50). Starting sourc
 | [Independent benchmarking and prior art](workstreams/10-benchmark.md) | V2-LK17-BENCHMARK; V2-LK18-PRIOR-ART; V2-B01 | Held-out annotation, matched budgets, coverage and accuracy separately, publish failures. |
 
 Branches may advance independently. Review dependencies before integration: security and provider boundaries underpin orchestration; knowledge identity and compiler underpin counterfactuals and specialist profiles; workspace consumes reviewed APIs; benchmarking runs across all but must freeze its inputs independently. Branch-only JS CI is not full verification. Do not duplicate common ledger edits across child branches.
+
+## Exact initial child PR checkpoint
+
+| PR | Branch | Head | Scoped JS CI at observation |
+|---|---|---|---|
+| [#51](https://github.com/aprashnasuraj2-dev/videoj/pull/51) | `01-model-orchestration` | `49eb1f56352b95cbff5135fa3f368d77e4f8d339` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750028185) |
+| [#52](https://github.com/aprashnasuraj2-dev/videoj/pull/52) | `02-persistent-knowledge` | `538e399b37cfac793f324d63f6ded73c8334373d` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750033050) |
+| [#53](https://github.com/aprashnasuraj2-dev/videoj/pull/53) | `03-semantic-compilation` | `2526cde01130541471b067afe0deed63088d8fa8` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750039080) |
+| [#54](https://github.com/aprashnasuraj2-dev/videoj/pull/54) | `04-evidence-acquisition` | `00fed563af6a3b5e79e007ced4d01264183a2d6c` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750042028) |
+| [#55](https://github.com/aprashnasuraj2-dev/videoj/pull/55) | `05-independent-verification` | `575efab451cfdb4e41aa3487e83a166f2168cd86` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750087991) |
+| [#56](https://github.com/aprashnasuraj2-dev/videoj/pull/56) | `06-counterfactuals` | `11873ae54add4625e89a3ab353532f78524b59ff` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750147430) |
+| [#57](https://github.com/aprashnasuraj2-dev/videoj/pull/57) | `07-security-recovery` | `6f2532d2b3119287c97d7ca089d63db5d386c201` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750150946) |
+| [#58](https://github.com/aprashnasuraj2-dev/videoj/pull/58) | `08-unified-workspace` | `78bd9509ac01e06951fbab33d089fd847b435b7c` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750155401) |
+| [#59](https://github.com/aprashnasuraj2-dev/videoj/pull/59) | `09-specialist-domains` | `357891e20374441e8af242928cdb6793ca465152` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750211579) |
+| [#60](https://github.com/aprashnasuraj2-dev/videoj/pull/60) | `10-benchmark` | `bc3a06d9241b6f1671f036601d5c037f8e30d5b7` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45750217798) |
+
+Four children have executable changes (01, 02, 07, 10); six initially establish acceptance contracts. Draft PR status does not imply implementation completion. Re-read exact remote heads and CI before using this checkpoint. Files linked in the workstream table are on their respective child branches until integration.
