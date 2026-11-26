@@ -18,3 +18,7 @@ Previous head `59faf60eb73ac9064fde1c9b28205d6e87e3887c` was non-mergeable again
 ## V2-192 — exact central and child refresh
 
 Prior validation `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled. Central source `66440d22c457a819eebba666e8c74837f9eac382`; updated exact child heads #52, #54, #58 listed in manifest. Verified all 38 changed path blobs against previous sources and validation tree; no overlap with validation-only adapters. Canonical knowledge and browser jobs reproduced byte-for-byte after removing exact validation branch guards. No new CI credit, release or merge into central. Validation-only ancestry records the exact central source. Do not merge PR #61.
+
+## V2-194 — queue-parser refresh
+
+Exact previous central `66440d22c457a819eebba666e8c74837f9eac382` and validation `f58473523181779fca3e13f0127bb18469ea76da` failed the queue audit on valid lowercase suffix IDs V2-F11b and V2-F12d. Exact previous combined parallel and workspace passed, not inherited by this revision. Refresh eight central register and parser blobs from `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24` after exact conflict checks; all ten child pins unchanged, canonical workflow unchanged. Exact CI pending. Validation-only; DO NOT MERGE.
