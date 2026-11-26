@@ -172,3 +172,13 @@ test('v2 research register and protocol are explicitly classified without waivin
  }
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/unknown.json'],map).unmapped,['docs/sutra-v2/evaluation/unknown.json']);
 });
+
+
+test('exact combined validation manifests and workflows require canonical v2 gates; unknown artifacts still fail closed',()=>{
+ const files=['docs/sutra-v2/validation/combined-v2-182.json','.github/workflows/sutra-v2-combined-v2-182.yml','.github/workflows/sutra-v2-workspace-browser.yml'];
+ const r=classifyChangedFiles(files,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.requiredWorkflows,['Validate SUTRA v2 knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/validation/unknown.json'],map).unmapped,['docs/sutra-v2/validation/unknown.json']);
+ const orig=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-knowledge.yml',import.meta.url),'utf8'),combined=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-combined-v2-182.yml',import.meta.url),'utf8');
+ const jobs=x=>x.slice(x.indexOf('\njobs:\n'));
+ assert.equal(jobs(combined).replaceAll("    if: github.head_ref == 'sutra/v2-validation/v2-182'\n",''),jobs(orig));
+});

@@ -343,7 +343,10 @@
         "docs/sutra-v2/threat-model.json",
         "docs/sutra-v2/evaluation/prior-art.json",
         "docs/sutra-v2/evaluation/PRIOR_ART.md",
-        "docs/sutra-v2/evaluation/PROTOCOL.md"
+        "docs/sutra-v2/evaluation/PROTOCOL.md",
+        "docs/sutra-v2/validation/combined-v2-182.json",
+        ".github/workflows/sutra-v2-combined-v2-182.yml",
+        ".github/workflows/sutra-v2-workspace-browser.yml"
       ],
       "requiredWorkflows": [
         "Validate SUTRA v2 knowledge kernel"
