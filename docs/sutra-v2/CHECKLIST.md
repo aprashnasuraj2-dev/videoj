@@ -17,11 +17,11 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-195 observation | Current evidence boundary |
+| PR | Workstream | Observed exact head at V2-197 reconciliation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24` | [exact corrected central knowledge and browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786919479) |
+| #50 | central V2 | `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70` | [exact central knowledge and browser CI; 7/7 queue audit](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589) |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
-| #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
+| #52 | persistent knowledge | `61714c3c095ad254486b250c80cc84b0481dfdd2` | [423/423 scoped JS passed; atomic correction/withdrawal, prior-state refusal and restored replay](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
 | #54 | evidence acquisition | `2336566c64c4ce461042bec8b34c01c22356aba3` | [407+5+2 tests passed, authenticated separate-process receipt and acquisition path](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957/job/139770463685) |
 | #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
@@ -30,9 +30,9 @@
 | #58 | unified workspace | `ba24ce6fbda97b76a85bce929659fb0f278d1f13` | [exact accessibility and browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416592/job/139794191354); parallel passed; publisher setup failure retained; exact retry passed |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
-| #61 | validation-only combined tree | `ca2fa3516b6dcfc69b94e4180c28b411a7548cc9` | exact manifest pins 10 children and central `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24`; [combined knowledge passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787018982/job/139796246998), [parallel passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787019038), [workspace passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787019111); canonical browser in_progress; **DO NOT MERGE** |
+| #61 | validation-only combined tree | `8d12e8e15ff54c42910948a6a691eb41d631be15` | pins central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70` and ten exact children; [combined CI running](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350009); [parallel passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788349987), prior exact `ca2fa3516b6dcfc69b94e4180c28b411a7548cc9` canonical CI passed; **DO NOT MERGE** |
 
-If any head changes, replace the stale row during reconciliation before claiming work against it. V2-195 comparison at observed central `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24`: all ten children 38 commits behind (ahead counts #51–#60: 5, 10, 7, 6, 4, 6, 5, 13, 6, 5). Refreshed validation-only #61 includes that central source as ancestry; subsequent central register/parser corrections require an exact refresh. See session evidence.
+If any head changes, reconcile the affected delta before claiming work against it. V2-197 comparison at observed central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70`: all ten children 39 commits behind (ahead counts #51–#60: 5, 11, 7, 6, 4, 6, 5, 13, 6, 5). The current validation-only tree pins that source, not this later bookkeeping checkpoint. Subsequent changes require exact reconciliation; see session evidence.
 
 ---
 
@@ -46,11 +46,11 @@ These items are first in the execution queue because later integrated claims dep
 - [x] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
 - [~] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
 - [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
-- [ ] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
-- [ ] `V2-N008` Make all machine/readable queues reference this remaining-work checklist and remove any automatic fallback to SUTRA1 pending IDs.
-- [ ] `V2-N009` Reconcile broad Living Knowledge gate wording against scoped machine statuses so unit/scoped evidence cannot be mistaken for full gate closure.
-- [ ] `V2-N010` Preserve #61 as validation-only and explicitly prevent it from becoming the integration merge vehicle.
-- [ ] `V2-N011` Produce a reviewed integration plan for moving compatible child work into the central V2 line without losing branch-specific evidence or known failures.
+- [x] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
+- [x] `V2-N008` Make all machine/readable queues reference this remaining-work checklist and remove any automatic fallback to SUTRA1 pending IDs.
+- [x] `V2-N009` Reconcile broad Living Knowledge gate wording against scoped machine statuses so unit/scoped evidence cannot be mistaken for full gate closure.
+- [x] `V2-N010` Preserve #61 as validation-only and explicitly prevent it from becoming the integration merge vehicle.
+- [x] `V2-N011` Produce a reviewed integration plan for moving compatible child work into the central V2 line without losing branch-specific evidence or known failures.
 - [x] `V2-N012` Run the applicable central exact CI after register/checklist reconciliation and record the new immutable checkpoint separately from the tested child SHAs.
 
 **Exit:** current heads, CI state, registers and next cursor agree; no stale V1 or old V2 queue can become active.

@@ -3,16 +3,11 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-195-exact-validation-and-register-reconciliation",
+  "session": "V2-197-exact-register-closure-and-revision-regression",
   "next": [
-    "V2-N005",
-    "V2-N007",
-    "V2-N008",
-    "V2-N009",
-    "V2-N010",
-    "V2-N011"
+    "V2-N005"
   ],
-  "state": "N003 scoped browser/accessibility, N004 exact combined knowledge/parallel/workspace, N012 exact central CI completed; N005 active (canonical combined browser and exact child-specific verification); N007–N011 register/integration plan candidates",
+  "state": "N007–N011 coordination acceptance observed; N005 active on newest exact manifest; HIST-003 shared-DAG scoped regression verified; integrated acceptance remains open",
   "verified": [
     {
       "id": "V2-M01",
@@ -450,6 +445,54 @@
       "sourceRevision": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786919479",
       "description": "Both exact central knowledge and browser jobs succeeded including 6/6 active queue regression groups. Subsequent register changes need their own exact verification."
+    },
+    {
+      "id": "V2-N007",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589/job/139798616046",
+      "description": "Current register/session normalization; historical snapshots preserved; exact 7/7 queue audit and both jobs passed."
+    },
+    {
+      "id": "V2-N008",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589/job/139798616046",
+      "description": "Sole V2 queue and legacy retirement; wrong fallback and counts rejected."
+    },
+    {
+      "id": "V2-N009",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589/job/139798616046",
+      "description": "Broad gate closure authority stays active checklist; wrong authority rejected; no broad gate promoted."
+    },
+    {
+      "id": "V2-N010",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589/job/139798616046",
+      "description": "Validation-only policy/audit; PR #61 observed draft and unmerged. No GitHub administrator permission or branch protection change claimed."
+    },
+    {
+      "id": "V2-N011",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/blob/e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70/docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+      "description": "Engineering-reviewed integration sequence, exact 82-path audit; preserve child proof; no independent human approval or integration claimed."
+    },
+    {
+      "id": "V2-N012",
+      "sourceRevision": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45787710589",
+      "description": "Exact central knowledge/browser passed; 7/7 queue audit and 317/317 regression. Later bookkeeping commit separate."
+    },
+    {
+      "id": "V2-N001",
+      "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662",
+      "description": "Current #52 exact 423/423 scoped JS tests including witness/recovery and new regression."
+    },
+    {
+      "id": "V2-HIST-001",
+      "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662",
+      "description": "Current #52 scoped JS; integrated persistence not claimed."
     }
   ],
   "release": "not_authorized",
@@ -1740,6 +1783,12 @@
       "sourceRevision": "3065b0624973c95a2e6300257d1935b13c46b379",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45749309606/job/139672991940",
       "description": "Focused council/operator integration step succeeded; full exact CI pending at observation."
+    },
+    {
+      "id": "V2-HIST-003",
+      "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662",
+      "description": "Shared-DAG simultaneous correction and withdrawal: 4 recomputed, 3 removed, 3 reused; dangling dependency refused without cache mutation; fresh and restored reports byte-identical. Integrated semantic/source-history/workspace acceptance open."
     }
   ],
   "reconciledCI": [
@@ -9430,8 +9479,8 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-195-exact-validation-and-register-reconciliation",
-    "baseline": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+    "session": "V2-197-exact-register-closure-and-revision-regression",
+    "baseline": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
     "branches": [
@@ -9452,9 +9501,9 @@
         "change": "One-shot approved route/scope plus pre-dispatch revalidation",
         "next": "Browser/operator approval wiring; actual authorized interoperability",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 5,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9462,21 +9511,21 @@
         "id": "02-persistent-knowledge",
         "branch": "sutra/v2-parallel/02-persistent-knowledge",
         "pr": 52,
-        "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af",
+        "head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
         "state": "scoped-verified",
         "ci": {
-          "run": 45779075994,
-          "job": 139769828804,
+          "run": 45788072332,
+          "job": 139799827662,
           "observed": "success",
-          "scope": "422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery"
+          "scope": "423/423 scoped JS; simultaneous correction/withdrawal, refusal and restoration, witness/recovery"
         },
         "mergeableAtObservation": null,
-        "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile",
-        "next": "Hardware power-loss, cross-filesystem portability, external freshness, scale",
+        "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic revision regression",
+        "next": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
-          "ahead": 10,
-          "behind": 38,
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+          "ahead": 11,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9495,9 +9544,9 @@
         "change": "Mapping revision audit and independent Python judgment reconstruction",
         "next": "Independent human annotation and browser review wiring",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 7,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9517,9 +9566,9 @@
         "change": "Exact source-bound observation receipt",
         "next": "External identity/measurement authentication and applicability",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 6,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9538,9 +9587,9 @@
         "change": "Independent Python topology and stale same-result revision challenges",
         "next": "Independent interval/statistical/semantic profiles",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 4,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9559,9 +9608,9 @@
         "change": "Normalized assignment domain expansion; omitted-world reporting",
         "next": "Scalable bounded search and measured review benefit",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 6,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9580,9 +9629,9 @@
         "change": "Opaque credential-generation fence through downstream publication",
         "next": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 5,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9606,9 +9655,9 @@
         "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
         "next": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 13,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9627,9 +9676,9 @@
         "change": "Engineering capacity interval and degraded-condition journey",
         "next": "Rights-cleared real source and independent specialist evaluation",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 6,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9648,9 +9697,9 @@
         "change": "Held-out exact content and declared lineage collision audit",
         "next": "Frozen independently annotated real cases, matched actual metering and comparative runs",
         "drift": {
-          "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "base": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
           "ahead": 5,
-          "behind": 38,
+          "behind": 39,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       }
@@ -11088,6 +11137,232 @@
           }
         ],
         "qualification": "Exact observation, no broad gate promotion. Earlier overlay and history are historical."
+      },
+      {
+        "session": "V2-195-exact-validation-and-register-reconciliation",
+        "baseline": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+        "branches": [
+          {
+            "id": "01-model-orchestration",
+            "branch": "sutra/v2-parallel/01-model-orchestration",
+            "pr": 51,
+            "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45757418475,
+              "observed": "success",
+              "scope": "exact child scoped JS regression",
+              "browserRun": 45757418447,
+              "browserObserved": "success"
+            },
+            "mergeableAtObservation": null,
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "next": "Browser/operator approval wiring; actual authorized interoperability",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 5,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "02-persistent-knowledge",
+            "branch": "sutra/v2-parallel/02-persistent-knowledge",
+            "pr": 52,
+            "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45779075994,
+              "job": 139769828804,
+              "observed": "success",
+              "scope": "422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery"
+            },
+            "mergeableAtObservation": null,
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile",
+            "next": "Hardware power-loss, cross-filesystem portability, external freshness, scale",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 10,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "03-semantic-compilation",
+            "branch": "sutra/v2-parallel/03-semantic-compilation",
+            "pr": 53,
+            "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45758784104,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "next": "Independent human annotation and browser review wiring",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 7,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "04-evidence-acquisition",
+            "branch": "sutra/v2-parallel/04-evidence-acquisition",
+            "pr": 54,
+            "head": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45779263957,
+              "job": 139770463685,
+              "observed": "success",
+              "scope": "407+5+2 tests passed, authenticated separate-process receipt and acquisition path"
+            },
+            "mergeableAtObservation": null,
+            "change": "Exact source-bound observation receipt",
+            "next": "External identity/measurement authentication and applicability",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 6,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "05-independent-verification",
+            "branch": "sutra/v2-parallel/05-independent-verification",
+            "pr": 55,
+            "head": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45764898229,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "next": "Independent interval/statistical/semantic profiles",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 4,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "06-counterfactuals",
+            "branch": "sutra/v2-parallel/06-counterfactuals",
+            "pr": 56,
+            "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759676416,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "next": "Scalable bounded search and measured review benefit",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 6,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "07-security-recovery",
+            "branch": "sutra/v2-parallel/07-security-recovery",
+            "pr": 57,
+            "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45753193964,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Opaque credential-generation fence through downstream publication",
+            "next": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 5,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "08-unified-workspace",
+            "branch": "sutra/v2-parallel/08-unified-workspace",
+            "pr": 58,
+            "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "state": "scoped-verified",
+            "ci": {
+              "observed": "success",
+              "scope": "exact scoped JS and Chromium browser/accessibility; publisher retry succeeded",
+              "run": 45786416609,
+              "browserRun": 45786416592,
+              "browserJob": 139794191354,
+              "browserObserved": "success",
+              "publisherRun": 45786416590,
+              "publisherObserved": "success attempt 2; attempt 1 failure retained"
+            },
+            "mergeableAtObservation": null,
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "next": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 13,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "09-specialist-domains",
+            "branch": "sutra/v2-parallel/09-specialist-domains",
+            "pr": 59,
+            "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759708514,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "next": "Rights-cleared real source and independent specialist evaluation",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 6,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "10-benchmark",
+            "branch": "sutra/v2-parallel/10-benchmark",
+            "pr": 60,
+            "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759752586,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Held-out exact content and declared lineage collision audit",
+            "next": "Frozen independently annotated real cases, matched actual metering and comparative runs",
+            "drift": {
+              "base": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+              "ahead": 5,
+              "behind": 38,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          }
+        ],
+        "qualification": "Current exact scoped child observation, pinned to observed central source. No broad gate promotion; historical snapshots preserved."
       }
     ],
     "priorityOrder": [
@@ -11143,7 +11418,7 @@
     "combinedValidation": {
       "pr": 61,
       "branch": "sutra/v2-validation/v2-182",
-      "head": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
       "state": "validation-only-do-not-merge",
       "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
       "children": [
@@ -11153,7 +11428,7 @@
         },
         {
           "pr": 52,
-          "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+          "head": "61714c3c095ad254486b250c80cc84b0481dfdd2"
         },
         {
           "pr": 53,
@@ -11190,13 +11465,21 @@
       ],
       "nonoverlappingFiles": 81,
       "ci": {
-        "run": 45787018982,
-        "knowledge": "success",
+        "run": 45788350009,
+        "knowledge": "in_progress",
         "browser": "in_progress",
-        "parallelRun": 45787019038,
+        "parallelRun": 45788349987,
         "parallel": "success",
-        "workspaceRun": 45787019111,
-        "workspace": "success"
+        "workspaceRun": 45788350020,
+        "workspace": "in_progress",
+        "browserCompatibilityRun": 45788350132,
+        "browserCompatibility": "in_progress",
+        "operatorBrowserRun": 45788349834,
+        "operatorBrowser": "in_progress",
+        "finqaRun": 45788349813,
+        "finqa": "success",
+        "publisherRun": 45788351602,
+        "publisher": "in_progress"
       },
       "history": [
         {
@@ -11321,10 +11604,77 @@
             "observed": "in_progress"
           },
           "qualification": "Latest exact ten child heads; no merge or broad gate promotion. Prior full combined CI passed; latest exact full run pending at observation. #58 actual browser download independent differential passed separately."
+        },
+        {
+          "pr": 61,
+          "branch": "sutra/v2-validation/v2-182",
+          "head": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+          "state": "validation-only-do-not-merge",
+          "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
+          "children": [
+            {
+              "pr": 51,
+              "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+            },
+            {
+              "pr": 52,
+              "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+            },
+            {
+              "pr": 53,
+              "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+            },
+            {
+              "pr": 54,
+              "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+            },
+            {
+              "pr": 55,
+              "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+            },
+            {
+              "pr": 56,
+              "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+            },
+            {
+              "pr": 57,
+              "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+            },
+            {
+              "pr": 58,
+              "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+            },
+            {
+              "pr": 59,
+              "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+            },
+            {
+              "pr": 60,
+              "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+            }
+          ],
+          "nonoverlappingFiles": 81,
+          "ci": {
+            "run": 45787018982,
+            "knowledge": "success",
+            "browser": "success",
+            "parallelRun": 45787019038,
+            "parallel": "success",
+            "workspaceRun": 45787019111,
+            "workspace": "success",
+            "compatibilityRun": 45787019018,
+            "compatibility": "in_progress"
+          },
+          "qualification": "Validation only; no merge or newer revision credit. Canonical browser separately observed; core gates open.",
+          "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "childUniquePaths": 82,
+          "exactChildBlobs": 75,
+          "reconciledPaths": 7,
+          "validationOnlyPaths": 6
         }
       ],
-      "qualification": "Validation only; no merge or newer revision credit. Canonical browser separately observed; core gates open.",
-      "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+      "qualification": "Validation only; eleven exact nonoverlapping delta blobs. New exact CI required; historical success does not transfer.",
+      "parent": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
       "childUniquePaths": 82,
       "exactChildBlobs": 75,
       "reconciledPaths": 7,
@@ -11583,18 +11933,18 @@
     "validationPr": 61,
     "validationMergeAllowed": false,
     "activeTask": "V2-N005",
-    "remainingTasks": 160,
+    "remainingTasks": 155,
     "activeTasks": 1,
-    "completedSinceReset": 8,
-    "remainingIncludingActive": 161,
+    "completedSinceReset": 13,
+    "remainingIncludingActive": 156,
     "externalBlockers": 6,
     "optionalRemainingTasks": 4,
-    "foundationRemainingIncludingActive": 157,
+    "foundationRemainingIncludingActive": 152,
     "explicitPriorityCounts": {
       "P0": 11,
       "P1": 16,
       "P2": 3,
-      "unclassified": 131
+      "unclassified": 126
     },
     "priorityCountQualification": "Explicit roadmap/checklist priorities only; unclassified checklist tasks use dependency order, no inferred priority labels."
   },
@@ -11606,34 +11956,36 @@
     "activePath": "docs/sutra-v2/CHECKLIST.md"
   },
   "currentReconciliation": {
-    "session": "V2-195-exact-validation-and-register-reconciliation",
-    "centralSource": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+    "session": "V2-197-exact-register-closure-and-revision-regression",
+    "centralSource": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
     "centralRun": {
-      "id": 45786919479,
+      "id": 45787710589,
       "knowledge": "success",
       "browser": "success",
-      "knowledgeJob": 139795901736,
-      "browserJob": 139795901603
+      "knowledgeJob": 139798616046,
+      "browserJob": 139798616376
     },
     "validation": {
-      "head": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
-      "centralSource": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+      "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+      "centralSource": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
       "mergeAllowed": false,
       "manifestStale": false,
-      "qualification": "Exact for observed source; subsequent registry checkpoint has separate source identity",
-      "combinedRun": 45787018982,
-      "knowledgeJob": 139796246998,
-      "knowledgeConclusion": "success",
-      "browserJob": 139796247554,
+      "qualification": "Exact observed parent; later registry checkpoint separate. Fresh CI required.",
+      "combinedRun": 45788350009,
+      "knowledgeJob": null,
+      "knowledgeConclusion": "in_progress",
+      "browserJob": null,
       "browserConclusion": "in_progress",
-      "parallelRun": 45787019038,
+      "parallelRun": 45788349987,
       "parallelConclusion": "success",
-      "workspaceRun": 45787019111,
-      "workspaceConclusion": "success",
+      "workspaceRun": 45788350020,
+      "workspaceConclusion": "in_progress",
       "childUniquePaths": 82,
       "exactChildBlobs": 75,
       "reconciledPaths": 7,
-      "validationOnlyPaths": 6
+      "validationOnlyPaths": 6,
+      "browserCompatibilityRun": 45788350132,
+      "browserCompatibilityConclusion": "in_progress"
     },
     "retainedFailures": [
       {
@@ -11705,7 +12057,12 @@
       "V2-N003",
       "V2-N004",
       "V2-N006",
-      "V2-N012"
+      "V2-N012",
+      "V2-N007",
+      "V2-N008",
+      "V2-N009",
+      "V2-N010",
+      "V2-N011"
     ],
     "next": "V2-N005",
     "children": [
@@ -11713,23 +12070,24 @@
         "pr": 51,
         "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
         "ahead": 5,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45757418475,
         "scopedConclusion": "success"
       },
       {
         "pr": 52,
-        "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af",
-        "ahead": 10,
-        "behind": 38,
-        "scopedRun": 45779075994,
-        "scopedConclusion": "success"
+        "head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+        "ahead": 11,
+        "behind": 39,
+        "scopedRun": 45788072332,
+        "scopedConclusion": "success",
+        "scopedJob": 139799827662
       },
       {
         "pr": 53,
         "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
         "ahead": 7,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45758784104,
         "scopedConclusion": "success"
       },
@@ -11737,7 +12095,7 @@
         "pr": 54,
         "head": "2336566c64c4ce461042bec8b34c01c22356aba3",
         "ahead": 6,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45779263957,
         "scopedConclusion": "success"
       },
@@ -11745,7 +12103,7 @@
         "pr": 55,
         "head": "1a429e24a4fca63affccedf138150480b3ee87c2",
         "ahead": 4,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45764898229,
         "scopedConclusion": "success"
       },
@@ -11753,7 +12111,7 @@
         "pr": 56,
         "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
         "ahead": 6,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45759676416,
         "scopedConclusion": "success"
       },
@@ -11761,7 +12119,7 @@
         "pr": 57,
         "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
         "ahead": 5,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45753193964,
         "scopedConclusion": "success"
       },
@@ -11769,7 +12127,7 @@
         "pr": 58,
         "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
         "ahead": 13,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45786416609,
         "scopedConclusion": "success",
         "browserRun": 45786416592,
@@ -11783,7 +12141,7 @@
         "pr": 59,
         "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
         "ahead": 6,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45759708514,
         "scopedConclusion": "success"
       },
@@ -11791,11 +12149,22 @@
         "pr": 60,
         "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
         "ahead": 5,
-        "behind": 38,
+        "behind": 39,
         "scopedRun": 45759752586,
         "scopedConclusion": "success"
       }
-    ]
+    ],
+    "previousValidationEvidence": {
+      "head": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "combinedRun": 45787018982,
+      "knowledgeJob": 139796246998,
+      "browserJob": 139796247554,
+      "combinedConclusion": "success",
+      "parallelRun": 45787019038,
+      "workspaceRun": 45787019111,
+      "browserCompatibilityRun": 45787019018,
+      "browserCompatibilityConclusion": "in_progress"
+    }
   },
   "webAccess": {
     "session": "V2-190-standalone-web-scope",
