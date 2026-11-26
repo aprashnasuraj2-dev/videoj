@@ -32,6 +32,8 @@ Use [CHECKLIST.md](CHECKLIST.md) as the only active work cursor.
 
 The V1 workspace under `docs/sutra/` may be consulted only for reusable source, exact evidence, security constraints and counterexamples needed by the selected V2 task.
 
+**Optional capability boundary (V2-190):** Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. Schedule WEB-001–004 after higher-priority foundation work.
+
 ## 3. Execution loop
 
 A continuation turn is not complete because a status report exists. While safe, authorized, dependency-ready engineering remains:

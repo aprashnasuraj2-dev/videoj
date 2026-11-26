@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-189
+# Dependency-aware engineering roadmap — V2-190
 
 > **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
 
@@ -1509,4 +1509,10 @@ Next: observe exact CI; integrate #52 persistent knowledge and #53 semantic revi
 
 ## V2-189 — optional web access plan (2026-11-26)
 
+> Historical decision superseded by V2-190 standalone scope; do not implement the integration described here.
+
 User supplied ten TypeScript files. Added four bounded checklist tasks WEB-001–004 under existing #54 acquisition, with #57 security, #58 UI and #55 replay reuse. [Integration contract and source fingerprints](WEB-ACCESS.md). No new workstream, no live provider test, no runtime enabled, no gate promoted. Existing N003 cursor and immediate CI reconciliation unchanged. Parent `2e1fce3dc5740d6f57127da6b6c8611f6f984c30`. Proposed host-only consented GET and source snapshot admission; reject current prototype's DNS/transport/MIME/taint gaps rather than import wholesale. 164 outstanding engineering tasks including one active; six external blockers.
+
+## V2-190 — standalone web scope and exact-head observation (2026-11-26)
+
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. Supersedes V2-189 integration language, retained below/in history as historical evidence only. Ten original TypeScript reference fingerprints retained; no runtime implementation or verification credit. Central observed parent `3d33e6466e9a997c0c0151780cf8fbc405898c34`; exact knowledge run [45785358772](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation. #58 exact head `e163e9a9a293a4be9c713f2b2967de33d91b07bd`: [workspace run 45779650243](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631) failed at 200% text resize (320px viewport, 384px document scroll width, no overflowing element detected by prior diagnostic); baseline browser journey passed, separate parallel run 45779650347 succeeded. #61 exact `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled; stale manifest, validation-only, DO NOT MERGE. N003 remains active. No new gate credit; 164 engineering items including active (160 foundation plus four optional), six external blockers.

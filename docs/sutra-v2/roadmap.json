@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-189-web-access-extension-plan",
+  "session": "V2-190-standalone-web-scope",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -4326,28 +4326,23 @@
   "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
   "executionPolicy": "Only the active V2 checklist selects tasks; broad roadmap statuses retain their prior evidence boundaries.",
   "webAccess": {
-    "session": "V2-189-web-access-extension-plan",
+    "session": "V2-190-standalone-web-scope",
     "status": "planned",
-    "scope": "optional read-only web discovery and reviewed source intake, disabled by default",
+    "scope": "standalone optional future capability, disabled and unregistered by default; no core integration",
     "contract": "docs/sutra-v2/WEB-ACCESS.md",
-    "owner": "#54 with #57, #58 and #55 integration",
+    "owner": "independent optional module",
     "tasks": [
       {
         "id": "V2-WEB-001",
         "priority": "P0",
-        "owner": "central / #57 + #54",
-        "dependencies": [
-          "V2-ACQ-008",
-          "V2-P02-RUNTIME",
-          "V2-P03-TAINT",
-          "V2-P04-CONSENT"
-        ],
+        "owner": "independent optional module",
+        "dependencies": [],
         "status": "pending"
       },
       {
         "id": "V2-WEB-002",
         "priority": "P1",
-        "owner": "#54",
+        "owner": "independent optional module",
         "dependencies": [
           "V2-WEB-001"
         ],
@@ -4356,25 +4351,28 @@
       {
         "id": "V2-WEB-003",
         "priority": "P1",
-        "owner": "#54 + #58",
+        "owner": "independent optional module",
         "dependencies": [
-          "V2-WEB-002",
-          "V2-UX-005"
+          "V2-WEB-002"
         ],
         "status": "pending"
       },
       {
         "id": "V2-WEB-004",
         "priority": "P1",
-        "owner": "central + #55/#57/#58",
+        "owner": "independent optional module",
         "dependencies": [
           "V2-WEB-003"
         ],
         "status": "pending"
       }
     ],
-    "enablement": "exact route-specific consent/runtime/taint, transport and integrated acceptance; live endpoints separately authorized",
+    "enablement": "isolated exact security, correctness and compatibility verification; live use separately authorized; future integration separate architectural decision",
     "broadGateCredit": false,
-    "sourceRevision": "2e1fce3dc5740d6f57127da6b6c8611f6f984c30"
+    "sourceRevision": "3d33e6466e9a997c0c0151780cf8fbc405898c34",
+    "coreGateDependency": false,
+    "defaultEnabled": false,
+    "defaultRegistered": false,
+    "foundationPriority": "after higher-priority foundation work"
   }
 }

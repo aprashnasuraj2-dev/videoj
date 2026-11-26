@@ -17,9 +17,9 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-189 observation | Current evidence boundary |
+| PR | Workstream | Current head at V2-190 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `2e1fce3dc5740d6f57127da6b6c8611f6f984c30` | prior checkpoint; exact CI reconciliation open |
+| #50 | central V2 | `3d33e6466e9a997c0c0151780cf8fbc405898c34` | exact [knowledge run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -27,10 +27,10 @@
 | #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
 | #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
 | #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
-| #58 | unified workspace | `e163e9a9a293a4be9c713f2b2967de33d91b07bd` | candidate: adaptive header and compact metrics; exact CI pending |
+| #58 | unified workspace | `e163e9a9a293a4be9c713f2b2967de33d91b07bd` | [failure: 200% text resize 384px at 320px](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631); baseline browser passed |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
-| #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; knowledge/parallel reruns requested; accessibility assertion failed; manifest stale; **DO NOT MERGE** |
+| #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; combined/parallel reruns cancelled; workspace cancelled; accessibility failure retained; manifest stale; **DO NOT MERGE** |
 
 If any head changes, replace the stale row during reconciliation before claiming work against it. V2-186 comparison: all ten children 32 commits behind observed central source; #61 24 behind. See session evidence.
 
@@ -119,15 +119,6 @@ Existing base: acquisition path replay, source-bound receipts and challenged Ed2
 - [ ] `V2-ACQ-010` Integrate acquisition planning and result admission into the unified workspace.
 - [ ] `V2-ACQ-011` Add independent oracle/replay coverage for multi-action noisy/shared-cost cases.
 
-
-### Optional web access (small extension of #54 acquisition; not a new workstream)
-
-See [WEB-ACCESS.md](WEB-ACCESS.md). Reuse existing consent, egress, budgets, taint, source receipts and #58 workspace; off by default. Priorities below apply to this feature, not unrelated work.
-
-- [ ] `V2-WEB-001` **P0** — Adapt existing host egress, consent and bounded-response primitives for credentialless read-only HTTPS search/read; explicit opt-in, exact destination/query disclosure, DNS/IP pinning and per-hop re-admission, cancellation, byte/contact/deadline budgets, robots policy and no fetch on refusal. Prove with deterministic adversarial fixtures.
-- [ ] `V2-WEB-002` **P1** — Implement two bounded web_search/web_read capabilities using approved provider adapters, accurate intent/status and deterministic ranking, inert HTML extraction and typed untrusted source snapshots; bind raw/extracted digests and exact source spans, never promote snippets or page instructions to evidence/authority.
-- [ ] `V2-WEB-003` **P1** — Add optional search/open/preview/import to the existing evidence workspace, explicit user review/selection and refresh-as-revision; manual/offline path remains complete, no automatic follow-links, provider/model coupling or external contact from imported text.
-- [ ] `V2-WEB-004` **P1** — Verify exact integrated source with deterministic hostile transport/parser/consent/budget tests, browser no-contact and opt-in fixture journeys, offline independent receipt/span replay and changed-page revision; retain failures, measure limits, and keep live provider acceptance separate from fixture evidence.
 
 ## B5. PR #55 — independent verification and replay
 
@@ -293,6 +284,15 @@ The two strong scoped foundation results `V2-P05-STORE` and `V2-P06-MODEL` are h
 
 ---
 
+## D1. Standalone optional web access (after foundation; no core gate dependency)
+
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. See [WEB-ACCESS.md](WEB-ACCESS.md). Priorities are local to this module.
+
+- [ ] `V2-WEB-001` **P0** — Build isolated disabled-by-default credentialless HTTPS admission and bounded transport: exact disclosure authorization, DNS/IP pinning, per-hop re-admission, robots policy, cancellation, byte/contact/deadline budgets and deterministic refusal/no-contact fixtures.
+- [ ] `V2-WEB-002` **P1** — Implement standalone bounded web_search/web_read with configured provider routing, accurate intent/status, deterministic ranking, inert extraction and typed untrusted snapshots with raw/extracted digests.
+- [ ] `V2-WEB-003` **P1** — Verify standalone interface and compatibility: explicit construction, disabled/unregistered defaults, no reverse dependencies or changes to core behavior; existing security primitive consumers retain their contracts.
+- [ ] `V2-WEB-004` **P1** — Verify isolated security, correctness and regression at exact revision with hostile deterministic fixtures, cancellation, resource/concurrency limits, offline snapshot integrity and foundation non-regression; no live provider claim.
+
 # E. External/user-owned blockers — never simulate
 
 - [!] `V2-EXT-001` Consenting human reviewers for usability/semantic-review evidence.
@@ -317,11 +317,12 @@ Unless exact remote reconciliation shows a dependency change, execute in this or
 5. `V2-N005` confirm manifest-bound evidence; `V2-N006`–`V2-N012` normalize branches/registers and prepare reviewed integration.
 6. Integrate `#52 history + #53 semantic review → #58 workspace`.
 7. Integrate #57 trust boundaries and #51 operator/model approval around that path.
-8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation; add the optional WEB-001–004 slice when its relevant consent/runtime/taint and workspace dependencies are verified. Keep web disabled otherwise.
+8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation.
 9. Expand #55 statistical/semantic independent verification.
 10. Exercise #59 complete specialist journeys.
 11. Advance #60 to end-to-end natural-language and full staged benchmarking.
 12. Close the 21 Living Knowledge gates and remaining foundations only when their acceptance is genuinely satisfied.
+13. Develop WEB-001–004 independently when higher-priority foundation work permits; never make web access a foundation gate.
 
 Do not choose a former SUTRA1 pending task merely because it once had a lower numeric phase or appeared in an old `next_task` queue.
 
