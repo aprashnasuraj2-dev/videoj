@@ -62,10 +62,10 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.match(await localizedDate.innerText(),/२०२६/,'Nepali display uses localized numerals while retaining Gregorian year');
   assert.match(await page.locator('#peer-elapsed').textContent(),/६०[,.]?००० ms/,'elapsed limit preserves ms while localizing numerals');
   const localizedComparisonButtons=page.locator('#comparison-body .actions button');
-  await localizedComparisonButtons.nth(1).click();
+  assert.equal(await localizedComparisonButtons.count(),1,'production comparison exposes only the real-evidence action');
+  await localizedComparisonButtons.first().click();
   assert.match(await page.locator('#comparison-body .comparison-card h3').first().innerText(),/भिडियो/,'rerendered comparison keeps selected locale');
-  assert.match(await page.locator('#comparison-body .comparison-excerpt').first().innerText(),/two signatures/,'source excerpt remains original-language data');
-  await localizedComparisonButtons.nth(0).click();
+  assert.match(await page.locator('#comparison-body .comparison-excerpt').first().innerText(),/Synthetic timing marker/,'source excerpt remains original-language data');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   await page.locator('#language-select').selectOption('en');
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
