@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0047 — 2026-11-26
+
+**723/1,107 overall verified; 617/1,000 original; 377 pending; six omissions; one hardware blocker.** P078-02 stabilization closure is verified at exact head `d1560cfadbd0cf73007076e7a5e7b8f319e8fc81`: all 19 workflows passed, and the learner/runtime/API/browser jobs executed default-off inference, zero-call consent cancellation, exact source/config binding, receipt-required completion, partial/terminal/token failure handling, no-retry, ambiguity/truncation and secret/BYOK assertions. [Evidence](evidence/implementation/SESSION-0047.md).
+
+P078 remains open because P078-07/P078-10 are not satisfied. Live funded provider economics, rights-cleared content, human/physical acceptance, independent public interoperability and production release/headroom remain external gates. No paid inference, deployment or release occurred.
+
 ## Session 0046 — 2026-11-26
 
 **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 and X010-44..50 verified. Exact combined source `ae042db07f51d0cf1e71f002869ce9a65a011d48` passed all 19 workflows. P0 persistent workspace/journey/semantic/security integration is green; P1 ranked evaluation, provider telemetry/cost plumbing and device-ready acceptance harness are green. Live funded provider evidence (R-007) and actual physical/human acceptance (R-008) remain external gates; no paid inference or public release.
