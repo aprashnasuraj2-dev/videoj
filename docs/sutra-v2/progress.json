@@ -10358,5 +10358,234 @@
         "scope": "real killed writer before immutable link, before HEAD rename, after HEAD rename; legacy manual lock recovery"
       }
     ]
+  },
+  "reuseFirstReconciliation": {
+    "session": "V2-183-reuse-first-reconciliation",
+    "observedDate": "2026-11-26",
+    "centralSource": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+    "legacy": {
+      "source": "9bd76ef8bfd05f323592f21fe4b0841188861693",
+      "disposition": "frozen baseline; reuse existing components; v2 roadmap is active",
+      "verified": 714,
+      "total": 1100,
+      "pending": 379,
+      "releaseSubmissionPending": 200
+    },
+    "centralBrowser": {
+      "run": 45755996159,
+      "rerunJob": 139721380052,
+      "conclusion": "success",
+      "qualification": "all three engine jobs and freshness observed successful on rerun; no broad gate promotion"
+    },
+    "children": [
+      {
+        "pr": 51,
+        "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45757418475,
+        "conclusion": "success",
+        "implemented": "Browser operator approval console, local synthetic credential lifecycle and one-shot dispatch",
+        "remaining": "Authorized live provider interoperability, budget metering, integrated consent",
+        "additionalRun": 45757418447,
+        "additionalConclusion": "success"
+      },
+      {
+        "pr": 52,
+        "head": "8caac249b3e3a6844fbef9fd9b189996d4d8566b",
+        "disposition": "implemented-candidate; verification-pending",
+        "run": 45757208682,
+        "conclusion": "in_progress",
+        "implemented": "Existing immutable snapshots, SIGKILL recovery and flock; challenge-bound external witness adapter candidate",
+        "remaining": "Observe rerun; external retained witness freshness, scale, portability and hardware power loss"
+      },
+      {
+        "pr": 53,
+        "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45758784104,
+        "conclusion": "success",
+        "implemented": "Pinned mapping review, independent Python reconstruction, 24 independently annotated FinQA gold programs",
+        "remaining": "Natural-language induction, review UI integration, broader ambiguity coverage"
+      },
+      {
+        "pr": 54,
+        "head": "0a781904d90a101b7f74a5b471d521ad8a024d05",
+        "disposition": "implemented-candidate; verification-pending",
+        "run": 45757527623,
+        "conclusion": "in_progress",
+        "implemented": "Exact source-bound acquisition and separate-process authenticated observation candidate",
+        "remaining": "Observe rerun; applicability, calibration, noisy correlated observations"
+      },
+      {
+        "pr": 55,
+        "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45753442120,
+        "conclusion": "success",
+        "implemented": "Independent rational, topology and stale-revision replay",
+        "remaining": "Independent interval/statistical and semantic profile coverage"
+      },
+      {
+        "pr": 56,
+        "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759676416,
+        "conclusion": "success",
+        "implemented": "Resumable bounded streaming counterfactual search; corrected fresh computation regression",
+        "remaining": "Workspace wiring, measured scaling and practical review benefit"
+      },
+      {
+        "pr": 57,
+        "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45753193964,
+        "conclusion": "success",
+        "implemented": "Credential-generation fencing and downstream publication refusal",
+        "remaining": "Post-publication lifecycle, transport/peer isolation, coordinated rollback"
+      },
+      {
+        "pr": 58,
+        "head": "7690ca6d874f61f8da98418c9c6e8b766b313e56",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45760669200,
+        "conclusion": "success",
+        "implemented": "Portable checkpoint, independent actual export replay; new 320px keyboard/accessibility candidate",
+        "remaining": "Observe browser rerun; integrated journey and human accessibility",
+        "additionalRun": 45760669191,
+        "additionalConclusion": "in_progress"
+      },
+      {
+        "pr": 59,
+        "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759708514,
+        "conclusion": "success",
+        "implemented": "Pinned public SEC/FHWA derived fact cards and independent calculations",
+        "remaining": "Full-document provenance, qualified review and multi-document journeys"
+      },
+      {
+        "pr": 60,
+        "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759752586,
+        "conclusion": "success",
+        "implemented": "Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer",
+        "remaining": "End-to-end natural-language reasoning, matched actual model metering",
+        "additionalRun": 45759752625,
+        "additionalConclusion": "success"
+      }
+    ],
+    "validation": {
+      "pr": 61,
+      "head": "c34dc954f7a35857e24a9d5f8795f3e61fc359dd",
+      "parent": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+      "run": 45764494043,
+      "conclusion": "in_progress",
+      "impactRun": 45764493968,
+      "qualification": "81 unique changed child paths; one HTML overlap reconciled; validation only; never merge"
+    },
+    "foundations": [
+      {
+        "ids": [
+          "V2-P00-REPRO",
+          "V2-P00-EVIDENCE"
+        ],
+        "disposition": "inherited-and-partially-implemented",
+        "reuse": "v1 exact-source CI and register; v2 source-bound artifacts",
+        "remaining": "two clean builds, locked toolchain differences, machine validation of evidence promotion"
+      },
+      {
+        "ids": [
+          "V2-P01-THREAT",
+          "V2-P02-RUNTIME",
+          "V2-P03-TAINT",
+          "V2-P04-CONSENT",
+          "V2-P08-CAUSAL"
+        ],
+        "disposition": "inherited-and-integration-pending",
+        "reuse": "v1 pinned runtime, strict parser, private context, peer admission, action consent; v2 composite policy and council",
+        "remaining": "new causal pins, taint propagation and exact combined trust boundary"
+      },
+      {
+        "ids": [
+          "V2-P05-RECOVERY",
+          "V2-P05-ROLLBACK",
+          "V2-P06-REFINE"
+        ],
+        "disposition": "implemented-in-part; verification-pending",
+        "reuse": "Go durable action protocol, bounded formal traces, child #52 immutable history and witness",
+        "remaining": "external monotonic anchor, coordinated rollback, power-loss and broader refinement"
+      },
+      {
+        "ids": [
+          "V2-P09-IR",
+          "V2-P11-UNCERTAINTY",
+          "V2-P12-ECON"
+        ],
+        "disposition": "implemented-in-part; integration-pending",
+        "reuse": "exact kernel, reviewed compiler, finite worlds, acquisition and interval profiles",
+        "remaining": "model-assisted intent induction, statistical parity and noisy observation applicability"
+      },
+      {
+        "ids": [
+          "V2-P14-BUDGET",
+          "V2-P14-BYOK-UX"
+        ],
+        "disposition": "implemented-in-part; external-validation-blocked",
+        "reuse": "v1 bounded proxy; v2 opaque credential vault and operator console #51",
+        "remaining": "authorized real providers, actual spend and global concurrency accounting"
+      },
+      {
+        "ids": [
+          "V2-P16-LEARN",
+          "V2-P17-OBSERVE",
+          "V2-P18-KIT"
+        ],
+        "disposition": "inherited-and-adaptation-pending",
+        "reuse": "v1 learner, neutral consumer, Open Kit and publisher starter; v2 observatory and receipts",
+        "remaining": "v2 independent public-compatible contract and authentic user/builder trials"
+      },
+      {
+        "ids": [
+          "V2-P19-PERF",
+          "V2-P20-BENCH",
+          "V2-P21-RESEARCH"
+        ],
+        "disposition": "implemented-in-part; evaluation-pending",
+        "reuse": "existing synthetic benchmarks, independent oracle, FinQA child #60",
+        "remaining": "held-out end-to-end reasoning, actual latency/tokens/cost, prior-art limits"
+      },
+      {
+        "ids": [
+          "V2-P07-WASM",
+          "V2-P10-LEAN",
+          "V2-P13-INTEROP"
+        ],
+        "disposition": "remaining-specific-verification",
+        "reuse": "existing bounded Rust/WASM support and formal models; v1 peer loader",
+        "remaining": "exact WASM resource profile, required machine-checked proofs, unknown independently operated publisher"
+      },
+      {
+        "ids": [
+          "V2-P15-SUPERVISE",
+          "V2-P22-RELEASE"
+        ],
+        "disposition": "deferred-with-existing-justification",
+        "reuse": "historical release/preflight infrastructure",
+        "remaining": "only reopen on product need or separate authorization"
+      }
+    ],
+    "externalBlockers": [
+      "Consenting human reviewers and actual physical devices",
+      "Operator-authorized real provider credentials and spend ceiling",
+      "Independent public HTTPS peer and release authorization",
+      "Original content rights/factual approval where applicable"
+    ],
+    "next": [
+      "Observe exact current CI (including combined).",
+      "Connect #52 history and #53 review to #58 workspace in a separate reviewed candidate; preserve child ownership.",
+      "Expand independent interval/statistical verifier, then run end-to-end reasoning evaluation rather than duplicate gold-program execution."
+    ],
+    "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion."
   }
 }

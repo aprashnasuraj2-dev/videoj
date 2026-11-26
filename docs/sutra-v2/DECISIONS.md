@@ -596,3 +596,7 @@ Publish immutable disk snapshots through staged fsynced inode/link, never write 
 
 ### V2-182 combined verification and process recovery
 Use a separate non-merge validation draft to materialize exact child blobs, retain original child PRs and exact manifest, and run unchanged canonical knowledge/browser job bodies with a dedicated branch guard. Never treat combined candidate success as merged-state or release evidence. For fresh Linux-only history stores, kernel-managed flock releases on process death; retain the legacy protocol separately, refuse mixed-mode writes, and do not infer power-loss or rollback witness guarantees. Independent Python workspace/mapping reconstruction verifies bounded declared inputs, not semantic truth or permission. Record every failed revision and exact correction.
+
+
+### V2-183-reuse-first-reconciliation
+Reuse-first selection: preserve v1 and v2 historical statuses. Record scoped child implementation/CI and unresolved integration or external acceptance separately, not as new broad gate credit. Combined validation materializes all ten exact child heads without merging; two disjoint HTML insertions and exact impact mappings were reconciled without replacing the underlying components. No public release, live inference or automatic merge.
