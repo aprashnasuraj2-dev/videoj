@@ -16,7 +16,7 @@ export function makeProofNetwork(){
 // The trusted host supplies a single bounded case, not a model-written registry.
 // Copy it before awaiting orchestration; do not expose the graph or result to
 // the model unless a future explicitly authorized disclosure contract allows it.
-function admitCase(text){
+export function admitProofCase(text){
  const c=parseUniqueJson(text,{maxChars:65536,maxDepth:5});
  if(!keys(c,['obligationId','methods'])||typeof c.obligationId!=='string'||!ID.test(c.obligationId)||
  !Array.isArray(c.methods)||c.methods.length<1||c.methods.length>4)reject();
@@ -38,7 +38,7 @@ export function parseProposal(text,obligationId,methodIds){
  return Object.freeze(p);
 }
 export async function runProofProposal({caseText,model,signal}){
- const c=admitCase(caseText),methodIds=[...c.methods.keys()];
+ const c=admitProofCase(caseText),methodIds=[...c.methods.keys()];
  const request=JSON.stringify({obligationId:c.obligationId,methodIds});
  signal?.throwIfAborted();
  const run=await runNetwork({definition:makeProofNetwork(),name:'proof',frontMan:'planner',request,model,signal,

@@ -41,7 +41,7 @@ def main():
         elif name=='revision':
             r=report('sutra-revision-development.json');o=report('sutra-revision-development-independent.json')
             check_ids(r['rows'],cases);require(r['cases']==r['exactCasesCorrect']==count and all(x['exactMatch'] for x in r['rows']),name+' mismatch')
-            require(r['frozenGitBlob']==blob and r['frozenSha256']==digest(raw),'revision report manifest mismatch')
+            require(r['frozenGitBlob']==blob and r['frozenSha256']==hashlib.sha256(raw).hexdigest(),'revision report manifest mismatch')
             require(o['profile']=='revision-development-independent/v1' and r['accepted']==o['accepted']==32 and r['refused']==8 and o['repinnedTamperRefused']==64,'revision replay mismatch')
             base.update(matchedCases=count,verificationScope='32 accepted artifacts independently reconstructed; eight refusals in JS; 64 separate repinned mutations',metrics={k:r[k] for k in ('accepted','refused','staleCarryForwardWrong','staleUnsupportedDecisive','fullReselection','sourceLocalReselection','sutraReselection')},independentRepinnedTamperRefused=o['repinnedTamperRefused'])
         else:

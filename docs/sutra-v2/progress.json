@@ -3,10 +3,12 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-147",
+  "session": "V2-148",
   "next": [
-    "V2-LK02-INTENT-IR",
+    "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
+    "V2-LK15-UNIFIED-WORKSPACE",
+    "V2-LK02-INTENT-IR",
     "V2-LK04-ROUNDTRIP",
     "V2-LK05-SEMANTIC-COUNTERFACTUAL",
     "V2-LK06-SEMANTIC-WORLDS",
@@ -20,7 +22,6 @@
     "V2-LK09-REVISION",
     "V2-LK11-IMPACT-REPORT",
     "V2-LK18-PRIOR-ART",
-    "V2-LK15-UNIFIED-WORKSPACE",
     "V2-LK17-BENCHMARK",
     "V2-LK19-TRUST-BOUNDARY",
     "V2-LK20-REPOSITORY-ISOLATION",
@@ -34,11 +35,10 @@
     "V2-P01-THREAT",
     "V2-P04-CONSENT",
     "V2-P14-BUDGET",
-    "V2-P14-BYOK-UX",
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Final-child pin independent verifier and actual browser archive candidate; exact CI pending.",
+  "state": "Candidate: ledger digest representation repair and provider-neutral reviewed-method council; exact CI pending.",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-148",
+    "parent": "25754181acbd582fdf80e92bed6015ff8a2f5341",
+    "description": "### V2-148 — provider-neutral reviewed-method council and ledger format repair (candidate)\nUser-directed pivot: no new corpus. Repair aggregate ledger comparison to use the revision producer's bare SHA-256 format, preserving exact bytes, Git blob and case identities. Add bounded host-owned council over the existing ephemeral credential vault and provider budget workspace. Arbitrary catalog/provider labels and custom model IDs; 1–4 agent routes, 1–3 rounds, explicit question/feedback disclosure scope, same-round barrier, fixed host assignments, per-method exact verification and preserved prior disagreements. Model output is a closed reviewed-method proposal; graph and credentials never deliberately sent to peers, no model-generated endpoint or verdict accepted. No auto fallback/retry. Timeout stops publication, not an injected non-cooperative transport; budget ownership remains in workspace. Tests use two arbitrary mock providers and actual beam verifier, hostile output, scope, budget and cancellation. Existing branch V2-146 exact knowledge job 139617361867 failed at manifest digest representation after 257 unit passes; retain failure. V2-147 register was already pending at observed parent; no inherited credit. New exact CI pending. Next: validate this candidate, then browser Agent Studio and general reviewed intent proposal pathway; live credentials, arbitrary egress and paid inference remain disabled."
+  },
+  "previousPendingCandidate": {
     "session": "V2-147",
     "parent": "23b5bc12bc7ed38dd277096433131d29eebed23c",
     "description": "### V2-147 — independently retained final-child pin in offline verification (candidate)\nV2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 20/20, 16 invalid cases: strict and structural zero false accepts, hash-only 14, hash-plus-declared-pins 8; two intentional pretty-reformat differences (knowledge job 139615315490). Add optional final-child digest to structural Python revision/recovery verifier and CLI, preserving exact old successful outputs when absent or matching. Wrong and malformed child pins refuse explicitly; actual browser separately exports final child for each transition and downloaded standalone archive checks them. Frozen replay evaluator uses new direct optional pin rather than wrapper; frozen expectations unchanged. Structural replay still differs from strict producer bytes. CI pending, no broad gate closure."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-146",
-    "parent": "1ee0be825a2f9b65efe43fcbbc5291d4dee1a1fe",
-    "description": "### V2-146 — reproducible six-group development ledger (candidate)\nAggregate only completed individual evaluator/oracle results; enforce six frozen manifest blob digests, exact case IDs, group-specific matched counts, independent replay scope and report artifact SHA-256. Include actual checked-out revision plus PR head/run ID, separate 200 synthetic coverage from zero expert/held-out labels, and retain group-specific baselines without pooling heterogeneous scores. Capture existing revision Python summary as artifact; no weakening of original steps. CI pending; no release or benchmark gate closure."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -784,6 +784,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45715972712/job/139561979295",
       "reason": "Frozen test array sorted in place; TypeError before assertion. Browser succeeded, kernel failed.",
       "resolutionStatus": "V2-112 fixed test-only frozen array sort; all nine returned PR workflows green, exact knowledge job 139562734872."
+    },
+    {
+      "sourceRevision": "4303fe497a0c07eb0fb4959cd1a1a62a3edba495",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45732403006",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45732403006/job/139617361867",
+      "reason": "Aggregate revision report manifest comparison used prefixed versus bare SHA-256; 257 kernel unit tests passed.",
+      "resolutionStatus": "V2-148 comparison repair candidate; exact CI pending."
     }
   ],
   "reconciledDurableCandidate": {
