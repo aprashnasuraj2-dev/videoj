@@ -21,3 +21,15 @@ Exact child CI pending.
 ## V2-182 candidate
 Add engineering specialist uncertainty journey over actual reviewed intervals: nominal capacity remains sufficient, surviving capacity may be uncertain around demand or fail across the declared range after correction. Synthetic fixture, no service SLA or physical safety certification. Real-source and independent specialist validation still open.
 Exact child CI pending.
+
+
+## V2-183 candidate — real public-source specialist journeys
+Replace synthetic-only evidence on two narrow specialist checks with compact pinned fact cards transcribed from immutable government archival locators: Apple 2025 Form 10-K accession 0000320193-25-000079 on SEC (Services 109,158 vs 96,169; total 416,161 vs 391,035; reported 14% vs 6%) and FHWA-HIF-22-025 printed page 57/Table 2 (iteration-3 phiVn 338 kip, dead 213.4, prestress -1.1, live 92.1, reported RF 1.36). Finance evaluates both source-reported percentages and exact raw-value relative growth; engineering evaluates the equivalent RF>1 margin. Independent Python recomputes both with Fraction and verifies literal fact-card SHA-256 pins. These are source-derived calculations, not financial advice, bridge certification, external-host authentication or full-document byte pinning. External sources reviewed 2026-11-26; CI remains offline and deterministic. Exact child CI pending.
+
+
+### V2-183 CI correction
+Run 45757956677 exposed the reviewed compiler's numeric-token boundary: fact-card percentages/rating factor ended immediately before a period, so the period could be interpreted as numeric continuation. Preserve the same source facts but normalize manually transcribed fact-card separators to semicolons, repin exact bytes, and keep the compiler boundary unchanged. This is formatting normalization of the derived fact card, not alteration of the cited values. Prior failure retained; corrected CI pending.
+
+
+### V2-183 status-layer correction
+Run 45758756371 passed source admission but exposed a test-layer mismatch: `compileReviewedExpression` intentionally reports the reviewed compiler status `CONDITIONALLY_SATISFIED`, not the lower-level kernel receipt string `constraint_satisfied`. Update fixture/test expectations to the public compiler contract; no computation, source value, parser or admission rule changed. Prior failures retained. Corrected CI pending.

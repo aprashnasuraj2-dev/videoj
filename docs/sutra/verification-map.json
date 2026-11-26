@@ -344,9 +344,13 @@
         "docs/sutra-v2/evaluation/prior-art.json",
         "docs/sutra-v2/evaluation/PRIOR_ART.md",
         "docs/sutra-v2/evaluation/PROTOCOL.md",
+        "docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt",
         "docs/sutra-v2/validation/combined-v2-182.json",
         ".github/workflows/sutra-v2-combined-v2-182.yml",
-        ".github/workflows/sutra-v2-workspace-browser.yml"
+        ".github/workflows/sutra-v2-workspace-browser.yml",
+        ".github/workflows/sutra-v2-operator-browser.yml",
+        ".github/workflows/sutra-v2-finqa-benchmark.yml",
+        "docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md"
       ],
       "requiredWorkflows": [
         "Validate SUTRA v2 knowledge kernel"

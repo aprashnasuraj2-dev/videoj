@@ -21,3 +21,11 @@ Exact child CI pending.
 ## V2-182 candidate
 Add pinned split manifest audit with exact per-case content digest and declared source-lineage collision detection across development/held-out splits; match held-out case IDs to independently pinned gold labels, preserve unknown ancestry. No real benchmark run or training contamination claim. Next: rights-cleared independently annotated cases and actual paired metering.
 Exact child CI pending.
+
+
+## V2-183 candidate — independent held-out FinQA comparative benchmark
+Freeze the semantic operation profile on the disjoint FinQA ID-ranked development slice 1–24, then benchmark ranks 25–64 (40 cases) without changing supported operations after inspection. The full 1,147-ID FNV rank inventory proves label-blind selection. Seven offline arms are compared case-by-case: SUTRA exact gold-program IR, Float64 gold-program execution, single-step exact, first-step exact, final-literal exact, a naive question-number difference heuristic, and abstain-all. An independently implemented Python Fraction scorer validates the third-party gold programs, scores coverage and correctness separately, emits Wilson 95% intervals, declared operation counts, failure IDs and paired errors versus SUTRA. The expected counterexample is explicit: Float64 can tie exact arithmetic on these simple cases, so no arithmetic-superiority claim is permitted. This is a held-out benchmark of annotated program execution/abstention, not natural-language retrieval/program induction, live LLMs, production latency/cost, or financial advice. Dedicated CI uploads predictions and score artifacts. FinQA is MIT licensed; exact upstream commit/blob are retained. Exact CI pending.
+
+
+### V2-183 benchmark path correction
+Dedicated benchmark run 45759275301 failed before evaluation because the new module imported `../index.js`, resolving to nonexistent `packages/index.js`; the kernel is sibling `./index.js`. Correct the module path only. No corpus, selection, arm or scoring rule changed. Prior failure retained; exact benchmark rerun pending.

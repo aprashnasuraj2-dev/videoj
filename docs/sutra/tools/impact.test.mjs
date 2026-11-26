@@ -174,6 +174,7 @@ test('v2 research register and protocol are explicitly classified without waivin
 });
 
 
+test('third-party v2 license artifacts are exact-mapped without waiving unknown evaluation files',()=>{const r=classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.invalidatedMetrics,[]);assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/unknown.txt'],map).unmapped,['docs/sutra-v2/evaluation/third-party/unknown.txt']);});
 test('exact combined validation manifests and workflows require canonical v2 gates; unknown artifacts still fail closed',()=>{
  const files=['docs/sutra-v2/validation/combined-v2-182.json','.github/workflows/sutra-v2-combined-v2-182.yml','.github/workflows/sutra-v2-workspace-browser.yml'];
  const r=classifyChangedFiles(files,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.requiredWorkflows,['Validate SUTRA v2 knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
@@ -182,3 +183,5 @@ test('exact combined validation manifests and workflows require canonical v2 gat
  const jobs=x=>x.slice(x.indexOf('\njobs:\n'));
  assert.equal(jobs(combined).replaceAll("    if: github.head_ref == 'sutra/v2-validation/v2-182'\n",''),jobs(orig));
 });
+
+test('validation snapshot new workflows require canonical knowledge verification',()=>{const paths=['.github/workflows/sutra-v2-operator-browser.yml','.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'];const r=classifyChangedFiles(paths,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);});
