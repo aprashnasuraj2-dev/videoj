@@ -2,7 +2,7 @@
 // revision. Never infer correspondence from an unknown reason or revive old claims.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {prepareEvidenceRevision,exportEvidenceRevision} from './evidence-revision-transaction.js';
+import {prepareEvidenceRevision,exportEvidenceRevision,openEvidenceRevision} from './evidence-revision-transaction.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {sealInvestigationVersion,compareInvestigationVersions} from './investigation-revision.js';
 export const VERSION='sutra-evidence-recovery/v1';
@@ -98,4 +98,17 @@ export async function exportEvidenceRecovery(ancestorText,ancestorPin,revisionPl
  const bundleText=JSON.stringify({...summary,priorTransactionText:prior.bundleText,priorTransactionDigest:prior.snapshotPin,recoveryPlanText,childVersion:child.versionText,childDigest:child.digest});
  const byteLength=new TextEncoder().encode(bundleText).length,portable=byteLength<=262144;
  return freeze({recovery,bundleText:portable?bundleText:null,byteLength,portable,snapshotPin:portable?await casePin(bundleText):null,reason:portable?null:'RECOVERY_BUNDLE_TOO_LARGE'});
+}
+
+// Reopen exact producer bytes, with six caller-retained pins. Nested report
+// fields are data, never authority. This does not enable recursive recovery.
+export async function openEvidenceRecovery(bundleText,snapshotPin,ancestorPin,revisionPlanPin,currentPin,recoveryPlanPin,childPin){
+ if(typeof bundleText!=='string'||!bundleText.length||bundleText.length>262144||new TextEncoder().encode(bundleText).length>262144)fail('IMPORT_SIZE');
+ if(![snapshotPin,ancestorPin,revisionPlanPin,currentPin,recoveryPlanPin,childPin].every(pin)||await casePin(bundleText)!==snapshotPin)fail('IMPORT_PIN');
+ const b=parse(bundleText,40);
+ if(b.version!==VERSION||b.ancestorDigest!==ancestorPin||b.revisionPlanDigest!==revisionPlanPin||b.parentDigest!==currentPin||b.recoveryPlanDigest!==recoveryPlanPin||b.childDigest!==childPin||typeof b.priorTransactionText!=='string'||typeof b.recoveryPlanText!=='string'||!pin(b.priorTransactionDigest))fail('IMPORT_SCOPE');
+ const prior=await openEvidenceRevision(b.priorTransactionText,b.priorTransactionDigest,ancestorPin,revisionPlanPin,currentPin);
+ const e=await exportEvidenceRecovery(prior.ancestor.versionText,ancestorPin,prior.planText,revisionPlanPin,currentPin,b.recoveryPlanText,recoveryPlanPin);
+ if(!e.portable||e.snapshotPin!==snapshotPin||e.bundleText!==bundleText||e.recovery.child.digest!==childPin)fail('IMPORT_REPLAY');
+ return freeze({ancestor:prior.ancestor,prior:prior.exported,exported:e});
 }

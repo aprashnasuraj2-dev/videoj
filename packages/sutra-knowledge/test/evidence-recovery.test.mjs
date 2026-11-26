@@ -4,7 +4,7 @@ import {casePin} from '../pinned-investigation.js';
 import {livingFixture} from '../examples/living-investigation.mjs';
 import {selectedSpan} from '../reviewed-draft.js';
 import {prepareEvidenceRevision} from '../evidence-revision-transaction.js';
-import {prepareEvidenceRecovery} from '../evidence-recovery.js';
+import {prepareEvidenceRecovery,exportEvidenceRecovery,openEvidenceRecovery} from '../evidence-recovery.js';
 import {replayInvestigationVersion,createInvestigationReplaySession,createFreshInvestigationReplaySession} from '../investigation-revision.js';
 const contract=v=>JSON.parse(JSON.parse(v.versionText).contractText);
 const source=(v,id)=>contract(v).sources.find(s=>s.id===id);
@@ -68,5 +68,38 @@ test('fail closed on wrong parent, stale recovery pin, cross-source binding, for
  for(const [ops,err] of [[[cross],/REBINDING_SCOPE/],[[forged],/COMPILER_QUOTE_MISMATCH/],[[op,op],/SOURCE_SCOPE/],[[stale],/RESTORE_SOURCE/]]){
   await assert.rejects(prepareEvidenceRecovery(...await args(a,r,ops)),err);
  }
+ assert.deepEqual(await replayInvestigationVersion(r.result.child.versionText,r.result.child.digest),r.result.child.report);
+});
+
+test('reopen exact recovery with independent final child pin; reject repinned summaries and nested mutations',async()=>{
+ const a=await livingFixture(),r=await revision(a,[missing(a,'secondary')]),text='訂正 🧪 Cash 40; before 30';
+ const op=await restore('secondary',text,[selection('secondary',text,'second','40')]);
+ const e=await exportEvidenceRecovery(...await args(a,r,[op]));
+ assert.equal(e.portable,true);
+ const b=JSON.parse(e.bundleText),pins=[e.snapshotPin,a.digest,r.pin,r.result.child.digest,b.recoveryPlanDigest,e.recovery.child.digest];
+ const reopened=await openEvidenceRecovery(e.bundleText,...pins);
+ assert.deepEqual(reopened.ancestor,a);assert.deepEqual(reopened.prior.revision,r.result);assert.deepEqual(reopened.exported,e);
+ assert.equal(Object.isFrozen(reopened.exported.recovery.child),true);
+ assert.deepEqual(e.recovery.stillMissingBindingIds,['other']);
+ for(let i=0;i<pins.length;i++){
+  const wrong=pins.slice();wrong[i]='sha256:'+'0'.repeat(64);
+  await assert.rejects(openEvidenceRecovery(e.bundleText,...wrong),/IMPORT_(PIN|SCOPE)/);
+ }
+ for(const mutate of [
+  x=>{x.stillMissingBindingIds=[];},
+  x=>{x.decisionAuthority='APPROVED';},
+  x=>{x.childVersion=x.priorTransactionText;},
+  x=>{x.changes[0].classification='TARGET_INPUT_RECOVERED';}
+ ]){
+  const x=JSON.parse(e.bundleText);mutate(x);const wire=JSON.stringify(x);
+  await assert.rejects(openEvidenceRecovery(wire,await casePin(wire),...pins.slice(1)),/IMPORT_REPLAY/);
+ }
+ const nested=JSON.parse(e.bundleText),p=JSON.parse(nested.priorTransactionText);
+ p.missingBindingIds=[];nested.priorTransactionText=JSON.stringify(p);nested.priorTransactionDigest=await casePin(nested.priorTransactionText);
+ const wire=JSON.stringify(nested);
+ await assert.rejects(openEvidenceRecovery(wire,await casePin(wire),...pins.slice(1)),/IMPORT_REPLAY/);
+ const pretty=JSON.stringify(b,null,2);
+ await assert.rejects(openEvidenceRecovery(pretty,await casePin(pretty),...pins.slice(1)),/IMPORT_REPLAY/);
+ await assert.rejects(openEvidenceRecovery('🧪'.repeat(70000),...pins),/IMPORT_SIZE/);
  assert.deepEqual(await replayInvestigationVersion(r.result.child.versionText,r.result.child.digest),r.result.child.report);
 });
