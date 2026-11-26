@@ -2,15 +2,37 @@
 // Immutable snapshots, an exclusive writer lock and atomic HEAD publication.
 // A crashed writer may leave a lock; do not automatically steal it.
 import {constants} from 'node:fs';
-import {open,lstat,rename,unlink,link,mkdir} from 'node:fs/promises';
+import {open,lstat,rename,unlink,link,mkdir,statfs} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {replayInvestigationHistory} from './investigation-history.js';
 import {verifyHistoryExtension} from './history-extension.js';
-const MAX=262144,PIN=/^sha256:[a-f0-9]{64}$/;
+export const MAX_HISTORY_BYTES=262144;
+const MAX=MAX_HISTORY_BYTES,PIN=/^sha256:[a-f0-9]{64}$/;
 const FLOCK_MARKER='sutra-history-kernel-flock/v1\n',FLOCK='/usr/bin/flock';
 const fail=c=>{throw TypeError('HISTORY_STORE_'+c);};
+const REMOTE_FILESYSTEMS=new Map([
+ [0x6969n,'NFS'],[0xff534d42n,'CIFS'],[0xfe534d42n,'SMB2'],[0x517bn,'SMB'],
+ [0x01021997n,'9P'],[0x5346414fn,'AFS'],[0x73757245n,'CODA'],[0x00c36400n,'CEPH'],[0x564cn,'NCP']
+]);
+export const HISTORY_STORE_PROFILE=Object.freeze({
+ version:1,platform:'linux',directory:'private local filesystem',crossFilesystemPortability:'NOT_CLAIMED',
+ knownRemoteFilesystemsRefused:Object.freeze([...REMOTE_FILESYSTEMS.values()])
+});
+export const historyStorePlatformSupported=platform=>platform==='linux';
+export function classifyHistoryFilesystemType(type){
+ let value;try{value=BigInt(type)&0xffffffffn;}catch{fail('FILESYSTEM_TYPE');}
+ const name=REMOTE_FILESYSTEMS.get(value)??'UNCLASSIFIED_LOCAL_OR_VIRTUAL';
+ return Object.freeze({typeHex:'0x'+value.toString(16),name,remote:REMOTE_FILESYSTEMS.has(value),portableAcrossFilesystems:false});
+}
+export function assertHistoryFilesystemType(type){
+ const profile=classifyHistoryFilesystemType(type);if(profile.remote)fail('UNSUPPORTED_FILESYSTEM_'+profile.name);return profile;
+}
+export async function inspectHistoryFilesystem(directory){
+ if(!historyStorePlatformSupported(process.platform)||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
+ const info=await statfs(resolve(directory));return assertHistoryFilesystemType(info.type);
+}
 const checked=p=>{if(typeof p!=='string'||!PIN.test(p))fail('PIN');return p;};
 const absent=e=>e?.code==='ENOENT';
 async function boundedRead(path,cap){
@@ -29,9 +51,10 @@ async function durableNew(path,text){
 }
 export async function openLocalHistoryStore(directory,{lockMode='exclusive-create'}={}){
  if(!['exclusive-create','kernel-flock'].includes(lockMode))fail('LOCK_MODE');
- if(process.platform!=='linux'||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
+ if(!historyStorePlatformSupported(process.platform)||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
  const dir=resolve(directory),s=await lstat(dir);
  if(!s.isDirectory()||s.isSymbolicLink()||(s.mode&0o077)!==0)fail('PRIVATE_DIRECTORY');
+ await inspectHistoryFilesystem(dir);
  const headPath=join(dir,'HEAD'),lockPath=join(dir,'WRITE.lock');
  if(lockMode==='kernel-flock'){
   try{if(await boundedRead(lockPath,128)!==FLOCK_MARKER)fail('FLOCK_MARKER');}
@@ -107,8 +130,9 @@ export async function openLocalHistoryStore(directory,{lockMode='exclusive-creat
 // A failed creation may leave an incomplete private directory for operator
 // inspection; no recursive deletion or automatic fallback.
 export async function createFlockedHistoryStore(directory){
- if(process.platform!=='linux'||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
+ if(!historyStorePlatformSupported(process.platform)||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
  const dir=resolve(directory);await mkdir(dir,{mode:0o700});
+ await inspectHistoryFilesystem(dir);
  await durableNew(join(dir,'WRITE.lock'),FLOCK_MARKER);
  const f=await open(dir,constants.O_RDONLY|constants.O_DIRECTORY|constants.O_NOFOLLOW);try{await f.sync();}finally{await f.close();}
  // Parent-directory durability matters for newly created store directory.
