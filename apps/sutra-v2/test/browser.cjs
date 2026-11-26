@@ -121,6 +121,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.getByRole('button',{name:'Replay computation receipt'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-replay-status').dataset.state==='reproduced');
   assert.match(await page.locator('#studio-replay-status').innerText(),/DIVERGENT_CONDITIONAL_OUTCOMES/);
+  const [versionDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Seal versioned investigation'}).click()]);
+  const versionText=fs.readFileSync(await versionDownload.path(),'utf8');
+  const versionPin=(await page.locator('#studio-version-digest').innerText()).match(/sha256:[a-f0-9]{64}/)[0];
+  const version=JSON.parse(versionText);assert.equal(version.previousDigest,null);
+  assert.equal(JSON.parse(version.batchText).proposals.length,2);
+  assert.ok(JSON.parse(version.annotationText).candidates.every(c=>Object.values(c.facets).every(x=>x===null)));
+  assert.equal(await page.evaluate(async({text,pin})=>'sha256:'+Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),v=>v.toString(16).padStart(2,'0')).join('')===pin,{text:versionText,pin:versionPin}),true);
   await page.getByLabel('Computation receipt JSON').fill(receiptText+' ');
   await page.getByRole('button',{name:'Replay computation receipt'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-replay-status').dataset.state==='refused');

@@ -1023,3 +1023,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 
 
 - [ ] **V2-156 candidate:** explicit Node-only literal-loopback connector and real TCP fixture adversaries; no production enablement or real model evidence; exact CI pending.
+
+
+- [ ] **V2-157 candidate:** verified receipt bridges into existing pinned investigation graph and source withdrawal; export version/pin without semantic adoption; exact CI pending.
