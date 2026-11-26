@@ -144,7 +144,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
 - [x] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
-- [ ] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
+- [x] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
 - [x] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
 - [x] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
 - [x] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
