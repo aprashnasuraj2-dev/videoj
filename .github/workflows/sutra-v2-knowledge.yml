@@ -129,6 +129,11 @@ jobs:
           node packages/sutra-knowledge/evaluation/acquisition-development-pilot.mjs > sutra-v2-acquisition-development.json
           python3 packages/sutra-knowledge/evaluation/verify-acquisition-development.py < sutra-v2-acquisition-development.json > sutra-v2-acquisition-independent.json
           cat sutra-v2-acquisition-independent.json
+      - name: Execute frozen replay and tamper differential benchmark
+        run: |
+          node packages/sutra-knowledge/evaluation/replay-development-pilot.mjs > sutra-v2-replay-development.json
+          python3 packages/sutra-knowledge/evaluation/verify-replay-development.py < sutra-v2-replay-development.json > sutra-v2-replay-independent.json
+          cat sutra-v2-replay-independent.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -165,6 +170,8 @@ jobs:
             sutra-v2-ancestry-portable.json
             sutra-v2-acquisition-development.json
             sutra-v2-acquisition-independent.json
+            sutra-v2-replay-development.json
+            sutra-v2-replay-independent.json
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json
