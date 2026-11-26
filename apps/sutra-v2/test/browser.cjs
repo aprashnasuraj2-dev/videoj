@@ -833,8 +833,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     await samplePage.locator('#review-exposure-run').click();await sampleState('exposure_ready');
     assert.match(await samplePage.locator('#review-exposure-result').innerText(),/Minimum declared input-touch cut: 1 cohort/);
     assert.match(await samplePage.locator('#review-exposure-result').innerText(),/independence NOT ESTABLISHED/);
-    const dl=samplePage.waitForEvent('download');await samplePage.locator('#review-exposure-export').click();const a=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));assert.equal(a.result.decisionAuthority,'NONE');
-    fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.json'),JSON.stringify(a));
+    const dl=samplePage.waitForEvent('download');await samplePage.locator('#review-exposure-export').click();const exposureBytes=fs.readFileSync(await (await dl).path()),a=JSON.parse(exposureBytes);assert.equal(a.result.decisionAuthority,'NONE');
+    const digestDownload=samplePage.waitForEvent('download');await samplePage.locator('#review-exposure-export-pin').click();const exposurePin=fs.readFileSync(await (await digestDownload).path(),'utf8').trim();
+    assert.equal(exposurePin,'sha256:'+require('node:crypto').createHash('sha256').update(exposureBytes).digest('hex'));assert.equal(a.versionDigest,await samplePage.locator('#review-semantic-pin').innerText());
+    fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.json'),exposureBytes);fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.sha256'),exposurePin+'\n');fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure-version.sha256'),a.versionDigest+'\n');
     assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     if(domain==='finance'){
      await samplePage.locator('#review-history-append').click();await sampleState('history_ready');

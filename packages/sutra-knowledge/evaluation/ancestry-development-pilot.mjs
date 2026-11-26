@@ -6,7 +6,7 @@ import {casePin} from '../pinned-investigation.js';
 import {sealReviewedDraft,draftComparisonProposal} from '../reviewed-draft.js';
 import {FACETS} from '../semantic-investigation.js';
 import {sealInvestigationVersion} from '../investigation-revision.js';
-import {auditStructuralExposure} from '../structural-exposure.js';
+import {exportStructuralExposure} from '../structural-exposure.js';
 const bytes=readFileSync(new URL('./ancestry-development-cases.json',import.meta.url));
 assert.equal(createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex'),'0af4985a8c32eaef7a9073f5033b4d875f1bd774','Frozen labels changed');
 const data=JSON.parse(bytes),type={kind:'count',unit:'items',scope:'synthetic_topology',dimension:[0,0,0]};
@@ -43,7 +43,7 @@ async function build(c){
 }
 const results=[];
 for(const c of data.cases){
- const {targets,version}=await build(c),r=await auditStructuralExposure(version.versionText,version.digest);
+ const {targets,version}=await build(c),e=await exportStructuralExposure(version.versionText,version.digest),r=e.result;assert.ok(e.portable,c.id);
  const observed={components:norm(r.cohorts.map(g=>g.sourceIds)),cuts:norm(r.cut.sets.map(ids)),status:r.cut.status};
  assert.deepEqual(observed,{components:c.expected.components.slice().sort(),cuts:c.expected.cuts.slice().sort(),status:c.expected.status},c.id);
  assert.equal(r.cut.minimumCohorts,c.expected.cuts.length?c.expected.cuts[0].length:null,c.id);
@@ -55,7 +55,7 @@ for(const c of data.cases){
  }
  assert.equal(r.counts.distinctDecisiveTargets,new Set(targets.filter(t=>['s','r'].includes(parseTarget(t).mode)).map(t=>t.split('@')[0])).size,c.id);
  assert.ok(r.cohorts.every(g=>g.independence==='NOT_ESTABLISHED'));assert.equal(r.decisionAuthority,'NONE');
- results.push({id:c.id,versionDigest:version.digest,observed,report:r});
+ results.push({id:c.id,versionDigest:version.digest,observed,report:r,bundleText:e.bundleText,snapshotPin:e.snapshotPin});
 }
 assert.equal(results.length,30);
 console.log(JSON.stringify({profile:'sutra-ancestry-development-results/v1',frozenBlob:'0af4985a8c32eaef7a9073f5033b4d875f1bd774',caseCount:results.length,results}));

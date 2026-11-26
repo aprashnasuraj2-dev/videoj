@@ -1278,3 +1278,7 @@ Thirty developer-labeled topology cases frozen before evaluator implementation: 
 
 ### V2-133 — execute frozen ancestry topology benchmark
 Real compiler + sealed semantic investigation + structural audit on all 30 frozen labels (Git blob 0af4985a8c32eaef7a9073f5033b4d875f1bd774). Separately implemented Python traversal/combinations checks all components and complete min cuts against same frozen manifest; compare naive artifact-only and lineage-only baselines. One-target manifests duplicated only to satisfy two-proposal profile; identical target structures counted once. No claims of independent expert labels, independence, full causal ancestry or actual failure probability. Exact CI pending; no gate closed.
+
+
+### V2-134 — independently replayable structural exposure
+V2-131 exact nine PR workflows green; actual Chromium recovery download independently verified, isolated archive matched, six tamper/pin attempts refused (job 139594608390). V2-134 candidate adds exact structural-exposure report pin, 256 KiB portable bound, separate version pin, independent Python traversal and cut reconstruction from real sealed investigation, standalone --exposure profile, all 30 corpus exports and 2 actual browser downloads with repinned summary/authority/ancestry attacks. Existing bundle shape preserved. No independence, actual physical failure, causal completeness, or release claim; exact CI pending.

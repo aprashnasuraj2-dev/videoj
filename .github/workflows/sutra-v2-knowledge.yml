@@ -122,6 +122,8 @@ jobs:
           node packages/sutra-knowledge/evaluation/ancestry-development-pilot.mjs > sutra-v2-ancestry-development.json
           python3 packages/sutra-knowledge/evaluation/verify-ancestry-development.py < sutra-v2-ancestry-development.json > sutra-v2-ancestry-independent.json
           cat sutra-v2-ancestry-independent.json
+          python3 packages/sutra-knowledge/reference/test_structural_exposure.py < sutra-v2-ancestry-development.json > sutra-v2-ancestry-portable.json
+          cat sutra-v2-ancestry-portable.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -155,6 +157,7 @@ jobs:
             sutra-v2-revision-pilot.json
             sutra-v2-ancestry-development.json
             sutra-v2-ancestry-independent.json
+            sutra-v2-ancestry-portable.json
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json
@@ -328,6 +331,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_evidence_recovery_browser.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-recovery-reference.txt
           cat apps/sutra-v2/test-output/living-recovery-reference.txt
+      - name: Independently replay actual browser structural exposure and tampering
+        run: |
+          python3 packages/sutra-knowledge/reference/test_structural_exposure.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-exposure-reference.txt
+          cat apps/sutra-v2/test-output/living-exposure-reference.txt
       - name: Independently replay actual browser finite semantic world grid
         run: |
           python3 packages/sutra-knowledge/reference/test_world_grid.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/world-grid-reference.txt

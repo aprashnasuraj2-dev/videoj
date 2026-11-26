@@ -12,7 +12,7 @@ import {createInvestigationHistory,openInvestigationHistory} from '../../../pack
 import {inspectReviewedTable,addReviewedTable} from '../../../packages/sutra-knowledge/reviewed-table.js';
 import {compareSiblingInvestigations} from '../../../packages/sutra-knowledge/sibling-branch-contrast.js';
 import {guidedLivingCase} from '../../../packages/sutra-knowledge/examples/guided-living-case.js';
-import {auditStructuralExposure} from '../../../packages/sutra-knowledge/structural-exposure.js';
+import {exportStructuralExposure} from '../../../packages/sutra-knowledge/structural-exposure.js';
 import {evaluateSemanticWorldGrid} from '../../../packages/sutra-knowledge/semantic-world-grid.js';
 import {compileReviewedExpression} from '../../../packages/sutra-knowledge/reviewed-expression.js';
 import {restoreReviewedSourceDraft,reviseReviewedSourceDraft,withdrawReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
@@ -589,7 +589,7 @@ function clearGrid(){clearProbe();clearAcquisition();gridCurrent=null;by('world-
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
  clearTransaction();clearWithdrawalPreview();clearWithdrawalExport();clearBranch();clearIntervals();clearBinomial();clearFisher();
- exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
+ exposureCurrent=null;by('exposure-pin').textContent='';by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;currentReplay=null;impactCurrent=null;by('session-reuse-result').textContent='';clearRoundtrip();by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
@@ -604,7 +604,7 @@ function semanticControl(){
  for(const id of ['roundtrip-export','roundtrip-export-pin'])by(id).disabled=busy||!roundtripCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
- by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;
+ by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;by('exposure-export-pin').disabled=busy||!exposureCurrent;
  by('interval-run').disabled=busy||!semanticCurrent;by('interval-export').disabled=busy||!intervalCurrent;by('interval-export-pin').disabled=busy||!intervalCurrent;
  for(const e of by('interval-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  by('binomial-run').disabled=busy||!semanticCurrent||bindings.filter(b=>b.type.kind==='count').length<2;by('binomial-export').disabled=busy||!binomialCurrent;by('binomial-export-pin').disabled=busy||!binomialCurrent;
@@ -954,17 +954,18 @@ by('acquisition-run').onclick=()=>work(async ticket=>{
 by('acquisition-export').onclick=()=>{if(acquisitionCurrent&&!busy)download(acquisitionCurrent.text,'sutra-robust-acquisition.json','application/json');};
 by('acquisition-export-pin').onclick=()=>{if(acquisitionCurrent&&!busy)download(acquisitionCurrent.snapshot+'\n','sutra-robust-acquisition.sha256','text/plain');};
 by('exposure-run').onclick=()=>work(async ticket=>{
- const c=semanticCurrent;if(!c)return;exposureCurrent=null;by('exposure-result').textContent='';
- const r=await auditStructuralExposure(c.versionText,c.digest);if(ticket!==epoch||c!==semanticCurrent)return;
- exposureCurrent={versionText:c.versionText,versionDigest:c.digest,result:r};
+ const c=semanticCurrent;if(!c)return;exposureCurrent=null;by('exposure-pin').textContent='';by('exposure-result').textContent='';
+ const e=await exportStructuralExposure(c.versionText,c.digest),r=e.result;if(ticket!==epoch||c!==semanticCurrent)return;
+ if(e.portable){exposureCurrent=e;by('exposure-pin').textContent=e.snapshotPin;}
  by('exposure-result').textContent=[r.counts.sourceArtifacts+' source artifacts · '+r.counts.conservativeCohorts+' conservative cohorts · independence NOT ESTABLISHED',
  r.cut.minimumCohorts===null?r.cut.status.replaceAll('_',' '):'Minimum declared input-touch cut: '+r.cut.minimumCohorts+' cohort(s)',
  ...r.cohorts.map(g=>g.id+' · '+g.sourceIds.join(', ')+' · affected targets '+(g.affectedTargetClasses.join(', ')||'none')),
  ...r.cut.sets.map(s=>'Cut: '+s.join(', ')),
  ...r.candidates.map(a=>a.id+' · '+a.state+' · target cohorts '+(a.targetCohorts.join(', ')||'none')),r.qualification].join('\n');
- status('exposure_ready','Structural dependency exposure computed; independence and actual failure are not established.');
+ status('exposure_ready','Structural dependency exposure computed; independence and actual failure are not established. '+(e.portable?'Local report available; save its digest separately.':'Portable report exceeds 256 KiB; no export.'));
 });
-by('exposure-export').onclick=()=>{if(exposureCurrent&&!busy)download(JSON.stringify(exposureCurrent),'sutra-structural-exposure.json','application/json');};
+by('exposure-export').onclick=()=>{if(exposureCurrent&&!busy)download(exposureCurrent.bundleText,'sutra-structural-exposure.json','application/json');};
+by('exposure-export-pin').onclick=()=>{if(exposureCurrent&&!busy)download(exposureCurrent.snapshotPin+'\n','sutra-structural-exposure.sha256','text/plain');};
 by('clarification-run').onclick=()=>work(async ticket=>{
  const current=semanticCurrent;if(!current)return;
  clarificationCurrent=null;previewCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';semanticControl();

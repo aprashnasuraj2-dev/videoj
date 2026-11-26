@@ -21,6 +21,7 @@ from verify_withdrawal_revision import verify as verify_withdrawal, MAX_BYTES as
 from verify_evidence_revision import verify as verify_transaction, MAX_BYTES as MAX_TRANSACTION_BYTES
 from verify_semantic_probe_suite import verify as verify_probe_suite, MAX_BYTES as MAX_PROBE_SUITE_BYTES
 from verify_evidence_recovery import verify as verify_recovery, MAX_BYTES as MAX_RECOVERY_BYTES
+from verify_structural_exposure import verify as verify_exposure, MAX_BYTES as MAX_EXPOSURE_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -56,6 +57,7 @@ def main():
     profiles.add_argument('--withdrawal',action='store_true',help='Explicitly select exact source-withdrawal transformation replay')
     profiles.add_argument('--evidence-transaction',action='store_true',help='Explicitly select atomic multi-source revision replay')
     profiles.add_argument('--evidence-recovery',action='store_true',help='Explicitly select exact immediately preceding evidence recovery replay')
+    profiles.add_argument('--exposure',action='store_true',help='Explicitly select declared structural exposure replay')
     profiles.add_argument('--probe-suite',action='store_true',help='Explicitly select exact finite semantic probe review subset')
     parser.add_argument('--ancestor-pin',help='Separately retained pre-revision ancestor digest')
     parser.add_argument('--revision-plan-pin',help='Separately retained preceding atomic revision plan digest')
@@ -70,13 +72,16 @@ def main():
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
     if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
     if args.contract_pin is not None and not (args.reviewed or args.question):parser.error('--contract-pin requires --reviewed or --question')
-    if args.version_pin is not None and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher or args.roundtrip or args.withdrawal or args.evidence_transaction or args.evidence_recovery or args.probe_suite):parser.error('version pin requires an applicable profile')
+    if args.version_pin is not None and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher or args.roundtrip or args.withdrawal or args.evidence_transaction or args.evidence_recovery or args.exposure or args.probe_suite):parser.error('version pin requires an applicable profile')
     if args.plan_pin is not None and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher or args.question or args.withdrawal or args.evidence_transaction or args.evidence_recovery or args.probe_suite):parser.error('plan pin requires an applicable profile')
     if (args.ancestor_pin is not None or args.revision_plan_pin is not None) and not args.evidence_recovery:parser.error('ancestor and revision plan pins require --evidence-recovery')
     if args.policy_pin is not None and not args.acquisition:parser.error('--policy-pin requires --acquisition')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.probe_suite:
+        if args.exposure:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_EXPOSURE_BYTES+1)
+            result=verify_exposure(data,pin,args.version_pin)
+        elif args.probe_suite:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_PROBE_SUITE_BYTES+1)
             result=verify_probe_suite(data,pin,args.version_pin,args.plan_pin)
         elif args.evidence_recovery:

@@ -1,5 +1,6 @@
 // Scoped structural dependency cuts, not empirical source independence.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+import {casePin} from './pinned-investigation.js';
 import {replayInvestigationVersion} from './investigation-revision.js';
 export const VERSION='sutra-structural-exposure/v1';
 const parse=(s,d=9)=>parseUniqueJson(s,{maxChars:262144,maxDepth:d});
@@ -64,4 +65,11 @@ export async function auditStructuralExposure(versionText,versionPin){
   cut:{status,minimumCohorts:min,sets:allCuts,uncoverableTargets:targets.filter(t=>!t.targetCohorts.length).map(t=>t.id)},
   counts:{sourceArtifacts:sources.length,declaredLineages:unique(sources.map(s=>s.lineage)).length,exactByteIdentities:unique(sources.map(s=>s.digest)).length,conservativeCohorts:cohorts.length,decisiveCandidateCount:candidates.filter(a=>decisive(a.state)).length,distinctDecisiveTargets:targets.length},
   decisionAuthority:'NONE',qualification:'Cohorts conservatively connect equal declared lineage or exact duplicate bytes, not verified common causes or independent roots. A cut touches a required input of each supplied decisive graph; it is not a proof that removing a source reverses truth, that a system physically fails, or that no substitute evidence exists. Context-only dependencies remain separate; unknown ancestry and unresolved candidates remain visible.'});
+}
+
+export async function exportStructuralExposure(versionText,versionDigest){
+ const result=await auditStructuralExposure(versionText,versionDigest);
+ const bundleText=JSON.stringify({versionText,versionDigest,result}),byteLength=new TextEncoder().encode(bundleText).length;
+ const portable=byteLength<=262144;
+ return freeze({result,bundleText:portable?bundleText:null,byteLength,portable,snapshotPin:portable?await casePin(bundleText):null});
 }
