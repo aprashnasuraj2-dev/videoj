@@ -1,5 +1,13 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0050 — 2026-11-26
+
+- 2026-11-26T16:42:29+05:45 — **737/1,107 overall verified; 631/1,000 original; 363 pending; six omissions; one hardware blocker.**
+- Added and indexed `docs/sutra/CONTRIBUTING.md` and `docs/sutra/CHANGELOG.md`; added an executable Open Kit documentation contract.
+- Exact source `08c7ca36e93dd748f004bc9cc511914aeebfebd6`: Open Kit run 45806012457/job 139861341692 passed 3/3 tests plus deterministic clean-distribution/vendor/starter checks.
+- P088-01..07 and P088-09 verified. P088-08/P088-10 remain pending for a genuine new-reader observation.
+- No public release, paid inference, deployment, outside-reader result, merge or submission.
+
 ## SUTRA-SESSION-0049 — 2026-11-26
 
 - 2026-11-26T16:38:18+05:45 — **729/1,107 overall verified; 623/1,000 original; 371 pending; six omissions; one hardware blocker.**
