@@ -39,3 +39,19 @@ test('review revisions do not transfer judgment through renumbered mapping or ch
  const p=JSON.parse(f.planText);p.left.bindingIds=['c'];const planText=JSON.stringify(p),g={...f,planText,planPin:await casePin(planText)};
  const newer=await saved(g,[]),r=await compareQuestionMappingReviews({before:old,after:newer});assert.equal(r.sameInputs,false);assert.equal(r.changes[0].status,'REMOVED_MAPPING');assert.equal(r.changes[1].status,'REVIEW_CONTEXT_CHANGED');assert.equal(r.changes[1].before.id,'question_2');assert.equal(r.changes[1].after.id,'question_1');assert.equal(r.changes[1].after.judgment,'unresolved');assert.ok(r.changes.every(x=>x.reviewRequired));assert.equal(r.decisionAuthority,'NONE');
 });
+
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+test('independent Python finite grammar and review replay rejects self-repinned forged judgment',async()=>{
+ const f=await fixture(),cases=[];
+ for(const [id,choices] of [['unresolved',[]],['one',[{id:'question_1',judgment:'plausible'},{id:'question_2',judgment:'excluded'}]],['both',[{id:'question_1',judgment:'plausible'},{id:'question_2',judgment:'plausible'}]],['none',[{id:'question_1',judgment:'excluded'},{id:'question_2',judgment:'excluded'}]]]){
+  const x=await saved(f,choices);cases.push({id,...x,expected:true});
+ }
+ const old=cases[1],changed=JSON.parse(old.snapshotText);changed.result.rows[1].judgment='plausible';const forged=JSON.stringify(changed);
+ cases.push({id:'repinned_result',...old,snapshotText:forged,snapshotPin:await casePin(forged),expected:false});
+ cases.push({id:'stale_review_pin',...old,expectedReviewPin:'sha256:'+'0'.repeat(64),expected:false});
+ const duplicate=JSON.parse(old.snapshotText);duplicate.reviewText=JSON.stringify({version:1,contractPin:f.contractPin,planPin:f.planPin,choices:[{id:'question_1',judgment:'plausible'},{id:'question_1',judgment:'excluded'}]});duplicate.reviewPin=await casePin(duplicate.reviewText);const bad=JSON.stringify(duplicate);
+ cases.push({id:'duplicate_judgment',...old,snapshotText:bad,snapshotPin:await casePin(bad),expectedReviewPin:duplicate.reviewPin,expected:false});
+ const p=spawnSync('python3',[fileURLToPath(new URL('../reference/verify_question_mapping_review.py',import.meta.url))],{input:JSON.stringify(cases),encoding:'utf8',timeout:30000,maxBuffer:1048576});
+ assert.equal(p.status,0,p.stderr||p.stdout||String(p.error));const r=JSON.parse(p.stdout);assert.equal(r.cases.filter(c=>c.accepted).length,4);assert.equal(r.cases.length,7);
+});
