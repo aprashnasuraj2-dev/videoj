@@ -24,6 +24,7 @@ When the user says **“continue with sutra”** (case-insensitive), read the re
 | [CHANGELOG.md](CHANGELOG.md) | Pre-release changelog policy; no invented public versions |
 | [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) | Pre-release implementation report with source-to-claim mapping and explicit untested limits |
 | [COMMUNITY_TOOLS_AND_IMPACT.md](COMMUNITY_TOOLS_AND_IMPACT.md) | Reusable-tool jobs, claim boundaries and maintenance limits without invented adoption |
+| [JUDGING_AVAILABILITY_RUNBOOK.md](JUDGING_AVAILABILITY_RUNBOOK.md) | Official judging-window conversion, residual availability risks and manual recovery plan |
 | [evidence/README.md](evidence/README.md) | Evidence conventions without private data or fabricated outcomes |
 
 ## Read-only progress commands
