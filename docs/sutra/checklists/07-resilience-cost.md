@@ -96,7 +96,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P065-05` Avoid run-worker-first patterns that unnecessarily invoke dynamic code
 - [x] `SUTRA-P065-06` Keep media delivery outside the main Patro application Worker
 - [ ] `SUTRA-P065-07` Calculate headroom using account-wide usage and retry assumptions
-- [ ] `SUTRA-P065-08` Record a dated request sample showing which requests invoke Workers
+- [x] `SUTRA-P065-08` Record a dated request sample showing which requests invoke Workers
 - [x] `SUTRA-P065-09` Produce and review the phase artifact: Route/quota budget and before/after request sample.
 - [ ] `SUTRA-P065-10` Close phase 065 only after its applicable tasks have evidence and its exit condition is observed: A static visit does not invoke the main Patro application Worker; inference calls are counted separately from asset and media requests.
 
