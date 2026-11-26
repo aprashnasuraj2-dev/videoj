@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-176",
+  "session": "V2-177",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: browser-to-local model extraction round trip with explicit review.",
+  "state": "Candidate: decoded source extraction credential boundary",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-177",
+    "parent": "40e7f463f41c0a79b5394ed81db0e55a1291842a",
+    "description": "### V2-177 — decoded model proposal credential boundary (candidate)\nV2-175 and V2-176 each have nine successful exact PR workflows (knowledge runs 45745352925 and 45745693875); separate push workflows not observed. Close an inner JSON escape bypass in the source quantity proposal path: scan decoded proposal keys and values using the enrolled credential vault before any review, anchor resolution or transfer, and scan decoded selected evidence before publishing a plan. CLI checks approved route metadata before socket contact. Add injected provider and real loopback TCP adversaries for escaped credential echo and zero-contact preflight rejection. This is exact credential canary detection at specified decoded boundaries, not general DLP, encoded-secret detection beyond that JSON layer, provider confidentiality or semantic verification. New candidate CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-176",
     "parent": "8ee7928a487b2cfafd61f79a62313a1b997a4c0f",
     "description": "### V2-176 — local BYOM source extraction operator round trip (candidate)\nAdd a literal-loopback-only local extraction CLI with plan-only default, exact config pin, explicit disclosure approval and environment-alias credential lookup only on execution. Browser selects source grants and exports full-draft local plan with clear disclosure, then checks compact returned suggestions against retained plan and separately retained proposal digest. Imported data is still untrusted, never automatically admitted; existing anchor review and explicit quantity selection remain mandatory. Actual loopback TCP fixture uses native Ollama wire shape and fake model responses; browser test checks plan download/import and zero provider contact. No genuine model execution or hosted activation. V2-175 exact CI pending at observation; all previous formal gates retained. Exact V2-176 CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-175",
-    "parent": "23be88829fe26218ea1c86e66a83d57a6938c06d",
-    "description": "### V2-175 — explicit upstream TLC prerelease asset migration (candidate)\nInvestigated the repeated SHA-256 failures rather than bypassing them. Official upstream release metadata identifies a newly published v1.8.0 prerelease asset at 2026-11-26 02:14 UTC. Record previous pin, release/asset ID, exact tag commit, new publisher SHA-256, published release-page SHA-1 and byte count in TLC-PROVENANCE.md. Require all three static integrity checks before execution; no fallback/dynamic trust or changes to formal models/expected results. Independent binary retrieval was unavailable in this environment; exact CI must validate the candidate. V2-174 browser job 139658804067 and focused and full JavaScript regression in knowledge job 139658804307 passed; unchanged old-pin TLC gate failed. Exact new CI pending; no production release approval."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1710,6 +1710,12 @@
       "sourceRevision": "23be88829fe26218ea1c86e66a83d57a6938c06d",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284/job/139658804067",
       "description": "Exact complete browser job passed."
+    },
+    {
+      "id": "V2-LK19-TRUST-BOUNDARY",
+      "sourceRevision": "40e7f463f41c0a79b5394ed81db0e55a1291842a",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745693875",
+      "description": "V2-176 exact PR knowledge workflow succeeded; no broader credential or semantic authority."
     }
   ],
   "reconciledCI": [
@@ -7203,6 +7209,128 @@
       ],
       "complete": false,
       "limitation": "PR workflow observation; separate push run not observed."
+    },
+    {
+      "sourceRevision": "8ee7928a487b2cfafd61f79a62313a1b997a4c0f",
+      "runs": [
+        {
+          "id": 45745352778,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352727,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352738,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352775,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352730,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352712,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352737,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352716,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745352925,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
+    },
+    {
+      "sourceRevision": "40e7f463f41c0a79b5394ed81db0e55a1291842a",
+      "runs": [
+        {
+          "id": 45745693781,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693893,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693817,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693842,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693948,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693957,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693882,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693820,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45745693875,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
     }
   ],
   "inheritedV2012FailureIndex": {

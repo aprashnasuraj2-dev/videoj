@@ -11,6 +11,7 @@ const stop=code=>{const e=new Error('Binding suggestion request refused ('+code+
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
 async function prepare({draftText,draftPin,sourceIds,route,workspace,maxOutputTokens=1024,timeoutMs=15000,signal}={}){
  if(typeof draftText!=='string'||draftText.length>262144||!councilInt(timeoutMs,100,30000)||!Array.isArray(sourceIds)||sourceIds.length<1||sourceIds.length>4||!denseCouncilArray(sourceIds)||sourceIds.some(x=>typeof x!=='string'||!ID.test(x))||new Set(sourceIds).size!==sourceIds.length)stop('CONFIG');
+ if(typeof workspace?.admitOperation!=='function')stop('CONFIG');
  const selected=[...sourceIds];
  const config=prepareCouncil({routes:[route],workspace,shareScope:SCOPE,maxRounds:1,maxOutputTokens,timeoutMs,signal,maxSlots:1});
  const team=config.team[0];
@@ -21,6 +22,8 @@ async function prepare({draftText,draftPin,sourceIds,route,workspace,maxOutputTo
  const sources=selected.map(id=>{const s=d.sources.find(x=>x.id===id);return {id:s.id,text:s.text};});
  if(sources.reduce((n,x)=>n+new TextEncoder().encode(x.text).length,0)>16000)stop('DISCLOSURE_SIZE');
  const operation=freeze({kind:'source-quantity-suggestion-v1',question:d.question,sources,instruction:'Return JSON with exactly {version:1,suggestions:[{id,sourceId,quote,before,after,type:{kind,unit,scope,dimension:[L,M,T]}}]}. At most 16. Quote a complete numeric token from a supplied source and adjacent literal context that uniquely identifies its occurrence. No inferred numbers, offsets, new sources, verification claims, tools or URLs. Types and comparability are suggestions only. If unsure omit the suggestion.'});
+ // Scan decoded operation fields before displaying or serializing a plan.
+ try{workspace.admitOperation(operation);}catch(e){stop(e?.code==='SECRET_ECHO'?'SECRET_ECHO':'CONFIG');}
  const inputBytes=new TextEncoder().encode(JSON.stringify(operation)).length;
  const plan=freeze({version:1,draftPin,providerId:team.providerId,profileId:team.profileId,model:team.model,agentId:team.id,role:team.role,sourceIds:selected,operation,inputBytes,maxOutputTokens,timeoutMs,qualification:'The approved question and full selected source texts are disclosed to this one route. Unselected sources are not included. A remote or local provider may retain or forward the request; no ownership, confidentiality, or billed-cost claim.'});
  const planPin=await casePin(JSON.stringify(plan));
@@ -49,7 +52,11 @@ export async function runApprovedBindingSuggestionRequest(options={}){
   // in the local draft. Scope checks occur before exact anchor preview.
   let candidate;try{candidate=parseUniqueJson(proposalText,{maxChars:32768,maxDepth:8});}catch{stop('PROPOSAL_REFUSED');}
   if(!councilClosed(candidate,['version','suggestions'])||candidate.version!==1||!Array.isArray(candidate.suggestions)||candidate.suggestions.length>16||candidate.suggestions.some(x=>!plan.sourceIds.includes(x?.sourceId)))stop('PROPOSAL_REFUSED');
-  const proposalPin=await casePin(proposalText);let preview;
+  // Provider envelope checks see raw assistant text, not its inner JSON values.
+ // Inspect the decoded tree before anchor resolution or publication: JSON
+ // escapes can otherwise disguise an exact enrolled credential from the vault.
+ try{options.workspace.admitOperation(candidate);}catch(e){stop(e?.code==='SECRET_ECHO'?'SECRET_ECHO':'PROPOSAL_REFUSED');}
+ const proposalPin=await casePin(proposalText);let preview;
   try{preview=await previewBindingSuggestions({draftText:options.draftText,draftPin:plan.draftPin,proposalText,proposalPin});}catch{stop('PROPOSAL_REFUSED');}
   if(controller.signal.aborted)stop('CANCELLED_OR_TIMEOUT');
   // Deliberately no draft application. The untrusted suggestion can be reviewed

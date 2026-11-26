@@ -15,10 +15,10 @@ function run(config,args=[],env={}){
   child.once('error',reject);child.once('close',code=>resolve({code,stdout:Buffer.concat(out).toString('utf8'),stderr:Buffer.concat(err).toString('utf8')}));child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify(config));
  });
 }
-async function fixture(t){
+async function fixture(t,response=()=>JSON.stringify({version:1,suggestions:[suggestion]})){
  const requests=[],server=createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{
   requests.push({body,headers:req.headers});res.writeHead(200,{'content-type':'application/json'});
-  res.end(JSON.stringify({done:true,done_reason:'stop',message:{role:'assistant',content:JSON.stringify({version:1,suggestions:[suggestion]})},eval_count:50}));
+  res.end(JSON.stringify({done:true,done_reason:'stop',message:{role:'assistant',content:response()},eval_count:50}));
  });});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();return new Promise(r=>server.close(r));});
  const draftText=JSON.stringify({version:1,question:'Compare A and B',sources:[{id:'a',lineage:'r1',text:'A: 12.50; repeat: 12.50;'},{id:'hidden',lineage:'r2',text:hidden+' 88;'}],bindings:[]});
@@ -47,4 +47,18 @@ test('local config refuses nonloopback and raw credentials before any I/O',async
  for(const connection of [{...config.connection,endpoint:'https://example.com/chat'},{...config.connection,credentialEnv:secret}]){
   await assert.rejects(admitLocalBindingConfig(JSON.stringify({...config,connection})));assert.equal(requests.length,0);
  }
+});
+
+test('operator never exports escaped credential echo in an untrusted transfer',async t=>{
+ const inner=JSON.stringify({version:1,suggestions:[{...suggestion,type:{...suggestion.type,scope:secret}}]}).replace(secret,'\\u004c'+secret.slice(1));
+ assert.equal(inner.includes(secret),false);assert.equal(JSON.parse(inner).suggestions[0].type.scope,secret);
+ const {config,requests}=await fixture(t,()=>inner),p=JSON.parse((await run(config)).stdout);
+ const out=await run(config,['--execute-local','--approve-local-disclosure','--approve-plan',p.planPin],{SUTRA_LOCAL_BINDING_TEST:secret});
+ assert.equal(requests.length,1);assert.equal(out.code,1);assert.equal(out.stdout,'');assert.equal(JSON.parse(out.stderr).reason,'SECRET_ECHO');assert.equal(out.stderr.includes(secret),false);
+});
+test('credential embedded in the operator endpoint path refuses before contact',async t=>{
+ const {config,requests}=await fixture(t);config.connection.endpoint+='/'+secret;
+ const plan=await run(config);assert.equal(plan.code,0,plan.stderr);
+ const out=await run(config,['--execute-local','--approve-local-disclosure','--approve-plan',JSON.parse(plan.stdout).planPin],{SUTRA_LOCAL_BINDING_TEST:secret});
+ assert.equal(out.code,1);assert.equal(out.stdout,'');assert.equal(out.stderr.includes(secret),false);assert.equal(requests.length,0);
 });

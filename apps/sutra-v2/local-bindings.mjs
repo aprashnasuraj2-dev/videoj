@@ -25,6 +25,9 @@ async function main(){
  try{
   const workspace=createProtocolWorkspace({connections:[{id:x.id,label:x.label,protocol:x.protocol,endpoint:x.endpoint,transportClass:'local',models:x.models}],exchange:transport.exchange,globalLimits:p.budget,defaultProfileLimits:p.budget});
   const handle=workspace.addProfile({providerId:x.id,label:x.label,credential}).handle;
+  // Endpoint paths and decoded route metadata are not part of the model operation.
+  // Refuse accidental credential reuse there before opening a socket.
+  workspace.admitOperation(x);
   const options={draftText:c.draftText,draftPin:c.draftPin,sourceIds:c.sourceIds,route:{id:'extractor',role:'Suggest exact source quantities',handle,model:x.models[0],shareScope:'selected-source-text-for-binding-suggestions'},workspace,maxOutputTokens:c.maxOutputTokens,timeoutMs:c.timeoutMs,signal:controller.signal};
   const plan=await previewBindingSuggestionRequest(options);
   workspace.admitOperation(plan.plan.operation);

@@ -38,3 +38,18 @@ test('timeout stops observing without retry or admitting a late provider result;
  const s=setup(()=>new Promise(()=>{})),o=await options(s,{timeoutMs:100});await assert.rejects(execute(o),/CANCELLED_OR_TIMEOUT/);assert.equal(s.seen.length,1);
  const t=setup(),ctrl=new AbortController();ctrl.abort();await assert.rejects(execute(await options(t,{signal:ctrl.signal})),/CANCELLED_OR_TIMEOUT/);assert.equal(t.seen.length,0);
 });
+
+// The fake transport returns an assistant JSON document with an escaped
+// credential in a permitted field. The outer response scan alone cannot see it.
+test('decoded model proposal credential echo refuses before review even when escaped',async()=>{
+ const plain=JSON.stringify({version:1,suggestions:[{...suggestion,type:{...type,scope:secret}}]});
+ const escaped=plain.replace(secret,'\\u0053'+secret.slice(1));
+ assert.equal(escaped.includes(secret),false);assert.equal(JSON.parse(escaped).suggestions[0].type.scope,secret);
+ const s=setup(()=>escaped),o=await options(s);
+ await assert.rejects(execute(o),e=>e.code==='SECRET_ECHO'&&!e.message.includes(secret));assert.equal(s.seen.length,1);
+});
+test('credential in selected evidence refuses before plan publication or dispatch',async()=>{
+ const s=setup(),base=await options(s),draft=JSON.parse(base.draftText);draft.sources[0].text+=' '+secret;
+ const draftText=JSON.stringify(draft),o={...base,draftText,draftPin:await casePin(draftText)};
+ await assert.rejects(previewBindingSuggestionRequest(o),e=>e.code==='SECRET_ECHO'&&!e.message.includes(secret));assert.equal(s.seen.length,0);
+});
