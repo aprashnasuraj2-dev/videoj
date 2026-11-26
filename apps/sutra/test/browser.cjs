@@ -45,7 +45,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/SUTRA synthetic timing catalog/);
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/Video cue unavailable/);
-  await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
+  await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
   assert.equal(await page.locator('#comparison-body .comparison-next-step').getAttribute('data-disposition'),'abstain');
