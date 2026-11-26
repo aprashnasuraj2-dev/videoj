@@ -39,3 +39,7 @@ The real 360px Chromium journey now retains the downloaded workspace checkpoint 
 
 ## V2-183 candidate — real browser usability/accessibility contract
 Extend visible focus treatment to inputs, textareas and disclosure summaries, and honor prefers-reduced-motion. A dedicated actual Chromium regression at 320px executes the finance baseline→retain→correct→correspondence→re-evaluate journey using keyboard activation only; checks every visible enabled workspace control has an accessible name, status semantics remain textual, focus outline is at least 3px, no horizontal overflow at 320px or a 200% root-font resize proxy, reduced-motion durations are <=0.02 ms, no browser storage is written and no external request occurs. This is automated accessibility/readiness evidence, not a human screen-reader or usability study; human AT acceptance remains open. Exact browser CI pending.
+
+
+### V2-183 accessibility audit correction
+Browser run 45758987591 exposed an audit-harness defect: accessible names were derived with rendered `innerText`, which is empty for labels inside closed disclosure content even though the form control retains an explicit label association; after the assertion the harness also left Chromium/server alive until job cancellation. Use semantic label/text content plus browser visibility checks and guarantee resource teardown on failure. Product focus and reduced-motion changes remain unchanged. Prior cancelled run retained; corrected browser CI pending.
