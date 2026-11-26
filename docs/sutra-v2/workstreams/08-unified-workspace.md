@@ -31,3 +31,7 @@ Export a bounded exact local workspace containing draft, optional retained basel
 ### V2-182 independent workspace checkpoint candidate
 
 Independent Python reconstructs UTF-16 draft spans, admits a reconstructed contract, and replays optional pinned history and baseline. Differential regression compares only the declared summary and authority, not full browser state. Two positive cases and six tamper/refusal controls. No freshness or execution restoration. Exact CI to be reconciled centrally.
+
+### V2-182 actual browser export differential
+
+The real 360px Chromium journey now retains the downloaded workspace checkpoint bytes and separately displayed pin, independently replays its draft/history/baseline in Python, compares exact bounded summary counts and authority, and refuses stale outer bytes plus a repinned added execution-approval field before restoring. This is a cross-language check of actual export, not only a programmatic fixture. Exact browser CI pending.

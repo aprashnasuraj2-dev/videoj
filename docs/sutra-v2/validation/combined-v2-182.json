@@ -34,7 +34,7 @@
     },
     {
       "pr": 58,
-      "head": "ee540afba806a2ff9748c269c3229353812149a7"
+      "head": "60d38f1248c2c6b5d82a89c3340ea401da6f01c3"
     },
     {
       "pr": 59,
@@ -45,7 +45,7 @@
       "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
     }
   ],
-  "materializedTree": "3bf8504d8f8443b61c46795fad378ddda87686f4",
+  "materializedTree": "3babae8c4e8ec1dac7bfbf49c2163233531943ce",
   "nonoverlappingFiles": 51,
   "workflowSourceBlob": "d6b34cd470596280d0b9a15b1a263665c6db348f",
   "qualification": "Exact child blobs copied into a separate branch; no PR merge, no release or authority. Full canonical knowledge/browser job bodies unchanged except exact branch gate. Never merge validation PR; advance child PRs individually and rebuild candidate from exact heads.",
@@ -115,7 +115,58 @@
       "observed": "success",
       "impactRun": 45754665894,
       "impactObserved": "success"
+    },
+    {
+      "revision": "fc238782f1950f76049d78ef178dae04259d3a2d",
+      "children": [
+        {
+          "pr": 51,
+          "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+        },
+        {
+          "pr": 52,
+          "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+        },
+        {
+          "pr": 53,
+          "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+        },
+        {
+          "pr": 54,
+          "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+        },
+        {
+          "pr": 55,
+          "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+        },
+        {
+          "pr": 56,
+          "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ee540afba806a2ff9748c269c3229353812149a7"
+        },
+        {
+          "pr": 59,
+          "head": "e73659542f738fedabc038879d078616c8d97281"
+        },
+        {
+          "pr": 60,
+          "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+        }
+      ],
+      "combinedRun": 45755340152,
+      "observed": "success",
+      "knowledgeJob": 139692536330,
+      "browserJob": 139692536528,
+      "impactRun": 45755340151,
+      "impactObserved": "success"
     }
   ],
-  "refreshQualification": "Materialized tree now includes previous validation-only files plus twelve exact child blobs (two new files). Prior 49-file disjoint comparison plus changed-path delta; no merges or gate credit."
+  "refreshQualification": "Latest exact child snapshot. Only #58 actual Chromium download differential regression and workstream document changed after the previously green combined snapshot; no production source change, no overlap, no merge. Exact CI required again."
 }

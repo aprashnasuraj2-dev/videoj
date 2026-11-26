@@ -1123,6 +1123,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      await samplePage.locator('#review-session-checkpoint-panel > summary').click();
      const sessionDownload=samplePage.waitForEvent('download');await samplePage.locator('#review-session-save').click();await sampleState('session_saved');
      const sessionBytes=fs.readFileSync(await (await sessionDownload).path()),sessionPin=await samplePage.locator('#review-session-saved-pin').innerText(),savedQuestion=await samplePage.locator('#review-question').inputValue();
+     // Verify the actual downloaded browser bytes with the independent Python
+     // implementation before touching local state. Keep the exact artifact for review.
+     fs.writeFileSync(path.join(output,'workspace-checkpoint.json'),sessionBytes);fs.writeFileSync(path.join(output,'workspace-checkpoint.sha256'),sessionPin+'\n');
+     const rawSession=sessionBytes.toString('utf8'),sessionWire=JSON.parse(rawSession),draftWire=JSON.parse(sessionWire.draft.text);
+     const alteredSession=JSON.stringify({...sessionWire,executionApproved:true}),alteredPin='sha256:'+require('node:crypto').createHash('sha256').update(alteredSession).digest('hex');
+     const verifier=path.resolve(__dirname,'../../../packages/sutra-knowledge/reference/verify_workspace_checkpoint.py');
+     const independentSession=JSON.parse(require('node:child_process').execFileSync('python3',[verifier],{input:JSON.stringify([{text:rawSession,pin:sessionPin},{text:rawSession+' ',pin:sessionPin},{text:alteredSession,pin:alteredPin}]),encoding:'utf8'}));
+     assert.equal(independentSession[0].status,'VERIFIED');assert.equal(independentSession[0].decisionAuthority,'NONE');
+     assert.deepEqual(independentSession[0].summary,{question:savedQuestion,sourceCount:draftWire.sources.length,bindingCount:draftWire.bindings.length,historyPin,versions:3,branches:2,baselinePin:savedHistory.versions[0].digest});
+     assert.deepEqual(independentSession.slice(1).map(x=>x.status),['REFUSED','REFUSED']);
      await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');await samplePage.locator('#review-baseline-clear').click();await samplePage.locator('#review-reset').click();await sampleState('draft');
      await samplePage.locator('#review-session-file').setInputFiles({name:'workspace.json',mimeType:'application/json',buffer:sessionBytes});await samplePage.locator('#review-session-pin').fill(sessionPin);await samplePage.locator('#review-session-check').click();await sampleState('session_checked');
      await samplePage.locator('#review-session-confirm').check();await samplePage.locator('#review-question').fill('Changed after preview');assert.equal(await samplePage.locator('#review-session-restore').isDisabled(),true);
