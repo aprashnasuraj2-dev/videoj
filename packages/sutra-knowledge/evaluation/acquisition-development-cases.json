@@ -1,0 +1,823 @@
+{
+  "profile": "sutra-acquisition-development-cases/v1",
+  "qualification": "30 developer-authored synthetic cases. Not independent expert labels, measured costs, probabilities, actual privacy exposure, or real decision authority. Frozen before evaluator. Every model uses two identical candidate proposals only to satisfy the semantic profile; they are not independent evidence.",
+  "rules": {
+    "worlds": "single: x in {2,4}, true iff x>3; conjunction: x,y in {2,4}, true iff x*y>9.",
+    "loss": "choose_true and choose_false cost 10 when incorrect, 0 when correct; abstain always 6. Minimize maximum branch loss plus upper-bound source acquisition and read cost. Source paid once per path; exposure is additive per path. Stop wins ties, otherwise lexical action ID.",
+    "labels": "exact: low/high; failed: low+failed/high+failed; overlap: low+mid/high+mid; same: common/common.",
+    "sources": "sx for x; shared conjunction uses sx for y, otherwise sy. Costs listed in sx,sy order.",
+    "expected": "Manual labels: single exact costs acquisition if not prepaid plus read; conjunction worst branch requires both exact reads, pays distinct nonprepaid sources once; if ambiguous possible outcome or insufficient exposure, some branch remains mixed so no strict benefit vs abstain. Lexical read_x wins symmetric worst-objective ties."
+  },
+  "cases": [
+    {
+      "id": "perfect_low_cost",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 2,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "free_read",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 0,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "tie_prefers_stop",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        5
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "cost_exceeds_loss",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        7
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "cap_zero",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 0,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "zero_exposure",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 0,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 0,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 2,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "source_already_acquired",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        8
+      ],
+      "initiallyAcquired": [
+        "sx"
+      ],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 1,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "failed_outcome",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "failed"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "failed_zero_cost",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "failed"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "overlapping_label",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "overlap"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "uninformative",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 0,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 0,
+          "labels": "same"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "budget_equal",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 3,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 2,
+          "exposure": 3,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 3,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "budget_one_short",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 2,
+          "exposure": 3,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "high_cost_prepaid",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        100
+      ],
+      "initiallyAcquired": [
+        "sx"
+      ],
+      "budget": 0,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 0,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 0,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "five_unit_gain",
+      "model": "single",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 1,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "shared_cost",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        2
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 4,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "separate_cost",
+      "model": "conjunction",
+      "shared": false,
+      "sourceCosts": [
+        2,
+        2
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "separate_low_cost",
+      "model": "conjunction",
+      "shared": false,
+      "sourceCosts": [
+        1,
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 4,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "shared_prepaid",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        9
+      ],
+      "initiallyAcquired": [
+        "sx"
+      ],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 2,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "separate_one_prepaid",
+      "model": "conjunction",
+      "shared": false,
+      "sourceCosts": [
+        9,
+        2
+      ],
+      "initiallyAcquired": [
+        "sx"
+      ],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 4,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "one_read_budget",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "both_zero_exposure",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 0,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 0,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 0,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 3,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "one_zero_exposure",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        1
+      ],
+      "initiallyAcquired": [],
+      "budget": 1,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 0,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 3,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "sum_exposure_exceeds",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 0,
+          "exposure": 2,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "x_failed",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "failed"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "y_overlap",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 0,
+          "exposure": 1,
+          "labels": "overlap"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "x_uninformative",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "same"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "cost_tie",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        4
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 6,
+        "root": "stop"
+      }
+    },
+    {
+      "id": "asymmetric_read_cost",
+      "model": "conjunction",
+      "shared": true,
+      "sourceCosts": [
+        0
+      ],
+      "initiallyAcquired": [],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 0,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 4,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 4,
+        "root": "read_x"
+      }
+    },
+    {
+      "id": "separate_both_prepaid",
+      "model": "conjunction",
+      "shared": false,
+      "sourceCosts": [
+        100,
+        100
+      ],
+      "initiallyAcquired": [
+        "sx",
+        "sy"
+      ],
+      "budget": 2,
+      "actions": [
+        {
+          "id": "read_x",
+          "axis": "x",
+          "read": 1,
+          "exposure": 1,
+          "labels": "exact"
+        },
+        {
+          "id": "read_y",
+          "axis": "y",
+          "read": 2,
+          "exposure": 1,
+          "labels": "exact"
+        }
+      ],
+      "expected": {
+        "objective": 3,
+        "root": "read_x"
+      }
+    }
+  ]
+}
