@@ -8,11 +8,11 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0046
+## Latest implementation checkpoint — 0047
 
-**722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 and X010-44..50 verified. Exact combined source `ae042db07f51d0cf1e71f002869ce9a65a011d48` passed all 19 workflows. P0 persistent workspace/journey/semantic/security integration is green; P1 ranked evaluation, provider telemetry/cost plumbing and device-ready acceptance harness are green. Live funded provider evidence (R-007) and actual physical/human acceptance (R-008) remain external gates; no paid inference or public release.
+**723/1,107 overall verified; 617/1,000 original; 377 pending; six omissions; one hardware blocker.** SUTRA-P078-02 is verified against exact head `d1560cfadbd0cf73007076e7a5e7b8f319e8fc81`, which passed all 19 workflows and executed the required consent/source/config/default-off/evidence/stream/ambiguity regressions. P078 remains open because P078-07/P078-10 are still pending. Live funded provider evidence (R-007), rights-cleared content, human/physical acceptance and public interoperability/release gates remain external; no paid inference or public release.
 
-Next: SUTRA-P054-01 requires participant-approved provider/model/spend for a capped live sample. If unavailable, continue dependency-ready independent engineering. R-007 and R-008 remain open. No public release, paid inference or human-acceptance claim.
+Next: SUTRA-P054-01 requires participant-approved provider/model/spend for a capped live sample. If unavailable, continue dependency-ready independent engineering rather than simulating external evidence. No public release, paid inference or human-acceptance claim.
 
 ## Resume sequence
 
