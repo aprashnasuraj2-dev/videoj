@@ -3,10 +3,10 @@ import {sealReviewedDraft} from '../reviewed-draft.js';
 import {compileReviewedExpression} from '../reviewed-expression.js';
 const enc=new TextEncoder();
 function locate(text,quote){const i=text.indexOf(quote);if(i<0||text.indexOf(quote,i+quote.length)!==-1)throw Error('PUBLIC_SOURCE_SPAN');const start=enc.encode(text.slice(0,i)).length;return {start,end:start+enc.encode(quote).length};}
-const FINANCE_TEXT='SEC Apple 2025 Form 10-K fact card. Services net sales: 2025=109158 USD million; 2024=96169 USD million; reported change=14%. Total net sales: 2025=416161 USD million; 2024=391035 USD million; reported change=6%.';
-const ENGINEERING_TEXT='FHWA-HIF-22-025 fact card. Iteration 3: phiVn=338 kip; Vu(DC)=213.4 kip; Vu(PS)=-1.1 kip; Vum(inv)=92.1 kip; reported shear load rating factor=1.36.';
-const FINANCE_PIN='sha256:19dfbefa3986a3e7a37ae8ab47bff1c1e9d4c754ebb7d3a75709cf1685ebd6d1';
-const ENGINEERING_PIN='sha256:d727f2d50bf86513c0541fe3184c635501413fd533a99a066b654af2fe4d1177';
+const FINANCE_TEXT='SEC Apple 2025 Form 10-K fact card. Services net sales: 2025=109158 USD million; 2024=96169 USD million; reported change=14%; Total net sales: 2025=416161 USD million; 2024=391035 USD million; reported change=6%;';
+const ENGINEERING_TEXT='FHWA-HIF-22-025 fact card. Iteration 3: phiVn=338 kip; Vu(DC)=213.4 kip; Vu(PS)=-1.1 kip; Vum(inv)=92.1 kip; reported shear load rating factor=1.36;';
+const FINANCE_PIN='sha256:67e99e05e03e509da9cb8abc7da8d01f54d2f24eb6804e14bd6a21021a8837b5';
+const ENGINEERING_PIN='sha256:e8e2d10f2fc6086052d11fb5b1a7ee94de6afb3bd013baac0a7f47a35ca1815e';
 const financeSource={id:'sec_apple_2025',lineage:'sec_accession_000032019325000079',url:'https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm',locator:'2025 Form 10-K page 23; net sales by category table',retrieved:'2026-11-26',factCardText:FINANCE_TEXT,factCardPin:FINANCE_PIN};
 const engineeringSource={id:'fhwa_hif_22_025',lineage:'fhwa_publication_hif_22_025',url:'https://www.fhwa.dot.gov/bridge/loadrating/pubs/hif22025.pdf',locator:'printed page 57, Table 2 and iteration 3 calculation; PDF page index 70 in repository verification',retrieved:'2026-11-26',factCardText:ENGINEERING_TEXT,factCardPin:ENGINEERING_PIN};
 const money={kind:'currency_amount',unit:'USD_million',scope:'apple_fy2024_2025',dimension:[0,0,0]},ratio={kind:'ratio',unit:'one',scope:'apple_fy2024_2025',dimension:[0,0,0]},force={kind:'force',unit:'kip',scope:'fhwa_hif_22_025_iteration_3',dimension:[1,1,-2]};
