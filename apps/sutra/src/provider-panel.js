@@ -6,13 +6,13 @@ import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin,onTelemetry=()=>{}}){
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
- const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
- const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentQuestion=$('provider-consent-question'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
+ const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),webList=$('provider-web-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
+ const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentQuestion=$('provider-consent-question'),consentBudget=$('provider-consent-budget'),consentResearch=$('provider-consent-research'),consentData=$('provider-consent-data'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
  const runtimeBounds=executionLimits();
  let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false;
  const set=(s,m)=>applyScreenState(status,s,m);
  const seekScope=createReceiptSeekScope();
- const clear=()=>{seekScope.cancel();epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
+ const clear=()=>{seekScope.cancel();epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();webList.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
  // Preserve earlier source text but do not resurrect its action authority after an edit or rediscovery.
  function revokeResultActions(){
   if(!resultContext||actionsRevoked)return;
@@ -33,6 +33,20 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(row)list.append(row);
   }
   if(!list.children.length){const li=document.createElement('li');li.textContent='No current catalog-matched source receipt is available. Do not treat model interpretation as evidence.';list.append(li);}
+ }
+ function renderWebResearch(webResearch){
+  webList.replaceChildren();
+  const receipts=Array.isArray(webResearch?.receipts)?webResearch.receipts:[];
+  for(const receipt of receipts){
+   if(!receipt||typeof receipt.url!=='string'||typeof receipt.excerpt!=='string')continue;
+   const li=document.createElement('li'),title=document.createElement('strong'),excerpt=document.createElement('p'),link=document.createElement('a');
+   title.textContent=receipt.title||receipt.url;excerpt.textContent=receipt.excerpt;
+   link.href=receipt.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open public source';
+   li.append(title,document.createTextNode(' · '),link,excerpt);
+   if(receipt.truncated){const note=document.createElement('p');note.className='muted';note.textContent='Displayed evidence is a bounded excerpt of the retrieved source.';li.append(note);}
+   webList.append(li);
+  }
+  if(!webList.children.length){const li=document.createElement('li');li.textContent='No external public source was read during this run.';webList.append(li);}
  }
  function controls(){
   const waiting=!!pendingApproval;
@@ -66,8 +80,8 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(active!==operation)return;
    if(operation.controller.signal.aborted)throw Error('cancelled');
    identifyResult(approval,true);answer.textContent=result.text;
-   renderReceipts(result.receipts);
-   const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' Per-call latency: '+u.requests.map(row=>row.latencyMs+' ms').join(', ')+'. No automatic retries.';
+   renderReceipts(result.receipts);renderWebResearch(result.webResearch);
+   const u=result.usage,w=result.webResearch;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' Public web capability: '+(w?String(w.providerCalls)+' provider calls, '+String(w.receipts?.length??0)+' sources read.':'disabled or unused')+'. Per-call latency: '+u.requests.map(row=>row.latencyMs+' ms').join(', ')+'. No automatic retries.';
    try{onTelemetry({outcome:'completed',backend:approval.contract.backend,model:result.model,usage:u});}catch{}
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
   }catch(error){
@@ -94,7 +108,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
    if(active!==operation||operation.controller.signal.aborted)return;
-   if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). A run may still be refused by quota or provider availability. No personal key is needed.');}
+   if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). '+(found.contract.webResearch==='configured'?'Bounded public web research is available when the model decides lesson evidence is insufficient. ':'External web research is disabled; this run is limited to lesson evidence. ')+'A run may still be refused by quota or provider availability. No personal key is needed.');}
    else set('denied','Optional site-operated inference is disabled. The no-model source question, transcript and local review remain available.');
   }catch(error){if(active!==operation)return;set('error',error?.code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before checking inference again. No model request was made.':'Inference configuration could not be confirmed. No model request was made.');}
   finally{if(active===operation){active=null;controls();}}
@@ -109,6 +123,9 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   consentModel.textContent=model;
   consentChars.textContent=String(value.length);consentQuestion.textContent=value;
   consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
+  const webEnabled=approvedContract.webResearch==='configured';
+  consentResearch.textContent=webEnabled?'Available for this run. The model may choose bounded public search/read calls through this SUTRA site when lesson evidence is insufficient. Retrieved webpages are untrusted and may be wrong or malicious.':'Disabled for this run. Only the lesson source capability is granted.';
+  consentData.textContent=webEnabled?'Question text, bounded agent instructions/messages, catalog-matched lesson results, and public research queries plus discovered public source URLs only when the model requests research.':'Question text, bounded agent instructions/messages, and catalog-matched lesson source results requested during this run.';
   controls();
   set('consent','Review the inference data flow. No model request has been made yet.');
   try{consentDialog.showModal();consentDeny.focus();}catch{closeConsent();set('error','Approval could not be displayed. No model request was made.');}
