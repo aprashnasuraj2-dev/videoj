@@ -179,6 +179,8 @@ test('peer protocol metadata cannot bypass the independent structured return all
   privateContext:{locale:'ne-NP',preference:'concise'},
   peerContextGrants:[{peerUrl,network:'transit',toPeer:['locale','preference'],toCaller:['preference']}],peerRuntime:{inspector:inspector(),fetchImpl}});
  assert.ok(result.text);assert.equal(seen.length,1);
- assert.deepEqual(seen[0],{cruse:1,text:'Public peer result.',presentation:null,source:{origin:'https://peer.example',network:'transit',agent:'learner'},private_context:{preference:'concise'}});
+ assert.deepEqual(seen[0],{cruse:1,text:'Public peer result.',presentation:null,source:{sourceId:'peer-1',origin:'https://peer.example',network:'transit',agent:'learner'},private_context:{preference:'concise'}});
+ assert.equal(result.peerResearch.receipts[0].sourceId,seen[0].source.sourceId);
+ assert.equal(result.peerResearch.receipts[0].verification,'peer_claim');
  assert.ok(!JSON.stringify(seen).includes('ne-NP'));assert.ok(!JSON.stringify(seen).includes('PEER_PROTOCOL_CANARY'));
 });

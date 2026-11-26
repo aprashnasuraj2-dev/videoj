@@ -11,7 +11,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   let ready=false;for(let i=0;i<60;i++){try{if((await fetch(base)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}assert.ok(ready,logs);
   browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   let peerRequests=0,modelCalls=0,manifestReads=0,graphReads=0;
-  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',inferenceContractId:'p'.repeat(64),routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',webResearch:'disabled',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
+  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',inferenceContractId:'c'.repeat(64),routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',webResearch:'disabled',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
   const graph=JSON.parse(fs.readFileSync(path.join(app,'public/agents/source_peer_learner.network.json'),'utf8'));graph.llm_config={model_name:'synthetic-provider-test'};
   const manifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
   manifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};manifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
@@ -29,7 +29,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/v1/chat/completions',async r=>{
    modelCalls++;const body=r.request().postDataJSON(),tools=(body.tools??[]).map(t=>t.function.name),toolMessages=body.messages.filter(m=>m.role==='tool');
-   assert.equal(r.request().headers()['x-sutra-inference-contract'],'p'.repeat(64));assert.equal(r.request().headers().authorization,undefined);
+   assert.equal(r.request().headers()['x-sutra-inference-contract'],'c'.repeat(64));assert.equal(r.request().headers().authorization,undefined);
    let data;
    if(!tools.length)data=chunk({content:'Independent peer claim: peer measurement is forty one units in this fixture.'},'stop');
    else if(!toolMessages.length){

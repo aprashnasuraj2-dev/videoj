@@ -174,7 +174,11 @@ test('exact peer capability grant lets an independently published compatible gra
  assert.equal(result.peerResearch.receipts[0].verification,'peer_claim');
  assert.match(result.peerResearch.receipts[0].excerpt,/read one caller-owned public source/);
  assert.deepEqual(contacts,['https://peer.example/agents/agent-manifest.json','https://peer.example/agents/transit.network.json']);
- assert.equal(JSON.stringify(result.events).includes('peer_capability_policy'),false,'sanitized trace must not expose internal peer grant metadata');
+ const policyEvent=result.events.find(event=>event.kind==='peer_capability_policy');
+ assert.ok(policyEvent,'sanitized trace should expose that a peer capability policy was applied');
+ const policyText=JSON.stringify(policyEvent);
+ assert.equal(policyText.includes(peerUrl),false,'sanitized trace must not expose the exact peer URL');
+ assert.equal(policyText.includes('capabilities'),false,'sanitized trace must not expose the raw capability grant object');
 });
 
 test('peer web descriptor is refused without an exact capability grant and never reaches the web provider',async()=>{
