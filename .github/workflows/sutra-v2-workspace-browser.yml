@@ -29,5 +29,7 @@ jobs:
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - name: Execute keyboard, reflow and reduced-motion accessibility contract
+        run: node apps/sutra-v2/test/workspace-accessibility.cjs
       - name: Scope boundary
         run: echo 'Actual child browser execution only; full independent artifact replay and integration formal gates remain required.'
