@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0058 — 2026-11-26
+
+**777/1,107 overall verified; 671/1,000 original; 323 pending; six omissions; one hardware blocker.** P065-08 is newly verified from a dated, read-only Cloudflare Workers Observability sample. A privacy projection retained only timestamp, Worker service, method/path, status, outcome and CPU/wall timing; request IPs, headers, user agents and identifiers were not written to repository evidence. [Evidence](evidence/implementation/SESSION-0058.md).
+
+The 24-hour observability window recorded 30,996 events for `patro`, 1,882 for `aafnai-library-phase1` and 593 for `patro-date-pages`, plus concrete path-to-service fetch samples. **These are observability events, not billed Worker invocations.** P065-07 remains pending for trustworthy account-wide quota/headroom evidence; P065-10 remains pending until an actual SUTRA production static visit and separate inference accounting exist. No Cloudflare configuration was changed.
+
 ## Session 0057 — 2026-11-26
 
 **776/1,107 overall verified; 670/1,000 original; 324 pending; six omissions; one hardware blocker.** P018-06, P019-02, P019-06, P041-10 and P050-10 are newly verified from exact source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c`. All 19 workflows passed; learner run 45835173595/job 139962008840 passed 161/161 app, 171/171 package/API, 182/182 runtime, 8/8 peer tests and the complete Chromium suite. Chromium/Firefox/WebKit compatibility matrix also passed. [Evidence](evidence/implementation/SESSION-0057.md).
