@@ -125,7 +125,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,webTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants,history=[]}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,webTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants,peerCapabilityGrants=[],history=[]}={}){
  let admittedPeer=null;
  if(peerRuntime!==undefined){
   try{peerRuntime=snapshotContactConfig(peerRuntime,['inspector','fetchImpl'],'PEER_CONFIG');}
@@ -141,6 +141,22 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  // the same pinned origin in both the client and runner context.
  if(sourceTools!==undefined){try{sourceTools=admitSourceConfig(sourceTools);}catch{fail('SOURCE_CONFIG','Source tool host configuration was refused.');}}
  if(webTools!==undefined){try{webTools=admitWebConfig(webTools);}catch{fail('WEB_CONFIG','Explicit host web research grant is required.');}}
+ let peerCapabilityPolicy;
+ try{
+  const raw=snapshotJsonData(peerCapabilityGrants,8192,'PEER_CAPABILITY_CONFIG');
+  if(!Array.isArray(raw)||raw.length>8)throw Error();
+  const map=new Map();
+  for(const grant of raw){
+   if(!plain(grant)||Object.keys(grant).sort().join(',')!=='capabilities,peerUrl'||typeof grant.peerUrl!=='string'||grant.peerUrl.length>2048||
+      !Array.isArray(grant.capabilities)||grant.capabilities.length<1||grant.capabilities.length>2)throw Error();
+   const parsed=parsePeerNetworkReference(grant.peerUrl),key=parsed.target.href,caps=[...grant.capabilities];
+   if(caps.some(cap=>!['source','web'].includes(cap))||new Set(caps).size!==caps.length||map.has(key))throw Error();
+   if(caps.includes('source')&&!sourceTools||caps.includes('web')&&!webTools)throw Error();
+   map.set(key,Object.freeze(caps.sort()));
+  }
+  if(map.size&&!admittedPeer)throw Error();
+  peerCapabilityPolicy=map;
+ }catch{fail('PEER_CAPABILITY_CONFIG','Peer capability grants require exact peer URLs and already enabled caller capabilities.');}
  let privatePolicy;
  try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
@@ -296,8 +312,11 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   check();if(!admittedPeer)return unavailable();
   let loaded,peer;
   try{
-   loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
-   check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
+   const parsed=parsePeerNetworkReference(url),caps=peerCapabilityPolicy.get(parsed.target.href)??[];
+   const allowSourceTools=caps.includes('source'),allowWebTools=caps.includes('web');
+   loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000),allowSourceTools,allowWebTools});
+   check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds,allowSourceTools,allowWebTools});
+   trace.note('peer_capability_policy',{origin:loaded.origin,network:loaded.name,source:allowSourceTools?'granted':'none',web:allowWebTools?'granted':'none'});
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
@@ -497,7 +516,7 @@ export function resolveSymbolicPeerLinks(definition,document,networkName){
  return result;
 }
 
-async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false,contactTimeoutMs}={}){
+async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false,allowWebTools=false,contactTimeoutMs}={}){
  const {base,networkName}=parsePeerNetworkReference(peerUrl);
  const manifestUrl=new URL('agent-manifest.json',base);
  let manifest;
@@ -524,7 +543,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
   url:graphUrl.href,fetchImpl,maxBytes:65536,signal,timeoutMs:contactTimeoutMs
  });}
  catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
- compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
+ compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools,allowWebTools});
  return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
 }
 
@@ -536,7 +555,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  */
 export async function loadPeerNetwork(input={}){
  let options;
- try{options=snapshotContactConfig(input,['peerUrl','inspector','fetchImpl','signal','timeoutMs','contactTimeoutMs','allowSourceTools'],'PEER_CONFIG');}
+ try{options=snapshotContactConfig(input,['peerUrl','inspector','fetchImpl','signal','timeoutMs','contactTimeoutMs','allowSourceTools','allowWebTools'],'PEER_CONFIG');}
  catch{fail('PEER_CONFIG','Peer loader configuration must contain supported own data fields.');}
  const {signal,timeoutMs=5000,contactTimeoutMs:suppliedContactTimeout,...contactOptions}=options;
  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)fail('LIMIT_CONFIG','Peer load budget must be 1–60000 ms.');
