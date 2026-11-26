@@ -21,8 +21,8 @@
     {
       "name": "research_learner",
       "front_man": "learner",
-      "hocon": "./v/573cc12362d42b41f46de4afc62b757064a597c3/research_learner.network.json",
-      "description": "Model-directed lesson evidence plus optional bounded public web research; retrieved claims remain unverified."
+      "hocon": "./v/ff40e39c6877a7d91591010ae8a9125d2bda4804/research_learner.network.json",
+      "description": "Model-directed lesson/web research with quotation-bound source claims and explicit inference/conflict/uncertainty labels."
     }
   ],
   "allowed_peers": [],

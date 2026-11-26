@@ -1,0 +1,62 @@
+import {snapshotDataArray,snapshotDataRecord} from '../sutra-evidence/index.js';
+import {parseUniqueJson} from './strict-json.js';
+
+const fail=code=>{const error=new Error('Epistemic answer rejected ('+code+').');error.code=code;throw error;};
+const text=(value,max)=>typeof value==='string'&&value.trim()&&value.length<=max&&!/[\u0000\u007f]/.test(value);
+const exact=(value,keys,limit=keys.length)=>{
+ const row=snapshotDataRecord(value,limit);
+ if(Object.keys(row).sort().join(',')!==[...keys].sort().join(','))fail('ANSWER_FORMAT');
+ return row;
+};
+const lessonKey=(sourceId,cueId)=>sourceId+'\u0000'+cueId;
+
+export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]}={}){
+ let root;try{root=parseUniqueJson(answer,{maxChars:12000,maxDepth:12});}catch{fail('ANSWER_FORMAT');}
+ root=exact(root,['claims']);
+ const claims=snapshotDataArray(root.claims,12);if(!claims.length)fail('ANSWER_FORMAT');
+ const lessons=new Map(),web=new Map();
+ for(const raw of snapshotDataArray(lessonReceipts,20)){
+  const r=snapshotDataRecord(raw,32);
+  if(!text(r.sourceId,160)||!text(r.cueId,160)||!text(r.excerpt,4000))fail('EVIDENCE_FORMAT');
+  lessons.set(lessonKey(r.sourceId,r.cueId),r);
+ }
+ for(const raw of snapshotDataArray(webReceipts,6)){
+  const r=snapshotDataRecord(raw,16);
+  if(!text(r.sourceId,32)||!text(r.url,2048)||!text(r.excerpt,3000))fail('EVIDENCE_FORMAT');
+  let url;try{url=new URL(r.url);}catch{fail('EVIDENCE_FORMAT');}
+  if(!['https:','http:'].includes(url.protocol))fail('EVIDENCE_FORMAT');
+  web.set(r.sourceId,r);
+ }
+ const output=[];
+ for(const raw of claims){
+  const claim=exact(raw,['kind','text','citations']);
+  if(!['source_claim','inference','conflict','uncertainty'].includes(claim.kind)||!text(claim.text,1000))fail('ANSWER_FORMAT');
+  const citations=snapshotDataArray(claim.citations,4),seen=new Set(),clean=[],authorities=new Set();
+  if(['source_claim','conflict'].includes(claim.kind)&&!citations.length)fail('CITATION_REQUIRED');
+  if(['inference','uncertainty'].includes(claim.kind)&&citations.length)fail('CITATION_FORBIDDEN');
+  for(const rawCitation of citations){
+   const base=snapshotDataRecord(rawCitation,4);
+   if(base.kind==='lesson'){
+    const c=exact(base,['kind','sourceId','cueId','quote'],4),r=lessons.get(lessonKey(c.sourceId,c.cueId));
+    if(!r||!text(c.quote,500)||c.quote.trim().length<12||!r.excerpt.includes(c.quote))fail('CITATION_INVALID');
+    const id='lesson:'+c.sourceId+'\u0000'+c.cueId;if(seen.has(id))fail('CITATION_INVALID');seen.add(id);authorities.add('lesson:'+c.sourceId);
+    clean.push(Object.freeze({kind:'lesson',sourceId:c.sourceId,cueId:c.cueId,quote:c.quote}));
+   }else if(base.kind==='web'){
+    const c=exact(base,['kind','sourceId','quote'],3),r=web.get(c.sourceId);
+    if(!r||!text(c.quote,500)||c.quote.trim().length<12||!r.excerpt.includes(c.quote))fail('CITATION_INVALID');
+    const id='web:'+c.sourceId;if(seen.has(id))fail('CITATION_INVALID');seen.add(id);authorities.add('web:'+new URL(r.url).hostname.toLowerCase());
+    clean.push(Object.freeze({kind:'web',sourceId:c.sourceId,quote:c.quote}));
+   }else fail('CITATION_INVALID');
+  }
+  if(claim.kind==='conflict'&&authorities.size<2)fail('INDEPENDENCE_REQUIRED');
+  output.push(Object.freeze({kind:claim.kind,text:claim.text,citations:Object.freeze(clean)}));
+ }
+ const cited=new Set(output.flatMap(claim=>claim.citations.map(c=>c.kind)));
+ const basis=cited.has('lesson')&&cited.has('web')?'lesson_and_web':cited.has('lesson')?'lesson':cited.has('web')?'web':output.some(c=>c.kind==='inference')?'model_inference':'uncertainty';
+ return Object.freeze({claims:Object.freeze(output),basis,verification:'quotation_integrity_only',truthStatus:'unverified'});
+}
+export function formatEpistemicAnswer(value){
+ const labels={source_claim:'Source claim',inference:'Model inference',conflict:'Conflicting evidence',uncertainty:'Uncertainty'};
+ if(!value||!Array.isArray(value.claims))fail('ANSWER_FORMAT');
+ return value.claims.map(claim=>labels[claim.kind]+': '+claim.text).join(' ');
+}

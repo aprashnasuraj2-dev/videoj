@@ -1,3 +1,4 @@
+import {validateEpistemicAnswer,formatEpistemicAnswer} from '../../../packages/sutra-runtime/epistemic-answer.js';
 import {createProviderWebTools} from './provider-web-tools.js';
 import {parseUniqueJson} from '../../../packages/sutra-consent/strict-json.js';
 import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
@@ -297,9 +298,14 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
   const webResearch=result.webResearch??null;
-  const acceptance=evaluateEvidenceAcceptance({webResearchEnabled:approvedContract.webResearch==='configured',lessonReceipts:evidence.receipts,webResearch});
-  if(!acceptance.accepted){const missing=Error('No independently observed evidence was available for the completed interpretation.');missing.code=acceptance.code;throw missing;}
-  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,evidenceBasis:acceptance.basis,usage:usage.snapshot(),truthStatus:'unverified'};
+  if(approvedContract.webResearch==='configured'){
+   let epistemic;try{epistemic=validateEpistemicAnswer(result.text,{lessonReceipts:evidence.receipts,webReceipts:webResearch?.receipts??[]});}
+   catch(error){const rejected=Error('Research answer failed epistemic receipt binding.');rejected.code=typeof error?.code==='string'?error.code:'ANSWER_FORMAT';throw rejected;}
+   return {model,text:formatEpistemicAnswer(epistemic),epistemicClaims:epistemic.claims,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,evidenceBasis:epistemic.basis,quotationIntegrity:epistemic.verification,usage:usage.snapshot(),truthStatus:'unverified'};
+  }
+  const acceptance=evaluateEvidenceAcceptance({webResearchEnabled:false,lessonReceipts:evidence.receipts,webResearch:null});
+  if(!acceptance.accepted){const missing=Error('No independently catalog-matched lesson receipt was available for the completed interpretation.');missing.code=acceptance.code;throw missing;}
+  return {model,text:result.text,epistemicClaims:null,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch:null,evidenceBasis:acceptance.basis,quotationIntegrity:null,usage:usage.snapshot(),truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
