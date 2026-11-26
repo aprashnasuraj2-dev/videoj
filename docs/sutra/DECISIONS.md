@@ -366,3 +366,14 @@ Keep featured native cue and written-guide integrity buttons focusable while pen
 ## SUTRA-DECISION-0052 — Acceptance readiness is not acceptance
 
 2026-11-26T12:48:46+05:45: Build a private CI static bundle and validate its required hashes, device record schema and neutral reviewer feedback contract. The feedback handler is an undeployed bounded interface with an injected sink, not authorization to collect people’s data. CI cannot prove physical hardware, human execution or screen-reader usability; R-008 remains open until real authorized observation exists.
+
+
+## SUTRA-DECISION-0053 — CloudflareB public caller deployment supersedes the prior no-deploy hold
+
+- 2026-11-27T00:03:20+05:45. The participant explicitly instructed SUTRA to deploy directly to the connected **CloudflareB** account and requested a `.dev` domain. This supersedes SUTRA-DECISION-0008 only for the public caller-app deployment authorized in this session.
+- Chosen path: create a Cloudflare Pages project named `sutra`, build exact branch `sutra/caller-peer-failure-boundary` from `apps/sutra`, and publish the generated `dist` output. Exact deployed revision: `f322757d0ebfbc149aae2ba930c0acf826e08c18`.
+- Domain fact: CloudflareB had zero DNS zones, zero Registrar registrations and zero existing Pages custom domains. Therefore no owned custom `.dev` hostname could be truthfully bound. The safe immediate production hostname is Cloudflare-managed `https://sutra-c70.pages.dev/`. No domain was purchased or invented.
+- Verified result: Cloudflare build/deploy succeeded; 87 files uploaded; independent public fetch returned the SUTRA learner page and direct JSON/runtime artifacts without a login wall.
+- Boundary: the deployed content profile remains explicitly synthetic development content. This deployment does not authorize or establish paid inference, final rights-cleared lesson content, a separate peer production origin, human/device acceptance, final challenge release, npm publication or Devpost submission.
+- Alternative considered: wait until an owned custom `.dev` zone exists before deploying anything. Rejected because the participant explicitly requested direct deployment now; the managed `pages.dev` hostname gives a reversible public deployment without fabricating domain ownership.
+- Evidence: [Session 0059](evidence/implementation/SESSION-0059.md).
