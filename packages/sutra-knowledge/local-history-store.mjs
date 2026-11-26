@@ -2,12 +2,14 @@
 // Immutable snapshots, an exclusive writer lock and atomic HEAD publication.
 // A crashed writer may leave a lock; do not automatically steal it.
 import {constants} from 'node:fs';
-import {open,lstat,rename,unlink,link} from 'node:fs/promises';
+import {open,lstat,rename,unlink,link,mkdir} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
 import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {replayInvestigationHistory} from './investigation-history.js';
 import {verifyHistoryExtension} from './history-extension.js';
 const MAX=262144,PIN=/^sha256:[a-f0-9]{64}$/;
+const FLOCK_MARKER='sutra-history-kernel-flock/v1\n',FLOCK='/usr/bin/flock';
 const fail=c=>{throw TypeError('HISTORY_STORE_'+c);};
 const checked=p=>{if(typeof p!=='string'||!PIN.test(p))fail('PIN');return p;};
 const absent=e=>e?.code==='ENOENT';
@@ -25,11 +27,16 @@ async function durableNew(path,text){
  const f=await open(path,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);
  try{await f.writeFile(text,'utf8');await f.sync();}finally{await f.close();}
 }
-export async function openLocalHistoryStore(directory){
+export async function openLocalHistoryStore(directory,{lockMode='exclusive-create'}={}){
+ if(!['exclusive-create','kernel-flock'].includes(lockMode))fail('LOCK_MODE');
  if(process.platform!=='linux'||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
  const dir=resolve(directory),s=await lstat(dir);
  if(!s.isDirectory()||s.isSymbolicLink()||(s.mode&0o077)!==0)fail('PRIVATE_DIRECTORY');
  const headPath=join(dir,'HEAD'),lockPath=join(dir,'WRITE.lock');
+ if(lockMode==='kernel-flock'){
+  try{if(await boundedRead(lockPath,128)!==FLOCK_MARKER)fail('FLOCK_MARKER');}
+  catch(e){if(absent(e))fail('FLOCK_MARKER');throw e;}
+ }
  const snapshotPath=p=>join(dir,'history-'+checked(p).slice(7)+'.json');
  async function syncDirectory(){const f=await open(dir,constants.O_RDONLY|constants.O_DIRECTORY|constants.O_NOFOLLOW);try{await f.sync();}finally{await f.close();}}
  async function readHead(){
@@ -60,6 +67,18 @@ export async function openLocalHistoryStore(directory){
   finally{try{await unlink(temp);}catch(e){if(!absent(e))throw e;}}
  }
  async function locked(fn){
+  if(lockMode==='kernel-flock'){
+   // Stable inode for this explicit store profile. Never unlink or replace it.
+   // Linux locks the open file description, shared with the inherited child fd.
+   const f=await open(lockPath,constants.O_RDWR|constants.O_NOFOLLOW|constants.O_NONBLOCK);
+   try{
+    const stat=await f.stat();if(!stat.isFile()||(stat.mode&0o077)!==0||stat.size!==Buffer.byteLength(FLOCK_MARKER))fail('FLOCK_MARKER');
+    if(await f.readFile('utf8')!==FLOCK_MARKER)fail('FLOCK_MARKER');
+    const p=spawnSync(FLOCK,['-x','-n','-E','75','3'],{stdio:['ignore','ignore','ignore',f.fd],timeout:5000});
+    if(p.status===75)fail('BUSY_OR_CRASHED_LOCK');if(p.status!==0||p.error||p.signal)fail('FLOCK_HELPER');
+    return await fn();
+   }finally{await f.close();}
+  }
   let f;
   try{f=await open(lockPath,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);}
   catch(e){if(e?.code==='EEXIST')fail('BUSY_OR_CRASHED_LOCK');throw e;}
@@ -81,4 +100,18 @@ export async function openLocalHistoryStore(directory){
    await publish(nextPin,nextText);return load(nextPin);
   });}
  });
+}
+
+// Explicit fresh-directory creation only. Do not migrate an existing legacy
+// store or silently interpret its empty O_EXCL lock as a kernel lock marker.
+// A failed creation may leave an incomplete private directory for operator
+// inspection; no recursive deletion or automatic fallback.
+export async function createFlockedHistoryStore(directory){
+ if(process.platform!=='linux'||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');
+ const dir=resolve(directory);await mkdir(dir,{mode:0o700});
+ await durableNew(join(dir,'WRITE.lock'),FLOCK_MARKER);
+ const f=await open(dir,constants.O_RDONLY|constants.O_DIRECTORY|constants.O_NOFOLLOW);try{await f.sync();}finally{await f.close();}
+ // Parent-directory durability matters for newly created store directory.
+ const parent=await open(resolve(dir,'..'),constants.O_RDONLY|constants.O_DIRECTORY|constants.O_NOFOLLOW);try{await parent.sync();}finally{await parent.close();}
+ return openLocalHistoryStore(dir,{lockMode:'kernel-flock'});
 }

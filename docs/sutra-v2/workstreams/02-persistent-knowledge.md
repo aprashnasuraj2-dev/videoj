@@ -40,3 +40,7 @@ Exact child CI pending.
 
 ## V2-182 real killed-writer challenge
 Test-only subprocess instrumentation wraps actual Node filesystem link/rename calls and sends SIGKILL to the writer at before immutable publication, before HEAD rename, and after HEAD rename. Verify exact old or new state, stale lock refusal, and explicit offline lock removal after the process exits. No production injection hook; no power-loss/hardware flush proof, no automatic lock stealing, no external freshness. Exact child CI pending.
+
+
+## V2-182 candidate — kernel-managed writer lock
+Add explicit fresh-directory Linux `kernel-flock` store profile using fixed `/usr/bin/flock`, inherited descriptor and permanent marker inode. Kernel releases the advisory lock on process death; no lock-file deletion, no auto migration, no fallback to the legacy O_EXCL protocol. Legacy writes to flock directories refuse. Real SIGKILL test at all three publication phases with automatic subsequent writer acquisition and exact retained head checks. Trusted local filesystem and host executable required; no NFS/hostile directory/power-loss or external freshness claim. Helper startup overhead unmeasured. Exact child CI pending.
