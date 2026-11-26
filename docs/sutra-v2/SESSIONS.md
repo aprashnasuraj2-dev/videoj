@@ -1249,3 +1249,6 @@ User authorized separate draft PRs for all ten critical workstreams. Branches ar
 
 
 V2-180 checkpoint: PRs #51–60 independently confirmed open and draft against the integration branch. Scoped JS CI 8/10 success at observation, two running. Four executable slices and six acceptance-only slices; no integration, full verification, or release credit. Exact child heads and runs recorded in PARALLEL-WORKSTREAMS.md and progress.json.
+
+
+V2-180 follow-up: exact child JS runs 45750211579 and 45750217798 passed; all ten scoped JS workflows successful. Correct child document links to immutable heads. No merge, deployment or gate promotion.

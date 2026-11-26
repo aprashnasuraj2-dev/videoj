@@ -9518,7 +9518,7 @@
         "head": "357891e20374441e8af242928cdb6793ca465152",
         "ci": {
           "run": 45750211579,
-          "observed": "in_progress",
+          "observed": "success",
           "scope": "child JS only"
         }
       },
@@ -9530,7 +9530,7 @@
         "head": "bc3a06d9241b6f1671f036601d5c037f8e30d5b7",
         "ci": {
           "run": 45750217798,
-          "observed": "in_progress",
+          "observed": "success",
           "scope": "child JS only"
         }
       }
