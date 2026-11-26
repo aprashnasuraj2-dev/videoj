@@ -51,7 +51,7 @@ test('SUTRA contributor path names runnable entry points without inventing a pub
 });
 
 test('pre-release technical report binds implementation claims to existing source paths and preserves unverified limits',async()=>{
- const report=await readFile(new URL('../../docs/sutra/TECHNICAL_REPORT.md',import.meta.url),'utf8');
+ const report=await readFile(new URL('../../docs/sutra/Technical_Report.md',import.meta.url),'utf8');
  for(const marker of [
   'System responsibility split',
   'Public artifact resolution and peer policy',
