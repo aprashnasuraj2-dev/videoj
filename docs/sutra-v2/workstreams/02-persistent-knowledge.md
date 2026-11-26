@@ -23,3 +23,7 @@ Child JS regression is not full integration evidence. Maintain exact source revi
 ## Parallel session — candidate
 Implement verified append-only history extension: both separately pinned snapshots fully replayed; exact ordered version prefix and every previous branch head's descendant ancestry required. Tests cover valid append/fork and independently valid sibling/rollback refusal. No durable storage or global freshness. Next: transactional persistent store with external checkpoint and crash/restart tests.
 Exact child CI pending.
+
+
+## Durable local history candidate
+Actual Linux private-directory store with immutable pinned snapshots, O_EXCL writer lock, separately retained expected HEAD, replay before commit, fsync barriers and atomic HEAD rename. Concurrent two-instance CAS, restart, orphan reuse, tamper, stale lock and coordinated rollback counterexample tests. A killed process can leave a lock requiring operator recovery; no automatic lock stealing, hostile same-user filesystem, NFS, Windows or external freshness claim. Publication can be ambiguous on I/O failure after rename; inspect using independently retained pins rather than blind retry. Exact child CI pending.
