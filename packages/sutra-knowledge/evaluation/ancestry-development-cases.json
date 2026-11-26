@@ -1,0 +1,680 @@
+{
+  "profile": "sutra-ancestry-development-cases/v1",
+  "qualification": "Developer-authored synthetic graph fixtures and explicit expected minimum declared cohort cuts; not independent expert annotation or empirical root independence. Source entry id:lineage:byteKey (defaults id). Target two source characters (q=question), optional :r refuted, :u unknown, :x refused, @ context source. Components are explicit sorted member IDs; cut strings contain the smallest member of each component. The expected labels are frozen before implementing the evaluator.",
+  "cases": [
+    {
+      "id": "single_source",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "aa"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "separate_singletons",
+      "sources": [
+        "a",
+        "b"
+      ],
+      "targets": [
+        "aa",
+        "bb"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b"
+        ],
+        "cuts": [
+          "ab"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "shared_declared_lineage",
+      "sources": [
+        "a:L",
+        "b:L"
+      ],
+      "targets": [
+        "aa",
+        "bb"
+      ],
+      "expected": {
+        "components": [
+          "ab"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "duplicate_bytes_cross_lineage",
+      "sources": [
+        "a:A:X",
+        "b:B:X"
+      ],
+      "targets": [
+        "aa",
+        "bb"
+      ],
+      "expected": {
+        "components": [
+          "ab"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "transitive_bridge",
+      "sources": [
+        "a:A:X",
+        "b:B:Y",
+        "c:B:X"
+      ],
+      "targets": [
+        "aa",
+        "bb"
+      ],
+      "expected": {
+        "components": [
+          "abc"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "cross_source_alternatives",
+      "sources": [
+        "a",
+        "b"
+      ],
+      "targets": [
+        "ab"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b"
+        ],
+        "cuts": [
+          "a",
+          "b"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "triangle",
+      "sources": [
+        "a",
+        "b",
+        "c"
+      ],
+      "targets": [
+        "ab",
+        "bc",
+        "ac"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c"
+        ],
+        "cuts": [
+          "ab",
+          "ac",
+          "bc"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "path",
+      "sources": [
+        "a",
+        "b",
+        "c"
+      ],
+      "targets": [
+        "ab",
+        "bc"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c"
+        ],
+        "cuts": [
+          "b"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "disjoint_pairs",
+      "sources": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "targets": [
+        "ab",
+        "cd"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "cuts": [
+          "ac",
+          "ad",
+          "bc",
+          "bd"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "star",
+      "sources": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "targets": [
+        "ab",
+        "ac",
+        "ad"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "four_cycle",
+      "sources": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "targets": [
+        "ab",
+        "bc",
+        "cd",
+        "da"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "cuts": [
+          "ac",
+          "bd"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "three_singletons",
+      "sources": [
+        "a",
+        "b",
+        "c"
+      ],
+      "targets": [
+        "aa",
+        "bb",
+        "cc"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c"
+        ],
+        "cuts": [
+          "abc"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "question_only",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "qq"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [],
+        "status": "NO_EXTERNAL_COHORT_CUT_COVERS_ALL_TARGETS"
+      }
+    },
+    {
+      "id": "question_and_external",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "qa"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "uncoverable_mixed",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "qq",
+        "aa"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [],
+        "status": "NO_EXTERNAL_COHORT_CUT_COVERS_ALL_TARGETS"
+      }
+    },
+    {
+      "id": "unknown_only",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "aa:u"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [],
+        "status": "NO_DECISIVE_TARGETS"
+      }
+    },
+    {
+      "id": "refused_only",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "aa:x"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [],
+        "status": "NO_DECISIVE_TARGETS"
+      }
+    },
+    {
+      "id": "refutation_is_decisive",
+      "sources": [
+        "a",
+        "b"
+      ],
+      "targets": [
+        "aa:r",
+        "bb"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b"
+        ],
+        "cuts": [
+          "ab"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "context_not_target",
+      "sources": [
+        "a",
+        "b"
+      ],
+      "targets": [
+        "aa@b"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "copy_target_not_extra_obligation",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "aa",
+        "aa"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "unused_duplicate",
+      "sources": [
+        "a:A:X",
+        "z:Z:X"
+      ],
+      "targets": [
+        "aa"
+      ],
+      "expected": {
+        "components": [
+          "az"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "shared_lineage_and_other",
+      "sources": [
+        "a:L",
+        "b:L",
+        "c:C"
+      ],
+      "targets": [
+        "aa",
+        "cc"
+      ],
+      "expected": {
+        "components": [
+          "ab",
+          "c"
+        ],
+        "cuts": [
+          "ac"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "cohort_collapses_shared_edge",
+      "sources": [
+        "a:A",
+        "b:L",
+        "c:L"
+      ],
+      "targets": [
+        "ab",
+        "ac"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "bc"
+        ],
+        "cuts": [
+          "a",
+          "b"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "eight_independent_singletons",
+      "sources": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h"
+      ],
+      "targets": [
+        "aa",
+        "bb",
+        "cc",
+        "dd",
+        "ee",
+        "ff",
+        "gg",
+        "hh"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h"
+        ],
+        "cuts": [
+          "abcdefgh"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "eight_same_lineage",
+      "sources": [
+        "a:L",
+        "b:L",
+        "c:L",
+        "d:L",
+        "e:L",
+        "f:L",
+        "g:L",
+        "h:L"
+      ],
+      "targets": [
+        "aa",
+        "bb",
+        "cc",
+        "dd",
+        "ee",
+        "ff",
+        "gg",
+        "hh"
+      ],
+      "expected": {
+        "components": [
+          "abcdefgh"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "four_declared_pairs",
+      "sources": [
+        "a:L",
+        "b:L",
+        "c:M",
+        "d:M",
+        "e:N",
+        "f:N",
+        "g:O",
+        "h:O"
+      ],
+      "targets": [
+        "aa",
+        "bb",
+        "cc",
+        "dd",
+        "ee",
+        "ff",
+        "gg",
+        "hh"
+      ],
+      "expected": {
+        "components": [
+          "ab",
+          "cd",
+          "ef",
+          "gh"
+        ],
+        "cuts": [
+          "aceg"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "disconnected_unused_duplicate",
+      "sources": [
+        "a",
+        "b:B:X",
+        "c:C:X"
+      ],
+      "targets": [
+        "aa"
+      ],
+      "expected": {
+        "components": [
+          "a",
+          "bc"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "long_transitive_chain",
+      "sources": [
+        "a:L:X",
+        "b:L:Y",
+        "c:M:Y",
+        "d:M:Z",
+        "e:N:Z",
+        "f:N:W"
+      ],
+      "targets": [
+        "aa",
+        "ff"
+      ],
+      "expected": {
+        "components": [
+          "abcdef"
+        ],
+        "cuts": [
+          "a"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    },
+    {
+      "id": "uncoverable_and_unknown",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "qq",
+        "aa:u"
+      ],
+      "expected": {
+        "components": [
+          "a"
+        ],
+        "cuts": [],
+        "status": "NO_EXTERNAL_COHORT_CUT_COVERS_ALL_TARGETS"
+      }
+    },
+    {
+      "id": "duplicate_shared_cross_edges",
+      "sources": [
+        "a:A:X",
+        "b:B:X",
+        "c:C:Y"
+      ],
+      "targets": [
+        "ac",
+        "bc"
+      ],
+      "expected": {
+        "components": [
+          "ab",
+          "c"
+        ],
+        "cuts": [
+          "a",
+          "c"
+        ],
+        "status": "MINIMUM_DECLARED_COHORT_CUT_FOUND"
+      }
+    }
+  ]
+}
