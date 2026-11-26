@@ -172,3 +172,6 @@ test('v2 research register and protocol are explicitly classified without waivin
  }
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/unknown.json'],map).unmapped,['docs/sutra-v2/evaluation/unknown.json']);
 });
+
+
+test('third-party v2 license artifacts are exact-mapped without waiving unknown evaluation files',()=>{const r=classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.invalidatedMetrics,[]);assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/unknown.txt'],map).unmapped,['docs/sutra-v2/evaluation/third-party/unknown.txt']);});

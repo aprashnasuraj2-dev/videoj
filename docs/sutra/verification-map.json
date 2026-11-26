@@ -343,7 +343,8 @@
         "docs/sutra-v2/threat-model.json",
         "docs/sutra-v2/evaluation/prior-art.json",
         "docs/sutra-v2/evaluation/PRIOR_ART.md",
-        "docs/sutra-v2/evaluation/PROTOCOL.md"
+        "docs/sutra-v2/evaluation/PROTOCOL.md",
+        "docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt"
       ],
       "requiredWorkflows": [
         "Validate SUTRA v2 knowledge kernel"
