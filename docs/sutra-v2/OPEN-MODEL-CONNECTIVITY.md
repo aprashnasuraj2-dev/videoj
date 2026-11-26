@@ -38,3 +38,6 @@ Native `/api/chat` adapter is selectable in the scripted Studio and admitted by 
 
 ## V2-160 exact local approval candidate
 Local operator execution requires the exact previewed input pin. Optional full living version export is explicitly selected and does not expand model disclosure. Existing local process trust and credential gates remain unchanged.
+
+## V2-161 hosted public-route policy candidate
+Conservative all-answer public IP admission, explicit route/model, one-use time-bounded DNS address pin and original TLS hostname descriptor. No public network client or credential authority; future socket-level enforcement and real provider tests remain separately gated.

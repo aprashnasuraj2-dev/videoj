@@ -1033,3 +1033,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] V2-159 native Ollama wire, bounded options and local fixture regression: exact revision CI pending.
 
 - [ ] **V2-160 local approval candidate:** exact input plan pin before contact; optional baseline-compatible version export with separate pin; cancellation and bounded output. Exact CI pending.
+
+- [ ] **V2-161 hosted route admission:** exact HTTPS route, mixed-answer refusal, one-use address pin and explicit TLS enforcement obligation. No public transport enabled; exact CI pending.
