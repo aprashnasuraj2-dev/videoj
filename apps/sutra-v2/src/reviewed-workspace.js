@@ -1,3 +1,4 @@
+import {admitLocalBindingConfig,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
 import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
@@ -31,7 +32,7 @@ import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.j
 import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
-let handoffPreview=null,bindingSuggestions=null;
+let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
@@ -54,12 +55,47 @@ function control(){
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
 }
-function invalidate(message){epoch++;clearHandoffPreview();clearBindingSuggestions();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
+const localBindingFields=['sources','model','protocol','endpoint','auth','env'];
+function clearLocalBindingPlan(){
+ localBindingPlan=null;by('binding-local-approve').checked=false;by('binding-local-result').value='';by('binding-local-pin').value='';by('binding-local-commands').textContent='';by('binding-local-commands').hidden=true;by('binding-local-status').textContent='No current local extraction plan.';
+}
+function localBindingControl(){
+ for(const field of [...localBindingFields,'approve','result','pin'])by('binding-local-'+field).disabled=busy;
+ by('binding-local-env').disabled=busy||by('binding-local-auth').value==='none';
+ by('binding-local-export').disabled=busy||!sources.length||!by('binding-local-approve').checked;
+ by('binding-local-import').disabled=busy||!localBindingPlan||!by('binding-local-result').files?.length||!by('binding-local-pin').value.trim();
+}
+for(const field of localBindingFields)by('binding-local-'+field).oninput=()=>{clearLocalBindingPlan();localBindingControl();};
+by('binding-local-approve').onchange=localBindingControl;
+by('binding-local-result').onchange=localBindingControl;
+by('binding-local-pin').oninput=localBindingControl;
+by('binding-local-export').onclick=()=>work(async ticket=>{
+ if(!by('binding-local-approve').checked)return;by('binding-local-approve').checked=false;
+ const draftText=draft(),authMode=by('binding-local-auth').value;
+ const config={version:LOCAL_BINDING_VERSION,draftText,draftPin:await casePin(draftText),sourceIds:[...by('binding-local-sources').selectedOptions].map(o=>o.value),connection:{id:'my-local-model',label:'User selected local model',protocol:by('binding-local-protocol').value,endpoint:by('binding-local-endpoint').value.trim(),models:[by('binding-local-model').value.trim()],authMode,credentialEnv:authMode==='none'?null:by('binding-local-env').value.trim()},maxOutputTokens:1024,timeoutMs:15000,transportDeadlineMs:10000};
+ const configText=JSON.stringify(config),p=await admitLocalBindingConfig(configText);
+ if(ticket!==epoch||draftText!==draft())return;
+ localBindingPlan={configText,planPin:p.planPin,draftText};download(configText,'sutra-local-bindings-config.json','application/json');
+ const command=by('binding-local-commands');command.hidden=false;command.textContent='node apps/sutra-v2/local-bindings.mjs --plan < sutra-local-bindings-config.json\n\nnode apps/sutra-v2/local-bindings.mjs --execute-local --approve-local-disclosure --approve-plan '+p.planPin+' < sutra-local-bindings-config.json > sutra-local-bindings-result.json';
+ by('binding-local-status').textContent='Exact plan exported: '+p.planPin+'. Retain the proposal digest printed separately by the local runner.';status('local_bindings_plan','Local extraction plan exported; no model contacted.');
+});
+by('binding-local-import').onclick=()=>work(async ticket=>{
+ const p=localBindingPlan,file=by('binding-local-result').files?.[0],expectedProposalPin=by('binding-local-pin').value.trim();
+ if(!p||p.draftText!==draft()||!file||file.size<1||file.size>65536)throw Error('LOCAL_BINDING_TRANSFER');
+ const transferText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer());
+ const result=await verifyLocalBindingTransfer({configText:p.configText,expectedPlanPin:p.planPin,transferText,expectedProposalPin});
+ if(ticket!==epoch||localBindingPlan!==p||draft()!==p.draftText||by('binding-local-result').files?.[0]!==file||by('binding-local-pin').value.trim()!==expectedProposalPin)return;
+ clearBindingSuggestions();by('binding-suggestions-json').value=result.proposalText;
+ by('binding-local-status').textContent='Returned suggestion bytes and disclosure scope match. No model authorship or meaning established. Check anchors and explicitly review quantities.';
+ status('local_bindings_import','Untrusted suggestions loaded for explicit source review.');
+});
 function clearBindingSuggestions(){
  bindingSuggestions=null;by('binding-suggestions-rows').replaceChildren();by('binding-suggestions-status').textContent='No current suggestion check.';
 }
 function bindingSuggestionControl(){
+ localBindingControl();
  by('binding-suggestions-json').disabled=busy;
  by('binding-suggestions-preview').disabled=busy||!sources.length||!by('binding-suggestions-json').value.trim();
  by('binding-suggestions-apply').disabled=busy||!bindingSuggestions||!by('binding-suggestions-rows').querySelector('input:checked');
@@ -260,6 +296,7 @@ by('table-stage').onclick=()=>work(async ticket=>{
  status('table_staged','Exact table text and '+r.selectedCells.length+' reviewed numeric selections staged. No formula or meaning inferred.');
 });
 function refresh(){
+ const previouslySelected=new Set([...by('binding-local-sources').selectedOptions].map(o=>o.value));options(by('binding-local-sources'),sources.map(s=>s.id));for(const o of by('binding-local-sources').options)o.selected=previouslySelected.has(o.value);localBindingControl();
  refreshTransactionSources();
  const selected=by('text-file-replace-source').value;options(by('text-file-replace-source'),sources.map(s=>s.id));if(sources.some(s=>s.id===selected))by('text-file-replace-source').value=selected;textFileControl();
  options(by('source-revise-pick'),sources.map(s=>s.id));by('source-revise-text').value=sources[0]?.text??'';

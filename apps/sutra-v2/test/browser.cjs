@@ -991,7 +991,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
   // Exact model suggestion review from a clean page: no external requests.
   {
-   const sp=await browser.newPage({viewport:{width:360,height:800}}),errs=[],requests=[];
+   const sp=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errs=[],requests=[];
    sp.on('pageerror',e=>errs.push(e.message));sp.on('request',r=>{if(new URL(r.url()).origin!==origin)requests.push(r.url());});
    await sp.goto(origin);await sp.locator('#review-open').click();
    const state=x=>sp.waitForFunction(s=>document.querySelector('#review-status').dataset.state===s&&!document.querySelector('#review-reset').disabled,x);
@@ -1002,7 +1002,15 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await sp.locator('#review-binding-suggestions-panel > summary').click();
    const type={kind:'stress',unit:'MPa',scope:'same_condition',dimension:[-1,1,-2]},s=(id,sourceId,quote,before='',after='')=>({id,sourceId,quote,before,after,type});
    const wire=JSON.stringify({version:1,suggestions:[s('a_value','a','12.50','repeat: ',';'),s('ambiguous','a','12.50'),s('b_value','b','10.25')]});
-   await sp.locator('#review-binding-suggestions-json').fill(wire);await sp.locator('#review-binding-suggestions-preview').click();await state('suggestions_preview');
+   await sp.locator('#review-binding-local-panel > summary').click();
+   await sp.locator('#review-binding-local-sources').selectOption(['a','b']);await sp.locator('#review-binding-local-model').fill('my/own-model');await sp.locator('#review-binding-local-approve').check();
+   const extractionDownload=sp.waitForEvent('download');await sp.locator('#review-binding-local-export').click();await state('local_bindings_plan');const configText=fs.readFileSync(await (await extractionDownload).path(),'utf8'),config=JSON.parse(configText);
+   const hash=s=>'sha256:'+require('node:crypto').createHash('sha256').update(s).digest('hex'),planPin=hash(configText),proposalPin=hash(wire);
+   const transfer={version:'sutra-local-binding-transfer/v1',planPin,draftPin:config.draftPin,proposalText:wire,proposalPin};
+   await sp.locator('#review-binding-local-result').setInputFiles({name:'local-result.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
+   await sp.locator('#review-binding-local-pin').fill(proposalPin);await sp.locator('#review-binding-local-import').click();await state('local_bindings_import');
+   assert.equal(await sp.locator('#review-binding-suggestions-json').inputValue(),wire);assert.match(await sp.locator('#review-staged').innerText(),/0 reviewed binding/);
+   await sp.locator('#review-binding-suggestions-preview').click();await state('suggestions_preview');
    assert.equal(await sp.locator('[data-suggestion-state="REVIEW_REQUIRED"]').count(),2);assert.equal(await sp.locator('[data-suggestion-state="REFUSED"]').count(),1);
    assert.match(await sp.locator('#review-staged').innerText(),/0 reviewed binding/);assert.equal(await sp.locator('#review-binding-suggestions-apply').isDisabled(),true);
    await sp.locator('#review-binding-suggestions-rows input[value="a_value"]').check();
