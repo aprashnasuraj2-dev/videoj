@@ -66,6 +66,10 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
  let lastTick=-1;
  const readClock=()=>{const now=clock();if(!Number.isSafeInteger(now)||now<0||now<lastTick)stop('CLOCK');lastTick=now;return now;};
  const admitOperation=operation=>sanitizeProviderValue(operation,vault.containsSecret);
+ // All live credentials participate in the canary check. A credential-set
+ // change during a dispatch invalidates that request's publication boundary.
+ // Do not retain removed credential bytes merely to detect subsequent echoes.
+ let profileSetToken=Symbol('credential-set');
 
  return Object.freeze({
   mode:'provider-workspace-laboratory',
@@ -83,6 +87,7 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    try{
     added=vault.addProfile({providerId,label,credential});
     ledger.registerProfile({profileId:added.profile.profileId,limits:profileLimits});
+    profileSetToken=Symbol('credential-set');
     return Object.freeze({handle:added.handle,profile:added.profile,budget:budgetRow(added.profile.profileId)});
    }catch(error){
     if(added){try{vault.remove(added.handle);}catch{}}
@@ -94,6 +99,7 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    const profile=profileMeta(handle);
    let budget;try{budget=ledger.disableProfile(profile.profileId);}catch(error){if(error instanceof BudgetLedgerError)stop('PROFILE');throw error;}
    vault.remove(handle);
+   profileSetToken=Symbol('credential-set');
    return Object.freeze({profile,budget});
   },
   list(){
@@ -113,7 +119,7 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    const profile=profileMeta(handle);
    if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
    const transport=transportById.get(profile.providerId);if(typeof transport!=='function')stop('TRANSPORT');
-   const checkedOperation=admitOperation(operation);
+   const checkedOperation=admitOperation(operation),observedProfileSet=profileSetToken;
    let lease;
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now:readClock()});}
    catch(error){if(error instanceof BudgetLedgerError)stop(error.code==='PROFILE_DISABLED'?'PROFILE_DISABLED':'BUDGET');throw error;}
@@ -124,6 +130,7 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     // A removed profile may not publish a late result. No asynchronous gap
     // between the handle check, all-profile canary scan, settlement and return.
     vault.describe(handle);
+    if(observedProfileSet!==profileSetToken)stop('PROFILE_SET_CHANGED');
     if(!closed(raw,['actualInputBytes','actualOutputTokens','value']))stop('PROVIDER_RESULT');
     const value=admitOperation(raw.value);
     try{ledger.settle(lease.leaseId,{actualInputBytes:raw.actualInputBytes,actualOutputTokens:raw.actualOutputTokens,now:readClock()});}

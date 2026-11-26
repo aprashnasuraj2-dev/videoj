@@ -15,3 +15,7 @@ No merge, release, live inference or external contact authorized. Child JS CI is
 
 ## Parallel session candidate
 Scan raw and strictly decoded adapter JSON before reserving or contacting transport. Regression: Unicode-escaped credential introduced by a custom encoder, zero contact and zero reservation. JSON adapters remain trusted code, but accidental exact credential echo is blocked. Arbitrary encodings, split secrets and general DLP remain outside this guarantee. Exact CI pending.
+
+
+## Credential-set publication fence
+Refuse in-flight provider completion if any enrolled credential is added or removed after dispatch. This closes the case where an unrelated removed credential would no longer be scanned on late output without retaining its raw bytes. Keep original removed-handle behavior, unknown budget charges, and no retry. Tests remove another profile during a malicious late result and enroll during benign output. Scope: workspace publication boundary only, not remote cancellation, secure deletion, downstream concurrent decoded review or general DLP. Exact CI pending.
