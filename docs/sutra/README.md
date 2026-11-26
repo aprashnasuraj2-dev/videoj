@@ -22,6 +22,7 @@ When the user says **“continue with sutra”** (case-insensitive), read the re
 | [BASELINE.md](BASELINE.md) | PDF provenance, known source revision, rules/spec and planning assumptions |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | SUTRA clean-install, component entry points, issue/security and contribution boundaries |
 | [CHANGELOG.md](CHANGELOG.md) | Pre-release changelog policy; no invented public versions |
+| [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) | Pre-release implementation report with source-to-claim mapping and explicit untested limits |
 | [evidence/README.md](evidence/README.md) | Evidence conventions without private data or fabricated outcomes |
 
 ## Read-only progress commands
