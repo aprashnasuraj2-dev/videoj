@@ -72,10 +72,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
 
 - [ ] `SUTRA-P084-01` Create versioned public source and release assets for each Open Kit tool
-- [ ] `SUTRA-P084-02` Include independent synthetic examples and actual runnable entry points
+- [x] `SUTRA-P084-02` Include independent synthetic examples and actual runnable entry points
 - [ ] `SUTRA-P084-03` Publish quickstart URLs usable without an account
-- [ ] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
-- [ ] `SUTRA-P084-05` Check tools do not require private learner media or credentials
+- [x] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
+- [x] `SUTRA-P084-05` Check tools do not require private learner media or credentials
 - [ ] `SUTRA-P084-06` Run the documented clean-host install on the release version
 - [ ] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
 - [ ] `SUTRA-P084-08` Record actual public URLs and release hashes for submission copy
@@ -128,11 +128,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P087-01` Start from a clean checkout at the final candidate revision
 - [ ] `SUTRA-P087-02` Run documented dependency installation and app/peer builds
 - [ ] `SUTRA-P087-03` Run required player checks if shared player source changed
-- [ ] `SUTRA-P087-04` Verify Open Kit commands without the learner application
+- [x] `SUTRA-P087-04` Verify Open Kit commands without the learner application
 - [ ] `SUTRA-P087-05` Inspect distributed archives, bundles and trace exports for secrets
 - [ ] `SUTRA-P087-06` Record environment, commands, exit codes and evidence locations
 - [ ] `SUTRA-P087-07` Ensure lockfiles and pinned runtime are sufficient for reproduction
-- [ ] `SUTRA-P087-08` Report missing hardware/network verification as untested rather than passing
+- [x] `SUTRA-P087-08` Report missing hardware/network verification as untested rather than passing
 - [ ] `SUTRA-P087-09` Produce and review the phase artifact: Reproduction log and artifact-scan findings.
 - [ ] `SUTRA-P087-10` Close phase 087 only after its applicable tasks have evidence and its exit condition is observed: A fresh builder can reproduce the release; no management token, provider key or participant personal data remains in public assets.
 
@@ -166,9 +166,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P089-03` Check rollback preserves valid graph/runtime/media combinations
 - [ ] `SUTRA-P089-04` Estimate judging-period model requests and available funding
 - [ ] `SUTRA-P089-05` Confirm public site, peer, media and default inference remain accessible
-- [ ] `SUTRA-P089-06` Recheck official judging end time in Nepal and UTC
-- [ ] `SUTRA-P089-07` Document provider drift and outages as residual availability risks
-- [ ] `SUTRA-P089-08` Record manual recovery steps without pretending monitoring is already scheduled
+- [x] `SUTRA-P089-06` Recheck official judging end time in Nepal and UTC
+- [x] `SUTRA-P089-07` Document provider drift and outages as residual availability risks
+- [x] `SUTRA-P089-08` Record manual recovery steps without pretending monitoring is already scheduled
 - [ ] `SUTRA-P089-09` Produce and review the phase artifact: Rollback runbook and judging-availability budget.
 - [ ] `SUTRA-P089-10` Close phase 089 only after its applicable tasks have evidence and its exit condition is observed: Rollback is reproducible; site and funded default inference are planned through at least 19 Jan Nepal time, subject to rechecked official dates.
 
