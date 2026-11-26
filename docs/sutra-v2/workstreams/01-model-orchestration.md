@@ -18,3 +18,8 @@ No automatic fallback; model replacement does not change existing pinned evidenc
 
 ## Verification boundary
 Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session candidate
+New actual council regression: two providers run concurrently with same pinned contract and disclosure but opposite formulas and conditional results. Separate per-workspace budget accounting; a replacement provider guessing undisclosed fields is refused. No real provider/model identity or shared production budget proof.
+Exact child CI pending.
