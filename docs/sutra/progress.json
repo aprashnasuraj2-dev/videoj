@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T16:53:07+05:45",
+  "updated_at": "2026-11-26T16:55:52+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "14d41bf92af831a469539c6e84eef2868bad448f",
-  "last_session_id": "SUTRA-SESSION-0051",
+  "last_observed_code_sha": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+  "last_session_id": "SUTRA-SESSION-0052",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "P085/P086 pre-release report subsets are verified; P085-04/10 and P086-02/03/05/09/10 stay pending for live/final/public/human evidence. Judging runbook exists but P089-06/07/08 remain pending until the corrected documentation contract executes. Core participant/rights/provider/hardware/public-production gates remain open.",
+  "next_action": "Session 0052 verifies only private Open Kit packaging/reproduction boundaries and P089-06/07/08 planning. Public Open Kit release/quickstart, final-candidate reproducibility, rollback rehearsal, funded headroom, participant/rights/human/provider/hardware/public-production and submission gates remain pending. Do not simulate them.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13264,6 +13264,110 @@
           "observed_at": "2026-11-26T16:53:07+05:45"
         }
       ]
+    },
+    "SUTRA-P084-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Private Open Kit candidate includes independently runnable synthetic evidence-validator, consent-inspector and publisher-starter entry points; CI executes them without treating fixtures as real-world evidence.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P084-04": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Open Kit deterministic inventory explicitly retains upstream/runtime LICENSE and NOTICE artifacts; pinned vendor verification passes.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P084-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Open Kit candidate is generated from reusable tracked source/synthetic examples, requires no learner application or provider key, and rejects credential/path canaries.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P087-04": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Clean source-distribution workflow executes Open Kit CLI/consent/starter commands independently of the learner application.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P087-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Technical/contributor/Open Kit artifacts explicitly report missing physical hardware, public network/interoperability and live-provider evidence as untested rather than passing.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P089-06": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Official Devpost judging end was rechecked and converted to 2027-01-19 01:00 UTC / 06:45 Asia/Kathmandu; runbook requires recheck before release/submission.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P089-07": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Judging runbook records hosted/self-hosted provider, static-route/cache and quota/funding drift mechanisms plus residual unmeasured gaps.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P089-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:55:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "description": "Judging runbook records bounded manual recovery and explicitly disclaims scheduled monitoring, automatic failover and production mutation.",
+          "result": "pass",
+          "source_revision": "58122834f7bdd1eacfa1d6ed5a25632defdf6cc3",
+          "observed_at": "2026-11-26T16:55:52+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13379,6 +13483,7 @@
     "Session 0048: four original tasks verified (P001-03, P001-06, P050-02, P065-06). Counts 727/1107 overall, 621/1000 original, 373 pending, six omissions, one hardware blocker. Official rules snapshot does not establish entrant eligibility; automated browser/route tests do not establish human/provider/production evidence.",
     "Session 0049: P001-07 and P023-09 verified. Counts 729/1107 overall, 623/1000 original, 371 pending, six omissions, one hardware blocker. P023-03 remains pending because scripted local orchestration is not configured live inference.",
     "Session 0050: P088-01..07 and P088-09 verified from contributor/changelog artifacts plus Open Kit run 45806012457 job 139861341692 (3/3 tests, clean distribution checks). Counts 737/1107 overall, 631/1000 original, 363 pending, six omissions, one hardware blocker. P088-08/10 remain pending for a real new-reader check.",
-    "Session 0051: P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 verified from Open Kit run 45806619487 job 139863464177 (5/5 tests, clean distribution checks). Counts 750/1107 overall, 644/1000 original, 350 pending, six omissions, one hardware blocker. P089 runbook not credited because its first contract run failed on Markdown-sensitive assertion; correction queued."
+    "Session 0051: P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 verified from Open Kit run 45806619487 job 139863464177 (5/5 tests, clean distribution checks). Counts 750/1107 overall, 644/1000 original, 350 pending, six omissions, one hardware blocker. P089 runbook not credited because its first contract run failed on Markdown-sensitive assertion; correction queued.",
+    "Session 0052: P084-02/04/05, P087-04/08 and P089-06/07/08 verified from corrected Open Kit run 45807667772 job 139867065204 (6/6 tests plus clean distribution/vendor/starter checks). Counts 758/1107 overall, 652/1000 original, 342 pending, six omissions, one hardware blocker. No public-release/final-candidate/rollback/funding claim."
   ]
 }
