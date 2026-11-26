@@ -588,3 +588,7 @@ User authorized separate draft PRs for all ten critical workstreams. Branches ar
 
 ### V2-181 parallel architecture and evidence
 Persist investigation history in a trusted Linux private directory using immutable snapshots and atomic expected-head CAS; do not claim external freshness or automatic crash-lock recovery. Semantic review remains a portable declaration with independently retained pins and recomputation. Credential-set changes refuse late publication without retaining removed secret bytes; unknown charge keeps its reservation. Browser draft import refuses CR normalization; explicit restore revokes prior results. Scope-specific child CI never promotes shared integration gates. See parallel registry for exact successful and failed revisions.
+
+
+### V2-182 — publication and recovery architecture
+Publish immutable disk snapshots through staged fsynced inode/link, never write partial bytes to content-addressed names. Use exact declared mapping identity, not candidate number, when comparing review revisions. Fence downstream publication across credential-set change; one-shot council approval is a host-held capability. Portable workspace replaces editable draft/baseline/history only with explicit pinned consent and discards executable approvals. Benchmark split and observation receipts are declarations, not external authenticity.

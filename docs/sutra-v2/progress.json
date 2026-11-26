@@ -9409,7 +9409,7 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-181-final",
+    "session": "V2-182-batch1",
     "baseline": "25ae51a7341c6afa178466b8d107a6705c426c8d",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
@@ -9419,152 +9419,155 @@
         "branch": "sutra/v2-parallel/01-model-orchestration",
         "state": "implementation-or-executable-regression",
         "pr": 51,
-        "head": "160caf5f63bcad74c1bf2c9de07cec8997cb1b91",
+        "head": "caef11eebffef60378504a154e166efe83940f5a",
         "ci": {
-          "run": 45751228588,
+          "run": 45753562635,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Provider replacement with opposite outputs, explicit scope and independent budgets",
-        "next": "Explicit route replacement UI and consent, live authorized interoperability"
+        "change": "One-shot route-bound council disclosure approval",
+        "next": "Browser/operator approval wiring, live authorized interoperability"
       },
       {
         "id": "02-persistent-knowledge",
         "branch": "sutra/v2-parallel/02-persistent-knowledge",
         "state": "implementation-or-executable-regression",
         "pr": 52,
-        "head": "a779ca7f25cf28b448ae80fd88d66f4d166af94f",
+        "head": "8786fa2cace4b63911a6035fdd58d882a452258c",
         "ci": {
-          "run": 45751814704,
+          "run": 45753072461,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Verified history extension; Linux immutable snapshots and fsync/atomic HEAD CAS; separate OS process race passed",
-        "next": "Actual killed-writer/power-loss injection, audited maintenance recovery, external freshness and browser persistence"
+        "change": "Atomic staged snapshot publication before HEAD; exact orphan flush",
+        "next": "Real killed-writer CI pending at 8e9cd7c; offline lock recovery and power-loss/external freshness",
+        "pendingHead": "8e9cd7c906285afa7a9b9400cda9353f10abd1f6",
+        "pendingChange": "actual SIGKILL at snapshot link and HEAD rename boundaries",
+        "pendingCI": "unobserved at this checkpoint"
       },
       {
         "id": "03-semantic-compilation",
         "branch": "sutra/v2-parallel/03-semantic-compilation",
         "state": "implementation-or-executable-regression",
         "pr": 53,
-        "head": "770d2046ff739bac42c639c096b108c2c3534e2b",
+        "head": "a2912799b14d7dee8f73f41b8372231ad54c7c2a",
         "ci": {
-          "run": 45751719623,
+          "run": 45753076834,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Explicit mapping review with retained alternatives; portable multi-pin replay refuses forged and substituted reviews",
-        "next": "Browser review wiring, independent annotation, cross-language replay and semantic ambiguity coverage"
+        "change": "Pinned mapping review revision audit; no inherited judgments",
+        "next": "Independent annotation and browser review wiring"
       },
       {
         "id": "04-evidence-acquisition",
         "branch": "sutra/v2-parallel/04-evidence-acquisition",
         "state": "implementation-or-executable-regression",
         "pr": 54,
-        "head": "731e1269c1a66c7bdb1ad5d426eb8c76b53e25e3",
+        "head": "23e036f19e6b23db1a6d9c69d752992168998400",
         "ci": {
-          "run": 45751233515,
+          "run": 45753437637,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Replayed synthetic observation path with surviving cells and declared cost/exposure",
-        "next": "Actual authenticated observation receipt, applicability and noisy correlation"
+        "change": "Source-bound exact observation receipt and trace replay",
+        "next": "External identity/measurement authentication and scope applicability"
       },
       {
         "id": "05-independent-verification",
         "branch": "sutra/v2-parallel/05-independent-verification",
         "state": "implementation-or-executable-regression",
         "pr": 55,
-        "head": "0db95b94e28679e81eaf7eda781410c5cbd144a3",
+        "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5",
         "ci": {
-          "run": 45751328232,
+          "run": 45753442120,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "13 positive and 12 forged generated graphs replayed by Python Fraction/hashlib",
-        "next": "Independent domain semantics, interval and statistical parity"
+        "change": "Independent Python replay of topology and stale same-result graph revisions",
+        "next": "Independent interval/statistical/semantic profiles"
       },
       {
         "id": "06-counterfactuals",
         "branch": "sutra/v2-parallel/06-counterfactuals",
         "state": "implementation-or-executable-regression",
         "pr": 56,
-        "head": "8b31621923f217959a1159f80ab2ac97aef46183",
+        "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9",
         "ci": {
-          "run": 45751237516,
+          "run": 45753447406,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Monotone grid prefix/witness expansion audit",
-        "next": "Bounded search scaling, wider probes and measured review benefit"
+        "change": "Domain-superset audit by normalized assignments, report truncated missing worlds",
+        "next": "Scalable bounded search and measured review benefit"
       },
       {
         "id": "07-security-recovery",
         "branch": "sutra/v2-parallel/07-security-recovery",
         "state": "implementation-or-executable-regression",
         "pr": 57,
-        "head": "d89cc96873200c7505acc37bb90556002d9c871a",
+        "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
         "ci": {
-          "run": 45751901285,
+          "run": 45753193964,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Decoded adapter JSON scan; credential-set publication fence; conservative unknown-reservation regression correction",
-        "next": "Downstream concurrent decoded review fence, live provider/peer isolation, rollback/refinement, arbitrary encodings"
+        "change": "Opaque generation fence through downstream council and suggestion publication",
+        "next": "Post-publication lifecycle, transport and peer boundaries, arbitrary encodings"
       },
       {
         "id": "08-unified-workspace",
         "branch": "sutra/v2-parallel/08-unified-workspace",
         "state": "implementation-or-executable-regression",
         "pr": 58,
-        "head": "ecbc9653d58424e1d5e38bf5053b105e4d9c082b",
+        "head": "38a49d175be793a804b0e44b94a141078e3c8447",
         "ci": {
-          "run": 45751822364,
+          "run": 45753299733,
           "observed": "success",
           "scope": "child JS regression",
-          "browserRun": 45751822345,
+          "browserRun": 45753299760,
           "browserObserved": "success"
         },
         "mergeableAtObservation": true,
-        "change": "Portable exact editable draft recovery with explicit confirmation, CRLF refusal, actual canonical build and Chromium",
-        "next": "Full investigation persistence, stale-preview stress, accessibility/human testing, independent artifact replay"
+        "change": "Portable bounded draft/history/baseline checkpoint and explicit stale-safe restore",
+        "next": "Full historical selection restoration, user evaluation, independent replay, larger portable profile"
       },
       {
         "id": "09-specialist-domains",
         "branch": "sutra/v2-parallel/09-specialist-domains",
         "state": "implementation-or-executable-regression",
         "pr": 59,
-        "head": "1252e85fc9d2a4cb1ab28f14c5768b137c673063",
+        "head": "e73659542f738fedabc038879d078616c8d97281",
         "ci": {
-          "run": 45751336253,
+          "run": 45753555498,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Finance and engineering four-version correction/withdrawal/reintroduction journeys",
-        "next": "Rights-cleared real specialist sources, independent replay and human evaluation"
+        "change": "Engineering capacity interval journey with nominal versus degraded applicability",
+        "next": "Rights-cleared real source and independent specialist evaluation"
       },
       {
         "id": "10-benchmark",
         "branch": "sutra/v2-parallel/10-benchmark",
         "state": "implementation-or-executable-regression",
         "pr": 60,
-        "head": "f4ea4454361122adb439eca3e27b686a3df87168",
+        "head": "9bf0ac16d885e485b31c12531b20508f7f337e48",
         "ci": {
-          "run": 45751331491,
+          "run": 45753566412,
           "observed": "success",
           "scope": "child JS regression"
         },
         "mergeableAtObservation": true,
-        "change": "Pinned common caps and paired case-level declared usage",
-        "next": "Frozen independent held-out corpus, seven matched baselines, actual metering"
+        "change": "Held-out manifest exact content and declared lineage collision audit",
+        "next": "Frozen independently annotated real cases, actual matched metering and comparative runs"
       }
     ],
     "qualification": "No new gate credit; child PR CI separate from full integration.",
@@ -9850,6 +9853,163 @@
             "next": "Frozen independent held-out corpus, seven matched baselines, actual metering"
           }
         ]
+      },
+      {
+        "session": "V2-181-final",
+        "branches": [
+          {
+            "id": "01-model-orchestration",
+            "branch": "sutra/v2-parallel/01-model-orchestration",
+            "state": "implementation-or-executable-regression",
+            "pr": 51,
+            "head": "160caf5f63bcad74c1bf2c9de07cec8997cb1b91",
+            "ci": {
+              "run": 45751228588,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Provider replacement with opposite outputs, explicit scope and independent budgets",
+            "next": "Explicit route replacement UI and consent, live authorized interoperability"
+          },
+          {
+            "id": "02-persistent-knowledge",
+            "branch": "sutra/v2-parallel/02-persistent-knowledge",
+            "state": "implementation-or-executable-regression",
+            "pr": 52,
+            "head": "a779ca7f25cf28b448ae80fd88d66f4d166af94f",
+            "ci": {
+              "run": 45751814704,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Verified history extension; Linux immutable snapshots and fsync/atomic HEAD CAS; separate OS process race passed",
+            "next": "Actual killed-writer/power-loss injection, audited maintenance recovery, external freshness and browser persistence"
+          },
+          {
+            "id": "03-semantic-compilation",
+            "branch": "sutra/v2-parallel/03-semantic-compilation",
+            "state": "implementation-or-executable-regression",
+            "pr": 53,
+            "head": "770d2046ff739bac42c639c096b108c2c3534e2b",
+            "ci": {
+              "run": 45751719623,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Explicit mapping review with retained alternatives; portable multi-pin replay refuses forged and substituted reviews",
+            "next": "Browser review wiring, independent annotation, cross-language replay and semantic ambiguity coverage"
+          },
+          {
+            "id": "04-evidence-acquisition",
+            "branch": "sutra/v2-parallel/04-evidence-acquisition",
+            "state": "implementation-or-executable-regression",
+            "pr": 54,
+            "head": "731e1269c1a66c7bdb1ad5d426eb8c76b53e25e3",
+            "ci": {
+              "run": 45751233515,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Replayed synthetic observation path with surviving cells and declared cost/exposure",
+            "next": "Actual authenticated observation receipt, applicability and noisy correlation"
+          },
+          {
+            "id": "05-independent-verification",
+            "branch": "sutra/v2-parallel/05-independent-verification",
+            "state": "implementation-or-executable-regression",
+            "pr": 55,
+            "head": "0db95b94e28679e81eaf7eda781410c5cbd144a3",
+            "ci": {
+              "run": 45751328232,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "13 positive and 12 forged generated graphs replayed by Python Fraction/hashlib",
+            "next": "Independent domain semantics, interval and statistical parity"
+          },
+          {
+            "id": "06-counterfactuals",
+            "branch": "sutra/v2-parallel/06-counterfactuals",
+            "state": "implementation-or-executable-regression",
+            "pr": 56,
+            "head": "8b31621923f217959a1159f80ab2ac97aef46183",
+            "ci": {
+              "run": 45751237516,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Monotone grid prefix/witness expansion audit",
+            "next": "Bounded search scaling, wider probes and measured review benefit"
+          },
+          {
+            "id": "07-security-recovery",
+            "branch": "sutra/v2-parallel/07-security-recovery",
+            "state": "implementation-or-executable-regression",
+            "pr": 57,
+            "head": "d89cc96873200c7505acc37bb90556002d9c871a",
+            "ci": {
+              "run": 45751901285,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Decoded adapter JSON scan; credential-set publication fence; conservative unknown-reservation regression correction",
+            "next": "Downstream concurrent decoded review fence, live provider/peer isolation, rollback/refinement, arbitrary encodings"
+          },
+          {
+            "id": "08-unified-workspace",
+            "branch": "sutra/v2-parallel/08-unified-workspace",
+            "state": "implementation-or-executable-regression",
+            "pr": 58,
+            "head": "ecbc9653d58424e1d5e38bf5053b105e4d9c082b",
+            "ci": {
+              "run": 45751822364,
+              "observed": "success",
+              "scope": "child JS regression",
+              "browserRun": 45751822345,
+              "browserObserved": "success"
+            },
+            "mergeableAtObservation": true,
+            "change": "Portable exact editable draft recovery with explicit confirmation, CRLF refusal, actual canonical build and Chromium",
+            "next": "Full investigation persistence, stale-preview stress, accessibility/human testing, independent artifact replay"
+          },
+          {
+            "id": "09-specialist-domains",
+            "branch": "sutra/v2-parallel/09-specialist-domains",
+            "state": "implementation-or-executable-regression",
+            "pr": 59,
+            "head": "1252e85fc9d2a4cb1ab28f14c5768b137c673063",
+            "ci": {
+              "run": 45751336253,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Finance and engineering four-version correction/withdrawal/reintroduction journeys",
+            "next": "Rights-cleared real specialist sources, independent replay and human evaluation"
+          },
+          {
+            "id": "10-benchmark",
+            "branch": "sutra/v2-parallel/10-benchmark",
+            "state": "implementation-or-executable-regression",
+            "pr": 60,
+            "head": "f4ea4454361122adb439eca3e27b686a3df87168",
+            "ci": {
+              "run": 45751331491,
+              "observed": "success",
+              "scope": "child JS regression"
+            },
+            "mergeableAtObservation": true,
+            "change": "Pinned common caps and paired case-level declared usage",
+            "next": "Frozen independent held-out corpus, seven matched baselines, actual metering"
+          }
+        ]
       }
     ],
     "priorityOrder": [
@@ -9878,11 +10038,11 @@
       }
     ],
     "integratedBaseEvidence": {
-      "sourceRevision": "e17ce32c4c6da662012dc8fadcad48da1498279c",
-      "knowledgeRun": 45751570231,
+      "sourceRevision": "fdeadbb8e364fa1e6e77575b01e5f3b3bf0a7637",
+      "knowledgeRun": 45752081976,
       "observedPRWorkflows": 9,
       "success": 9,
-      "qualification": "Integration branch documentation/registry revision only; none of the child implementations merged; separate push CI not observed."
+      "qualification": "Exact parent registry only; no child implementations merged, no separate push observation."
     },
     "baselineEvidence": {
       "sourceRevision": "25ae51a7341c6afa178466b8d107a6705c426c8d",

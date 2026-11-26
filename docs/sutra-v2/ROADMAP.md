@@ -1472,3 +1472,6 @@ V2-181: all ten child PRs #51–60 advanced with executable slices; #52 and #58 
 
 
 V2-181 final: 17 child commits across #51–60; all latest scoped JS green; workspace actual Chromium green at ecbc9653. PR #52 cross-process CAS green, #53 portable mapping replay green, #57 intermediate test failure retained and corrected at d89cc968, #58 source CR normalization refusal green. Exact heads/CI/next acceptance in PARALLEL-WORKSTREAMS.md and machine register. Central parent e17ce32c had nine exact PR workflows pass, not combined child implementation verification. All original broader gates remain open.
+
+
+V2-182 batch 1: ten independent implementation commits, ten exact scoped JS workflows green, workspace Chromium green; #52 real subprocess crash challenge candidate 8e9cd7c pending. Parent fdeadbb8 exact nine PR workflows passed (registry only). All broader gates remain open; next workstream actions and exact evidence in parallel registry.
