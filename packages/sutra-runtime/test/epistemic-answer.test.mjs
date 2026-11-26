@@ -54,3 +54,26 @@ test('ambiguous JSON, extra fields and accessor-backed evidence fail closed',()=
  let touched=0;const bad={sourceId:'web-1',url:'https://alpha.example/article'};Object.defineProperty(bad,'excerpt',{enumerable:true,get(){touched++;return webA.excerpt;}});
  assert.throws(()=>validateEpistemicAnswer(encode([{kind:'source_claim',text:'x',citations:[{kind:'web',sourceId:'web-1',quote:'measured value was forty two units'}]}]),{webReceipts:[bad]}),e=>e.code==='EVIDENCE_FORMAT');assert.equal(touched,0);
 });
+
+test('peer claims can be quoted as unverified peer evidence and share hostname independence with web evidence',()=>{
+ const peer={sourceId:'peer-1',origin:'https://alpha.example/agents/',network:'expert',agent:'learner',excerpt:'The peer reports that the measured value was forty one units in its own analysis.',verification:'peer_claim'};
+ const answer=encode([{kind:'source_claim',text:'The peer reports forty one units.',citations:[{kind:'peer',sourceId:'peer-1',quote:'measured value was forty one units'}]}]);
+ const result=validateEpistemicAnswer(answer,{peerReceipts:[peer]});
+ assert.equal(result.basis,'peer');assert.equal(result.claims[0].citations[0].kind,'peer');
+ const conflict=encode([{kind:'conflict',text:'The peer and web report differ.',citations:[
+  {kind:'peer',sourceId:'peer-1',quote:'measured value was forty one units'},
+  {kind:'web',sourceId:'web-1',quote:'measured value was forty two units'}
+ ]}]);
+ assert.throws(()=>validateEpistemicAnswer(conflict,{peerReceipts:[peer],webReceipts:[webA]}),e=>e.code==='INDEPENDENCE_REQUIRED','same hostname across peer and web must not count as independent');
+ const independent={...peer,origin:'https://gamma.example/agents/'};
+ assert.equal(validateEpistemicAnswer(conflict,{peerReceipts:[independent],webReceipts:[webA]}).claims[0].kind,'conflict');
+});
+
+test('fabricated or malformed peer citations fail closed',()=>{
+ const peer={sourceId:'peer-1',origin:'https://gamma.example/agents/',network:'expert',agent:'learner',excerpt:'The peer provides a bounded unverified claim for inspection.',verification:'peer_claim'};
+ for(const claims of [
+  [{kind:'source_claim',text:'fabricated',citations:[{kind:'peer',sourceId:'peer-1',quote:'this quote was never returned by the peer'}]}],
+  [{kind:'source_claim',text:'unknown peer',citations:[{kind:'peer',sourceId:'peer-9',quote:'bounded unverified claim'}]}]
+ ])assert.throws(()=>validateEpistemicAnswer(encode(claims),{peerReceipts:[peer]}),e=>e.code==='CITATION_INVALID');
+ assert.throws(()=>validateEpistemicAnswer(encode([{kind:'uncertainty',text:'x',citations:[]}]),{peerReceipts:[{...peer,verification:'verified_truth'}]}),e=>e.code==='EVIDENCE_FORMAT');
+});

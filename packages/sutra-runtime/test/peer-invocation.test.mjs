@@ -168,6 +168,11 @@ test('exact peer capability grant lets an independently published compatible gra
  assert.equal(result.text,'Caller received the independent peer result.');
  assert.equal(web.search,1);assert.equal(web.read,1);
  assert.equal(result.webResearch.providerCalls,2);assert.equal(result.webResearch.receipts.length,1);
+ assert.equal(result.peerResearch.receipts.length,1);
+ assert.equal(result.peerResearch.receipts[0].sourceId,'peer-1');
+ assert.equal(result.peerResearch.receipts[0].origin,'https://peer.example/agents/');
+ assert.equal(result.peerResearch.receipts[0].verification,'peer_claim');
+ assert.match(result.peerResearch.receipts[0].excerpt,/read one caller-owned public source/);
  assert.deepEqual(contacts,['https://peer.example/agents/agent-manifest.json','https://peer.example/agents/transit.network.json']);
  assert.equal(JSON.stringify(result.events).includes('peer_capability_policy'),false,'sanitized trace must not expose internal peer grant metadata');
 });

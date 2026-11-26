@@ -262,6 +262,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
  const webClient=webTools?createWebAccess(webTools,{signal:controller.signal}):null;
+ const peerReceipts=[];
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{
   check();
@@ -343,13 +344,19 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // adapter, total model budget, trace and abort signal. Never send prompt
    // text or an API key to the artifact-serving peer origin.
    const result=await runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);check();
+   let excerpt=result.text.trim();
+   if(excerpt.length>3000){excerpt=excerpt.slice(0,3000);if(/[\ud800-\udbff]$/.test(excerpt))excerpt=excerpt.slice(0,-1);}
+   if(!excerpt)fail('PEER_RESPONSE','Peer returned no usable claim text.');
+   const sourceId='peer-'+(peerReceipts.length+1);
+   const peerReceipt=Object.freeze({sourceId,origin:loaded.origin,network:loaded.name,agent:peer.frontMan,excerpt,truncated:excerpt.length<result.text.trim().length,verification:'peer_claim'});
+   peerReceipts.push(peerReceipt);
    // Private context uses a separate return allowlist. The peer cannot widen it:
    // only fields already present in the caller-owned side channel can return.
    const returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);
    // Project the peer result, not its arbitrary upstream parsed envelope.
    // Model-controlled protocol, presentation and rejected proposals are not
    // approved structured return channels. Plain text remains untrusted.
-   return {cruse:1,text:result.text,presentation:null,source:{origin:loaded.origin,network:loaded.name,agent:peer.frontMan},
+   return {cruse:1,text:result.text,presentation:null,source:{sourceId,origin:loaded.origin,network:loaded.name,agent:peer.frontMan},
     ...(Object.keys(returning).length?{private_context:returning}:{})};
   }};
  };
@@ -364,7 +371,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(pendingRefinements.size)fail('SOURCE_QUERY_TOO_BROAD','Source refinement remained unresolved at the end of execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events,...(webClient?{webResearch:webClient.snapshot()}:{})};
+  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events,...(webClient?{webResearch:webClient.snapshot()}:{}),...(peerReceipts.length?{peerResearch:Object.freeze({receipts:Object.freeze([...peerReceipts])})}:{})};
  }catch(error){
   // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
   const source=failure??(controller.signal.aborted?controller.signal.reason:error);

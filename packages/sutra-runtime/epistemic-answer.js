@@ -13,11 +13,11 @@ const evidenceArray=(value,max)=>{try{return snapshotDataArray(value,max);}catch
 const evidenceRecord=(value,max)=>{try{return snapshotDataRecord(value,max);}catch{fail('EVIDENCE_FORMAT');}};
 const lessonKey=(sourceId,cueId)=>sourceId+'\u0000'+cueId;
 
-export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]}={}){
+export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[],peerReceipts=[]}={}){
  let root;try{root=parseUniqueJson(answer,{maxChars:12000,maxDepth:12});}catch{fail('ANSWER_FORMAT');}
  root=exact(root,['claims']);
  const claims=answerArray(root.claims,12);if(!claims.length)fail('ANSWER_FORMAT');
- const lessons=new Map(),web=new Map();
+ const lessons=new Map(),web=new Map(),peers=new Map();
  for(const raw of evidenceArray(lessonReceipts,20)){
   const r=evidenceRecord(raw,32);
   if(!text(r.sourceId,160)||!text(r.cueId,160)||!text(r.excerpt,4000))fail('EVIDENCE_FORMAT');
@@ -29,6 +29,13 @@ export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]
   let url;try{url=new URL(r.url);}catch{fail('EVIDENCE_FORMAT');}
   if(!['https:','http:'].includes(url.protocol))fail('EVIDENCE_FORMAT');
   web.set(r.sourceId,r);
+ }
+ for(const raw of evidenceArray(peerReceipts,4)){
+  const r=evidenceRecord(raw,16);
+  if(!text(r.sourceId,32)||!text(r.origin,2048)||!text(r.network,120)||!text(r.agent,120)||!text(r.excerpt,3000)||r.verification!=='peer_claim')fail('EVIDENCE_FORMAT');
+  let origin;try{origin=new URL(r.origin);}catch{fail('EVIDENCE_FORMAT');}
+  if(!['https:','http:'].includes(origin.protocol)||origin.username||origin.password||origin.search||origin.hash)fail('EVIDENCE_FORMAT');
+  peers.set(r.sourceId,r);
  }
  const output=[];
  for(const raw of claims){
@@ -47,15 +54,21 @@ export function validateEpistemicAnswer(answer,{lessonReceipts=[],webReceipts=[]
    }else if(base.kind==='web'){
     const c=exact(base,['kind','sourceId','quote'],3),r=web.get(c.sourceId);
     if(!r||!text(c.quote,500)||c.quote.trim().length<12||!r.excerpt.includes(c.quote))fail('CITATION_INVALID');
-    const id='web:'+c.sourceId;if(seen.has(id))fail('CITATION_INVALID');seen.add(id);authorities.add('web:'+new URL(r.url).hostname.toLowerCase());
+    const id='web:'+c.sourceId;if(seen.has(id))fail('CITATION_INVALID');seen.add(id);authorities.add('host:'+new URL(r.url).hostname.toLowerCase());
     clean.push(Object.freeze({kind:'web',sourceId:c.sourceId,quote:c.quote}));
+   }else if(base.kind==='peer'){
+    const c=exact(base,['kind','sourceId','quote'],3),r=peers.get(c.sourceId);
+    if(!r||!text(c.quote,500)||c.quote.trim().length<12||!r.excerpt.includes(c.quote))fail('CITATION_INVALID');
+    const id='peer:'+c.sourceId;if(seen.has(id))fail('CITATION_INVALID');seen.add(id);authorities.add('host:'+new URL(r.origin).hostname.toLowerCase());
+    clean.push(Object.freeze({kind:'peer',sourceId:c.sourceId,quote:c.quote}));
    }else fail('CITATION_INVALID');
   }
   if(claim.kind==='conflict'&&authorities.size<2)fail('INDEPENDENCE_REQUIRED');
   output.push(Object.freeze({kind:claim.kind,text:claim.text,citations:Object.freeze(clean)}));
  }
  const cited=new Set(output.flatMap(claim=>claim.citations.map(c=>c.kind)));
- const basis=cited.has('lesson')&&cited.has('web')?'lesson_and_web':cited.has('lesson')?'lesson':cited.has('web')?'web':output.some(c=>c.kind==='inference')?'model_inference':'uncertainty';
+ const evidenceKinds=['lesson','web','peer'].filter(kind=>cited.has(kind));
+ const basis=evidenceKinds.length>1?evidenceKinds.join('_and_'):evidenceKinds[0]??(output.some(c=>c.kind==='inference')?'model_inference':'uncertainty');
  return Object.freeze({claims:Object.freeze(output),basis,verification:'quotation_integrity_only',truthStatus:'unverified'});
 }
 export function formatEpistemicAnswer(value){
