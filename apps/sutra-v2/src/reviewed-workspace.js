@@ -78,7 +78,7 @@ by('binding-suggestions-preview').onclick=()=>work(async ticket=>{
   if(row.state==='REVIEW_REQUIRED'){
    const label=document.createElement('label'),box=document.createElement('input'),details=document.createElement('pre');
    box.type='checkbox';box.value=row.id;box.onchange=bindingSuggestionControl;label.append(box,document.createTextNode(' Confirm this exact quantity and its declared type'));
-   details.textContent='Source '+row.binding.sourceId+' · '+JSON.stringify(row.span.quote)+'\\nContext: '+row.context+'\\nDeclared type: '+JSON.stringify(row.binding.type);
+   details.textContent='Source '+row.binding.sourceId+' · '+JSON.stringify(row.span.quote)+'\nContext: '+row.context+'\nDeclared type: '+JSON.stringify(row.binding.type);
    item.append(details,label);
   }else{const reason=document.createElement('p');reason.textContent=row.reason;item.append(reason);}
   list.append(item);

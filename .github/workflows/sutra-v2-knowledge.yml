@@ -26,7 +26,7 @@ jobs:
       - name: Run bounded inference and opaque credential boundary tests
         run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Verify council orchestration and operator integration before external formal tool download
-        run: node --test packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs
+        run: node --test packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs packages/sutra-knowledge/test/binding-suggestion-request.test.mjs
       - name: Execute threat-register runtime and API regressions
         run: |
           node --test packages/sutra-runtime/test/private-context.test.mjs packages/sutra-runtime/test/peer-boundary.test.mjs packages/sutra-runtime/test/peer-invocation.test.mjs
@@ -65,6 +65,8 @@ jobs:
           cat sutra-v2-pinned-policy-refinement.json
           python3 packages/sutra-knowledge/action-protocol/formal/refine_pinned_policy_trace_mutants.py sutra-v2-pinned-policy-trace.json > sutra-v2-pinned-policy-refinement-mutants.json
           cat sutra-v2-pinned-policy-refinement-mutants.json
+      - name: Run full JavaScript knowledge regression before external formal dependency
+        run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Bounded recovery state model and unsafe counterexample
         run: sh packages/sutra-knowledge/action-protocol/formal/check.sh
       - name: Rust bounded support lattice and exhaustive reference controls
@@ -74,7 +76,6 @@ jobs:
           /tmp/sutra-support-tests
           rustc --edition=2021 -O --test packages/sutra-knowledge/support-lattice/wasm.rs -o /tmp/sutra-support-abi-tests
           /tmp/sutra-support-abi-tests
-      - run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Run matched semantic execution-signature development pilot
         run: node packages/sutra-knowledge/evaluation/semantic-signature-pilot.mjs
       - name: Independently compare two-group conditional arithmetic
