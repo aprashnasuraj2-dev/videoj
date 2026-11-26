@@ -1,4 +1,4 @@
-import {discoverProvider,runProviderLesson,snapshotLearningContext,snapshotConversationTurns} from './provider-run.js';
+import {discoverProvider,runProviderLesson,snapshotLearningContext,snapshotConversationTurns,learningContextMessage} from './provider-run.js';
 import {applyScreenState} from './status-state.js';
 import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {executionLimits} from '../../../packages/sutra-runtime/index.js';
@@ -134,10 +134,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   consentModel.textContent=model;
   consentChars.textContent=String(value.length);consentQuestion.textContent=value;
   consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations'+(approvedContract.webResearch==='configured'?', '+providerWebCallLimit+' public web tool calls':'')+' and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
-  const playback=learningContext?.playback;
-  consentContext.textContent=playback?.available?
-   'Playback '+playback.currentTime.toFixed(2)+'s of '+playback.duration.toFixed(2)+'s; current cue '+(learningContext.currentCueId??'none')+'; inspected cue '+(learningContext.inspectedCueId??'none')+'; '+history.length+' prior completed turn'+(history.length===1?'':'s')+' included.':
-   'Media context unavailable ('+(playback?.reason??'not captured')+'); inspected cue '+(learningContext?.inspectedCueId??'none')+'; '+history.length+' prior completed turn'+(history.length===1?'':'s')+' included.';
+  consentContext.textContent=learningContextMessage(learningContext)??'No learning-state message will be sent.';
   const webEnabled=approvedContract.webResearch==='configured';
   consentResearch.textContent=webEnabled?'Available for this run. The model may choose bounded public search/read calls through this SUTRA site when lesson evidence is insufficient. Retrieved webpages are untrusted and may be wrong or malicious.':'Disabled for this run. Only the lesson source capability is granted.';
   consentData.textContent=(webEnabled?'Question text, bounded agent instructions/messages, approved playback/cue metadata, up to two prior completed question/answer turns, catalog-matched lesson results, and public research queries plus discovered public source URLs only when the model requests research.':'Question text, bounded agent instructions/messages, approved playback/cue metadata, up to two prior completed question/answer turns, and catalog-matched lesson source results requested during this run.');

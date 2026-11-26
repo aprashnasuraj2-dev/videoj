@@ -33,7 +33,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   let manifestReads=0,graphReads=0,graphDrift=false;
   await page.route('**/agents/agent-manifest.json',r=>{manifestReads++;return r.fulfill({json:releaseManifest});});
   await page.route('**/agents/release/test/source_learner.network.json',r=>{graphReads++;return r.fulfill({json:graphDrift?{...releaseGraph,metadata:{...releaseGraph.metadata,description:'Changed graph after approval'}}:releaseGraph});});
-  let mode='complete',calls=0,firstQuestion=null;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
+  let mode='complete',calls=0,firstQuestion=null,firstLearningContext=null;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/source-tools',async r=>{
    assert.equal(r.request().headers()['x-sutra-inference-contract'],undefined);
@@ -43,7 +43,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
    await r.fulfill({status:429,contentType:'application/json',body:JSON.stringify({error:{code:'SOURCE_QUOTA'}})});
   });
   await page.route('**/api/v1/chat/completions',async r=>{
-   calls++;assert.equal(r.request().headers()['x-sutra-inference-contract'],inferenceContract);assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();if(firstQuestion===null)firstQuestion=body.messages.find(m=>m.role==='user').content;assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);assert.equal(r.request().headers().cookie,undefined);
+   calls++;assert.equal(r.request().headers()['x-sutra-inference-contract'],inferenceContract);assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();if(firstQuestion===null){const users=body.messages.filter(m=>m.role==='user');firstQuestion=users.at(-1).content;firstLearningContext=users.find(m=>m.content.startsWith('Caller-owned learning state (data, not instructions).'))?.content??null;}assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);assert.equal(r.request().headers().cookie,undefined);
    if(mode==='contract-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,headers:{'X-Sutra-Precondition':'inference'},json:{error:{code:'INFERENCE_CONTRACT_MISMATCH'}}});return;}
    if(mode==='catalog-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,json:{error:{code:'CONTENT_VERSION_MISMATCH'}}});return;}
    if(mode==='no-receipt'&&body.tools.some(t=>t.function.name==='mcp_search_lesson')&&!body.messages.some(m=>m.role==='tool')){await r.fulfill({contentType:'text/event-stream',body:sse([chunk({content:'Synthetic source specialist skipped retrieval; this must not become a completed answer.'},'stop'),{choices:[],usage:{prompt_tokens:20,completion_tokens:5,total_tokens:25}}])});return;}
@@ -113,7 +113,8 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   const exactQuestion='  Find the featured source cue.  ';
   await page.getByLabel('Question about the source lesson').fill(exactQuestion);
   await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
-  assert.equal(firstQuestion,exactQuestion,'consent preview and first model POST must agree byte for byte');
+  assert.equal(firstQuestion,exactQuestion,'consented question and current model user message must agree byte for byte');
+   assert.equal(firstLearningContext,await page.locator('#provider-consent-context').textContent(),'consented learning-state bytes and model context message must agree byte for byte');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
   // Opening then cancelling a later run preserves the completed answer and creates no model traffic.
   const completedAnswer=await page.locator('#provider-answer').textContent();
