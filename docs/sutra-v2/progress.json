@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-169",
+  "session": "V2-170",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: capacity-aware bounded agent waves; mixed council CI pending.",
+  "state": "Candidate: reversible human review lens; preceding knowledge runs blocked by pinned TLC checksum failure.",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-170",
+    "parent": "5e3620e7411c979f7d129a8e2420cd38bc60289d",
+    "description": "### V2-170 — reversible human review answers and scoped CI diagnostics (candidate)\nConnect council review prompts to explicit human answers over a separately pinned and recomputed expression receipt. Exact comparison choices only; candidates outside compared pairs remain unknown, original dissent and receipt remain intact, no semantic approval or automatic adoption. Studio supports preview/reset and export of replayable answer comparison; browser checks both matching and conflicting branches. Add early scoped council integration step without removing any existing unit/formal gates. V2-168 and V2-169 knowledge jobs 139651382343 and 139652112443 both stopped on pinned TLC download checksum mismatch before the full knowledge tests, not a demonstrated code regression. No pin change or bypass; scoped results cannot close full CI gate. V2-168 browser passed; V2-169 browser pending at observation. Exact new CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-169",
     "parent": "328b0a122c844dfbe9161b373a55157cf2d3807c",
     "description": "### V2-169 — capacity-aware council waves (candidate)\nSUTRA schedules bounded same-round waves from actual ledger concurrency and remaining call/output reservation capacity rather than treating a selected four-agent team as four simultaneous calls. Global and profile admission remain in the ledger; actual wire bytes are checked there, no retry or hidden fallback. Preserve stable trace order and frozen previous-round feedback across waves; unknown charges hold slots and can block remaining agents, cancellation prevents later waves. Tests exercise 4 agents/2 slots (8 of 8 calls), 2 shared-profile agents/1 slot, unknown charge and cancellation. Capacity hints do not prove production scheduling or currency budget; contention can still cause a refusal. V2-168 exact CI pending at observation. Exact V2-169 CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-168",
-    "parent": "2ad562163be2683f93a8339c19ab19675a3c7b4e",
-    "description": "### V2-168 — mixed local/hosted council composition (candidate)\nV2-167 exact nine PR workflows passed, knowledge 139643053370 and browser 139643053251. Compose existing local/hosted transports in one operator plan with separate explicit transport classes, credential alias namespaces, exact plan pin and hosted disclosure approval. No default hosted I/O: trusted resolver and socket primitives must be explicitly injected; no public request or real key used. Pre-enroll every credential and scan reviewed sources before dispatch; share existing council, budget and receipt kernel. Actual loopback TCP fixture plus injected hosted TLS exercise separate credentials, conditional disagreement and receipt replay; adverse plan/route/credential cases refuse before contact. Local config contract unchanged. This is not hosted production activation, multi-tenant security, genuine model interoperability or monetary budget certification. Exact new CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -860,6 +860,20 @@
       "run": 45735551883,
       "job": 139627789195,
       "reason": "Protocol accessor rejection classification changed; browser passed."
+    },
+    {
+      "sourceRevision": "328b0a122c844dfbe9161b373a55157cf2d3807c",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45742715851",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45742715851/job/139651382343",
+      "reason": "Pinned TLC JAR SHA-256 mismatch before full knowledge tests",
+      "resolutionStatus": "Unresolved external artifact integrity gate. Early scoped council tests added; no checksum bypass."
+    },
+    {
+      "sourceRevision": "5e3620e7411c979f7d129a8e2420cd38bc60289d",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45742945338",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45742945338/job/139652112443",
+      "reason": "Pinned TLC JAR SHA-256 mismatch before full knowledge tests",
+      "resolutionStatus": "Unresolved external artifact integrity gate. Early scoped council tests added; no checksum bypass."
     }
   ],
   "reconciledDurableCandidate": {

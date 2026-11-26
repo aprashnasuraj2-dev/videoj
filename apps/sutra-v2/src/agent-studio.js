@@ -6,6 +6,8 @@ import {admitCouncilDisclosure} from '../../../packages/sutra-knowledge/council-
 import {admitLocalCouncilConfig,LOCAL_COUNCIL_VERSION} from '../../../packages/sutra-knowledge/local-council-config.js';
 import {verifyLocalCouncilTransfer} from '../../../packages/sutra-knowledge/local-council-transfer.js';
 import {createExpressionReviewReceipt,verifyExpressionReviewReceipt} from '../../../packages/sutra-knowledge/expression-review-receipt.js';
+import {expressionReviewQuestions,previewExpressionReviewAnswers,VERSION as REVIEW_ANSWERS_VERSION} from '../../../packages/sutra-knowledge/expression-review-answers.js';
+import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {sealExpressionInvestigation} from '../../../packages/sutra-knowledge/expression-investigation.js';
 import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
 import {beamGraph} from '../../../packages/sutra-knowledge/examples/beam.mjs';
@@ -14,9 +16,9 @@ const form=by('studio-form'),runButton=by('studio-run'),cancelButton=by('studio-
 const fields=[...form.querySelectorAll('input,select,textarea'),by('studio-reset-case'),by('studio-load-finance')];
 const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'stiffer_assumption',constraintId:'deflection_limit',graphText:beamGraph('10000000000')},{id:'softer_assumption',constraintId:'deflection_limit',graphText:beamGraph('2500000000')}]});
 const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt'),versionButton=by('studio-export-version');
-let active=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null;
+let active=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null,reviewEpoch=0,reviewExport=null;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
-function clear(){current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
+function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
@@ -55,7 +57,7 @@ function render(r,configuration,calls){
  by('studio-interpretation').textContent=expression?r.state.replaceAll('_',' ')+' — semantic review required; agreement cannot resolve divergent outcomes.':'Method selection only; independent computation is conditional on the reviewed graphs.';
  if(expression&&r.reviewPlan){
   by('studio-review').hidden=false;by('studio-review-summary').textContent=r.reviewPlan.opposingPairs?r.reviewPlan.steps.length+' prioritized review prompts separate '+r.reviewPlan.coveredPairs+' of '+r.reviewPlan.opposingPairs+' opposing pairs. They do not validate meaning.':'No opposing pair to separate; review intended meaning and any missing candidates.';
-  for(const step of r.reviewPlan.steps){const item=element('li',step.prompt);const choices=step.choices.map(c=>{const entry=r.triage?.contrast.entries.find(x=>x.id===c.candidateId);const candidate=r.candidates.find(x=>x.proposalDigest===entry?.computation?.proposalDigest);return (candidate?.expression??c.candidateId)+' — '+c.choice;});item.append(element('p',choices.join(' | ')));by('studio-review-steps').append(item);}
+  renderReviewQuestions(r);
  }
  if(expression&&r.disclosure.agentScopes){
   const target=by('studio-applied-scopes');target.hidden=false;target.append(element('h3','Applied evidence permissions'));
@@ -254,3 +256,34 @@ by('studio-transfer-download').addEventListener('click',()=>{
  by('studio-transfer-status').textContent='Verified version download requested. Retain its pin separately: '+version.versionPin;
 });
 by('studio-case').value=fixture();showMode();showScopes();
+
+function resetReviewPreview(){reviewEpoch++;reviewExport=null;by('studio-review-export').disabled=true;by('studio-review-candidates').replaceChildren();by('studio-review-status').textContent='';delete by('studio-review-status').dataset.state;}
+function renderReviewQuestions(r){
+ const questions=expressionReviewQuestions(r.reviewPlan);
+ const formula=id=>{const entry=r.triage?.contrast.entries.find(x=>x.id===id);return r.candidates.find(x=>x.proposalDigest===entry?.computation?.proposalDigest)?.expression??id;};
+ for(const q of questions){
+  const item=element('li',q.prompt);const label=element('label','Answer '+q.id.replace('review_',''));label.htmlFor='studio-'+q.id;
+  const select=document.createElement('select');select.id='studio-'+q.id;select.dataset.reviewQuestion=q.id;select.append(new Option('Not sure / leave unanswered',''));
+  for(const opt of q.options)select.append(new Option(q.kind==='EXPRESSION_STRUCTURE'?formula(opt):opt==='INCLUDED'?'Include this binding':opt==='NOT_INCLUDED'?'Do not include this binding':opt,opt));
+  item.append(element('p',q.choices.map(c=>formula(c.candidateId)+' — '+(q.kind==='EXPRESSION_STRUCTURE'?'review complete expression':c.choice)).join(' | ')),label,select);by('studio-review-steps').append(item);
+  select.addEventListener('input',()=>{resetReviewPreview();by('studio-review-preview').disabled=false;});
+ }
+ by('studio-review-preview').disabled=!questions.length;by('studio-review-reset').disabled=!questions.length;
+}
+by('studio-review-reset').addEventListener('click',()=>{for(const s of by('studio-review-steps').querySelectorAll('select'))s.value='';resetReviewPreview();by('studio-review-preview').disabled=false;by('studio-review-status').textContent='Answers cleared. Original proposals remain unchanged.';});
+by('studio-review-preview').addEventListener('click',async()=>{
+ if(!current||active||current.configuration.mode!=='expression')return;
+ const snapshot=current,runTicket=epoch;resetReviewPreview();const ticket=reviewEpoch;by('studio-review-preview').disabled=true;
+ try{
+  const c=snapshot.configuration,r=await createExpressionReviewReceipt({contractText:c.contractText,contractPin:c.contractPin,bindingIds:c.disclosure.bindingIds,expressions:snapshot.result.candidates.map(x=>x.expression)});
+  const answers=[...by('studio-review-steps').querySelectorAll('select')].filter(s=>s.value).map(s=>({questionId:s.dataset.reviewQuestion,choice:s.value}));
+  const answersText=JSON.stringify({version:REVIEW_ANSWERS_VERSION,receiptPin:r.receiptPin,answers}),answersPin=await casePin(answersText);
+  const preview=await previewExpressionReviewAnswers({contractText:c.contractText,contractPin:c.contractPin,receiptText:r.receiptText,receiptPin:r.receiptPin,answersText,answersPin});
+  if(ticket!==reviewEpoch||runTicket!==epoch||current!==snapshot)return;
+  const el=by('studio-review-status');el.dataset.state='complete';el.textContent=preview.status.replaceAll('_',' ')+' · '+preview.remainingCandidateIds.length+' of '+preview.candidates.length+' supplied candidates not contradicted by answers. Original disagreement is retained; no adoption or authority.';
+  for(const candidate of preview.candidates){const card=element('article','', 'studio-method');card.dataset.compatibility=candidate.compatibility;card.append(element('strong',candidate.expression),element('p',candidate.conditionalState.replaceAll('_',' ')),element('small',candidate.compatibility.replaceAll('_',' ')));by('studio-review-candidates').append(card);}
+  reviewExport={version:REVIEW_ANSWERS_VERSION,receiptText:r.receiptText,receiptPin:r.receiptPin,answersText,answersPin,preview};by('studio-review-export').disabled=false;
+ }catch{if(ticket===reviewEpoch&&runTicket===epoch){by('studio-review-status').dataset.state='refused';by('studio-review-status').textContent='Answer preview refused. Re-run the council and review the supplied alternatives.';}}
+ finally{if(ticket===reviewEpoch&&runTicket===epoch)by('studio-review-preview').disabled=false;}
+});
+by('studio-review-export').addEventListener('click',()=>{if(!reviewExport||!current||active)return;const url=URL.createObjectURL(new Blob([JSON.stringify(reviewExport,null,2)],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-expression-review-answers.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});

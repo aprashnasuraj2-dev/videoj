@@ -112,6 +112,15 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(expressionTrace.result.termination,'STAGNANT_CANDIDATES');
   assert.equal(expressionTrace.result.reviewPlan.coveredPairs,1);
   assert.match(await page.locator('#studio-review-steps').innerText(),/ppe25/);
+  await page.locator('#studio-review_1').selectOption('INCLUDED');await page.getByRole('button',{name:'Preview review answers'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-review-status').dataset.state==='complete');
+  assert.equal(await page.locator('#studio-review-candidates [data-compatibility="MATCHES_REVIEW_ANSWERS"]').count(),1);
+  assert.equal(await page.locator('#studio-review-candidates [data-compatibility="DIFFERS_FROM_REVIEW_ANSWER"]').count(),1);
+  assert.match(await page.locator('#studio-review-status').innerText(),/Original disagreement is retained/);
+  const [reviewDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export answer comparison'}).click()]);
+  const reviewFile=JSON.parse(fs.readFileSync(await reviewDownload.path(),'utf8'));assert.equal(reviewFile.preview.originalState,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(reviewFile.preview.decisionAuthority,'NONE');
+  await page.getByRole('button',{name:'Reset review answers'}).click();assert.equal(await page.locator('#studio-review-candidates article').count(),0);assert.equal(await page.getByRole('button',{name:'Export answer comparison'}).isDisabled(),true);
+  assert.equal(await page.locator('#studio-methods .studio-method').count(),2);
   const [receiptDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export computation receipt'}).click()]);
   const receiptText=fs.readFileSync(await receiptDownload.path(),'utf8');
   const receiptPin=(await page.locator('#studio-receipt-digest').innerText()).match(/sha256:[a-f0-9]{64}/)[0];
