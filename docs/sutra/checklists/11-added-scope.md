@@ -183,4 +183,19 @@ Both are isolated learner/developer regressions verified in automated browser an
 
 - [x] `SUTRA-X010-42` Preserve keyboard focus and expose busy state during receipt-backed native cue seeks without permitting repeated activation. Verify actual Chromium keyboard Enter/Space, one native seek write, result replacement cancellation and a fresh successful retry. Shared direct/local/provider row implementation; do not infer physical keyboard or screen-reader acceptance. Requires X010-14 and X010-41.
 
-- [ ] `SUTRA-X010-43` Preserve keyboard focus and prevent repeated activation across featured native cue, comparison native cue and written-guide integrity checks while busy; verify actual held native seeks and one transport under Enter/Space, cross-surface supersession and normal retry. Requires X010-42. Scope is browser keyboard behavior, not physical-device or screen-reader acceptance.
+- [x] `SUTRA-X010-43` Preserve keyboard focus and prevent repeated activation across featured native cue, comparison native cue and written-guide integrity checks while busy; verify actual held native seeks and one transport under Enter/Space, cross-surface supersession and normal retry. Requires X010-42. Scope is browser keyboard behavior, not physical-device or screen-reader acceptance.
+
+
+- [x] `SUTRA-X010-44` Integrate an explicit opt-in persistent browser workspace for mapping history: exact schema/readback, bounded no-drop writes, reload/session continuity and stale-schema refusal. Verify mapping state survives reload only after consent; no silent migration or data loss. This is local diagnostics, not a user-research record.
+
+- [x] `SUTRA-X010-45` Wire the workspace adapter across the visible browser journey: navigation lifecycle, sanitized DOM-render deltas, classified fetch lifecycle, learner screen-state transitions and ranked mapping events. Verify actual browser propagation and explicit disable/clear; no raw URL or content capture.
+
+- [x] `SUTRA-X010-46` Expose deterministic ranked/competing local mappings with bounded confidence, disambiguation metadata, score margin and explicit unique-select versus abstain fallback. Preserve all displayed catalog-matched alternatives and zero model/network behavior. Confidence is lexical support only, not semantic probability.
+
+- [x] `SUTRA-X010-47` Enforce integrated consent/storage/credential boundaries for workspace history: zero persistence before opt-in, exact allowlisted event envelopes, fail-closed schema drift and rejection of raw URLs, request bodies, headers, credentials and secret-bearing extension fields. Existing provider/peer credential boundaries remain unchanged.
+
+- [x] `SUTRA-X010-48` Add deterministic source-grounded ranked-mapping evaluation that compares primary output with matched alternatives, computes top-1/MRR/alternative recovery/abstention/evidence coverage and traces every displayed candidate to a validated receipt plus repository source artifact/hash. Synthetic engineering evidence only; no human semantic claim.
+
+- [x] `SUTRA-X010-49` Add provider interoperability measurement plumbing: per-call outcome/latency/token ledger, consented sanitized local persistence, fixed hosted/self-hosted browser route classification and schema-v2 request-level USD cost calculation from an explicit dated price basis. No live provider/model/spend evidence is claimed; R-007 remains open.
+
+- [x] `SUTRA-X010-50` Build a device-ready human-acceptance harness: private CI static bundle, hash preflight, physical-device record validator, neutral reviewer record/CLI and bounded feedback-capture handler that rejects credential/PII extensions. CI readiness is not physical-device, screen-reader or human acceptance; R-008 remains open.

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T21:09:58+05:45",
+  "updatedAt": "2026-11-26T12:48:46+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1495,8 +1495,8 @@
     {
       "id": "R-066",
       "severity": "medium",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Featured cue and comparison busy controls have inconsistent keyboard activation behavior",
       "mechanism": "Featured and guide controls temporarily use native disabled; comparison cue permits repeat activation while waiting.",
       "userEffect": "Focus can leave the active control or repeated keyboard activation can restart pending work.",
@@ -1509,9 +1509,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "a6e2caa6db8828afec15183eb50745f1311e69f3"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0046.md",
+          "sourceRevision": "ae042db07f51d0cf1e71f002869ce9a65a011d48"
         }
       ],
-      "unblockCondition": "Exact held native seek/guide transport Chromium counterexamples and all applicable regressions pass."
+      "unblockCondition": null
     }
   ]
 }

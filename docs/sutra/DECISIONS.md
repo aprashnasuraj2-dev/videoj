@@ -349,3 +349,20 @@ Use an explicit busy state rather than transient native disablement in the share
 ## SUTRA-DECISION-0048 — Consistent pending control semantics
 
 Keep featured native cue and written-guide integrity buttons focusable while pending, and guard repeated activation on comparison native cue. Allow distinct actions to supersede prior work; do not restore authority to stale results. Require held native/transport actual-browser regressions, not screen-reader or physical-device claims.
+
+
+## SUTRA-DECISION-0049 — Persistent workspace requires explicit opt-in
+
+2026-11-26T12:48:46+05:45: Local browser-journey history is a developer diagnostic, not implicit analytics or user research. Persist nothing before explicit enablement. After consent, store only closed-schema navigation/render/network-class/state/mapping/provider metadata with exact readback and a hard capacity stop; never store raw URLs, questions, excerpts, request bodies, headers or credentials. Reload continuity does not widen capture authority.
+
+## SUTRA-DECISION-0050 — Competing mappings remain explicit
+
+2026-11-26T12:48:46+05:45: Natural-language local retrieval may rank lexically supported candidates, but confidence means bounded lexical support only. Preserve primary and competing mappings, candidate counts, score margin and deterministic abstention rather than silently selecting among alternatives. Evaluation must trace every displayed candidate to a validated receipt and raw repository artifact/hash; synthetic scores are not semantic or factual truth.
+
+## SUTRA-DECISION-0051 — Provider telemetry is evidence, pricing is external input
+
+2026-11-26T12:48:46+05:45: Record per-call outcome, latency and provider-reported token tuples only after an explicitly approved run; persist them locally only under workspace opt-in. Calculate request-level USD cost offline from a dated explicit price basis and preserve incomplete usage as unknown. Do not infer current provider price in-browser, retry automatically, or treat synthetic hosted/self-hosted routing tests as a live funded provider sample. R-007 remains open.
+
+## SUTRA-DECISION-0052 — Acceptance readiness is not acceptance
+
+2026-11-26T12:48:46+05:45: Build a private CI static bundle and validate its required hashes, device record schema and neutral reviewer feedback contract. The feedback handler is an undeployed bounded interface with an injected sink, not authorization to collect people’s data. CI cannot prove physical hardware, human execution or screen-reader usability; R-008 remains open until real authorized observation exists.

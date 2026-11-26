@@ -1,22 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T21:09:58+05:45",
+  "updated_at": "2026-11-26T12:48:46+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "a6e2caa6db8828afec15183eb50745f1311e69f3",
-  "last_session_id": "SUTRA-SESSION-0045",
+  "last_observed_code_sha": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+  "last_session_id": "SUTRA-SESSION-0046",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-43",
+  "next_task": "SUTRA-P054-01",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
-    "SUTRA-P054-01",
     "SUTRA-P066-01",
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Verify exact X010-43 featured/comparison keyboard candidate full CI, then select dependency-ready independent engineering. No release or paid inference.",
+  "next_action": "P1 engineering harnesses are verified. Run SUTRA-P054-01 only after participant approval of provider/model/spend; while that input is unavailable, continue the next dependency-ready independent engineering item. Physical/human acceptance remains external. No release or paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12741,6 +12740,166 @@
           "observed_at": "2026-11-24T21:09:58+05:45"
         }
       ]
+    },
+    "SUTRA-X010-43": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45425180006",
+          "description": "Exact X010-43 learner-shell source revision passed; featured/comparison/guide pending-control keyboard regressions remained green.",
+          "result": "pass",
+          "source_revision": "cbddb72b6ce582e8919edf2ea186682f1813e15a",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45425180050",
+          "description": "Exact X010-43 Chromium/Firefox/WebKit browser matrix completed successfully.",
+          "result": "pass",
+          "source_revision": "cbddb72b6ce582e8919edf2ea186682f1813e15a",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-44": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834795",
+          "description": "Final learner shell passed persistence, reload, bounded no-drop and schema-drift tests.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0046.md",
+          "description": "Session evidence records P0 persistence integration and self-healing.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-45": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834851",
+          "description": "Final three-engine browser matrix passed the visible-journey integration.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834795",
+          "description": "Learner shell browser journey and state/render/network integration tests passed.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-46": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834795",
+          "description": "Ranked competing mapping, confidence, disambiguation and deterministic fallback unit/browser tests passed.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834745",
+          "description": "Engineering evaluation remained green with ranked mapping harness present.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-47": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834795",
+          "description": "Consent-before-capture, exact local storage schema and credential/raw-request exclusion tests passed.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834851",
+          "description": "Three-engine browser matrix passed after integrated storage/security changes.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-48": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834745",
+          "description": "Ranked source-grounded evaluation tests and baseline artifact build passed on final combined head.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "tools/sutra-evaluation/mapping-harness.mjs",
+          "description": "Deterministic primary/alternative scoring and raw artifact/hash trace implementation.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-49": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834680",
+          "description": "Provider measurement workflow passed schema-v2 latency and request-level cost arithmetic tests.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834795",
+          "description": "Runtime per-call usage/latency ledger and consented persistence tests passed; no live provider call claimed.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-50": {
+      "state": "verified",
+      "verified_at": "2026-11-26T12:48:46+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45771834706",
+          "description": "Physical-device evidence workflow passed validator/reviewer/feedback/preflight tests, built the static candidate and uploaded the private device-ready artifact.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        },
+        {
+          "artifact": "tools/sutra-device-check/README.md",
+          "description": "Reproducible physical-device and neutral reviewer sign-off commands; explicitly non-human CI boundary.",
+          "result": "pass",
+          "source_revision": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
+          "observed_at": "2026-11-26T12:48:46+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12850,6 +13009,7 @@
     "**712/1,098 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-40 exact all 19 workflows passed. X010-41 technical lexical qualifier implementation awaits exact CI; no credit before verification.",
     "**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.",
     "**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.",
-    "**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet."
+    "**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet.",
+    "2026-11-26T12:48:46+05:45: **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 reconciled exact 19/19. X010-44..50 P0/P1 engineering integration verified on exact combined source ae042db07f51d0cf1e71f002869ce9a65a011d48 with all 19 workflows successful. R-007 live funded provider evidence and R-008 physical/human acceptance remain open; no paid inference, public deployment or human-test claim."
   ]
 }

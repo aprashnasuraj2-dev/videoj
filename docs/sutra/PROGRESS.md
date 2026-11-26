@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0046 — 2026-11-26
+
+**722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 and X010-44..50 verified. Exact combined source `ae042db07f51d0cf1e71f002869ce9a65a011d48` passed all 19 workflows. P0 persistent workspace/journey/semantic/security integration is green; P1 ranked evaluation, provider telemetry/cost plumbing and device-ready acceptance harness are green. Live funded provider evidence (R-007) and actual physical/human acceptance (R-008) remain external gates; no paid inference or public release.
+
+Self-healing corrected two test-boundary failures during implementation: the storage allowlist was expanded only for the dedicated workspace controller, and a secret-leak assertion was narrowed so the allowed field `promptTokens` is not mistaken for prompt content. [Evidence](evidence/implementation/SESSION-0046.md).
+
 ## Session 0045 — 2026-11-24
 
 **714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet.
