@@ -1410,3 +1410,7 @@ V2-163 knowledge job 139638337117 and browser 139638337391 passed; V2-164 exact 
 
 ### V2-166 — pinned hosted HTTPS socket candidate (not enabled)
 Add trusted Node-only HTTPS exchange with mandatory host resolver, public route admission, exact IP connection, original SNI, TLS 1.2+, certificate and peer IP/port checks before HTTP credentials, one authenticated socket, no redirect/retry/proxy, deadline across DNS/TLS/body, 256 KiB response cap. Shared local/hosted wire body validator; two compatible wire protocols, no live public contact, no CLI or browser wiring. Injected TLS/HTTP event adversaries exercise policy; real CA/TLS fixture, production tenant isolation and paid provider approval remain open. V2-164 exact nine PR workflows passed; V2-165 exact nine PR workflows passed. Candidate CI pending.
+
+
+### V2-167 — actual TLS fixture validates pinned transport primitive (candidate)
+Extract internal socket primitive, keep public route and credential preflight in host wrapper. Real local HTTPS server with ephemeral per-test CA/certificate tests actual Node TLS+HTTP socket reuse, SNI, exact peer, authenticated header, untrusted certificate, wrong hostname, wrong admitted peer and redirect refusal. Public-route policy still forbids loopback, so positive local fixture invokes only internal primitive with a test pin and explicit test CA; no production trust modification, real public requests, UI wiring or authorization. V2-165 nine exact PR workflows passed; V2-166 candidate pending. Exact CI pending.
