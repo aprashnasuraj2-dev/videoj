@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T16:38:18+05:45",
+  "updated_at": "2026-11-26T16:42:29+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "509d686b0ee54647aa2ca89a672dbdaf50713887",
-  "last_session_id": "SUTRA-SESSION-0049",
+  "last_observed_code_sha": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+  "last_session_id": "SUTRA-SESSION-0050",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Independent original-task scan is exhausted except tasks requiring participant eligibility/rights/narration, human review/testing, live provider/spend, physical hardware, public HTTPS/interoperability, production Cloudflare evidence or final-candidate/release state. P054-01 remains next once provider/model/spend approval exists; do not simulate external gates.",
+  "next_action": "Phase 088 contributor artifact is implemented and CI-validated; P088-08/P088-10 remain pending for an actual new-reader observation. Core product gates still require participant/rights/human/provider/hardware/public-production evidence. Continue safe pre-release documentation only where it does not imply a frozen or deployed candidate.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12991,6 +12991,110 @@
           "observed_at": "2026-11-26T16:38:18+05:45"
         }
       ]
+    },
+    "SUTRA-P088-01": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide provides clean learner and reusable-tool installation/first-invocation commands.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide records package boundaries and current Node/Vite/Playwright/Video.js compatibility markers.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-03": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide defines a minimal reproducible issue report with SHA, environment, steps, failing command and sanitized evidence.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-04": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide routes security-sensitive reports to the repository private-security path and forbids public secret/exploit disclosure.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide names focused contribution examples and rejects unrelated scope/unsafe boundary widening.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-06": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Pre-release changelog keeps work under Unreleased and forbids CI/private/staging candidates from becoming version entries.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-07": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor guide explicitly disclaims guaranteed response times, hosted SLA and indefinite compatibility/support.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
+    },
+    "SUTRA-P088-09": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:42:29+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "description": "Contributor and changelog documents are produced, indexed and covered by the executable Open Kit documentation contract.",
+          "result": "pass",
+          "source_revision": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
+          "observed_at": "2026-11-26T16:42:29+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13104,6 +13208,7 @@
     "2026-11-26T12:48:46+05:45: **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 reconciled exact 19/19. X010-44..50 P0/P1 engineering integration verified on exact combined source ae042db07f51d0cf1e71f002869ce9a65a011d48 with all 19 workflows successful. R-007 live funded provider evidence and R-008 physical/human acceptance remain open; no paid inference, public deployment or human-test claim.",
     "Session 0047: SUTRA-P078-02 verified from exact-head d1560cfadbd0cf73007076e7a5e7b8f319e8fc81 19/19 CI and executed consent/source/config/default-off/evidence/stream/ambiguity regressions. Counts become 723/1107 overall and 617/1000 original; P078-07/P078-10 and all external human/content/provider/public-release gates remain open.",
     "Session 0048: four original tasks verified (P001-03, P001-06, P050-02, P065-06). Counts 727/1107 overall, 621/1000 original, 373 pending, six omissions, one hardware blocker. Official rules snapshot does not establish entrant eligibility; automated browser/route tests do not establish human/provider/production evidence.",
-    "Session 0049: P001-07 and P023-09 verified. Counts 729/1107 overall, 623/1000 original, 371 pending, six omissions, one hardware blocker. P023-03 remains pending because scripted local orchestration is not configured live inference."
+    "Session 0049: P001-07 and P023-09 verified. Counts 729/1107 overall, 623/1000 original, 371 pending, six omissions, one hardware blocker. P023-03 remains pending because scripted local orchestration is not configured live inference.",
+    "Session 0050: P088-01..07 and P088-09 verified from contributor/changelog artifacts plus Open Kit run 45806012457 job 139861341692 (3/3 tests, clean distribution checks). Counts 737/1107 overall, 631/1000 original, 363 pending, six omissions, one hardware blocker. P088-08/10 remain pending for a real new-reader check."
   ]
 }
