@@ -462,7 +462,7 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
 
-  await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
+  await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
   const guideLink=page.getByRole('link',{name:'Open written source excerpt'});
@@ -491,7 +491,7 @@ const assert=require('node:assert/strict');
   await page.unroute('**/guides/synthetic-comparison-guide.html*');
   assert.equal(await page.locator('#comparison-body .comparison-seek-status').innerText(),'','obsolete guide completion must not attach to the new comparison');
   // Controlled lifecycle injection: old guide bytes must not certify a result after navigation revocation.
-  await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
+  await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).click();
   let navRelease,navStart,navFinish;const navStarted=new Promise(r=>navStart=r),navFinished=new Promise(r=>navFinish=r);
   await page.route('**/guides/synthetic-comparison-guide.html*',async route=>{navStart();await new Promise(r=>navRelease=r);try{await route.fulfill({contentType:'text/html',body:guideText});}catch{}finally{navFinish();}});
   await page.getByRole('button',{name:'Check written source integrity'}).click();await navStarted;
