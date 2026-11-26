@@ -105,7 +105,7 @@ test('generated inventory exactly binds manifest, links, graphs and built runtim
 
 test('synthetic written comparison link is byte-bound to the published guide and exact anchor excerpt',async()=>{
  const {createHash}=await import('node:crypto');
- const {syntheticComparison}=await import('../src/comparison.js');
+ const {syntheticComparison}=await import('./fixtures/synthetic-comparison.mjs');
  const claim=syntheticComparison.guide;
  assert.match(claim.sourceHash,/^[a-f0-9]{64}$/);assert.match(claim.sourceHref,/^\.\/guides\//);
  const [file,fragment]=claim.sourceHref.slice(2).split('#');
