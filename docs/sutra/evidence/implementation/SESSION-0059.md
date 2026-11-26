@@ -59,7 +59,7 @@ Cloudflare file hashes for the first and final deployments are identical for the
 - `/content/content-profile.json` → `b71b285df4fc896694de7ca46e34d83b`;
 - `/runtime/sutra-runtime.js` → `f22caa7fefae8f4665a0875002f0166c`.
 
-This establishes that the documentation-only auto-deploy did not change those published app artifacts. Future branch commits do not automatically deploy.
+This establishes that the documentation-only auto-deploy did not change those published app artifacts. Future branch commits do not automatically deploy. Cloudflare may still create **skipped deployment records** for later Git pushes; for example record `3dbbdb55-9d42-4ce8-9339-8f1bd3d27978` for commit `ed1b1c00c7fe08bdf2d595307a102b2938d1f5e3` was observed with `is_skipped: true` and no stages executed. The canonical production deployment remains `f2209727-cff2-4142-ad1d-966c42770e48`.
 
 ## External public verification
 
