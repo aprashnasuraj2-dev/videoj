@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Explain browser versus server responsibilities, artifact resolution, consent, evidence validation, privacy, hosting, measured performance and current limits. Include exact reproduction commands.
 - **Phase exit:** Every implementation claim has a source path or test evidence; advertised features match the deployed build.
 
-- [ ] `SUTRA-P085-01` Explain browser graph execution versus server inference responsibilities
-- [ ] `SUTRA-P085-02` Document artifact resolution, peer policy and registered actions
-- [ ] `SUTRA-P085-03` Describe cue validation, context filtering and reviewed receipts
+- [x] `SUTRA-P085-01` Explain browser graph execution versus server inference responsibilities
+- [x] `SUTRA-P085-02` Document artifact resolution, peer policy and registered actions
+- [x] `SUTRA-P085-03` Describe cue validation, context filtering and reviewed receipts
 - [ ] `SUTRA-P085-04` Report actual evaluation, cost and browser results with dates
-- [ ] `SUTRA-P085-05` Include clean installation and reproduction commands
-- [ ] `SUTRA-P085-06` Document media hosting, cache behavior and quota assumptions
-- [ ] `SUTRA-P085-07` Link implementation claims to source paths or observed checks
-- [ ] `SUTRA-P085-08` State current limits and untested environments without marketing guarantees
-- [ ] `SUTRA-P085-09` Produce and review the phase artifact: Technical_Report.md and PDF-ready report content.
+- [x] `SUTRA-P085-05` Include clean installation and reproduction commands
+- [x] `SUTRA-P085-06` Document media hosting, cache behavior and quota assumptions
+- [x] `SUTRA-P085-07` Link implementation claims to source paths or observed checks
+- [x] `SUTRA-P085-08` State current limits and untested environments without marketing guarantees
+- [x] `SUTRA-P085-09` Produce and review the phase artifact: Technical_Report.md and PDF-ready report content.
 - [ ] `SUTRA-P085-10` Close phase 085 only after its applicable tasks have evidence and its exit condition is observed: Every implementation claim has a source path or test evidence; advertised features match the deployed build.
 
 ## Phase 086 - Write the community impact report
@@ -107,14 +107,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Document the builder problem, each reusable artifact, installation results, license, external trial counts and next maintenance steps. Separate usability feedback from adoption or operational impact.
 - **Phase exit:** The report contains actual evidence and limitations; same-owner demo origins are not counted as external adopters.
 
-- [ ] `SUTRA-P086-01` Explain which builder problem each reusable tool solves
+- [x] `SUTRA-P086-01` Explain which builder problem each reusable tool solves
 - [ ] `SUTRA-P086-02` Link versioned source, license, documentation and working example
 - [ ] `SUTRA-P086-03` Report actual outside-builder counts, install times and interventions
-- [ ] `SUTRA-P086-04` Separate installation usability from production adoption
+- [x] `SUTRA-P086-04` Separate installation usability from production adoption
 - [ ] `SUTRA-P086-05` Summarize target-user task results with sample-size limitations
-- [ ] `SUTRA-P086-06` Identify limitations and a realistic maintenance boundary
-- [ ] `SUTRA-P086-07` Avoid counting same-owner origins as community users
-- [ ] `SUTRA-P086-08` Create a short truthful section usable in the final Devpost description
+- [x] `SUTRA-P086-06` Identify limitations and a realistic maintenance boundary
+- [x] `SUTRA-P086-07` Avoid counting same-owner origins as community users
+- [x] `SUTRA-P086-08` Create a short truthful section usable in the final Devpost description
 - [ ] `SUTRA-P086-09` Produce and review the phase artifact: Community_Tools_and_Impact.md with public links.
 - [ ] `SUTRA-P086-10` Close phase 086 only after its applicable tasks have evidence and its exit condition is observed: The report contains actual evidence and limitations; same-owner demo origins are not counted as external adopters.
 
