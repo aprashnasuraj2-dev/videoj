@@ -96,3 +96,7 @@ A handoff should state the exact current branch HEAD, last fully verified source
 But the handoff is not the goal. If the user said **continue with SUTRA** and the session still has workable engineering capacity, continue working rather than wrapping after the handoff.
 
 Do not create a scheduled/background task from this phrase.
+
+## Parallel child workstreams (V2-180)
+
+Read [PARALLEL-WORKSTREAMS.md](PARALLEL-WORKSTREAMS.md), resolve every open child draft PR and exact CI, and resume independent pending segments without overwriting concurrent changes. Child records belong under workstreams/; update shared registers on integration, preserving original evidence. No automatic merge or release.

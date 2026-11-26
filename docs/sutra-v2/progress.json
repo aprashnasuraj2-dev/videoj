@@ -9407,5 +9407,64 @@
     "failedGate": "V2-D27-REVIEWED-ORDER-CONTRAST",
     "lastVerifiedKernelSource": "9c6a25e11b23051b0277206ed39878e7f69b0977",
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
+  },
+  "parallelWorkstreams": {
+    "session": "V2-180",
+    "baseline": "25ae51a7341c6afa178466b8d107a6705c426c8d",
+    "baseBranch": "sutra/v2-knowledge-compiler",
+    "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+    "branches": [
+      {
+        "id": "01-model-orchestration",
+        "branch": "sutra/v2-parallel/01-model-orchestration",
+        "state": "planned"
+      },
+      {
+        "id": "02-persistent-knowledge",
+        "branch": "sutra/v2-parallel/02-persistent-knowledge",
+        "state": "planned"
+      },
+      {
+        "id": "03-semantic-compilation",
+        "branch": "sutra/v2-parallel/03-semantic-compilation",
+        "state": "planned"
+      },
+      {
+        "id": "04-evidence-acquisition",
+        "branch": "sutra/v2-parallel/04-evidence-acquisition",
+        "state": "planned"
+      },
+      {
+        "id": "05-independent-verification",
+        "branch": "sutra/v2-parallel/05-independent-verification",
+        "state": "planned"
+      },
+      {
+        "id": "06-counterfactuals",
+        "branch": "sutra/v2-parallel/06-counterfactuals",
+        "state": "planned"
+      },
+      {
+        "id": "07-security-recovery",
+        "branch": "sutra/v2-parallel/07-security-recovery",
+        "state": "planned"
+      },
+      {
+        "id": "08-unified-workspace",
+        "branch": "sutra/v2-parallel/08-unified-workspace",
+        "state": "planned"
+      },
+      {
+        "id": "09-specialist-domains",
+        "branch": "sutra/v2-parallel/09-specialist-domains",
+        "state": "planned"
+      },
+      {
+        "id": "10-benchmark",
+        "branch": "sutra/v2-parallel/10-benchmark",
+        "state": "planned"
+      }
+    ],
+    "qualification": "No new gate credit; child PR CI separate from full integration."
   }
 }

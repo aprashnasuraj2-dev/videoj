@@ -1,0 +1,18 @@
+# Parallel SUTRA v2 engineering workstreams
+
+Integration target: `sutra/v2-knowledge-compiler` (draft PR #50). Starting source: `25ae51a7341c6afa178466b8d107a6705c426c8d`. Child PRs must be draft, independently reviewable, never merged or released without applicable authorization. Workstream branch prefix `sutra/v2-parallel/`. The workstream files record candidate state and actual evidence; central gate status stays unchanged until integration. Shared files should have one owner or an explicitly coordinated integration patch. Reconcile exact child HEAD and CI, then run the full unchanged integration gate after any authorized merge. No active task is dropped; existing SUTRA1 and V2 release gates remain.
+
+| Workstream | Existing roadmap IDs | Acceptance |
+|---|---|---|
+| [Model-independent orchestration](workstreams/01-model-orchestration.md) | V2-P14-BYOK-UX; V2-P14-BUDGET; V2-P02-RUNTIME | Model substitution preserves a pinned investigation; route/credential/consent changes cannot silently dispatch. |
+| [Persistent knowledge and revision](workstreams/02-persistent-knowledge.md) | V2-K07; V2-LK08-KNOWLEDGE-GRAPH; V2-LK09-REVISION; V2-LK10-VERSION-CONTROL; V2-LK11-IMPACT-REPORT | Exact independently replayed history; dependency closure parity; crash/concurrency/rollback counterexamples. |
+| [Semantic compilation and intent](workstreams/03-semantic-compilation.md) | V2-LK02-INTENT-IR; V2-LK03-PATHWAYS; V2-LK04-ROUNDTRIP; V2-LK07-AMBIGUITY-REVIEW | Materially different interpretations retained, scope mismatch refused, human review required. |
+| [Evidence acquisition and source economics](workstreams/04-evidence-acquisition.md) | V2-LK12-ACQUISITION; V2-LK13-STRUCTURAL-WEAKNESS; V2-D24-DISCLOSURE-FRONTIER; V2-F03; V2-F04 | No invented probabilities, unknown lineage retained, zero unapproved contact. |
+| [Independent verification and replay](workstreams/05-independent-verification.md) | V2-P07-WASM; V2-D01; V2-D02; V2-D03; V2-O04; V2-LK14-STATISTICAL-PROFILES | Independent oracle and tamper rejection for a declared bounded profile. |
+| [Counterfactuals and adversarial challenge](workstreams/06-counterfactuals.md) | V2-LK05-SEMANTIC-COUNTERFACTUAL; V2-LK06-SEMANTIC-WORLDS; V2-F05 | Bounded counterexample search with explicit completeness, no semantic truth claim. |
+| [Security, privacy and recovery](workstreams/07-security-recovery.md) | V2-LK19-TRUST-BOUNDARY; V2-P01-THREAT; V2-P04-CONSENT; V2-P05-RECOVERY; V2-P05-ROLLBACK; V2-F11b; V2-P06-REFINE | No unauthorized disclosure/action, independent adversarial replay, unresolved coordinated rollback retained. |
+| [Unified investigation workspace](workstreams/08-unified-workspace.md) | V2-LK15-UNIFIED-WORKSPACE; V2-LK07-AMBIGUITY-REVIEW | Complete keyboard/mobile manual journey, explicit state and recovery, no automatic authority. |
+| [Specialist domain journeys](workstreams/09-specialist-domains.md) | V2-LK16-SPECIALIST-JOURNEYS; V2-LK14-STATISTICAL-PROFILES; V2-D03; V2-L03 | Two complete independently replayed narrow journeys with applicability limits and user evidence. |
+| [Independent benchmarking and prior art](workstreams/10-benchmark.md) | V2-LK17-BENCHMARK; V2-LK18-PRIOR-ART; V2-B01 | Held-out annotation, matched budgets, coverage and accuracy separately, publish failures. |
+
+Branches may advance independently. Review dependencies before integration: security and provider boundaries underpin orchestration; knowledge identity and compiler underpin counterfactuals and specialist profiles; workspace consumes reviewed APIs; benchmarking runs across all but must freeze its inputs independently. Branch-only JS CI is not full verification. Do not duplicate common ledger edits across child branches.
