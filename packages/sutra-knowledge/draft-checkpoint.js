@@ -9,8 +9,9 @@ export async function openDraftCheckpoint(draftText,expectedPin){
  await sealReviewedDraft(draftText);
  const draft=parseUniqueJson(draftText,{maxChars:262144,maxDepth:8});
  // This profile restores the exact editable browser draft representation.
- // The browser question field normalizes CR and has a narrower length limit.
- if(draft.question.length>1000||draft.question.includes('\r')||draft.bindings.some(b=>!draft.sources.some(s=>s.id===b.sourceId)))fail('BROWSER_PROFILE');
+ // Browser textareas normalize CR in both question and source text. Refuse
+ // such imports rather than letting selection offsets diverge from stored text.
+ if(draft.question.length>1000||draft.question.includes('\r')||draft.sources.some(s=>s.text.includes('\r'))||draft.bindings.some(b=>!draft.sources.some(s=>s.id===b.sourceId)))fail('BROWSER_PROFILE');
  if(JSON.stringify({version:1,question:draft.question,sources:draft.sources,bindings:draft.bindings})!==draftText)fail('CANONICAL_DRAFT');
  return freeze({draft,draftText,draftPin:expectedPin,summary:{question:draft.question,sourceIds:draft.sources.map(s=>s.id),bindingCount:draft.bindings.length},decisionAuthority:'NONE',qualification:'Exact editable draft only. No sealed investigation, model permission, semantic truth or execution approval restored.'});
 }

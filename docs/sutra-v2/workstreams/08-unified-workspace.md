@@ -19,3 +19,7 @@ Portable exact editable-draft export, separately retained digest, bounded UTF-8 
 
 ## Parallel browser acceptance candidate
 Add dedicated workspace-child CI job running the actual canonical build, vendored runtime verification, existing complete Chromium browser journey and guided-state tests, including explicit draft recovery. The job does not run on the other nine child branches and does not replace full integration independent replay or formal gates. Exact browser CI pending.
+
+
+## Editable source normalization boundary
+Reject carriage returns in restored source text as well as question text, so textarea normalization cannot make browser selection offsets disagree with restored bytes. Add exact pinned CRLF regression. Prior actual Chromium workflow passed at 54882b7; new exact child CI pending.
