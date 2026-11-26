@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T17:01:10+05:45",
+  "updated_at": "2026-11-26T17:07:40+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "d9b48d94652bd3670f43b57d418cc00d11377d0d",
-  "last_session_id": "SUTRA-SESSION-0053",
+  "last_observed_code_sha": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
+  "last_session_id": "SUTRA-SESSION-0054",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Claim-boundary tasks P076-08/P083-08/P084-07 are verified without claiming adoption, production release or npm publication. Remaining original work is classified in REMAINING_GATE_MAP.md and is dominated by participant/rights, human, provider/hardware, public-production, final-candidate/release or submission evidence. Keep those gates pending until their real re-open condition exists.",
+  "next_action": "Session 0054 closes seven independent planning/engineering controls. P018-06 remains pending because the optional synthetic-conflict demo is still visible in the normal learner UI. Remaining work is still dominated by real participant/rights/human/provider/hardware/public-production/final-candidate evidence; follow REMAINING_GATE_MAP.md and do not promote development fixtures into held-out or release evidence.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13407,6 +13407,97 @@
           "observed_at": "2026-11-26T17:01:10+05:45"
         }
       ]
+    },
+    "SUTRA-P001-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/PERMISSION_ASSET_INVENTORY.md",
+          "description": "Permission-sensitive employer/third-party asset categories are listed with required basis and default exclusion; actual permission remains unresolved.",
+          "result": "pass",
+          "source_revision": "05b44009a0ca7bff13d48a9c373af8d21d44b4a2",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P018-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "description": "Clearly marked synthetic conflicting video/guide fixture is unit-tested as unresolved without selecting a winner.",
+          "result": "pass",
+          "source_revision": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P018-07": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "description": "Source-tool registry is bounded to 20 sources × 500 cues and 4M aggregate characters; closed schemas reject URL/crawler-style arguments.",
+          "result": "pass",
+          "source_revision": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P073-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/MEASUREMENT_PROTOCOLS.md",
+          "description": "Hero-path live-run success/failure criteria, timing boundaries and benchmark target were preregistered before live measurement.",
+          "result": "pass",
+          "source_revision": "05b44009a0ca7bff13d48a9c373af8d21d44b4a2",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P075-01": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/MEASUREMENT_PROTOCOLS.md",
+          "description": "Equivalent manual transcript-search task and valid-evidence rubric were defined before participant comparison.",
+          "result": "pass",
+          "source_revision": "05b44009a0ca7bff13d48a9c373af8d21d44b4a2",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P081-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "description": "SUTRA build is rooted to apps/sutra/dist; build tests reject preview/DETOUR dependencies and keep output isolated.",
+          "result": "pass",
+          "source_revision": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P081-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:07:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "description": "Exact app/unit regression keeps provider/client-hash/self-hosted secrets outside committed Wrangler vars while checked-in inference remains disabled.",
+          "result": "pass",
+          "source_revision": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
+          "observed_at": "2026-11-26T17:07:40+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13524,6 +13615,7 @@
     "Session 0050: P088-01..07 and P088-09 verified from contributor/changelog artifacts plus Open Kit run 45806012457 job 139861341692 (3/3 tests, clean distribution checks). Counts 737/1107 overall, 631/1000 original, 363 pending, six omissions, one hardware blocker. P088-08/10 remain pending for a real new-reader check.",
     "Session 0051: P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 verified from Open Kit run 45806619487 job 139863464177 (5/5 tests, clean distribution checks). Counts 750/1107 overall, 644/1000 original, 350 pending, six omissions, one hardware blocker. P089 runbook not credited because its first contract run failed on Markdown-sensitive assertion; correction queued.",
     "Session 0052: P084-02/04/05, P087-04/08 and P089-06/07/08 verified from corrected Open Kit run 45807667772 job 139867065204 (6/6 tests plus clean distribution/vendor/starter checks). Counts 758/1107 overall, 652/1000 original, 342 pending, six omissions, one hardware blocker. No public-release/final-candidate/rollback/funding claim.",
-    "Session 0053: P076-08, P083-08 and P084-07 verified from Open Kit run 45808726066 job 139870685754 (6/6 tests plus clean distribution checks). Counts 761/1107 overall, 655/1000 original, 339 pending, six omissions, one hardware blocker. No adoption/release/npm event claimed."
+    "Session 0053: P076-08, P083-08 and P084-07 verified from Open Kit run 45808726066 job 139870685754 (6/6 tests plus clean distribution checks). Counts 761/1107 overall, 655/1000 original, 339 pending, six omissions, one hardware blocker. No adoption/release/npm event claimed.",
+    "Session 0054: P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 verified. Exact source 69d57d5... had build/app/package/runtime/peer steps green at checkpoint; Chromium was still running and not used as evidence. Counts 768/1107 overall, 662/1000 original, 332 pending, six omissions, one hardware blocker."
   ]
 }
