@@ -16,3 +16,8 @@ No merge, release, live inference or external contact authorized. Child JS CI is
 ## Parallel session candidate
 Implement actual grid expansion audit: recompute both pinned grids, require identical axes/order and immutable prefix, report newly discovered conditional witness pairs. Test joint-only witness discovered at budget 4 vs 3; changed axis ordering refused. No proof of equivalence or empirical completeness.
 Exact child CI pending.
+
+
+## V2-182 candidate
+Domain expansion audit matches normalized assignments rather than order-local world IDs, recomputes exact common world rows and witnesses, and reports old evaluated worlds lost to truncation. Tests reordering/adding values, finite budget omission, and non-superset refusal. No empirical completeness claim.
+Exact child CI pending.
