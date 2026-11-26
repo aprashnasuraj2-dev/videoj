@@ -106,3 +106,22 @@ test('community impact note separates reusable engineering evidence from externa
  assert.match(note,/does not yet demonstrate independent external adoption, public third-party interoperability, or production impact/i);
  assert.doesNotMatch(note,/\b[1-9][0-9]* independent (?:adopters|builders|users)\b/i);
 });
+
+test('judging availability runbook records official end conversion and avoids fake monitoring or rollback claims',async()=>{
+ const note=await readFile(new URL('../../docs/sutra/JUDGING_AVAILABILITY_RUNBOOK.md',import.meta.url),'utf8');
+ for(const marker of [
+  'https://cognizant-agenticweb.devpost.com/rules',
+  '2027-01-18 17:00 Pacific Time',
+  '2027-01-19 01:00 UTC',
+  '2027-01-19 06:45 Asia/Kathmandu',
+  'Residual provider and infrastructure risks',
+  'Manual recovery sequence after an authorized public release',
+  'No scheduled-monitoring claim',
+  'P089-04/P089-05 remain open',
+  'does not authorize production mutation'
+ ])assert.ok(note.includes(marker),marker);
+ assert.match(note,/no automated judging-period monitor, pager, scheduled health check or background recovery job is claimed/i);
+ assert.match(note,/no authorized live funded provider sample\/economics yet/i);
+ assert.match(note,/no public SUTRA production origins/i);
+ assert.doesNotMatch(note,/rollback (?:was|has been) successfully rehearsed/i);
+});
