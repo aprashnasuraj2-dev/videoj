@@ -4,7 +4,7 @@ import {createServer} from 'node:http';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {casePin} from '../pinned-investigation.js';
-import {admitLocalBindingConfig,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../local-binding-config.js';
+import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../local-binding-config.js';
 const cli=fileURLToPath(new URL('../../../apps/sutra-v2/local-bindings.mjs',import.meta.url));
 const secret='LOCAL_BINDING_TEST_CANARY_1234',hidden='UNSELECTED_SOURCE_MARKER_1234';
 const suggestion={id:'a_value',sourceId:'a',quote:'12.50',before:'repeat: ',after:';',type:{kind:'stress',unit:'MPa',scope:'same_condition',dimension:[-1,1,-2]}};
@@ -61,4 +61,12 @@ test('credential embedded in the operator endpoint path refuses before contact',
  const plan=await run(config);assert.equal(plan.code,0,plan.stderr);
  const out=await run(config,['--execute-local','--approve-local-disclosure','--approve-plan',JSON.parse(plan.stdout).planPin],{SUTRA_LOCAL_BINDING_TEST:secret});
  assert.equal(out.code,1);assert.equal(out.stdout,'');assert.equal(out.stderr.includes(secret),false);assert.equal(requests.length,0);
+});
+
+test('saved extraction plan recovery requires independently retained digest and exact already staged draft',async t=>{
+ const {config,requests}=await fixture(t),configText=JSON.stringify(config),expectedPlanPin=await casePin(configText),currentDraftText=config.draftText;
+ const p=await recoverLocalBindingPlan({configText,expectedPlanPin,currentDraftText});
+ assert.equal(p.planPin,expectedPlanPin);assert.deepEqual(p.config.sourceIds,['a']);assert.equal(p.preview.mode,'LOCAL_BINDING_PLAN_ONLY');
+ for(const args of [{expectedPlanPin:'sha256:'+'0'.repeat(64)},{currentDraftText:currentDraftText+' '},{configText:JSON.stringify({...config,maxOutputTokens:256})}])await assert.rejects(recoverLocalBindingPlan({configText,expectedPlanPin,currentDraftText,...args}),/PLAN_OR_DRAFT_MISMATCH/);
+ assert.equal(requests.length,0);
 });

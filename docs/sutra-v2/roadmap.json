@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-178",
+  "session": "V2-179",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2943,7 +2943,8 @@
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45712887023/job/139551497664",
           "description": "Nine returned PR workflows green; actual Chromium local UTF-8 stage/replacement/refusal journey passed after typed refusal fix. Separate push run not observed; no broad gate promotion."
         }
-      ]
+      ],
+      "knownLimitations": "\nV2-179 exact local extraction plan recovery candidate; current draft must already match. No new verification credit."
     },
     {
       "id": "V2-LK04-ROUNDTRIP",
@@ -3483,7 +3484,8 @@
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45726374744/job/139597168368",
           "description": "Exact V2-135 9/9 returned PR workflows green, saved transaction reopening and existing independent recovery replay; broad gate remains open."
         }
-      ]
+      ],
+      "knownLimitations": "\nV2-179 exact local extraction plan recovery candidate; current draft must already match. No new verification credit."
     },
     {
       "id": "V2-LK16-SPECIALIST-JOURNEYS",

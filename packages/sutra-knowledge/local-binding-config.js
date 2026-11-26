@@ -29,6 +29,14 @@ export async function admitLocalBindingConfig(configText){
  const planPin=await casePin(configText),budget={maxCalls:1,maxInputBytes:100000,maxOutputTokens:c.maxOutputTokens,maxConcurrent:1};
  return freeze({config:c,draft,routes,planPin,budget,preview:{mode:'LOCAL_BINDING_PLAN_ONLY',planPin,draftPin:c.draftPin,question:draft.question,sources,connection:x,maxOutputTokens:c.maxOutputTokens,timeoutMs:c.timeoutMs,transportDeadlineMs:c.transportDeadlineMs,qualification:'Full draft is in the local plan file; only the question and selected source text are sent by the approved runner. A local process may forward requests. No model identity, confidentiality or semantic accuracy established.'}});
 }
+// Recover only a separately pinned plan for the exact already staged draft.
+// This function neither restores evidence nor grants network execution.
+export async function recoverLocalBindingPlan({configText,expectedPlanPin,currentDraftText}={}){
+ if(typeof expectedPlanPin!=='string'||!PIN.test(expectedPlanPin))fail('EXPECTED_PINS');
+ const p=await admitLocalBindingConfig(configText);
+ if(p.planPin!==expectedPlanPin||p.config.draftText!==currentDraftText)fail('PLAN_OR_DRAFT_MISMATCH');
+ return p;
+}
 export async function verifyLocalBindingTransfer({configText,expectedPlanPin,transferText,expectedProposalPin}={}){
  if(typeof expectedPlanPin!=='string'||!PIN.test(expectedPlanPin)||typeof expectedProposalPin!=='string'||!PIN.test(expectedProposalPin))fail('EXPECTED_PINS');
  const {config,planPin}=await admitLocalBindingConfig(configText);

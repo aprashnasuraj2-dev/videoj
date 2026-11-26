@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-178",
+  "session": "V2-179",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: decoded council and extraction credential boundaries",
+  "state": "Candidate: local extraction plan recovery for exact staged draft",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-179",
+    "parent": "92facb7b273f259a676b66f26d6d3d99180590fe",
+    "description": "### V2-179 — recover exact saved local extraction plan (candidate)\nA lost browser-memory plan no longer forces a model rerun. Add pure exact plan recovery bound to a separately retained plan digest and byte-identical already staged draft, with zero network contact or draft replacement. Browser file import is bounded, fatal UTF-8 decoded, guarded against stale inputs, displays the actual admitted route/scope/budgets and never grants execution approval. Existing transfer verification and explicit quantity selection remain mandatory. Add pure digest/draft/plan tamper cases and actual Chromium plan-discard/recover/wrong-pin/no-contact journey. Current draft must first be reconstructed exactly; no automatic cross-session persistence or proof of model authorship. V2-178 exact CI pending. V2-177 scoped council/operator integration passed (knowledge job 139672991940). New exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-178",
     "parent": "3065b0624973c95a2e6300257d1935b13c46b379",
     "description": "### V2-178 — decoded council candidate credential boundary (candidate)\nExtend the host-owned council scheduler to scan admitted decoded candidate strings against every enrolled credential before compilation, trace insertion or directed peer feedback. A structurally valid expression equal to another agent's credential but escaped in the inner JSON must refuse without eliminating unrelated legitimate candidates or retrying the refused route. Add an injected two-provider regression. Restore the exact previous historical evidence objects in roadmap.json (V2-177 inadvertently appended a limitation to historical entries; active gate limitations retained). V2-177 PR CI observed 4/9 successful at checkpoint; no inherited new credit. Exact new CI pending. This is scoped exact-canary detection, not general DLP or strong noninterference."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-177",
-    "parent": "40e7f463f41c0a79b5394ed81db0e55a1291842a",
-    "description": "### V2-177 — decoded model proposal credential boundary (candidate)\nV2-175 and V2-176 each have nine successful exact PR workflows (knowledge runs 45745352925 and 45745693875); separate push workflows not observed. Close an inner JSON escape bypass in the source quantity proposal path: scan decoded proposal keys and values using the enrolled credential vault before any review, anchor resolution or transfer, and scan decoded selected evidence before publishing a plan. CLI checks approved route metadata before socket contact. Add injected provider and real loopback TCP adversaries for escaped credential echo and zero-contact preflight rejection. This is exact credential canary detection at specified decoded boundaries, not general DLP, encoded-secret detection beyond that JSON layer, provider confidentiality or semantic verification. New candidate CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1716,6 +1716,12 @@
       "sourceRevision": "40e7f463f41c0a79b5394ed81db0e55a1291842a",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745693875",
       "description": "V2-176 exact PR knowledge workflow succeeded; no broader credential or semantic authority."
+    },
+    {
+      "id": "V2-LK19-TRUST-BOUNDARY",
+      "sourceRevision": "3065b0624973c95a2e6300257d1935b13c46b379",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45749309606/job/139672991940",
+      "description": "Focused council/operator integration step succeeded; full exact CI pending at observation."
     }
   ],
   "reconciledCI": [
@@ -7386,6 +7392,67 @@
         {
           "id": 45749309553,
           "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "Exact PR workflow snapshot; separate push run not observed."
+    },
+    {
+      "sourceRevision": "92facb7b273f259a676b66f26d6d3d99180590fe",
+      "runs": [
+        {
+          "id": 45749421698,
+          "name": "Validate SUTRA learner shell",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45749421740,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45749421704,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45749421735,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45749421693,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45749421774,
+          "name": "Validate SUTRA publisher starter",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45749421697,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45749421708,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45749421771,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
           "status": "completed",
           "conclusion": "success"
         }

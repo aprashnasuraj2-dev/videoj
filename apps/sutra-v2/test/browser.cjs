@@ -1007,6 +1007,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const extractionDownload=sp.waitForEvent('download');await sp.locator('#review-binding-local-export').click();await state('local_bindings_plan');const configText=fs.readFileSync(await (await extractionDownload).path(),'utf8'),config=JSON.parse(configText);
    const hash=s=>'sha256:'+require('node:crypto').createHash('sha256').update(s).digest('hex'),planPin=hash(configText),proposalPin=hash(wire);
    const transfer={version:'sutra-local-binding-transfer/v1',planPin,draftPin:config.draftPin,proposalText:wire,proposalPin};
+   // Discard the in-memory plan by editing a route field; re-admit exact saved bytes.
+   await sp.locator('#review-binding-local-model').fill('different/model');
+   assert.equal(await sp.locator('#review-binding-local-import').isDisabled(),true);
+   await sp.locator('#review-binding-local-panel details > summary').click();
+   await sp.locator('#review-binding-local-saved').setInputFiles({name:'saved-plan.json',mimeType:'application/json',buffer:Buffer.from(configText)});
+   await sp.locator('#review-binding-local-saved-pin').fill('sha256:'+'0'.repeat(64));await sp.locator('#review-binding-local-recover').click();await state('refused');
+   assert.equal(await sp.locator('#review-binding-local-import').isDisabled(),true);
+   await sp.locator('#review-binding-local-saved-pin').fill(planPin);await sp.locator('#review-binding-local-recover').click();await state('local_bindings_recovered');
+   assert.match(await sp.locator('#review-binding-local-scope').innerText(),/my\/own-model/);assert.equal(await sp.locator('#review-binding-local-approve').isChecked(),false);
+   assert.match(await sp.locator('#review-staged').innerText(),/0 reviewed binding/);
    await sp.locator('#review-binding-local-result').setInputFiles({name:'local-result.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
    await sp.locator('#review-binding-local-pin').fill(proposalPin);await sp.locator('#review-binding-local-import').click();await state('local_bindings_import');
    assert.equal(await sp.locator('#review-binding-suggestions-json').inputValue(),wire);assert.match(await sp.locator('#review-staged').innerText(),/0 reviewed binding/);

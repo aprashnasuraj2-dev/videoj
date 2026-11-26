@@ -1,4 +1,4 @@
-import {admitLocalBindingConfig,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
+import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
 import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
@@ -59,25 +59,44 @@ function invalidate(message){epoch++;clearHandoffPreview();clearBindingSuggestio
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 const localBindingFields=['sources','model','protocol','endpoint','auth','env'];
 function clearLocalBindingPlan(){
- localBindingPlan=null;by('binding-local-approve').checked=false;by('binding-local-result').value='';by('binding-local-pin').value='';by('binding-local-commands').textContent='';by('binding-local-commands').hidden=true;by('binding-local-status').textContent='No current local extraction plan.';
+ localBindingPlan=null;by('binding-local-approve').checked=false;by('binding-local-result').value='';by('binding-local-pin').value='';by('binding-local-commands').textContent='';by('binding-local-commands').hidden=true;by('binding-local-scope').textContent='';by('binding-local-scope').hidden=true;by('binding-local-status').textContent='No current local extraction plan.';
 }
 function localBindingControl(){
- for(const field of [...localBindingFields,'approve','result','pin'])by('binding-local-'+field).disabled=busy;
+ for(const field of [...localBindingFields,'approve','result','pin','saved','saved-pin'])by('binding-local-'+field).disabled=busy;
  by('binding-local-env').disabled=busy||by('binding-local-auth').value==='none';
  by('binding-local-export').disabled=busy||!sources.length||!by('binding-local-approve').checked;
+ by('binding-local-recover').disabled=busy||!sources.length||!by('binding-local-saved').files?.length||!by('binding-local-saved-pin').value.trim();
  by('binding-local-import').disabled=busy||!localBindingPlan||!by('binding-local-result').files?.length||!by('binding-local-pin').value.trim();
 }
 for(const field of localBindingFields)by('binding-local-'+field).oninput=()=>{clearLocalBindingPlan();localBindingControl();};
 by('binding-local-approve').onchange=localBindingControl;
 by('binding-local-result').onchange=localBindingControl;
 by('binding-local-pin').oninput=localBindingControl;
+for(const id of ['saved','saved-pin'])by('binding-local-'+id).oninput=()=>{clearLocalBindingPlan();localBindingControl();};
+function showLocalBindingScope(p){
+ const scope=by('binding-local-scope'),c=p.config,x=c.connection;scope.hidden=false;
+ scope.textContent='Exact plan scope (not execution approval)\n'+JSON.stringify({planPin:p.planPin,draftPin:c.draftPin,sourceIds:c.sourceIds,connectionId:x.id,protocol:x.protocol,endpoint:x.endpoint,model:x.models[0],authMode:x.authMode,credentialEnv:x.credentialEnv,maxOutputTokens:c.maxOutputTokens,timeoutMs:c.timeoutMs,transportDeadlineMs:c.transportDeadlineMs},null,2);
+}
+by('binding-local-recover').onclick=()=>work(async ticket=>{
+ const file=by('binding-local-saved').files?.[0],expectedPlanPin=by('binding-local-saved-pin').value.trim(),draftText=draft();
+ clearLocalBindingPlan();
+ if(!file||file.size<1||file.size>262144)throw Error('LOCAL_BINDING_PLAN');
+ const configText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()),p=await recoverLocalBindingPlan({configText,expectedPlanPin,currentDraftText:draftText});
+ if(ticket!==epoch||draft()!==draftText||by('binding-local-saved').files?.[0]!==file||by('binding-local-saved-pin').value.trim()!==expectedPlanPin)return;
+ const x=p.config.connection;
+ for(const o of by('binding-local-sources').options)o.selected=p.config.sourceIds.includes(o.value);
+ for(const [id,value] of Object.entries({model:x.models[0],protocol:x.protocol,endpoint:x.endpoint,auth:x.authMode,env:x.credentialEnv??''}))by('binding-local-'+id).value=value;
+ localBindingPlan={configText,planPin:p.planPin,draftText};showLocalBindingScope(p);
+ by('binding-local-status').textContent='Exact saved plan recovered for the current draft. Import the returned suggestion file and separately retained proposal digest. No model contacted.';
+ status('local_bindings_recovered','Saved plan matches exact current draft; no evidence replaced or model contacted.');
+});
 by('binding-local-export').onclick=()=>work(async ticket=>{
  if(!by('binding-local-approve').checked)return;by('binding-local-approve').checked=false;
  const draftText=draft(),authMode=by('binding-local-auth').value;
  const config={version:LOCAL_BINDING_VERSION,draftText,draftPin:await casePin(draftText),sourceIds:[...by('binding-local-sources').selectedOptions].map(o=>o.value),connection:{id:'my-local-model',label:'User selected local model',protocol:by('binding-local-protocol').value,endpoint:by('binding-local-endpoint').value.trim(),models:[by('binding-local-model').value.trim()],authMode,credentialEnv:authMode==='none'?null:by('binding-local-env').value.trim()},maxOutputTokens:1024,timeoutMs:15000,transportDeadlineMs:10000};
  const configText=JSON.stringify(config),p=await admitLocalBindingConfig(configText);
  if(ticket!==epoch||draftText!==draft())return;
- localBindingPlan={configText,planPin:p.planPin,draftText};download(configText,'sutra-local-bindings-config.json','application/json');
+ localBindingPlan={configText,planPin:p.planPin,draftText};showLocalBindingScope(p);download(configText,'sutra-local-bindings-config.json','application/json');
  const command=by('binding-local-commands');command.hidden=false;command.textContent='node apps/sutra-v2/local-bindings.mjs --plan < sutra-local-bindings-config.json\n\nnode apps/sutra-v2/local-bindings.mjs --execute-local --approve-local-disclosure --approve-plan '+p.planPin+' < sutra-local-bindings-config.json > sutra-local-bindings-result.json';
  by('binding-local-status').textContent='Exact plan exported: '+p.planPin+'. Retain the proposal digest printed separately by the local runner.';status('local_bindings_plan','Local extraction plan exported; no model contacted.');
 });
