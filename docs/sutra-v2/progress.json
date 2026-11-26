@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-174",
+  "session": "V2-175",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: explicitly approved extraction request integrated with reviewed quantity admission.",
+  "state": "Candidate: explicit TLC prerelease asset migration after upstream provenance review; V2-174 full JS and browser passed.",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-175",
+    "parent": "23be88829fe26218ea1c86e66a83d57a6938c06d",
+    "description": "### V2-175 — explicit upstream TLC prerelease asset migration (candidate)\nInvestigated the repeated SHA-256 failures rather than bypassing them. Official upstream release metadata identifies a newly published v1.8.0 prerelease asset at 2026-11-26 02:14 UTC. Record previous pin, release/asset ID, exact tag commit, new publisher SHA-256, published release-page SHA-1 and byte count in TLC-PROVENANCE.md. Require all three static integrity checks before execution; no fallback/dynamic trust or changes to formal models/expected results. Independent binary retrieval was unavailable in this environment; exact CI must validate the candidate. V2-174 browser job 139658804067 and focused and full JavaScript regression in knowledge job 139658804307 passed; unchanged old-pin TLC gate failed. Exact new CI pending; no production release approval."
+  },
+  "previousPendingCandidate": {
     "session": "V2-174",
     "parent": "e05ad8a08a6321c9a4b6acda8e038d874fd376e3",
     "description": "### V2-174 — explicitly scoped model quantity extraction request and independent regression ordering (candidate)\nConnect exact source-quantity suggestions to the existing provider-independent workspace. A local plan binds the exact draft, selected full source texts, route/profile/model, byte estimate, output cap and timeout; only separately approved plan/disclosure can dispatch one request. Hidden-source guesses refuse before local anchor resolution; no automatic application, fallback or retries. A cancelled observer cannot publish a late result; provider may still complete/bill. Tests use an injected custom OpenAI-compatible wire adapter, not a real model. Move the existing complete JavaScript knowledge regression step before the external TLC download without removing any mandatory formal or benchmark gates. V2-172 and V2-173 browser jobs 139656497203 and 139657590848 succeeded; focused integration passed; full knowledge jobs stopped at unchanged TLC integrity gate. Exact new CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-173",
-    "parent": "ecc0e76b80a2a87294a70aa386848b0ddde5bfb5",
-    "description": "### V2-173 — exact model-suggested quantity review (candidate)\nAdd a bounded untrusted suggestion format using unique literal context anchors, compiler-validated exact numeric spans and explicit pinned human selection. Ambiguous repeated values, fabricated quotes, truncated numbers, invalid types and stale pins refuse; conflicting duplicate spans cannot be jointly admitted. Existing evidence bytes and unselected candidates remain unchanged. Browser accepts pasted suggestions without provider contact, previews actual context and requires explicit selected review before sealing. Add focused tests to the pre-formal-download CI step. No claim of automated semantic extraction or model identity. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -902,6 +902,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45744634151/job/139657590456",
       "reason": "Pinned TLC JAR integrity gate blocked full knowledge run",
       "resolutionStatus": "Pin unchanged. Independent full JS regression moved earlier at V2-174; formal gate remains mandatory."
+    },
+    {
+      "sourceRevision": "23be88829fe26218ea1c86e66a83d57a6938c06d",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284/job/139658804307",
+      "reason": "Old static TLC SHA-256 mismatch after all JS tests passed",
+      "resolutionStatus": "V2-175 explicit new upstream asset provenance candidate; all static checks and formal suite remain mandatory."
     }
   ],
   "reconciledDurableCandidate": {
@@ -1691,6 +1698,18 @@
       "sourceRevision": "e05ad8a08a6321c9a4b6acda8e038d874fd376e3",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45744634151/job/139657590848",
       "description": "Exact full browser job succeeded; focused integration succeeded; full formal gate not passed."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "23be88829fe26218ea1c86e66a83d57a6938c06d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284/job/139658804307",
+      "description": "Focused and full JS knowledge regression succeeded before unchanged old TLC integrity failure."
+    },
+    {
+      "id": "V2-LK15-UNIFIED-WORKSPACE",
+      "sourceRevision": "23be88829fe26218ea1c86e66a83d57a6938c06d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284/job/139658804067",
+      "description": "Exact complete browser job passed."
     }
   ],
   "reconciledCI": [

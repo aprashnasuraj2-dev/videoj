@@ -1061,3 +1061,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-173 candidate:** exact unique anchor suggestions, atomic selected review and browser integration; exact CI pending.
 
 - [ ] **V2-174 candidate:** exact approved model quantity extraction, selected-source-only wire, cancellation and complete JS regression ordering; exact CI pending.
+
+- [ ] **V2-175 candidate:** explicit upstream prerelease migration with static SHA-256, SHA-1 and size; unchanged safe/unsafe checks; exact CI pending.

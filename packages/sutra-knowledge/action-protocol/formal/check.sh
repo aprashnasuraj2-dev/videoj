@@ -5,7 +5,13 @@ JAR="$(mktemp /tmp/sutra-tlc.XXXXXX)"
 WORK="$(mktemp -d)"
 trap 'rm -f "$JAR"; rm -rf "$WORK"' EXIT
 curl --fail --silent --show-error --location --max-time 60 https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -o "$JAR"
-printf '%s  %s\n' fdffef247f563ef6edbfd44958d2a82db79e7564e07cb673262d896353fa6713 "$JAR" | sha256sum -c -
+# Explicitly reviewed V2-175 development dependency migration. The upstream
+# v1.8.0 prerelease was republished on 2026-11-26; the older exact pin is
+# retained in docs/sutra-v2/TLC-PROVENANCE.md. Never trust a dynamic digest,
+# retry with another version, accept either hash, or execute a mismatched JAR.
+test "$(wc -c < "$JAR" | tr -d '[:space:]')" = 4511244
+printf '%s  %s\n' 67f9575c3b9ef7a0787b1bded34812862ffe79d711298e5a75b1a77720b19928 "$JAR" | sha256sum -c -
+printf '%s  %s\n' fc4b766626acf025b4661242f58e246d946b9d6b "$JAR" | sha1sum -c -
 java -version
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/safe" -config Safe.cfg Recovery.tla > "$WORK/safe.log" 2>&1 || { cat "$WORK/safe.log"; exit 1; }
 cat "$WORK/safe.log"
