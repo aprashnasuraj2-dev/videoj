@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
 import {onRequest} from './functions/api/[[path]].js';
 import worker from '../../services/sutra-api/worker.js';
 const base='https://sutra.aafnaipatro.com', req=(path,init)=>new Request(base+path,init);
@@ -33,6 +33,16 @@ test('media, content and ordinary static routes cannot reach the private API ser
  assert.deepEqual(workerAssets.run_worker_first,['/api/*'],'Worker-first execution must stay API-only');
  assert.equal(pages.pages_build_output_dir,'./dist');
  assert.deepEqual(pages.services,[{binding:'SUTRA_API',service:'sutra-api-private'}]);
+ const functionFiles=[];
+ const walk=async(dir,prefix='')=>{
+  for(const entry of await readdir(dir,{withFileTypes:true})){
+   const relative=prefix+entry.name;
+   if(entry.isDirectory())await walk(new URL(entry.name+'/',dir),relative+'/');
+   else functionFiles.push(relative);
+  }
+ };
+ await walk(new URL('./functions/',import.meta.url));
+ assert.deepEqual(functionFiles.sort(),['api/[[path]].js'],'Pages must not contain a static/media catch-all Function');
  let calls=0;
  const env={SUTRA_API:{fetch(){calls++;throw Error('static/media route reached private service');}}};
  for(const path of [
