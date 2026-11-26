@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T17:07:40+05:45",
+  "updated_at": "2026-11-26T17:09:52+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b",
-  "last_session_id": "SUTRA-SESSION-0054",
+  "last_session_id": "SUTRA-SESSION-0055",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Session 0054 closes seven independent planning/engineering controls. P018-06 remains pending because the optional synthetic-conflict demo is still visible in the normal learner UI. Remaining work is still dominated by real participant/rights/human/provider/hardware/public-production/final-candidate evidence; follow REMAINING_GATE_MAP.md and do not promote development fixtures into held-out or release evidence.",
+  "next_action": "Session 0055 records public eligibility as NOT DETERMINED and participant availability as UNCONFIRMED; neither is an eligibility/availability success. Remaining work still requires real participant/rights/human/provider/hardware/public-production/final-candidate evidence. Follow REMAINING_GATE_MAP.md and keep private evidence out of public Git.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13498,6 +13498,32 @@
           "observed_at": "2026-11-26T17:07:40+05:45"
         }
       ]
+    },
+    "SUTRA-P001-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:09:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/PARTICIPANT_HANDOFF.md",
+          "description": "Public eligibility status is explicitly not determined; only blocker categories are recorded and private identity/permission documents are excluded.",
+          "result": "pass",
+          "source_revision": "6a3634d77b0998231a4e1eedfc949482266ce5d3",
+          "observed_at": "2026-11-26T17:09:52+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T17:09:52+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/PARTICIPANT_HANDOFF.md",
+          "description": "Participant availability is recorded as unconfirmed and genuine-human tasks are enumerated with reasons synthetic/automated evidence is insufficient.",
+          "result": "pass",
+          "source_revision": "6a3634d77b0998231a4e1eedfc949482266ce5d3",
+          "observed_at": "2026-11-26T17:09:52+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13616,6 +13642,7 @@
     "Session 0051: P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 verified from Open Kit run 45806619487 job 139863464177 (5/5 tests, clean distribution checks). Counts 750/1107 overall, 644/1000 original, 350 pending, six omissions, one hardware blocker. P089 runbook not credited because its first contract run failed on Markdown-sensitive assertion; correction queued.",
     "Session 0052: P084-02/04/05, P087-04/08 and P089-06/07/08 verified from corrected Open Kit run 45807667772 job 139867065204 (6/6 tests plus clean distribution/vendor/starter checks). Counts 758/1107 overall, 652/1000 original, 342 pending, six omissions, one hardware blocker. No public-release/final-candidate/rollback/funding claim.",
     "Session 0053: P076-08, P083-08 and P084-07 verified from Open Kit run 45808726066 job 139870685754 (6/6 tests plus clean distribution checks). Counts 761/1107 overall, 655/1000 original, 339 pending, six omissions, one hardware blocker. No adoption/release/npm event claimed.",
-    "Session 0054: P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 verified. Exact source 69d57d5... had build/app/package/runtime/peer steps green at checkpoint; Chromium was still running and not used as evidence. Counts 768/1107 overall, 662/1000 original, 332 pending, six omissions, one hardware blocker."
+    "Session 0054: P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 verified. Exact source 69d57d5... had build/app/package/runtime/peer steps green at checkpoint; Chromium was still running and not used as evidence. Counts 768/1107 overall, 662/1000 original, 332 pending, six omissions, one hardware blocker.",
+    "Session 0055: P001-08 and P007-02 verified from PARTICIPANT_HANDOFF.md. Exact learner run 45809483294/job 139873282707 later completed fully green, strengthening Session 0054 without additional credit. Counts 770/1107 overall, 664/1000 original, 330 pending, six omissions, one hardware blocker."
   ]
 }
