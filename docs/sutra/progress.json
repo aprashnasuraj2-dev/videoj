@@ -1,22 +1,15 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T21:09:58+05:45",
+  "updated_at": "2026-11-26T13:15:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "a6e2caa6db8828afec15183eb50745f1311e69f3",
   "last_session_id": "SUTRA-SESSION-0045",
-  "stage": "source_consent_and_learner_stabilization",
+  "stage": "retired_v1_execution_queue",
   "current_task": null,
-  "next_task": "SUTRA-X010-43",
-  "ready_engineering_queue": [
-    "SUTRA-P041-10",
-    "SUTRA-P078-07",
-    "SUTRA-P054-01",
-    "SUTRA-P066-01",
-    "SUTRA-P020-02",
-    "SUTRA-P005-08"
-  ],
-  "next_action": "Verify exact X010-43 featured/comparison keyboard candidate full CI, then select dependency-ready independent engineering. No release or paid inference.",
+  "next_task": null,
+  "ready_engineering_queue": [],
+  "next_action": "No SUTRA1 execution action. Follow docs/sutra-v2/CHECKLIST.md and docs/sutra-v2/CONTINUE.md.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12851,5 +12844,13 @@
     "**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.",
     "**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.",
     "**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet."
-  ]
+  ],
+  "retirement": {
+    "retired_at": "2026-11-26T13:15:00+05:45",
+    "retired_by_user_direction": true,
+    "removed_pending_tasks": 379,
+    "active_execution_queue": false,
+    "active_checklist": "docs/sutra-v2/CHECKLIST.md",
+    "note": "Verified/omitted/blocked V1 records are retained as historical evidence; former pending tasks are not V2 work."
+  }
 }
