@@ -1,5 +1,15 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0047 — 2026-11-26
+
+- 2026-11-26T16:25:00+05:45 — **723/1,107 overall verified; 617/1,000 original; 377 pending; six omissions; one hardware blocker.**
+- Reconciled exact branch head `d1560cfadbd0cf73007076e7a5e7b8f319e8fc81`: one documentation-only commit beyond product source `ae042db07f51d0cf1e71f002869ce9a65a011d48`; exact head completed 19/19 workflows.
+- Closed only `SUTRA-P078-02` after tracing executed learner/runtime/API/browser assertions for default-off inference, one-run consent, zero model calls on denial/cancel, source/config drift, independent receipt requirement, partial/terminal/token failure handling, no retry, ambiguity/truncation and secret/BYOK isolation.
+- Preserved counterexamples: fluent no-receipt answer rejected; unsuccessful terminal reason cannot be rewritten by later stop; inconsistent token arithmetic rejected; changed source/backend/graph cannot inherit consent; >5 matches remain visibly truncated/ambiguous.
+- P078-07 and P078-10 remain pending. R-005..R-010 remain open as applicable; no live provider, human/physical acceptance, rights-cleared content, public deployment, release or submission was claimed.
+- Evidence: [SESSION-0047](evidence/implementation/SESSION-0047.md).
+- Next: P054-01 only after provider/model/spend approval; otherwise continue dependency-ready independent engineering.
+
 ## SUTRA-SESSION-0046 — 2026-11-26
 
 - 2026-11-26T12:48:46+05:45 — **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 and X010-44..50 verified. Exact combined source `ae042db07f51d0cf1e71f002869ce9a65a011d48` passed all 19 workflows. P0 persistent workspace/journey/semantic/security integration is green; P1 ranked evaluation, provider telemetry/cost plumbing and device-ready acceptance harness are green. Live funded provider evidence (R-007) and actual physical/human acceptance (R-008) remain external gates; no paid inference or public release.
