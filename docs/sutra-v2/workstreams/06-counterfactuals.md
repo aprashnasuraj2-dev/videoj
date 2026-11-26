@@ -25,3 +25,7 @@ Exact child CI pending.
 
 ## V2-183 candidate — resumable streaming counterfactual search
 Add a separate large-domain search profile with up to six axes × 32 declared values, total domain capped at 1,000,000,000 assignments, but each call evaluates at most 4,096 worlds and never materializes the Cartesian product. Mixed-radix random access supports deterministic resume; candidate graphs are compiled once, unchanged candidates reuse baseline, chunks expose exact contiguous coverage, and merge refuses overlap or identity drift. The search may stop after all eligible pairs have witnesses, but only full domain exhaustion permits the bounded statement “no witness in this declared domain”; incomplete prefixes never imply equivalence. Regression searches a 262,144-world domain with <=128 evaluations and bounded output, then exhausts a 64-world domain via two chunks. Complexity remains linear in evaluated worlds/candidates; this is bounded scalability, not sublinear semantic proof. Exact child CI pending.
+
+
+### V2-183 CI correction
+Run 45757607945 failed because the regression incorrectly required a distinguishing witness inside the first 128 mixed-radix assignments of the 262,144-world scalability case. Incomplete chunks are specifically allowed to contain no witness. Correct the assertion to require explicit incomplete/non-equivalence qualification, and require an actual witness only after the separate 64-world domain is fully exhausted. Search implementation and coverage rules are unchanged. Prior failure retained; corrected CI pending.
