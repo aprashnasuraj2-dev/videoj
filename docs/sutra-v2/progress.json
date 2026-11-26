@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-130",
+  "session": "V2-131",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Independent immediate evidence recovery replay candidate; CI pending",
+  "state": "browser explicit recovery candidate; verification pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-131",
+    "parent": "3f82d277cdc214a3c8e6b7741fa2f7516eeedeca",
+    "description": "### V2-131 — explicit recovery in the reviewed workspace (candidate)\nV2-126 and V2-128 each observed 9/9 exact PR workflows successful; V2-127 malformed artifact indentation was repaired in V2-128, not counted as passing. Frozen benchmark: 40/40 expected outcomes, 32/32 independent replays, 64/64 repinned tamper refusals; 94 full versus 46 conventional source-local/SUTRA reselections. No source-local advantage, independent annotation, or speed claim. V2-131 adds a bounded, immediate-only recovery queue inside the atomic revision panel. Restored source starts blank, corrected source remains read-only, selected tokens retain prior declared type. Preview is nonmutating; explicit confirmation shifts comparison baseline to the preceding revision (not the original ancestor). Any edit clears recovery state; partial recovery cannot be iterated under this protocol. Separate pins and portable two-transition report; actual Chromium journey and independent replay including attempted semantic relink added, not yet verified. No release or deployment."
+  },
+  "previousPendingCandidate": {
     "session": "V2-130",
     "parent": "300dad864dd6857f9dfb159939bcaa86ea8795d3",
     "description": "## V2-130 — Independent two-transition evidence recovery replay\n\nPortable bounded recovery includes exact preceding transaction, new recovery plan and child; independently retained snapshot, ancestor, revision plan, current and recovery plan pins required. Python separately reconstructs source and binding restoration, candidate node correspondence, unchanged annotations, refusal preservation and impact; standalone deterministic offline archive dispatch uses explicit extra pins. Four fixture exports include restored and omitted sources, partial multi-source recovery, non-target input recovery, originally unknown reason-text counterexample and removed quote. Repinned altered child, semantic link, forged selection and pin adversaries; actual isolated archive comparison. CI pending; no browser integration or arbitrary ancestry recovery."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-129",
-    "parent": "8d08f59158de63c5aa3a9f4f8b1252770f839e6f",
-    "description": "## V2-129 — Recover explicitly selected lost inputs from a preceding atomic revision\n\nIntroduce bounded evidence recovery kernel using exact ancestor, preceding revision plan, independently retained current child and new recovery plan pins. Reconstruct the prior transaction rather than trust unknown-node reason text. Restore only explicitly selected missing bindings with preserved types, from newly supplied exact source bytes or current corrected source bytes. No restoration of old quotation/semantic links, arbitrary historical ancestry, source authenticity or automatic correspondence. Refused candidates stay quarantined. Tests cover withdrawal→recovery reversal, omitted binding→recovery, partial recovery, order independence, pin/cross-source/span adversaries and fresh/session parity. Kernel candidate; independent Python export and browser workflow pending. V2-128 exact CI observed running; no benchmark credit yet."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1489,6 +1489,12 @@
       "sourceRevision": "5d1d7f2e41368baabbc36743d6e9d0ac19a7611b",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45720354098/job/139576839545",
       "description": "Exact V2-125 nine returned PR workflows green; actual grounded change question browser and independent downloaded replay; closed grammar only."
+    },
+    {
+      "id": "V2-LK17-BENCHMARK",
+      "sourceRevision": "8d08f59158de63c5aa3a9f4f8b1252770f839e6f",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45724887938/job/139592109156",
+      "description": "Frozen developer-labeled 40/40 revision; 32/32 independent Python replay, 64/64 repinned adversaries refused. 94 full vs 46 source-local/SUTRA reselections; no advantage over source-local. 36 stale incorrect and 20 unsupported decisive; 66 executed, 72 reused, 54 removed; 8 refusals, 10 order checks. Two domain wrappers; no independent annotations or system speed claim."
     }
   ],
   "reconciledCI": [
@@ -5817,6 +5823,250 @@
         {
           "id": 45720354098,
           "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "dd5e52d67270fdbe06c2008b21d89b1ec7b92d8d",
+      "runs": [
+        {
+          "id": 45724672410,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672397,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672399,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672406,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672409,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672403,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672426,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672477,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724672529,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "8d08f59158de63c5aa3a9f4f8b1252770f839e6f",
+      "runs": [
+        {
+          "id": 45724887826,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887802,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887959,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887804,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887897,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887882,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887900,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724888006,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45724887938,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "300dad864dd6857f9dfb159939bcaa86ea8795d3",
+      "runs": [
+        {
+          "id": 45725056050,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056074,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056007,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056012,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056001,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056167,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056015,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725056008,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725055998,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "3f82d277cdc214a3c8e6b7741fa2f7516eeedeca",
+      "runs": [
+        {
+          "id": 45725240855,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725240845,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45725240986,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725240795,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725240828,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725241106,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725241084,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725240870,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45725240904,
+          "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",
           "conclusion": "success"
         }
