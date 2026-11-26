@@ -29,3 +29,7 @@ Replace synthetic-only evidence on two narrow specialist checks with compact pin
 
 ### V2-183 CI correction
 Run 45757956677 exposed the reviewed compiler's numeric-token boundary: fact-card percentages/rating factor ended immediately before a period, so the period could be interpreted as numeric continuation. Preserve the same source facts but normalize manually transcribed fact-card separators to semicolons, repin exact bytes, and keep the compiler boundary unchanged. This is formatting normalization of the derived fact card, not alteration of the cited values. Prior failure retained; corrected CI pending.
+
+
+### V2-183 status-layer correction
+Run 45758756371 passed source admission but exposed a test-layer mismatch: `compileReviewedExpression` intentionally reports the reviewed compiler status `CONDITIONALLY_SATISFIED`, not the lower-level kernel receipt string `constraint_satisfied`. Update fixture/test expectations to the public compiler contract; no computation, source value, parser or admission rule changed. Prior failures retained. Corrected CI pending.

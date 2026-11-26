@@ -20,12 +20,12 @@ export async function financePublicSourceFixture(){
  const c=await contract('Did Services net sales grow faster than total net sales from 2024 to 2025?',financeSource,[['services25','109158',money],['services24','96169',money],['services_reported','14%',ratio],['total25','416161',money],['total24','391035',money],['total_reported','6%',ratio]]);
  const expressions={reported:'[services_reported]>[total_reported]',recomputed:'([services25]-[services24])/[services24] > ([total25]-[total24])/[total24]'},compiled={};
  for(const [id,e] of Object.entries(expressions))compiled[id]=await compileReviewedExpression(c.contractText,c.pin,e);
- return {...c,expressions,compiled,expected:{reported:'constraint_satisfied',recomputed:'constraint_satisfied'}};
+ return {...c,expressions,compiled,expected:{reported:'CONDITIONALLY_SATISFIED',recomputed:'CONDITIONALLY_SATISFIED'}};
 }
 export async function engineeringPublicSourceFixture(){
  const c=await contract('Does the FHWA iteration-3 shear margin imply a load rating factor above one?',engineeringSource,[['phiVn','338',force],['dead','213.4',force],['prestress','-1.1',force],['live','92.1',force],['reported_rf','1.36',{kind:'ratio',unit:'one',scope:'fhwa_hif_22_025_iteration_3',dimension:[0,0,0]}]]);
  const expressions={margin:'([phiVn]-[dead]-[prestress])>[live]',reported:'[reported_rf]>[reported_rf]-[reported_rf]'},compiled={};
  for(const [id,e] of Object.entries(expressions))compiled[id]=await compileReviewedExpression(c.contractText,c.pin,e);
- return {...c,expressions,compiled,expected:{margin:'constraint_satisfied',reported:'constraint_satisfied'}};
+ return {...c,expressions,compiled,expected:{margin:'CONDITIONALLY_SATISFIED',reported:'CONDITIONALLY_SATISFIED'}};
 }
 export const publicSourceSpecialistManifest=Object.freeze({version:1,sources:[financeSource,engineeringSource].map(x=>Object.freeze({...x})),qualification:'Compact manually transcribed fact cards from immutable government archival locators. The repository pins the fact-card bytes, not the entire external document. Arithmetic replay does not independently authenticate the external host or establish professional advice.'});
