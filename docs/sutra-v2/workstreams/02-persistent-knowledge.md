@@ -36,3 +36,7 @@ Run two separate Node OS processes against the same private filesystem history h
 ## V2-182 candidate
 Content-addressed snapshot publication now fsyncs a unique staging inode and links it exclusively into the immutable namespace before HEAD publication; partial writes cannot poison the final name. Reused exact orphan inode fsynced, byte-cap preflight, nonblocking reads refuse nonregular files. Regression covers corrupt final refusal without overwriting, retained partial stage and explicit offline correction. Simulated artifact state, not actual power-loss proof. Linux trusted private directory only; stale lock operator recovery and external freshness remain open.
 Exact child CI pending.
+
+
+## V2-182 real killed-writer challenge
+Test-only subprocess instrumentation wraps actual Node filesystem link/rename calls and sends SIGKILL to the writer at before immutable publication, before HEAD rename, and after HEAD rename. Verify exact old or new state, stale lock refusal, and explicit offline lock removal after the process exits. No production injection hook; no power-loss/hardware flush proof, no automatic lock stealing, no external freshness. Exact child CI pending.

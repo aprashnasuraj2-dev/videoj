@@ -62,3 +62,31 @@ test('partial staging artifact cannot poison immutable final name; preexisting c
  // Deliberate offline operator correction, not automated destructive recovery.
  await rm(final);const next=await s.append(args);assert.equal(next.digest,a.child.digest);assert.equal(await readFile(final,'utf8'),a.child.historyText);assert.equal(await readFile(staged,'utf8'),'partial');
 });
+
+// Inject a genuine child-process death at the production filesystem call, not
+// a callback that throws and allows finally blocks to clean up. Only test code
+// patches Node built-in exports; the store has no fault-injection backdoor.
+function crashAppend(dir,args,phase){
+ const moduleUrl=new URL('../local-history-store.mjs',import.meta.url).href;
+ const code=`import fs from 'node:fs/promises';import {syncBuiltinESMExports} from 'node:module';
+ const phase=process.argv[2],realLink=fs.link,realRename=fs.rename;
+ const die=()=>{process.kill(process.pid,'SIGKILL');};
+ fs.link=async(a,b)=>{if(phase==='before_link'&&String(b).includes('/history-'))die();return realLink(a,b);};
+ fs.rename=async(a,b)=>{if(String(b).endsWith('/HEAD')&&phase==='before_head')die();const r=await realRename(a,b);if(String(b).endsWith('/HEAD')&&phase==='after_head')die();return r;};
+ syncBuiltinESMExports();const {openLocalHistoryStore}=await import(${JSON.stringify(moduleUrl)});let input='';for await(const c of process.stdin)input+=c;const s=await openLocalHistoryStore(process.argv[1]);await s.append(JSON.parse(input));process.exitCode=3;`;
+ return new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--input-type=module','-e',code,dir,phase],{stdio:['pipe','ignore','pipe']});let stderr='';child.stderr.on('data',d=>stderr+=d);child.on('error',reject);child.on('close',(code,signal)=>{try{assert.equal(signal,'SIGKILL',stderr+' code '+code);resolve();}catch(e){reject(e);}});child.stdin.end(JSON.stringify(args));});
+}
+for(const phase of ['before_link','before_head','after_head'])test('SIGKILL at '+phase+' preserves one exact published state and requires offline lock recovery',async t=>{
+ const {dir,a}=await setup(t),s=await openLocalHistoryStore(dir);await s.initialize(a.root.historyText,a.root.digest);
+ const args={expectedHead:a.root.digest,nextText:a.child.historyText,nextPin:a.child.digest};
+ await crashAppend(dir,args,phase);
+ const reopened=await openLocalHistoryStore(dir),published=phase==='after_head'?a.child:a.root,unpublished=phase==='after_head'?a.root:a.child;
+ assert.equal((await reopened.read(published.digest)).historyText,published.historyText);await assert.rejects(reopened.read(unpublished.digest),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
+ await assert.rejects(reopened.append(args),/HISTORY_STORE_BUSY_OR_CRASHED_LOCK/);
+ // The child has exited, no other writers exist in this test. Operator removes
+ // the stale lock explicitly; the store never auto-steals a lock.
+ await rm(join(dir,'WRITE.lock'));
+ if(phase==='after_head')await assert.rejects(reopened.append(args),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
+ else assert.equal((await reopened.append(args)).digest,a.child.digest);
+ assert.equal((await reopened.read(a.child.digest)).historyText,a.child.historyText);
+});
