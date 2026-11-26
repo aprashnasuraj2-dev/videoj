@@ -1062,6 +1062,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    samplePage.on('pageerror',e=>errors.push(e.message));samplePage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
    await samplePage.goto(origin);await samplePage.locator('#review-open').focus();await samplePage.keyboard.press('Enter');assert.equal(await samplePage.locator('#reviewed-workspace').getAttribute('open'),'');assert.equal(await samplePage.locator('#review-studio-state').innerText(),'NO CURRENT RESULT');await samplePage.locator('#review-studio-next').click();assert.equal(await samplePage.locator('#review-question').evaluate(e=>e===document.activeElement),true);await samplePage.locator('#review-sample-panel > summary').click();
    const sampleState=s=>samplePage.waitForFunction(state=>document.querySelector('#review-status').dataset.state===state&&!document.querySelector('#review-reset').disabled,s);
+   let rootHistoryPin=null;
    for(const domain of ['finance','engineering']){
     await samplePage.locator('#review-sample-'+domain).click();await sampleState('sample_ready');
     await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
@@ -1088,7 +1089,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     if(domain==='finance'){
      await samplePage.locator('#review-history-panel > summary').click();await samplePage.locator('#review-history-create').click();await sampleState('history_ready');
      assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
-     const rootHistoryPin=await samplePage.locator('#review-history-digest').innerText();
+     rootHistoryPin=await samplePage.locator('#review-history-digest').innerText();
      await samplePage.locator('#review-history-durable-panel > summary').click();
      await samplePage.locator('#review-history-durable-initialize').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
      assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/initialized/);

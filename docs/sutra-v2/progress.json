@@ -9,7 +9,7 @@
     "V2-UX-002",
     "V2-HIST-009"
   ],
-  "state": "SEM004 and UX003 exact mapping-review UI verified; HIST010 active with optional injected durable-host CAS/recovery candidate; UX002 pending exact acceptance",
+  "state": "V2-203 browser test scoping correction candidate; HIST010 remains active and unverified; failed exact browser run retained",
   "verified": [
     {
       "id": "V2-M01",
@@ -1045,6 +1045,13 @@
       "job": 139812999201,
       "failure": "Queue audit refused candidate before product regressions: current reconciliation session/base mismatch.",
       "correction": "Synchronize parallelWorkstreams session/baseline and roadmap.parallelCandidateEvidence session to V2-199 tested baseline. No product credit from failed run."
+    },
+    {
+      "revision": "50f4dba58b71aef236da05d45832a508ef7afbe2",
+      "run": 45795433588,
+      "job": 139824758991,
+      "failure": "Browser journey ReferenceError: rootHistoryPin scoped to first finance block; later durable stale-CAS block could not reference it.",
+      "correction": "Hoist test-only retained root pin across the guided-domain loop. No assertion removed; durable host contract unchanged."
     }
   ],
   "reconciledDurableCandidate": {
