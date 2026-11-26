@@ -1,4 +1,4 @@
-import {createVerifier} from '../index.js';
+import {createVerifier} from './index.js';
 const OPS={add:'add',subtract:'sub',multiply:'mul',divide:'div'},NUM=/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/,REF=/^#([0-9]+)$/,CONST=/^const_([1-9]\d*)$/;
 const fail=c=>{throw TypeError('FINQA_BENCHMARK_'+c);};
 const fnv=s=>{let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h>>>0;};
