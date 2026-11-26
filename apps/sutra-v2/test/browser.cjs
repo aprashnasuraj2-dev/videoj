@@ -999,6 +999,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    for(const [id,value] of [['a','測定 🧪 A: 12.50; repeat: 12.50;'],['b','B: 10.25;']]){
     await sp.locator('#review-source-id').fill(id);await sp.locator('#review-lineage').fill('root_'+id);await sp.locator('#review-source-text').fill(value);await sp.locator('#review-source-add').click();await state('draft');
    }
+   // Save and restore a draft with exact Unicode source text, wrong-pin refusal, and explicit confirmation.
+   await sp.locator('#review-draft-checkpoint-panel > summary').click();
+   const draftDownload=sp.waitForEvent('download');await sp.locator('#review-draft-save').click();await state('draft_saved');
+   const savedDraft=fs.readFileSync(await (await draftDownload).path(),'utf8'),savedPin=await sp.locator('#review-draft-saved-pin').innerText();
+   await sp.locator('#review-reset').click();await state('draft');assert.match(await sp.locator('#review-staged').innerText(),/0 staged source/);
+   await sp.locator('#review-draft-file').setInputFiles({name:'draft.json',mimeType:'application/json',buffer:Buffer.from(savedDraft)});
+   await sp.locator('#review-draft-pin').fill('sha256:'+'0'.repeat(64));await sp.locator('#review-draft-check').click();await state('refused');
+   assert.equal(await sp.locator('#review-draft-restore').isDisabled(),true);
+   await sp.locator('#review-draft-pin').fill(savedPin);await sp.locator('#review-draft-check').click();await state('draft_checked');
+   assert.equal(await sp.locator('#review-draft-restore').isDisabled(),true);await sp.locator('#review-draft-confirm').check();await sp.locator('#review-draft-restore').click();await state('draft_restored');
+   assert.match(await sp.locator('#review-staged').innerText(),/2 staged source/);
+   assert.equal(await sp.locator('#review-question').inputValue(),'Is A higher than B?');
    await sp.locator('#review-binding-suggestions-panel > summary').click();
    const type={kind:'stress',unit:'MPa',scope:'same_condition',dimension:[-1,1,-2]},s=(id,sourceId,quote,before='',after='')=>({id,sourceId,quote,before,after,type});
    const wire=JSON.stringify({version:1,suggestions:[s('a_value','a','12.50','repeat: ',';'),s('ambiguous','a','12.50'),s('b_value','b','10.25')]});

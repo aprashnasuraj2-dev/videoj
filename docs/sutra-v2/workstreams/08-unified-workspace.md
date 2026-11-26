@@ -11,3 +11,7 @@ State: acceptance contract; implementation pending.
 Acceptance: Keyboard/mobile journey, loss recovery, explicit human approval and accessible state; no automatic authority.
 
 No merge, release, live inference or external contact authorized. Child JS CI is scoped; full integration gates remain mandatory. Record exact source and CI evidence here.
+
+
+## Parallel session candidate
+Portable exact editable-draft export, separately retained digest, bounded UTF-8 file verification, preview and explicit restore. Existing history/baseline retained; current sealed results and local plan permissions invalidated. Pure tamper/Unicode tests and actual browser restore/wrong-pin/no-contact assertions added. Child CI covers JS; full browser execution still required. No storage automation or model authority.

@@ -1,3 +1,4 @@
+import {openDraftCheckpoint,exportDraftCheckpoint} from '../../../packages/sutra-knowledge/draft-checkpoint.js';
 import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
 import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
@@ -32,7 +33,7 @@ import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.j
 import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
-let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null;
+let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
@@ -48,6 +49,7 @@ const tableFields=['table-text','table-source','table-lineage','table-inspect','
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
+ draftCheckpointControl();
  by('offer-contract').disabled=busy||!sealed||!bindings.length;handoffControl();bindingSuggestionControl();
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
@@ -55,8 +57,40 @@ function control(){
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
 }
-function invalidate(message){epoch++;clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearDraftCheckpoint();clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
+function clearDraftPreview(){draftPreview=null;by('draft-preview').textContent='';by('draft-confirm').checked=false;}
+function clearDraftCheckpoint(){draftSaved=null;by('draft-saved-pin').textContent='';clearDraftPreview();}
+function draftCheckpointControl(){
+ by('draft-save').disabled=busy||!by('question').value.trim();
+ by('draft-save-pin').disabled=busy||!draftSaved||draftSaved.draftText!==draft();
+ for(const id of ['draft-file','draft-pin'])by(id).disabled=busy;
+ by('draft-check').disabled=busy||!by('draft-file').files?.length||!by('draft-pin').value.trim();
+ by('draft-confirm').disabled=busy||!draftPreview;
+ by('draft-restore').disabled=busy||!draftPreview||!by('draft-confirm').checked;
+}
+for(const id of ['draft-file','draft-pin']){for(const event of ['input','change'])by(id).addEventListener(event,()=>{clearDraftPreview();draftCheckpointControl();});}
+by('draft-confirm').onchange=draftCheckpointControl;
+by('draft-save').onclick=()=>work(async ticket=>{
+ const text=draft(),p=await exportDraftCheckpoint(text);if(ticket!==epoch||text!==draft())return;
+ draftSaved=p;by('draft-saved-pin').textContent=p.draftPin;download(p.draftText,'sutra-editable-draft.json','application/json');status('draft_saved','Exact editable draft exported. Retain its digest separately.');
+});
+by('draft-save-pin').onclick=()=>{if(!busy&&draftSaved?.draftText===draft())download(draftSaved.draftPin+'\n','sutra-editable-draft.sha256','text/plain');};
+by('draft-check').onclick=()=>work(async ticket=>{
+ clearDraftPreview();const file=by('draft-file').files?.[0],pin=by('draft-pin').value.trim(),currentDraft=draft();
+ if(!file||file.size<1||file.size>262144)throw Error('DRAFT_CHECKPOINT_SIZE');
+ const text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()),p=await openDraftCheckpoint(text,pin);
+ if(ticket!==epoch||currentDraft!==draft()||file!==by('draft-file').files?.[0]||pin!==by('draft-pin').value.trim())return;
+ draftPreview={p,currentDraft,file,pin};by('draft-preview').textContent=p.summary.question+'\nSources: '+p.summary.sourceIds.join(', ')+'\nDeclared bindings: '+p.summary.bindingCount+'\n'+p.draftPin;
+ status('draft_checked','Saved draft checked; current draft unchanged.');
+});
+by('draft-restore').onclick=()=>work(async ticket=>{
+ const r=draftPreview;if(!r||!by('draft-confirm').checked||r.currentDraft!==draft()||r.file!==by('draft-file').files?.[0]||r.pin!==by('draft-pin').value.trim())return;
+ const p=await openDraftCheckpoint(r.p.draftText,r.pin);if(ticket!==epoch||r!==draftPreview||r.currentDraft!==draft())return;
+ const d=structuredClone(p.draft);sources=d.sources;bindings=d.bindings;by('question').value=d.question;
+ invalidate('Saved editable draft restored; re-seal and review before using any result.');refresh();by('draft-file').value='';by('draft-pin').value='';
+ status('draft_restored','Exact editable draft restored. No model contacted and no verified result restored.');
+});
 const localBindingFields=['sources','model','protocol','endpoint','auth','env'];
 function clearLocalBindingPlan(){
  localBindingPlan=null;by('binding-local-approve').checked=false;by('binding-local-result').value='';by('binding-local-pin').value='';by('binding-local-commands').textContent='';by('binding-local-commands').hidden=true;by('binding-local-scope').textContent='';by('binding-local-scope').hidden=true;by('binding-local-status').textContent='No current local extraction plan.';
