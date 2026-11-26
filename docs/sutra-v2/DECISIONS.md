@@ -600,3 +600,16 @@ Use a separate non-merge validation draft to materialize exact child blobs, reta
 
 ### V2-183-reuse-first-reconciliation
 Reuse-first selection: preserve v1 and v2 historical statuses. Record scoped child implementation/CI and unresolved integration or external acceptance separately, not as new broad gate credit. Combined validation materializes all ten exact child heads without merging; two disjoint HTML insertions and exact impact mappings were reconciled without replacing the underlying components. No public release, live inference or automatic merge.
+
+## V2-DECISION-0185 — Retire SUTRA1 pending queue; V2 remaining-work checklist is sole cursor (2026-11-26)
+
+**Decision:** By explicit user direction, retire and remove the 379 remaining unchecked SUTRA1 tasks from active execution. Preserve verified/omitted/blocked historical records and Git history. Replace the active SUTRA2 checklist with a remaining-work-only checklist covering current branch reconciliation, ten parallel workstreams, 21 Living Knowledge exit gates, unresolved foundation phases, cross-register obligations and genuine external blockers.
+
+**Continuation semantics:** “Continue with SUTRA” now means reconcile exact current V2 remote heads/CI and execute the next dependency-ready unchecked item in `docs/sutra-v2/CHECKLIST.md`. Former V1 pending/next IDs are never selected by default.
+
+**Why:** The old 1,000-task learner/competition checklist no longer represents the renewed living-knowledge product and was causing cursor drift. Keeping its 379 unchecked tasks active would duplicate or conflict with the V2 roadmap. Git history preserves the retired tasks, so removing them from current files does not erase provenance.
+
+**Counterexample / boundary:** V1 verified evidence, security constraints and failures may still be reused when a current V2 task explicitly depends on them. Retirement is not completion, waiver, release authorization or proof that every old capability is unnecessary; any still-required capability must exist as an active V2 checklist/roadmap item.
+
+**Release/authority:** No merge, public deployment, paid inference, real credentials, outreach, release or submission is authorized by this decision.
+
