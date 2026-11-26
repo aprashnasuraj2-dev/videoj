@@ -85,3 +85,61 @@ test('adaptive two-axis acquisition, shared cost, and noisy outcomes match indep
   assert.ok(r.plan.worstExposure<=budget);
  }
 });
+
+async function branchingFixture(){
+ const question='Does the explicitly selected synthetic quantity exceed the limit?',source='Selector: 0; One: 1; Y: 2; Z: 2; Limit: 3;',type={kind:'ratio',unit:'one',scope:'synthetic',dimension:[0,0,0]};
+ const markers={x:'Selector: 0',one:'One: 1',y:'Y: 2',z:'Z: 2',limit:'Limit: 3'};
+ const bindings=Object.entries(markers).map(([id,m])=>{const start=source.indexOf(m)+m.length-1;return {id,sourceId:'source',start,end:start+1,type};});
+ const {contractText,pin}=await sealReviewedDraft(JSON.stringify({version:1,question,sources:[{id:'source',lineage:'synthetic',text:source}],bindings}));
+ // x is a declared 0/1 selector, not an empirically inferred causal relation.
+ // selected = (1-x)*y + x*z. Both alternative programs are deliberately identical.
+ const proposal=JSON.stringify({version:1,contractDigest:pin,questionSpan:{sourceId:'question',start:0,end:question.length,quote:question},claims:[],nodes:[...Object.keys(markers).map(id=>({id,kind:'input',bindingId:id})),
+ {id:'complement',kind:'derive',op:'sub',args:['one','x']},{id:'left',kind:'derive',op:'mul',args:['complement','y']},{id:'right',kind:'derive',op:'mul',args:['x','z']},
+ {id:'selected',kind:'derive',op:'add',args:['left','right']},{id:'target',kind:'constraint',op:'gt',args:['selected','limit']}],targetId:'target'});
+ const candidates=['a','b'].map(id=>({id,meaning:id,facets:Object.fromEntries(FACETS.map(k=>[k,null]))}));
+ const batchText=JSON.stringify({version:1,contractDigest:pin,proposals:candidates.map(c=>({id:c.id,proposalText:proposal}))});
+ const annotationText=JSON.stringify({version:1,contractDigest:pin,batchDigest:await casePin(batchText),candidates});
+ const v=await sealInvestigationVersion({contractText,contractPin:pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
+ const axes=[{bindingId:'x',values:['0/1','1/1']},...['y','z'].map(bindingId=>({bindingId,values:['2/1','4/1']}))];
+ const grid={version:1,versionDigest:v.digest,axes,maxAssignments:16},gridText=JSON.stringify(grid),gridPin=await casePin(gridText);
+ const policy={...(await fixture()).policy,versionDigest:v.digest,gridDigest:gridPin,exposureBudget:2,sourceCosts:[{id:'source',costUpper:0}],
+ actions:axes.map(a=>({id:'read_'+a.bindingId,sourceId:'source',bindingId:a.bindingId,readCostUpper:1,exposure:1,outcomes:a.values.map((value,i)=>({value,labels:[i?'high':'low']}))}))};
+ return {v,grid,gridText,gridPin,policy};
+}
+// Independent fixed-subset baseline: enumerate every subset and every outcome
+// partition from the declared truth table. No production plan is read.
+function fixedSubsetObjective(worlds,actions,budget){
+ let best=6;
+ for(let mask=1;mask<(1<<actions.length);mask++){
+  const chosen=actions.filter((_,i)=>mask&(1<<i)),exposure=chosen.reduce((s,a)=>s+a.exposure,0);
+  if(exposure>budget)continue;
+  let parts=[worlds];
+  for(const a of chosen){
+   const next=[];
+   for(const group of parts){
+    const labels=new Set(group.flatMap(w=>a.outcomes.find(o=>o.value===w[a.bindingId]).labels));
+    for(const label of labels)next.push(group.filter(w=>a.outcomes.find(o=>o.value===w[a.bindingId]).labels.includes(label)));
+   }
+   parts=next;
+  }
+  const terminal=Math.max(...parts.map(g=>new Set(g.map(w=>w.state)).size===1?0:6));
+  best=Math.min(best,chosen.reduce((s,a)=>s+a.readCostUpper,0)+terminal);
+ }
+ return best;
+}
+test('branch-dependent evidence acquisition strictly beats matched fixed subsets on declared selector model',async()=>{
+ const f=await branchingFixture(),worlds=[0,1].flatMap(x=>[2,4].flatMap(y=>[2,4].map(z=>({x:x+'/1',y:y+'/1',z:z+'/1',state:(x===0?y:z)>3?'constraint_satisfied':'constraint_refuted'}))));
+ for(const budget of [1,2,3]){
+  f.policy.exposureBudget=budget;const r=await run(f),fixed=fixedSubsetObjective(worlds,f.policy.actions,budget);
+  assert.equal(r.cells.length,16);assert.equal(r.coverage.truncated,false);assert.equal(r.decisionAuthority,'NONE');
+  for(const c of r.cells){const a=Object.fromEntries(c.assignment.map(x=>[x.bindingId,x.value]));assert.equal(c.state,worlds.find(w=>w.x===a.x&&w.y===a.y&&w.z===a.z).state);}
+  assert.equal(r.plan.worstObjective,oracle(worlds,f.policy.actions,f.policy.decisions,false,0,budget));
+  assert.equal(r.plan.worstObjective,budget===1?6:2);assert.equal(fixed,budget===3?3:6);
+  if(budget>=2){
+   assert.equal(r.plan.actionId,'read_x');assert.equal(r.plan.worstExposure,2);
+   assert.deepEqual(r.plan.branches.map(b=>[b.outcome,b.next.actionId]),[['high','read_z'],['low','read_y']]);
+  }
+ }
+ f.policy.exposureBudget=3;f.policy.actions[0].outcomes.forEach(o=>o.labels.push('failed'));
+ const failed=await run(f);assert.equal(failed.plan.kind,'stop');assert.equal(failed.plan.worstObjective,6);
+});

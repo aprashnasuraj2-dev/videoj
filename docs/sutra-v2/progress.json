@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-139",
+  "session": "V2-140",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "acquisition frozen corpus executable independent oracle candidate; CI pending",
+  "state": "branch-dependent acquisition regression candidate; CI pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -391,7 +391,7 @@
     "reason": "Actual browser invalid UTF-8 test: kernel refused correctly but UI sanitizer omitted digits in permitted error-code suffix, so TEXT_FILE_UTF8 became a generic refusal.",
     "resolutionStatus": "V2-107 exact nine returned PR workflows green including Chromium 139551497664; separate push run unobserved; historical failure retained."
   },
-  "lastVerifiedKernelSource": "c5f6dba9049df6fb40113fff6e2b1994499345ff",
+  "lastVerifiedKernelSource": "48c0879c37f83a03a05c9e3ef61724cd3eacb9c9",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-140",
+    "parent": "86b315bbf42ebda189008cf5c6072353b0338651",
+    "description": "### V2-140 — adversarial adaptive-versus-fixed acquisition regression (candidate)\nV2-136 exact commit 48c0879c37f83a03a05c9e3ef61724cd3eacb9c9: all nine returned PR workflows successful; actual knowledge job 139612253862 and Chromium job 139612253419 passed. Strict six-pin recovery opening thus verified within kernel scope, not arbitrary ancestry or authority. V2-138 frozen manifest also matched 30/30 in a separate preliminary array enumeration (declared objective totals 126 versus one-read 147 and no observation 180); not execution of V2-139 actual compiler/planner or its Python oracle. Add separate, non-corpus regression at maximum 16 candidate-world cells: x selects y or z through explicit arithmetic; optimal branch-dependent policy reads x then the relevant quantity. Exhaustive fixed-subset baseline has objective 6 at exposure cap 2 and 3 at cap 3, whereas expected adaptive objective 2; cap 1 and possible selector failure must abstain. Tests check every compiled cell against independent direct truth table, independent recursive oracle and fixed subsets. This is an explicit synthetic counterexample to blanket equivalence of adaptive and nonadaptive collection, not a field advantage. V2-137/139 exact CI pending at authoring."
+  },
+  "previousPendingCandidate": {
     "session": "V2-139",
     "parent": "ffa0625f24690217e6e17e488685e78895136d0d",
     "description": "### V2-139 — execute frozen acquisition corpus and independent matched baseline oracle (candidate)\nPinned unchanged V2-138 manifest Git blob a5bd96c1667c9b980bbdfa34e1fb814baf692be0. Actual reviewed compiler, sealed investigation, finite world grid, minimax planner execute all 30 cases; expected roots/objectives and cell arithmetic checked. Separate Python enumerates from frozen manifest, not reported grid, with exact adaptive, one-read, nonadaptive subset and no-observation policies under matched losses/costs/budgets. CI publishes both JSON artifacts; no independent labels, measured real losses/privacy, human-time, superiority or verified benchmark credit pending exact workflow. V2-136/137/138 remain pending unless exact evidence later observed."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-138",
-    "parent": "9e744cd22e6b2b81c115c96d4d93d3fb45a31221",
-    "description": "### V2-138 — freeze acquisition development benchmark before implementation\nFreeze 30 explicit developer-labeled robust acquisition cases (15 single-axis and 15 two-axis conjunction). Expected objective and first action manually declared before evaluator; same bounded loss, actions, shared acquisition costs and exposure cap across future comparisons. Cases include free reads, stop ties, prepaid source, exposure exactly at/short of budget, overlapping and failed outcomes, shared vs separate source costs and two-step interaction. Two identical semantic proposals used solely for profile admission, not independent evidence. Next: executable compiler/grid/acquisition runner plus independent exhaustive oracle and matched no-observation/one-read/nonadaptive baselines. No empirical costs, independent human labels, speed or superiority claim; dataset not yet executed. V2-136/137 exact CI still pending at observation."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -6487,6 +6487,67 @@
         {
           "id": 45726374744,
           "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "9/9 returned PR workflows successful; separate push run not observed."
+    },
+    {
+      "sourceRevision": "48c0879c37f83a03a05c9e3ef61724cd3eacb9c9",
+      "runs": [
+        {
+          "id": 45730873292,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873211,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873178,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873250,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873260,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873222,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873221,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873237,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45730873198,
+          "name": "Validate SUTRA learner shell",
           "status": "completed",
           "conclusion": "success"
         }
