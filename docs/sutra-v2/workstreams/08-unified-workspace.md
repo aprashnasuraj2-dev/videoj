@@ -15,3 +15,7 @@ No merge, release, live inference or external contact authorized. Child JS CI is
 
 ## Parallel session candidate
 Portable exact editable-draft export, separately retained digest, bounded UTF-8 file verification, preview and explicit restore. Existing history/baseline retained; current sealed results and local plan permissions invalidated. Pure tamper/Unicode tests and actual browser restore/wrong-pin/no-contact assertions added. Child CI covers JS; full browser execution still required. No storage automation or model authority.
+
+
+## Parallel browser acceptance candidate
+Add dedicated workspace-child CI job running the actual canonical build, vendored runtime verification, existing complete Chromium browser journey and guided-state tests, including explicit draft recovery. The job does not run on the other nine child branches and does not replace full integration independent replay or formal gates. Exact browser CI pending.

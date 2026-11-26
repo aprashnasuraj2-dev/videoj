@@ -1,0 +1,33 @@
+name: Validate SUTRA workspace browser
+on:
+  pull_request:
+    branches: ['sutra/v2-knowledge-compiler']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+permissions:
+  contents: read
+jobs:
+  workspace-browser:
+    if: github.head_ref == 'sutra/v2-parallel/08-unified-workspace'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/sutra/package-lock.json
+      - run: node --check apps/sutra-v2/test/browser.cjs
+      - run: npm ci --prefix apps/sutra
+      - name: Build actual canonical browser artifact
+        run: |
+          rustup target add wasm32-unknown-unknown
+          node apps/sutra-v2/build.mjs
+          node --test apps/sutra-v2/test/build-contract.test.mjs
+      - run: node packages/sutra-runtime/verify-vendor.mjs
+      - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
+      - name: Execute complete browser journey including draft recovery
+        run: node apps/sutra-v2/test/browser.cjs
+      - name: Scope boundary
+        run: echo 'Actual child browser execution only; full independent artifact replay and integration formal gates remain required.'
