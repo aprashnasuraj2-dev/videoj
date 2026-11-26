@@ -163,6 +163,12 @@ test('development attack/evaluation fixtures stay outside the default public lea
  for(const file of files){
   const bytes=fs.readFileSync(file);
   assert.equal(bytes.includes(Buffer.from(marker)),false,`development fixture leaked into ${path.relative(app,file)}`);
+  for(const forbidden of [
+   'Hypothetical video note',
+   'Authored synthetic video contradiction fixture',
+   'Demonstrate development-only synthetic conflict',
+   'Development-only synthetic contradiction fixture'
+  ])assert.equal(bytes.includes(Buffer.from(forbidden)),false,`synthetic conflict fixture leaked into ${path.relative(app,file)}`);
  }
 });
 
