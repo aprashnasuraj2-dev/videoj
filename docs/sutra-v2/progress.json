@@ -14,7 +14,7 @@
     "V2-UX-002",
     "V2-UX-003"
   ],
-  "state": "V2-198 exact integrated CI passed; HIST003–006 exact integrated evidence closed; HIST002 durable typed graph adapter candidate active pending exact CI",
+  "state": "V2-199 register invariant correction after exact queue-audit refusal; HIST002 remains active and unverified",
   "verified": [
     {
       "id": "V2-M01",
@@ -1013,6 +1013,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45745004284/job/139658804307",
       "reason": "Old static TLC SHA-256 mismatch after all JS tests passed",
       "resolutionStatus": "V2-175 explicit new upstream asset provenance candidate; all static checks and formal suite remain mandatory."
+    },
+    {
+      "revision": "ef4c7f6788a36153571db4f0b4fe4ec095e62504",
+      "run": 45791977475,
+      "job": 139812999201,
+      "failure": "Queue audit refused candidate before product regressions: current reconciliation session/base mismatch.",
+      "correction": "Synchronize parallelWorkstreams session/baseline and roadmap.parallelCandidateEvidence session to V2-199 tested baseline. No product credit from failed run."
     }
   ],
   "reconciledDurableCandidate": {
@@ -9522,8 +9529,8 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-198-first-foundation-source-integration",
-    "baseline": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+    "session": "V2-199-durable-typed-history-candidate",
+    "baseline": "0fd7a39c355b6da832cfa4c185438bedcacbe1cb",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
     "branches": [

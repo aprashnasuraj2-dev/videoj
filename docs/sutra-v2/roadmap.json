@@ -3726,7 +3726,7 @@
     "allocationIsTarget": true
   },
   "parallelCandidateEvidence": {
-    "session": "V2-198-first-foundation-source-integration",
+    "session": "V2-199-durable-typed-history-candidate",
     "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
     "history": [
       {
