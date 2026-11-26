@@ -21,10 +21,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P081-02` Include source SHA and deterministic asset inventory in release manifests
 - [ ] `SUTRA-P081-03` Calculate content hashes of graphs, runtime files and media references
 - [ ] `SUTRA-P081-04` Check static bundles contain no credentials or private inputs
-- [ ] `SUTRA-P081-05` Ensure source integration cannot empty other player output directories
+- [x] `SUTRA-P081-05` Ensure source integration cannot empty other player output directories
 - [ ] `SUTRA-P081-06` Provide build/install instructions matching actual package locations
 - [ ] `SUTRA-P081-07` Verify a clean extraction matches the manifest checksums
-- [ ] `SUTRA-P081-08` Keep deployment configuration placeholders distinct from real secrets
+- [x] `SUTRA-P081-08` Keep deployment configuration placeholders distinct from real secrets
 - [ ] `SUTRA-P081-09` Produce and review the phase artifact: dist-sutra/, dist-sutra-peer/ and release manifests.
 - [ ] `SUTRA-P081-10` Close phase 081 only after its applicable tasks have evidence and its exit condition is observed: A clean extraction matches the checksums; a SUTRA build cannot alter existing player outputs.
 
