@@ -1,0 +1,683 @@
+const {chromium}=require('playwright');
+const {spawn}=require('node:child_process');
+const path=require('node:path');
+const net=require('node:net');
+const fs=require('node:fs');const {createHash}=require('node:crypto');
+const assert=require('node:assert/strict');
+
+(async()=>{
+ const app=path.resolve(__dirname,'..');
+ const port=await new Promise((resolve,reject)=>{
+  const probe=net.createServer();probe.once('error',reject);probe.listen(0,'127.0.0.1',()=>{
+   const selected=probe.address().port;probe.close(error=>error?reject(error):resolve(selected));
+  });
+ });
+ const base='http://127.0.0.1:'+port;
+ const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{cwd:app,stdio:'pipe'});
+ let browser,exited=false,serverLog='';for(const output of [server.stdout,server.stderr])output.on('data',d=>serverLog=(serverLog+d.toString()).slice(-8000));server.on('exit',()=>exited=true);
+ try{
+  let ready=false;
+  for(let i=0;i<60;i++){if(exited)throw Error('Preview exited: '+serverLog);try{const r=await fetch(base,{signal:AbortSignal.timeout(500)});if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}
+  if(!ready)throw Error('Hero preview not ready: '+serverLog);
+  browser=await chromium.launch({headless:true});
+  const page=await browser.newPage({viewport:{width:1280,height:960}});
+  const errors=[],external=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
+
+  // A fresh viewer must reach a saved, reviewable source citation using only the
+  // no-model question route, without playback, developer panels, or account setup.
+  const freshContext=await browser.newContext({viewport:{width:1280,height:800}});
+  try{
+   const first=await freshContext.newPage(),externalCalls=[];
+   first.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/timing-fixture.mp4'))externalCalls.push(r.url());});
+   await first.goto(base);
+   await first.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   assert.deepEqual(await first.locator('.journey-map a').first().getAttribute('href'),'#local-answer');
+   const expectedOrder=['local-answer-title','lesson-title','evidence-title','direct-title','comparison-title','review-title','provider-title','developer-tools-title'];
+   const order=()=>first.evaluate(ids=>[...document.querySelectorAll(ids.map(x=>'#'+x).join(','))].map(x=>x.id),expectedOrder);
+   assert.deepEqual(await order(),expectedOrder,'local find/inspect/compare/review precede optional inference');
+   assert.match(await first.locator('.journey-note').innerText(),/no personal API key.*optional inference requires separate approval for every run/i);
+   assert.equal(await first.locator('#provider-status').getAttribute('data-state'),'idle');
+   assert.match(await first.locator('#provider-status').innerText(),/availability has not been checked.*lesson and transcript remain usable/i);
+   assert.equal(await first.getByRole('button',{name:'Check inference availability'}).isEnabled(),true);
+   assert.equal(await first.getByRole('button',{name:'Ask configured model'}).isDisabled(),true);
+   assert.equal(await first.getByLabel('Question about the source lesson').isDisabled(),true);
+   assert.equal(externalCalls.length,0,'first-load instructions must not probe inference or media before an explicit check');
+   await first.setViewportSize({width:360,height:800});assert.deepEqual(await order(),expectedOrder);assert.ok(await first.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+   await first.setViewportSize({width:1280,height:800});
+   await first.locator('.journey-map a').last().focus();await first.keyboard.press('Tab');assert.equal(await first.evaluate(()=>document.activeElement?.id),'local-answer-query','first task follows the learner navigation in keyboard order');
+   await first.getByRole('searchbox',{name:'Question for local source lookup'}).fill('Where is the timing marker?');
+   await first.getByRole('button',{name:'Find cited source locally',exact:true}).click();
+   assert.equal(await first.locator('#local-answer-status').getAttribute('data-state'),'completed');
+   await first.getByRole('button',{name:'Preview local review card'}).click();
+   await first.getByRole('dialog',{name:'Review before local save'}).waitFor();
+   assert.equal(JSON.parse(await first.locator('#review-preview').textContent()).args.receipt.cueId,'timing-marker');
+   assert.equal(await first.locator('#review-list li').count(),0,'explicit confirmation required');
+   await first.getByRole('button',{name:'Confirm local save'}).click();
+   await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   assert.equal(externalCalls.length,0,'the first viewer question-to-card flow is entirely model-free and media-free');
+   await first.getByRole('button',{name:'Check inference availability'}).click();
+   await first.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='denied');
+   assert.match(await first.locator('#provider-status').innerText(),/optional site-operated inference is disabled.*no-model source question.*remain available/i);
+   assert.equal(await first.getByRole('button',{name:'Ask configured model'}).isDisabled(),true);
+   assert.equal(externalCalls.filter(url=>url.includes('/api/status')).length,1,'explicit discovery performs one same-origin status check');
+   assert.equal(externalCalls.some(url=>url.includes('/api/infer')||url.includes('/api/v1/chat/completions')||url.includes('/media/')),false,'availability discovery must not call a model or load media');
+   assert.equal(await first.locator('#local-answer-status').getAttribute('data-state'),'completed','disabled inference must not erase the local result');
+   await first.reload();await first.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   await first.getByRole('button',{name:'Delete local review'}).click();await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+   assert.equal(await first.locator('#review-list li').count(),0);
+   // Locale changes must translate the primary free-inference task and current
+   // result rather than only translating the preexisting hero or navigation.
+   await first.locator('#language-select').selectOption('ne');
+   assert.match(await first.locator('#local-answer-title').innerText(),/स्रोत/);
+   assert.match(await first.locator('#local-answer-form button').innerText(),/स्रोत/);
+   await first.locator('#local-answer-query').fill('timing marker');
+   await first.locator('#local-answer-form button').click();
+   assert.match(await first.locator('#local-answer-status').innerText(),/मोडेल कल ०/);
+   await first.locator('#language-select').selectOption('en');
+   assert.match(await first.locator('#local-answer-status').innerText(),/0 model calls/);
+  }finally{await freshContext.close();}
+
+  // Real same-origin browser tabs must serialize read/modify/write. Hold the
+  // shared lock until both users have explicitly confirmed their receipts;
+  // neither save may overwrite the other. Navigation revokes queued writes.
+  const concurrentContext=await browser.newContext();
+  try{
+   const a=await concurrentContext.newPage(),b=await concurrentContext.newPage();
+   await Promise.all([a.goto(base),b.goto(base)]);
+   await Promise.all([a,b].map(p=>p.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor()));
+   const key='sutra.review-cards.v2',lockName='sutra.review-cards.mutation.v2';
+   async function hold(){
+    await a.evaluate(name=>{window.__reviewLockHeld=false;void navigator.locks.request(name,()=>new Promise(resolve=>{window.__reviewLockHeld=true;window.__releaseReviewLock=resolve;}));},lockName);
+    await a.waitForFunction(()=>window.__reviewLockHeld);
+   }
+   async function confirm(p){await p.getByRole('button',{name:'Preview source review card'}).click();await p.getByRole('button',{name:'Confirm local save'}).click();await p.waitForFunction(()=>!document.querySelector('#review-dialog').open);}
+   await hold();await Promise.all([confirm(a),confirm(b)]);
+   assert.equal(await a.evaluate(k=>localStorage.getItem(k),key),null,'both confirmed operations await the exclusive origin lock');
+   await a.evaluate(()=>window.__releaseReviewLock());
+   await a.waitForFunction(k=>JSON.parse(localStorage.getItem(k)??'[]').length===2,key);
+   const records=await a.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(new Set(records.map(x=>x.id)).size,2);
+   await Promise.all([a,b].map(p=>p.waitForFunction(()=>document.querySelectorAll('#review-list li').length===2)));
+   await hold();await confirm(b);
+   await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Review action interrupted by navigation'));
+   assert.equal(await b.locator('#download-review-attempt').isHidden(),true,'a revoked save must not publish a late outcome receipt');
+   await a.evaluate(()=>window.__releaseReviewLock());
+   assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // Revoke queued destructive actions too, and prevent old callback
+   // status from replacing the navigation invalidation message.
+   for(const operation of ['delete','clear']){
+    await hold();
+    if(operation==='delete')await b.getByRole('button',{name:'Delete local review'}).first().click();
+    else{await b.locator('#clear-local-reviews').click();await b.locator('#confirm-clear-reviews').click();}
+    await b.waitForFunction(async name=>(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
+    await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+    await b.waitForFunction(async name=>!(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
+    await a.evaluate(()=>window.__releaseReviewLock());
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2,'revoked '+operation+' cannot mutate local data');
+    assert.match(await b.locator('#review-status').textContent(),/Review action interrupted by navigation/);
+    assert.equal(await b.locator('#download-review-attempt').isHidden(),true);
+   }
+   // Exports also need the cooperative lock and a current snapshot. Change
+   // the record from the exporting tab itself (no storage event in that tab)
+   // while the lock is held, then reject its old captured download action.
+   const downloads=[];b.on('download',d=>downloads.push(d));
+   await hold();await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await b.waitForFunction(()=>[...document.querySelectorAll('#review-list .review-action')].some(x=>x.disabled));
+   assert.equal(downloads.length,0,'no download may bypass the held mutation lock');
+   await b.evaluate(k=>{const rows=JSON.parse(localStorage.getItem(k));rows[0].savedAt='2026-02-01T00:00:00.000Z';localStorage.setItem(k,JSON.stringify(rows));},key);
+   await a.evaluate(()=>window.__releaseReviewLock());
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('No export success is claimed'));
+   assert.equal(downloads.length,0,'changed record cannot authorize the queued download');
+   await hold();await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await b.waitForFunction(()=>[...document.querySelectorAll('#review-list .review-action')].some(x=>x.disabled));
+   await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Review action interrupted by navigation'));
+   await b.waitForFunction(async name=>!(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
+   await a.evaluate(()=>window.__releaseReviewLock());
+   assert.equal(downloads.length,0,'revoked queued export must never start');
+   const freshDownload=b.waitForEvent('download');await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await freshDownload;assert.equal(downloads.length,1,'an explicit fresh action can request a current download');
+   // Same-document out-of-band mutation emits no storage event. The still
+   // visible delete control must compare the exact captured record, not ID.
+   await a.evaluate(k=>{const rows=JSON.parse(localStorage.getItem(k));rows[0].savedAt='2026-01-01T00:00:00.000Z';localStorage.setItem(k,JSON.stringify(rows));},key);
+   await a.getByRole('button',{name:'Delete local review'}).first().click();
+   await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Could not delete'));
+   assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // A transport/storage implementation can change bytes and then throw.
+   // The real learner UI must refresh the list and disclose uncertainty.
+   await a.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreReviewSet=()=>{Storage.prototype.setItem=original;};Storage.prototype.setItem=function(name,value){original.call(this,name,value);if(name===k)throw Error('synthetic post-write failure');};},key);
+   try{
+    await a.getByRole('button',{name:'Delete local review'}).first().click();
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('deletion outcome is unknown'));
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),1);
+    assert.equal(await a.locator('#review-list li').count(),1);
+   }finally{await a.evaluate(()=>window.__restoreReviewSet());}
+   // A native-looking quota exception after writing is not a proven refusal.
+   await a.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreReviewSet=()=>{Storage.prototype.setItem=original;};Storage.prototype.setItem=function(name,value){original.call(this,name,value);if(name===k)throw new DOMException('synthetic post-save exception','QuotaExceededError');};},key);
+   try{
+    await confirm(a);
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Save outcome is unknown'));
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+    assert.equal(await a.locator('#review-list li').count(),2);
+    assert.equal(await a.locator('#download-review-attempt').isHidden(),false);
+   }finally{await a.evaluate(()=>window.__restoreReviewSet());}
+   const legacy='sutra.synthetic-review-cards.v1';
+   await a.evaluate(k=>localStorage.setItem(k,'legacy fixture'),legacy);
+   await a.locator('#clear-local-reviews').click();
+   await a.evaluate(k=>{const original=Storage.prototype.removeItem;window.__restoreReviewRemove=()=>{Storage.prototype.removeItem=original;};Storage.prototype.removeItem=function(name){if(name===k)throw new DOMException('synthetic second-key failure','SecurityError');original.call(this,name);};},legacy);
+   try{
+    await a.locator('#confirm-clear-reviews').click();
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('clear outcome is unknown'));
+    assert.equal(await a.evaluate(k=>localStorage.getItem(k),key),null);
+    assert.equal(await a.evaluate(k=>localStorage.getItem(k),legacy),'legacy fixture');
+    assert.equal(await a.locator('#review-list li').count(),0);
+    assert.equal(await a.locator('#download-review-attempt').isHidden(),true);
+   }finally{await a.evaluate(()=>window.__restoreReviewRemove());}
+  }finally{await concurrentContext.close();}
+
+  // Real cross-document history navigation. Use the full Chromium browser
+  // (new headless), not the separate headless shell, and enable its BFCache.
+  // CDP diagnostic reasons are recorded independently of the web API's
+  // privacy-masked notRestoredReasons. Neither a reload nor a fabricated
+  // PageTransitionEvent may stand in for restored-document evidence.
+  const historyBrowser=await chromium.launch({headless:true,channel:'chromium',ignoreDefaultArgs:['--disable-back-forward-cache']});
+  try{
+   for(const mediaMode of ['none','paused','playing']){
+    const withMedia=mediaMode!=='none';
+    const historyContext=await historyBrowser.newContext();
+    try{
+     const learner=await historyContext.newPage(),writer=await historyContext.newPage();
+     const cdp=await historyContext.newCDPSession(learner),misses=[];
+     await cdp.send('Page.enable');
+     cdp.on('Page.backForwardCacheNotUsed',event=>misses.push((event.notRestoredExplanations??[]).map(x=>({type:x.type,reason:x.reason}))));
+     await learner.addInitScript(()=>{
+      window.__sutraHistory={documentId:crypto.randomUUID(),shows:[],hides:[],playingAtHide:[]};
+      window.addEventListener('pageshow',event=>window.__sutraHistory.shows.push(event.persisted));
+      window.addEventListener('pagehide',event=>{
+       window.__sutraHistory.hides.push(event.persisted);
+       const video=document.querySelector('video');window.__sutraHistory.playingAtHide.push(!!video&&!video.paused&&!video.ended);
+      });
+     });
+     await Promise.all([learner.goto(base),writer.goto(base)]);
+     await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await writer.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
+     const first=await learner.evaluate(()=>({...window.__sutraHistory}));
+     let mediaSrc=null;
+     if(withMedia){
+      await learner.getByRole('button',{name:'Load source media'}).click();
+      await learner.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+      mediaSrc=await learner.locator('video').evaluate(v=>{v.pause();return v.currentSrc;});
+      assert.ok(mediaSrc.startsWith('blob:'));
+     }
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     await learner.getByRole('button',{name:'Confirm local save'}).click();
+     await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+     await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     if(mediaMode==='playing'){
+      // A real native playing element is distinct from the existing paused
+      // fixture. Muted looping avoids autoplay and short-fixture EOF races.
+      await learner.locator('video').evaluate(async v=>{v.muted=true;v.loop=true;await v.play();});
+      await learner.waitForFunction(()=>{const v=document.querySelector('video');return v&&!v.paused&&!v.ended&&v.currentTime>0;});
+     }
+     await learner.goto(base+'/guides/synthetic-comparison-guide.html');
+     await writer.getByRole('button',{name:'Delete local review'}).click();
+     await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+     await learner.goBack({waitUntil:'commit',timeout:15000});
+     await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await learner.waitForFunction(({documentId,shows})=>{
+      const state=window.__sutraHistory;
+      return state&&(state.documentId!==documentId?state.shows.length>0:state.shows.length>shows.length);
+     },first);
+     const observation=await learner.evaluate(()=>({
+      ...window.__sutraHistory,
+      notRestoredReasons:performance.getEntriesByType('navigation')[0]?.notRestoredReasons?.toJSON?.()??null
+     }));
+     const restored=observation.documentId===first.documentId;
+     assert.equal(observation.shows.at(-1),restored,'same document and actual persisted pageshow must agree');
+     if(restored){assert.equal(observation.hides.at(-1),true);assert.equal(observation.playingAtHide.at(-1),mediaMode==='playing');}
+     assert.equal(await learner.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
+     assert.equal(await learner.locator('#review-list li').count(),0);
+     assert.equal(await learner.locator('#download-review-attempt').isHidden(),true);
+     if(withMedia&&restored){
+      assert.equal(await learner.locator('video').evaluate(v=>v.currentSrc),mediaSrc,'restored document must retain the same verified media URL');
+      assert.equal(await learner.locator('video').evaluate(v=>v.paused),true);
+      await learner.getByRole('button',{name:'Inspect featured source cue'}).click();
+      await learner.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+     }
+     if(withMedia&&!restored)assert.equal(await learner.locator('video').count(),0,'fresh document must not claim retained native media');
+     console.log('ACTUAL_BFCACHE '+JSON.stringify({withMedia,mediaMode,restored,playingAtHide:observation.playingAtHide.at(-1)??null,notRestoredReasons:observation.notRestoredReasons,cdpMisses:misses}));
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     await learner.getByRole('button',{name:'Confirm local save'}).click();
+     await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+    }finally{await historyContext.close();}
+   }
+  }finally{await historyBrowser.close();}
+
+  // An isolated, hash-consistent synthetic profile with six overlapping cues
+  // must show five receipts AND the complete count, including after a locale
+  // switch; the original public fixture and actual source text remain unchanged.
+  const ambiguityContext=await browser.newContext({viewport:{width:1280,height:800}});
+  try{
+   const ambiguous=await ambiguityContext.newPage();const apiOrMedia=[];
+   ambiguous.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/timing-fixture.mp4'))apiOrMedia.push(r.url());});
+   const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
+   const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
+   profile.contentVersion=catalog.contentVersion='synthetic-ambiguity-browser-fixture-v1';
+   const source=catalog.sources[0];source.version='ambiguity-fixture-v1';
+   const longCueId='cue:.'+'a'.repeat(123);
+   for(let i=1;i<6;i++)source.cues.push({...source.cues[0],id:i===1?longCueId:'alternative-'+i});
+   const catalogBytes=JSON.stringify(catalog);profile.catalog.sha256=createHash('sha256').update(catalogBytes).digest('hex');
+   await ambiguous.route('**/content/content-profile.json',r=>r.fulfill({json:profile}));
+   await ambiguous.route('**/content/source-catalog.json',r=>r.fulfill({contentType:'application/json',body:catalogBytes}));
+   await ambiguous.goto(base);
+   const transcript=ambiguous.getByRole('searchbox',{name:'Search source transcript'});
+   await transcript.fill('timing marker');
+   assert.equal(await ambiguous.locator('#timing-transcript-panel .transcript-cue').count(),6,'all catalog-valid cues, including 128-character punctuation-bearing ID, remain inspectable');
+   const inspect=ambiguous.locator('.transcript-inspect').filter({hasText:'Inspect cue receipt'}).nth(1);
+   await inspect.click();assert.equal(await inspect.getAttribute('aria-expanded'),'true');
+   assert.match(await ambiguous.locator('.transcript-receipt:not([hidden])').innerText(),new RegExp(longCueId.replace('.','\\.')));
+   const previewButton=ambiguous.getByRole('button',{name:'Preview inspected review card'});
+   await previewButton.click();
+   const exact=JSON.parse(await ambiguous.locator('#review-preview').textContent()).args.receipt;
+   assert.equal(exact.cueId,longCueId);assert.equal(exact.sourceVersion,'ambiguity-fixture-v1');
+   await ambiguous.getByRole('button',{name:'Cancel',exact:true}).click();
+   await ambiguous.locator('#language-select').selectOption('ne');assert.equal(await ambiguous.locator('.transcript-receipt:not([hidden])').count(),1);
+   await ambiguous.locator('#language-select').selectOption('en');
+   await ambiguous.evaluate(()=>{window.__staleReceiptAction=document.querySelector('.transcript-receipt:not([hidden]) .actions button:last-child');});
+   await transcript.fill('unavailable wording');assert.equal(await ambiguous.locator('.transcript-receipt:not([hidden])').count(),0);
+   await ambiguous.evaluate(()=>window.__staleReceiptAction.click());assert.equal(await ambiguous.locator('#review-dialog').evaluate(d=>d.open),false);
+   await transcript.fill('timing marker');
+   const question=ambiguous.getByRole('searchbox',{name:'Question for local source lookup'});
+   await question.fill('Where is the timing marker?');await question.press('Enter');
+   const status=ambiguous.locator('#local-answer-status');
+   assert.match(await status.innerText(),/5 of 6 matching source excerpts shown \(truncated\)/);
+   assert.equal(await status.getAttribute('data-state'),'empty','ambiguity must not claim a completed answer');
+   assert.equal(await ambiguous.locator('#local-answer-results li').count(),5);
+   assert.match(await ambiguous.locator('#local-answer-results').innerText(),new RegExp(longCueId.replace('.','\\.')));
+   await ambiguous.locator('#language-select').selectOption('ne');assert.match(await status.innerText(),/६.*५/);
+   await ambiguous.locator('#language-select').selectOption('en');assert.match(await status.innerText(),/5 of 6 matching/);
+   const literal=ambiguous.getByRole('searchbox',{name:'Exact source wording'});
+   await literal.fill('timing marker');await literal.press('Enter');
+   assert.match(await ambiguous.locator('#direct-status').innerText(),/5 of 6 matching source cues shown \(truncated\)/);
+   assert.equal(await ambiguous.locator('#direct-results li').count(),5);
+   await question.fill('unavailable voltage threshold');await question.press('Enter');
+   assert.equal(await status.getAttribute('data-match-count'),null);assert.equal(await ambiguous.locator('#local-answer-results li').count(),0);
+   assert.deepEqual(apiOrMedia,[]);
+  }finally{await ambiguityContext.close();}
+
+  // Synthetic reviewed-mode routing fixture: correct digest-shaped path is not
+  // sufficient. Reject altered bytes before any native player can be mounted;
+  // preserve transcript and recover only on an explicit correct retry.
+  const reviewedContext=await browser.newContext();
+  try{
+   const reviewPage=await reviewedContext.newPage(),requests=[],trackRequests=[];
+   reviewPage.on('request',r=>{if(/\.(?:vtt|svg)(?:\?|$)/.test(r.url())&&r.url().startsWith(base))trackRequests.push(r.url());});
+   const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
+   const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
+   const source=catalog.sources[0],mediaBytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4')),textBytes=fs.readFileSync(path.join(app,'public/transcripts/synthetic-timing.txt'));
+   profile.mode='reviewed';profile.media.video='/media/release/'+source.mediaHash+'/lesson.mp4';profile.transcript.path='/transcripts/release/'+source.hash+'/lesson.txt';
+   const {renderReviewedGuideDerivative}=await import('../../../packages/sutra-content-profile/guide-derivative.js');
+   const guideClaim={sourceKind:'guide',sourceId:'test-guide',sourceVersion:'v1',title:'Test guide',scope:profile.videoClaim.scope,claimKey:profile.videoClaim.claimKey,value:profile.videoClaim.value,excerpt:'Test only.',provenance:'Synthetic routing test, not reviewed content',observedAt:profile.observedAt,dateBasis:'Synthetic routing fixture'};
+   const validGuide=renderReviewedGuideDerivative(guideClaim,'claim','a'.repeat(64));
+   const wrongGuide=renderReviewedGuideDerivative({...guideClaim,excerpt:'Different claim.'},'claim','a'.repeat(64)).replace('<h2>Reviewed excerpt</h2>','<h2>Test only.</h2>');
+   const guideHash=require('node:crypto').createHash('sha256').update(validGuide).digest('hex');
+   profile.guideClaim={...guideClaim,sourceHref:'/guides/release/'+guideHash+'/guide.html#claim',sourceHash:guideHash};
+   let guideRequests=0;
+   await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>{guideRequests++;assert.equal(r.request().headers().cookie,undefined);return r.fulfill({contentType:'text/html',body:validGuide});});
+   await reviewPage.route('**/content/content-profile.json',r=>r.fulfill({json:profile}));
+   await reviewPage.route('**'+profile.transcript.path,r=>r.fulfill({contentType:'text/plain',body:textBytes}));
+   let phase='wrong',releaseHeld,held=false;
+   await reviewPage.route('**'+profile.media.video+'*',async r=>{
+    requests.push(r.request().url());assert.equal(r.request().headers().cookie,undefined);
+    if(phase==='hold'){held=true;await new Promise(resolve=>{releaseHeld=resolve;});return r.abort().catch(()=>{});}
+    return r.fulfill({contentType:'video/mp4',body:phase==='wrong'?Buffer.concat([mediaBytes,Buffer.from([0])]):mediaBytes});
+   });
+   await reviewedContext.addCookies([{name:'media-canary',value:'not-for-media',url:base}]);
+   await reviewPage.goto(base);await reviewPage.getByRole('searchbox',{name:'Search source transcript'}).fill('timing marker');assert.equal(requests.length,0);
+   assert.equal(guideRequests,0,'guide content remains opt-in');
+   await reviewPage.getByRole('button',{name:'Check written source integrity'}).click();
+   await reviewPage.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('bytes and anchored excerpt match'));
+   assert.equal(guideRequests,1);
+   // Even an internally hash-consistent profile must not turn a matching
+   // heading (rather than the declared text-only excerpt) into evidence.
+   // Correct digest and exact visible-text match do not make an arbitrary
+   // HTML document an inspectable compiler derivative.
+   for(const deceptive of [
+    '<html><head><style>section{display:none}</style></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
+    '<html><head><meta http-equiv="refresh" content="0;url=https://not-contacted.invalid/"></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
+    '<html><body><section id="claim" class="concealed"><blockquote>Test only.</blockquote></section></body></html>',
+    validGuide.replace('<body>','<body hidden>'),
+    validGuide.replace('<html lang="en">','<html lang="en" style="display:none">'),
+    validGuide.replace('Synthetic routing fixture','Different date basis')
+   ]){
+    const digest=require('node:crypto').createHash('sha256').update(deceptive).digest('hex');
+    profile.guideClaim.sourceHref='/guides/release/'+digest+'/guide.html#claim';profile.guideClaim.sourceHash=digest;
+    await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>r.fulfill({contentType:'text/html',body:deceptive}));
+    await reviewPage.reload();await reviewPage.getByRole('button',{name:'Check written source integrity'}).click();
+    await reviewPage.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
+   }
+   const wrongHash=require('node:crypto').createHash('sha256').update(wrongGuide).digest('hex');
+   profile.guideClaim.sourceHref='/guides/release/'+wrongHash+'/guide.html#claim';profile.guideClaim.sourceHash=wrongHash;
+   await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>r.fulfill({contentType:'text/html',body:wrongGuide}));
+   await reviewPage.reload();await reviewPage.getByRole('button',{name:'Check written source integrity'}).click();
+   await reviewPage.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
+   await reviewPage.getByRole('searchbox',{name:'Search source transcript'}).fill('timing marker');
+   const load=reviewPage.getByRole('button',{name:'Load source media'});
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='error');
+   assert.equal(await reviewPage.locator('video').count(),0);assert.equal(await reviewPage.locator('#timing-transcript-panel .transcript-cue').count(),1);
+   assert.equal(await reviewPage.locator('#seek-timing').isHidden(),true);
+   phase='hold';await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='loading');
+   for(let i=0;i<50&&!held;i++)await new Promise(r=>setTimeout(r,20));assert.equal(held,true);
+   await reviewPage.getByRole('button',{name:'Cancel media load'}).click();
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='cancelled');
+   releaseHeld();assert.equal(await reviewPage.locator('video').count(),0);
+   phase='correct';await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   assert.match(await reviewPage.locator('#timing-status').textContent(),/Reviewed hash-checked/);
+   assert.equal(await reviewPage.locator('video').evaluate(v=>v.currentSrc.startsWith('blob:')),true);
+   await reviewPage.locator('#language-select').selectOption('ne');
+   assert.equal(await reviewPage.locator('video').count(),1);
+   await reviewPage.locator('#language-select').selectOption('en');
+   assert.equal(await reviewPage.locator('video').count(),1);
+   assert.equal(requests.length,3,'only explicit full media GETs; no remote native refetch');
+   await reviewPage.locator('video').evaluate(video=>{[...video.textTracks].find(t=>t.kind==='captions').mode='showing';});
+   await reviewPage.waitForFunction(()=>[...document.querySelector('video').textTracks].find(t=>t.kind==='captions')?.cues?.length===1);
+   const native=await reviewPage.locator('video').evaluate(video=>{const cue=[...video.textTracks].find(t=>t.kind==='captions').cues[0];return {start:cue.startTime,end:cue.endTime,text:cue.getCueAsHTML().textContent};});
+   assert.deepEqual(native,{start:source.cues[0].start,end:source.cues[0].end,text:source.cues[0].text});
+   assert.equal(trackRequests.length,0,'reviewed playback cannot fetch independent poster or track bytes');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   // The bytes may have the same duration and even the same contents, but
+   // a native source not created by this verified mount cannot certify a cue.
+   const originalBlob=await reviewPage.locator('video').evaluate(v=>v.currentSrc);
+   const swapped=await reviewPage.evaluate(async src=>{
+    const blob=await (await fetch(src)).blob(),url=URL.createObjectURL(blob),video=document.querySelector('video');
+    video.src=url;video.load();return url;
+   },originalBlob);
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Native media or track source changed'));
+   assert.equal(await reviewPage.locator('video').count(),0);assert.equal(await reviewPage.locator('#seek-timing').isHidden(),true);
+   assert.equal(await reviewPage.locator('#timing-transcript-panel .transcript-cue').count(),1);
+   assert.equal(await reviewPage.evaluate(async src=>{try{await fetch(src);return false;}catch{return true;}},originalBlob),true,'old verified media blob revoked');
+   await reviewPage.evaluate(src=>URL.revokeObjectURL(src),swapped);
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   const originalTrack=await reviewPage.locator('video track[kind="captions"]').getAttribute('src');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).focus();
+   const substitutedTrack=await reviewPage.locator('video track[kind="captions"]').evaluate(track=>{
+    const url=URL.createObjectURL(new Blob(['WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nsubstituted caption\n'],{type:'text/vtt'}));track.src=url;return url;
+   });
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Native media or track source changed'));
+   assert.equal(await reviewPage.locator('video').count(),0);
+   assert.equal(await reviewPage.evaluate(async src=>{try{await fetch(src);return false;}catch{return true;}},originalTrack),true,'old reviewed track blob revoked');
+   assert.equal(await reviewPage.evaluate(()=>document.activeElement?.id),'load-timing','revoked native controls return keyboard focus to the explicit recovery action');
+   await reviewPage.evaluate(src=>URL.revokeObjectURL(src),substitutedTrack);
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   assert.equal(requests.length,5,'only explicit retries reload source bytes; no implicit replacement');
+  }finally{await reviewedContext.close();}
+
+  let delayed=true;
+  await page.route('**/media/timing-fixture.mp4*',async route=>{
+   if(delayed){delayed=false;await new Promise(r=>setTimeout(r,350));}
+   await route.continue();
+  });
+
+  await page.goto(base);
+  await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.deepEqual(await page.locator('.journey-map a').evaluateAll(nodes=>nodes.map(n=>({href:n.getAttribute('href'),text:n.textContent.trim()}))),[
+   {href:'#local-answer',text:'1 · Ask locallyAsk a question for exact source cues. No model call.'},
+   {href:'#comparison-title',text:'2 · Compare evidenceKeep missing or conflicting sources visibly separate.'},
+   {href:'#review-title',text:'3 · Keep a reviewed referencePreview the exact receipt before anything is saved.'}
+  ]);
+  assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#comparison-title,#review-title,#developer-tools-title,#runtime-title')].map(x=>x.id)),['comparison-title','review-title','developer-tools-title','runtime-title'],'core comparison/review must precede developer tooling');
+
+  // Direct evidence selection is a complete usable path before inference or media transfer.
+  const direct=page.getByRole('searchbox',{name:'Exact source wording'});
+  const requestsBefore=await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')||x.name.includes('timing-fixture.mp4')).length);
+  await direct.fill('unavailable voltage threshold');await direct.press('Enter');
+  assert.equal(await page.locator('#direct-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#direct-results li').count(),0);
+  await direct.fill('timing marker');await direct.press('Enter');
+  assert.equal(await page.locator('#direct-status').getAttribute('data-state'),'completed');
+  assert.match(await page.locator('#direct-status').innerText(),/0 model calls, 0 network requests/);
+  assert.equal(await page.locator('#direct-results li').count(),1);
+  await page.getByRole('button',{name:'Seek to matched cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
+  assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')||x.name.includes('timing-fixture.mp4')).length),requestsBefore);
+  await page.getByRole('button',{name:'Preview matched review card'}).click();
+  await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
+  const exactPreview=JSON.parse(await page.locator('#review-preview').textContent()).args.receipt;
+  assert.equal(exactPreview.cueId,'timing-marker');assert.equal(exactPreview.excerpt,'Synthetic timing marker. This is not a training instruction.');
+  await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('sutra.review-cards.v2'))[0].receipt);
+  assert.deepEqual(saved,exactPreview);
+  await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+  assert.equal(await page.locator('#review-list li').count(),0);
+  await direct.fill('unavailable voltage threshold');assert.equal(await page.locator('#direct-results li').count(),0);
+  await page.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
+  assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
+
+  assert.equal(await page.getByRole('button',{name:'Demonstrate development-only synthetic conflict'}).count(),0,'production hero must not expose the synthetic contradiction fixture');
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
+
+  // The local citation-only question path is usable without model, provider, or media.
+  const localQuestion=page.getByRole('searchbox',{name:'Question for local source lookup'});
+  await localQuestion.fill('Where is the timing marker?');
+  const beforeLocal=await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')).length);
+  await page.getByRole('button',{name:'Find cited source locally',exact:true}).click();
+  assert.equal(await page.locator('#local-answer-status').getAttribute('data-state'),'completed');
+  assert.equal(await page.locator('#local-answer-results li').count(),1);
+  assert.match(await page.locator('#local-answer-results').innerText(),/Synthetic timing marker/);
+  assert.match(await page.locator('#local-answer-status').innerText(),/0 model calls, 0 network requests/);
+  assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')).length),beforeLocal);
+  await localQuestion.fill('synthetic timing marker training instruction 7');
+  await localQuestion.press('Enter');
+  assert.equal(await page.locator('#local-answer-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#local-answer-results li').count(),0);
+  await localQuestion.fill('What is the safe voltage threshold?');
+  await page.getByRole('button',{name:'Find cited source locally',exact:true}).click();
+  assert.equal(await page.locator('#local-answer-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#local-answer-results li').count(),0);
+  const preMediaSearch=page.getByRole('searchbox',{name:'Search source transcript'});
+  await preMediaSearch.fill('ｔｉｍｉｎｇ marker');
+  await page.getByRole('button',{name:'Load source media'}).click();
+  assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'loading','visible loading state appears while media bytes are delayed');
+  await preMediaSearch.focus();
+  await preMediaSearch.evaluate(input=>input.setSelectionRange(2,5,'backward'));
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
+  assert.match(await page.locator('#timing-status').innerText(),/Actual media duration: 8.0 seconds/);
+  assert.equal(await preMediaSearch.inputValue(),'ｔｉｍｉｎｇ marker','media loading must preserve the exact typed transcript filter');
+  assert.deepEqual(await preMediaSearch.evaluate(input=>({focused:document.activeElement===input,start:input.selectionStart,end:input.selectionEnd,direction:input.selectionDirection})),{focused:true,start:2,end:5,direction:'backward'},'media verification must preserve the active transcript selection');
+
+  await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Source cue reached'));
+  assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'completed');
+
+  await direct.fill('timing marker');await direct.press('Enter');
+  await page.getByRole('button',{name:'Seek to matched cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Native media reached'));
+  const search=page.getByRole('searchbox',{name:'Search source transcript'});
+  await search.fill('timing marker');
+  const cue=page.locator('#timing-transcript-panel .transcript-cue');
+  assert.equal(await cue.count(),1);
+  await cue.click();
+  await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status')?.textContent.includes('Native media reached'));
+  const obsoleteCue=await cue.elementHandle();
+  await search.fill('unavailable voltage threshold');
+  const transcriptStatus=page.locator('#timing-transcript-panel .transcript-status');
+  assert.match(await transcriptStatus.innerText(),/No transcript cues match/);
+  await page.evaluate(()=>{const media=document.querySelector('video');media.pause();media.currentTime=0;});
+  await page.waitForFunction(()=>{const media=document.querySelector('video');return !media.seeking&&media.currentTime<.1;});
+  await obsoleteCue.evaluate(async button=>{button.click();await new Promise(r=>setTimeout(r,30));});
+  assert.ok(await page.locator('video').evaluate(media=>media.currentTime<.1),'detached transcript control cannot seek');
+  assert.match(await transcriptStatus.innerText(),/No transcript cues match/);
+  await obsoleteCue.dispose();await search.fill('timing marker');
+
+  await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
+  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status')?.textContent.includes('Native media reached'));
+
+  // Two distinct UI entry points request the same native cue. Hold the first
+  // request, then allow the second to reach real native media. Only the second
+  // operation may claim success, even though the timestamp matches both.
+  await page.evaluate(()=>{
+   const video=document.querySelector('video'),time=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime'),seeking=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'seeking');
+   video.pause();let pending=true;
+   Object.defineProperty(video,'seeking',{configurable:true,get(){return pending||seeking.get.call(this);}});
+   Object.defineProperty(video,'currentTime',{configurable:true,get(){return time.get.call(this);},set(t){if(pending){pending=false;return;}time.set.call(this,t);}});
+   // Keep the first operation pending until the newer action is explicitly selected.
+   let held=true;Object.defineProperty(video,'seeking',{configurable:true,get(){return held||seeking.get.call(this);}});
+   window.__releaseSutraSeek=()=>{held=false;};
+  });
+  try{
+   await page.getByRole('button',{name:'Seek to matched cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   await page.evaluate(()=>window.__releaseSutraSeek());
+   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
+  }finally{await page.evaluate(()=>{const v=document.querySelector('video');delete v.currentTime;delete v.seeking;delete window.__releaseSutraSeek;});}
+
+  // Revoking a result must cancel its native wait, not merely hide its later
+  // status. Hold a seek with no native event; edit the query, then start a
+  // fresh action. The stale detached control must promptly leave its busy state.
+  await page.evaluate(()=>{
+   const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
+   Object.defineProperty(video,'seeking',{configurable:true,get(){return true;}});
+   window.__receiptSeekWrites=0;
+   Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(){window.__receiptSeekWrites++;}});
+  });
+  try{
+   const stale=await page.getByRole('button',{name:'Seek to matched cue'}).elementHandle();
+   await stale.focus();await page.keyboard.press('Enter');
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   assert.equal(await stale.evaluate(button=>document.activeElement===button),true,'receipt seek retains keyboard focus while waiting');
+   assert.equal(await stale.getAttribute('aria-busy'),'true');
+   assert.equal(await stale.evaluate(button=>button.disabled),false);
+   const initialWrites=await page.evaluate(()=>window.__receiptSeekWrites);
+   assert.equal(initialWrites,1,'first activation makes one native seek request');
+   await page.keyboard.press('Enter');await page.keyboard.press('Space');
+   assert.equal(await page.evaluate(()=>window.__receiptSeekWrites),initialWrites,'repeated keyboard activation cannot restart a busy receipt seek');
+   assert.equal(await stale.evaluate(button=>document.activeElement===button),true);
+   await direct.fill('unavailable voltage threshold');
+   await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),stale,{timeout:1000});
+   assert.equal(await page.locator('#direct-results li').count(),0);
+   await stale.dispose();
+   const featured=page.getByRole('button',{name:'Inspect featured source cue'});
+   await featured.focus();await page.keyboard.press('Enter');
+   await page.waitForFunction(()=>document.querySelector('#seek-timing').getAttribute('aria-busy')==='true');
+   const featuredWrites=await page.evaluate(()=>window.__receiptSeekWrites);
+   assert.equal(featuredWrites,initialWrites+1);
+   assert.equal(await featured.evaluate(button=>document.activeElement===button&&!button.disabled),true);
+   await page.keyboard.press('Enter');await page.keyboard.press('Space');
+   assert.equal(await page.evaluate(()=>window.__receiptSeekWrites),featuredWrites);
+   const compare=page.getByRole('button',{name:'Inspect native video cue at 2 seconds'});
+   await compare.focus();await page.keyboard.press('Enter');
+   await page.waitForFunction(()=>!document.querySelector('#seek-timing').hasAttribute('aria-busy'));
+   assert.equal(await compare.getAttribute('aria-busy'),'true');
+   const compareWrites=await page.evaluate(()=>window.__receiptSeekWrites);
+   assert.equal(compareWrites,featuredWrites+1);
+   assert.equal(await compare.evaluate(button=>document.activeElement===button),true);
+   await page.keyboard.press('Enter');await page.keyboard.press('Space');
+   assert.equal(await page.evaluate(()=>window.__receiptSeekWrites),compareWrites);
+   const held=await cue.elementHandle();await held.click();
+   await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),await compare.elementHandle(),{timeout:1000});
+   await page.waitForFunction(()=>document.querySelector('.transcript-cue')?.getAttribute('aria-busy')==='true');
+   await search.fill('unavailable voltage threshold');
+   await page.waitForFunction(()=>!document.querySelector('.transcript-cue'));
+   await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),held,{timeout:1000});
+   await held.dispose();
+  }finally{await page.evaluate(()=>{const video=document.querySelector('video');delete video.currentTime;delete video.seeking;delete window.__receiptSeekWrites;});}
+  await direct.fill('timing marker');await direct.press('Enter');await search.fill('timing marker');
+  await page.getByRole('button',{name:'Seek to matched cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Native media reached'));
+
+  // Inject a native seek that lands just before the cue, inside the old one-second
+  // tolerance. The actual native time is observable, but no cue success is allowed.
+  await page.evaluate(()=>{const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(t){d.set.call(this,t===2?1.5:t);}});});
+  try{
+   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('no seek success'));
+   await cue.click();await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('No seek success'));
+   await page.getByRole('button',{name:'Seek to matched cue'}).click();await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
+   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('no successful seek'));
+   assert.ok(await page.locator('video').evaluate(v=>v.currentTime<2&&v.currentTime>=1));
+  }finally{await page.evaluate(()=>{delete document.querySelector('video').currentTime;});}
+  await cue.click();await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('Native media reached'));
+
+  await page.getByRole('button',{name:'Preview source review card'}).click();
+  await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
+  assert.match(await page.locator('#review-preview').innerText(),/synthetic-timing-fixture/);
+  await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
+  assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+
+  await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();
+  await page.getByRole('dialog',{name:'External contact request'}).waitFor();
+  await page.getByRole('button',{name:'Deny',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#consent-status')?.dataset.state==='denied');
+  assert.match(await page.locator('#consent-status').innerText(),/Local lesson and evidence remain available/);
+  assert.equal(external.length,0,'synthetic denial makes no external request');
+
+  // Local learning remains usable after refusal.
+  assert.equal(await page.locator('video').count(),1);
+  assert.equal(await search.count(),1);
+  await search.fill('marker');
+  assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
+  await page.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
+
+  await page.setViewportSize({width:360,height:800});
+  await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+  assert.equal(await page.locator('#review-list li').count(),0);
+
+  // Re-run the local core path at 360 px using keyboard activation only.
+  await page.reload();
+  await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  await page.getByRole('button',{name:'Check example',exact:true}).focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
+  await page.getByRole('button',{name:'Load source media'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
+  await page.getByRole('button',{name:'Inspect featured source cue'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Source cue reached'));
+  await page.getByRole('button',{name:'Preview source review card'}).focus();await page.keyboard.press('Enter');
+  await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
+  await page.getByRole('button',{name:'Confirm local save'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
+  assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+  await page.getByRole('button',{name:'Delete local review'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+  assert.equal(await page.locator('#review-list li').count(),0);
+
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.review-cards.v2')),null);
+  assert.equal(await page.locator('#download-review-attempt').isHidden(),true);
+  assert.equal(await page.locator('#review-preview').textContent(),'');
+  await page.evaluate(()=>{localStorage.setItem('sutra.review-cards.v2','corrupt fixture canary');localStorage.setItem('unrelated-browser-key','keep');});
+  await page.reload();
+  await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  assert.match(await page.locator('#review-status').innerText(),/could not be read/);
+  await page.getByRole('button',{name:'Clear all local review data'}).click();
+  await page.getByRole('button',{name:'Keep local reviews'}).click();
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.review-cards.v2')),'corrupt fixture canary');
+  await page.getByRole('button',{name:'Clear all local review data'}).click();
+  await page.getByRole('button',{name:'Confirm clear local reviews'}).click();
+  await page.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('cleared from this browser'));assert.match(await page.locator('#review-status').innerText(),/cleared from this browser/);
+  assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sutra.review-cards.v2'),localStorage.getItem('unrelated-browser-key'),sessionStorage.length]),[null,'keep',0]);
+  await page.reload();
+  await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  assert.equal(await page.locator('#review-list li').count(),0);
+  assert.equal(await page.locator('#download-review-attempt').isHidden(),true);
+  assert.deepEqual(errors,[]);
+  console.log('PASS: visible hero journey covers empty/loading/conflict/success/denied states, evidence-to-native-media seek, review save/delete, refusal resilience and a 360px keyboard-activated local completion without developer-console setup or external requests.');
+ }finally{
+  await browser?.close().catch(()=>{});
+  server.kill('SIGTERM');
+  await new Promise(r=>setTimeout(r,120));
+  if(!exited)server.kill('SIGKILL');
+ }
+})().catch(error=>{console.error(error);process.exit(1);});

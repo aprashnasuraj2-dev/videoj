@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Synthetic timing fixture poster</title>
+<desc id="desc">A plain development-only poster marking the SUTRA timing fixture, not an original lesson.</desc>
+<rect width="1600" height="900" fill="#183e3d"/>
+<rect x="120" y="120" width="1360" height="660" rx="28" fill="#f5f4ee"/>
+<text x="180" y="355" font-family="system-ui,sans-serif" font-size="88" font-weight="700" fill="#163c3d">SUTRA</text>
+<text x="180" y="465" font-family="system-ui,sans-serif" font-size="56" fill="#163c3d">Synthetic timing fixture</text>
+<text x="180" y="555" font-family="system-ui,sans-serif" font-size="34" fill="#596e64">Development media · not original lesson footage</text>
+</svg>

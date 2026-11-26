@@ -21,10 +21,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P081-02` Include source SHA and deterministic asset inventory in release manifests
 - [ ] `SUTRA-P081-03` Calculate content hashes of graphs, runtime files and media references
 - [ ] `SUTRA-P081-04` Check static bundles contain no credentials or private inputs
-- [ ] `SUTRA-P081-05` Ensure source integration cannot empty other player output directories
+- [x] `SUTRA-P081-05` Ensure source integration cannot empty other player output directories
 - [ ] `SUTRA-P081-06` Provide build/install instructions matching actual package locations
 - [ ] `SUTRA-P081-07` Verify a clean extraction matches the manifest checksums
-- [ ] `SUTRA-P081-08` Keep deployment configuration placeholders distinct from real secrets
+- [x] `SUTRA-P081-08` Keep deployment configuration placeholders distinct from real secrets
 - [ ] `SUTRA-P081-09` Produce and review the phase artifact: dist-sutra/, dist-sutra-peer/ and release manifests.
 - [ ] `SUTRA-P081-10` Close phase 081 only after its applicable tasks have evidence and its exit condition is observed: A clean extraction matches the checksums; a SUTRA build cannot alter existing player outputs.
 
@@ -60,7 +60,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P083-05` Confirm the default funded model path from a clean browser session
 - [ ] `SUTRA-P083-06` Smoke-check existing Patro, DHAGO and DETOUR routes
 - [ ] `SUTRA-P083-07` Record rollback target and deployed artifact hashes
-- [ ] `SUTRA-P083-08` Do not treat a source merge or staged branch as proof of production release
+- [x] `SUTRA-P083-08` Do not treat a source merge or staged branch as proof of production release
 - [ ] `SUTRA-P083-09` Produce and review the phase artifact: Proposed production URLs activated and release record.
 - [ ] `SUTRA-P083-10` Close phase 083 only after its applicable tasks have evidence and its exit condition is observed: Both new origins serve the intended candidate over HTTPS; existing public player and Patro routes pass a smoke check.
 
@@ -72,12 +72,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
 
 - [ ] `SUTRA-P084-01` Create versioned public source and release assets for each Open Kit tool
-- [ ] `SUTRA-P084-02` Include independent synthetic examples and actual runnable entry points
+- [x] `SUTRA-P084-02` Include independent synthetic examples and actual runnable entry points
 - [ ] `SUTRA-P084-03` Publish quickstart URLs usable without an account
-- [ ] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
-- [ ] `SUTRA-P084-05` Check tools do not require private learner media or credentials
+- [x] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
+- [x] `SUTRA-P084-05` Check tools do not require private learner media or credentials
 - [ ] `SUTRA-P084-06` Run the documented clean-host install on the release version
-- [ ] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
+- [x] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
 - [ ] `SUTRA-P084-08` Record actual public URLs and release hashes for submission copy
 - [ ] `SUTRA-P084-09` Produce and review the phase artifact: Community tool URLs and versioned release package.
 - [ ] `SUTRA-P084-10` Close phase 084 only after its applicable tasks have evidence and its exit condition is observed: Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Explain browser versus server responsibilities, artifact resolution, consent, evidence validation, privacy, hosting, measured performance and current limits. Include exact reproduction commands.
 - **Phase exit:** Every implementation claim has a source path or test evidence; advertised features match the deployed build.
 
-- [ ] `SUTRA-P085-01` Explain browser graph execution versus server inference responsibilities
-- [ ] `SUTRA-P085-02` Document artifact resolution, peer policy and registered actions
-- [ ] `SUTRA-P085-03` Describe cue validation, context filtering and reviewed receipts
+- [x] `SUTRA-P085-01` Explain browser graph execution versus server inference responsibilities
+- [x] `SUTRA-P085-02` Document artifact resolution, peer policy and registered actions
+- [x] `SUTRA-P085-03` Describe cue validation, context filtering and reviewed receipts
 - [ ] `SUTRA-P085-04` Report actual evaluation, cost and browser results with dates
-- [ ] `SUTRA-P085-05` Include clean installation and reproduction commands
-- [ ] `SUTRA-P085-06` Document media hosting, cache behavior and quota assumptions
-- [ ] `SUTRA-P085-07` Link implementation claims to source paths or observed checks
-- [ ] `SUTRA-P085-08` State current limits and untested environments without marketing guarantees
-- [ ] `SUTRA-P085-09` Produce and review the phase artifact: Technical_Report.md and PDF-ready report content.
+- [x] `SUTRA-P085-05` Include clean installation and reproduction commands
+- [x] `SUTRA-P085-06` Document media hosting, cache behavior and quota assumptions
+- [x] `SUTRA-P085-07` Link implementation claims to source paths or observed checks
+- [x] `SUTRA-P085-08` State current limits and untested environments without marketing guarantees
+- [x] `SUTRA-P085-09` Produce and review the phase artifact: Technical_Report.md and PDF-ready report content.
 - [ ] `SUTRA-P085-10` Close phase 085 only after its applicable tasks have evidence and its exit condition is observed: Every implementation claim has a source path or test evidence; advertised features match the deployed build.
 
 ## Phase 086 - Write the community impact report
@@ -107,14 +107,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Document the builder problem, each reusable artifact, installation results, license, external trial counts and next maintenance steps. Separate usability feedback from adoption or operational impact.
 - **Phase exit:** The report contains actual evidence and limitations; same-owner demo origins are not counted as external adopters.
 
-- [ ] `SUTRA-P086-01` Explain which builder problem each reusable tool solves
+- [x] `SUTRA-P086-01` Explain which builder problem each reusable tool solves
 - [ ] `SUTRA-P086-02` Link versioned source, license, documentation and working example
 - [ ] `SUTRA-P086-03` Report actual outside-builder counts, install times and interventions
-- [ ] `SUTRA-P086-04` Separate installation usability from production adoption
+- [x] `SUTRA-P086-04` Separate installation usability from production adoption
 - [ ] `SUTRA-P086-05` Summarize target-user task results with sample-size limitations
-- [ ] `SUTRA-P086-06` Identify limitations and a realistic maintenance boundary
-- [ ] `SUTRA-P086-07` Avoid counting same-owner origins as community users
-- [ ] `SUTRA-P086-08` Create a short truthful section usable in the final Devpost description
+- [x] `SUTRA-P086-06` Identify limitations and a realistic maintenance boundary
+- [x] `SUTRA-P086-07` Avoid counting same-owner origins as community users
+- [x] `SUTRA-P086-08` Create a short truthful section usable in the final Devpost description
 - [ ] `SUTRA-P086-09` Produce and review the phase artifact: Community_Tools_and_Impact.md with public links.
 - [ ] `SUTRA-P086-10` Close phase 086 only after its applicable tasks have evidence and its exit condition is observed: The report contains actual evidence and limitations; same-owner demo origins are not counted as external adopters.
 
@@ -128,11 +128,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P087-01` Start from a clean checkout at the final candidate revision
 - [ ] `SUTRA-P087-02` Run documented dependency installation and app/peer builds
 - [ ] `SUTRA-P087-03` Run required player checks if shared player source changed
-- [ ] `SUTRA-P087-04` Verify Open Kit commands without the learner application
+- [x] `SUTRA-P087-04` Verify Open Kit commands without the learner application
 - [ ] `SUTRA-P087-05` Inspect distributed archives, bundles and trace exports for secrets
 - [ ] `SUTRA-P087-06` Record environment, commands, exit codes and evidence locations
-- [ ] `SUTRA-P087-07` Ensure lockfiles and pinned runtime are sufficient for reproduction
-- [ ] `SUTRA-P087-08` Report missing hardware/network verification as untested rather than passing
+- [x] `SUTRA-P087-07` Ensure lockfiles and pinned runtime are sufficient for reproduction
+- [x] `SUTRA-P087-08` Report missing hardware/network verification as untested rather than passing
 - [ ] `SUTRA-P087-09` Produce and review the phase artifact: Reproduction log and artifact-scan findings.
 - [ ] `SUTRA-P087-10` Close phase 087 only after its applicable tasks have evidence and its exit condition is observed: A fresh builder can reproduce the release; no management token, provider key or participant personal data remains in public assets.
 
@@ -143,15 +143,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Provide a quickstart, sample issues, compatibility boundaries, security reporting and a minimal changelog. Avoid claiming an ongoing support commitment that cannot be met.
 - **Phase exit:** A newcomer knows what to run, what to reuse and where to report a problem without reading the entire product codebase.
 
-- [ ] `SUTRA-P088-01` Write a short clean-install and first-invocation contributor path
-- [ ] `SUTRA-P088-02` Explain package boundaries and supported compatibility versions
-- [ ] `SUTRA-P088-03` Provide minimal reproducible issue-reporting guidance
-- [ ] `SUTRA-P088-04` Describe safe security reporting without publishing exploit secrets
-- [ ] `SUTRA-P088-05` Document contribution scope and examples suitable for newcomers
-- [ ] `SUTRA-P088-06` Keep changelog entries tied to public versions
-- [ ] `SUTRA-P088-07` Avoid promises of indefinite hosted support or response times
+- [x] `SUTRA-P088-01` Write a short clean-install and first-invocation contributor path
+- [x] `SUTRA-P088-02` Explain package boundaries and supported compatibility versions
+- [x] `SUTRA-P088-03` Provide minimal reproducible issue-reporting guidance
+- [x] `SUTRA-P088-04` Describe safe security reporting without publishing exploit secrets
+- [x] `SUTRA-P088-05` Document contribution scope and examples suitable for newcomers
+- [x] `SUTRA-P088-06` Keep changelog entries tied to public versions
+- [x] `SUTRA-P088-07` Avoid promises of indefinite hosted support or response times
 - [ ] `SUTRA-P088-08` Check a new reader can locate tool entry points quickly
-- [ ] `SUTRA-P088-09` Produce and review the phase artifact: CONTRIBUTING and maintenance notes for SUTRA/Open Kit.
+- [x] `SUTRA-P088-09` Produce and review the phase artifact: CONTRIBUTING and maintenance notes for SUTRA/Open Kit.
 - [ ] `SUTRA-P088-10` Close phase 088 only after its applicable tasks have evidence and its exit condition is observed: A newcomer knows what to run, what to reuse and where to report a problem without reading the entire product codebase.
 
 ## Phase 089 - Rehearse rollback and judging availability
@@ -166,9 +166,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P089-03` Check rollback preserves valid graph/runtime/media combinations
 - [ ] `SUTRA-P089-04` Estimate judging-period model requests and available funding
 - [ ] `SUTRA-P089-05` Confirm public site, peer, media and default inference remain accessible
-- [ ] `SUTRA-P089-06` Recheck official judging end time in Nepal and UTC
-- [ ] `SUTRA-P089-07` Document provider drift and outages as residual availability risks
-- [ ] `SUTRA-P089-08` Record manual recovery steps without pretending monitoring is already scheduled
+- [x] `SUTRA-P089-06` Recheck official judging end time in Nepal and UTC
+- [x] `SUTRA-P089-07` Document provider drift and outages as residual availability risks
+- [x] `SUTRA-P089-08` Record manual recovery steps without pretending monitoring is already scheduled
 - [ ] `SUTRA-P089-09` Produce and review the phase artifact: Rollback runbook and judging-availability budget.
 - [ ] `SUTRA-P089-10` Close phase 089 only after its applicable tasks have evidence and its exit condition is observed: Rollback is reproducible; site and funded default inference are planned through at least 19 Jan Nepal time, subject to rechecked official dates.
 

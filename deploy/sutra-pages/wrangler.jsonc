@@ -1,0 +1,11 @@
+{
+  "name": "sutra-learner",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-11-23",
+  "services": [
+    {
+      "binding": "SUTRA_API",
+      "service": "sutra-api-private"
+    }
+  ]
+}

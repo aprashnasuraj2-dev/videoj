@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "description": "SUTRA local learner/evidence network. Original content and live inference are not connected."
+  },
+  "max_steps": 4,
+  "tools": [
+    {
+      "name": "learner",
+      "function": {
+        "description": "Route a learning question to the evidence agent and preserve source uncertainty.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Delegate source inspection to evidence. Do not invent sources, facts or successful actions. A supplied catalog match means consistency only.",
+      "tools": [
+        "evidence"
+      ]
+    },
+    {
+      "name": "evidence",
+      "function": {
+        "description": "Inspect source reference consistency and clearly separate it from factual truth.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Use the registered read-only source tools. Return exact cue receipts and explain source consistency does not establish factual truth. The catalog is synthetic.",
+      "tools": [
+        {
+          "url": "/api/source-tools"
+        }
+      ]
+    }
+  ]
+}

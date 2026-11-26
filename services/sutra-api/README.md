@@ -7,12 +7,12 @@ public release. Existing AafnaiPatro/player routes have not been changed.
 
 ## Endpoints
 
-- `POST /api/infer`: fixed provider, validated payload, global transactional quota,
-  sanitized stream. Returns 503 while disabled or incompletely configured.
+- `POST /api/infer`: internal SUTRA same-origin alias for the fixed funded provider path.
+- `POST /api/v1/chat/completions`: publisher-funded OpenAI-compatible browser-router facade backed by the **same** validation/quota/streaming core. It accepts no visitor Authorization header and returns 503 while disabled/incompletely configured.
 - `/api/source-tools`: restricted stateless MCP JSON transport, protocol pin
-  2025-06-18; initialize/initialized, tools/list, tools/call; GET returns 405.
+  2025-06-18; initialize/initialized, tools/list, tools/call; GET returns 405. Initialization accepts only bounded standard client capabilities (`roots`, empty `sampling`, empty `elicitation`) and never turns them into server-side powers.
   Origin checks protect the browser boundary. The catalog is public synthetic data.
-- `GET /api/status`: configured/disabled inference and honest synthetic-catalog state.
+- `GET /api/status`: configured/disabled inference and honest synthetic-catalog state; when configured, publishes `routerBase: /api/v1`, `publisherFunded: true`, `byok: false` plus the approved model.
 - Other `/api/*`: 404, never the HTML asset fallback.
 
 Development/preview middleware invokes this same handler with no secrets and
@@ -21,33 +21,27 @@ source test uses real endpoint requests with deterministic scripted decisions.
 This client deliberately supports this site's JSON-only MCP profile, not arbitrary
 MCP servers, SSE responses, auth flows or third-party discovery.
 
-## Operator setup, before enabling paid inference
+## Operator setup, before enabling any hosted inference
 
 1. Build the isolated app: `npm --prefix apps/sutra ci` and
    `npm --prefix apps/sutra run build`.
 2. Choose an actual available provider model and obtain budget authorization.
    `SUTRA_MODELS` is an exact comma-separated allowlist (1–3 models). It is empty
    by default. Model availability, pricing and provider compatibility are unverified.
-3. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure secrets through
-   Cloudflare secret management: `SUTRA_PROVIDER_KEY` and a random
-   `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters. Never use a VITE variable,
+3. Choose `SUTRA_INFERENCE_BACKEND=self_hosted` (recommended if an operator can run a GPU gateway) or explicitly select `hosted` for an externally billed provider. Without an explicit backend, **inference is disabled** even when a key exists. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure a random `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters through Cloudflare secret management. Hosted mode additionally requires `SUTRA_PROVIDER_KEY`; self-hosted mode instead requires `SUTRA_SELF_HOSTED_TOKEN` and the exact authenticated gateway URL. Never use a VITE variable,
    frontend storage, browser key entry, committed `.env` or a ZIP to supply these.
-4. Keep the default quotas conservative: 100 model calls/day global; 8/client/day;
-   512 output tokens/call. Hard configuration maxima: 1,000 global, client <= global,
-   1,024 output tokens. A full agent task may consume up to 8 model calls.
+4. Keep the default quotas conservative: 100 model calls/day global; 8/client/day; **2 active provider calls at once**; 512 output tokens/call. Public source reads have their own default ceiling of 10,000/day global and 500/client/day; source discovery and malformed calls do not spend that allowance. Hard configuration maxima: 1,000 global, client <= global, 10 concurrent calls, 1,024 output tokens. A full agent task may consume up to 8 model calls.
 5. Apply/review the DO migration and validate the Wrangler bundle/deployment in a
    separate nonproduction environment. Wrangler 4.166.0 dry-run passed on 2026-11-23 (72 assets, 32.49 KiB Worker /9.16 KiB gzip); no deployment has been observed. Account routing, secret setup and live visitor checks
    remain pending. Enable only after budget/model approval and those checks.
 
-Only the fixed `https://api.openai.com/v1/chat/completions` can receive the server
-key. Caller-supplied URL, authorization, token caps and extra payload fields are
+In explicit `hosted` mode, only the fixed `https://api.openai.com/v1/chat/completions` receives the external server key. In `self_hosted` mode only the operator-configured canonical HTTPS `SUTRA_SELF_HOSTED_UPSTREAM_URL` ending in `/v1/chat/completions` receives the separate `SUTRA_SELF_HOSTED_TOKEN`; no user-entered endpoint can be forwarded. A private authenticated TLS gateway is required. `localhost`, raw IPs, URL credentials, queries, fragments, redirects and unauthenticated gateways are refused. The token remains server-side; zero provider invoice does not mean zero machine, electricity, bandwidth or operations cost. Never expose an unprotected Ollama/llama.cpp server on the public internet. The Worker is not a LAN-to-browser bridge. Caller-supplied URL, authorization, token caps and extra payload fields are
 rejected. Request body <=32 KiB, 32 messages, 24,000 message-content characters,
 16 tool schemas; supported closed schemas only. Output/stream caps are documented
 in the inference package. Body/quota deadline: 5 seconds; provider deadline: 30.
-No automatic retries or quota refunds follow ambiguous/failed provider requests.
+No automatic provider retries or daily-quota refunds follow ambiguous/failed provider requests. Active-concurrency leases are released separately so a failed stream does not block all later traffic until the next UTC day.
 
-The quota DO uses one global named instance and an atomic storage transaction.
-Daily client identities are HMAC hashes of the Cloudflare-supplied IP plus UTC day;
+The quota DO uses one global named instance and atomic storage transactions. Inference admission and source-read admission use separate state keys and ceilings; exhausting source reads cannot silently turn into model-only answers because source failures terminate the grounded run. A successful reservation creates a 45-second active lease; at most `SUTRA_MAX_CONCURRENT` leases may exist. The Worker attempts bounded lease release after provider rejection/failure, completed or incomplete stream, and client stream cancellation. Successful SSE termination waits for this teardown attempt. Expired leases are pruned during later reservations. Daily/client usage is deliberately **not refunded** after admission, even if the reservation response is lost and no provider work starts. An unknown admitted lease may occupy a concurrency slot for up to 45 seconds; never automatically replay that reservation. Daily inference client identities are HMAC hashes of the Cloudflare-supplied IP plus the same UTC day bound to the admission request. The quota transaction rejects mismatched UTC day or expired admission deadline before charging. Public source-tool reads have separate global/client daily ceilings; client counters are sharded across 256 HMAC-prefix storage buckets so one Durable Object value does not grow with the entire daily client population;
 no raw IP, prompt, content or provider secret is stored in quota state. Old-day
 state is replaced on the next request. Shared NAT users share a client allowance;
 rotating IPs can evade that allowance, but the global ceiling still applies.
@@ -68,6 +62,8 @@ result; this conservative choice avoids accidental repeat spend.
 an in-memory serialized transaction harness, not a live Cloudflare deployment.
 The provider tests inject synthetic HTTP streams and never contact a paid service.
 
+`node services/sutra-api/test-local/quota-runtime.mjs` separately exercises real local Wrangler 4.166.0 / Workerd SQLite Durable Object storage in a temporary directory. The fixture verifies unknown-lease expiry, eight competing denials, daily charge retention, UTC-day/deadline rejection, idempotent release, sanitized SSE, malformed stream refusal and redirect rejection. The upstream is simulated; no deployed service, credentials, account, provider spend or live model is tested. Worker-side requests use supported manual redirect mode and reject redirect responses explicitly without following Location; the browser uses redirect:error.
+
 Primary references refreshed 2026-11-23:
 - https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
 - https://developers.openai.com/api/reference/resources/chat/subresources/completions/streaming-events
@@ -77,3 +73,39 @@ Primary references refreshed 2026-11-23:
 The reference upstream runner is unchanged. SUTRA's host grants exactly one local
 MCP descriptor (`/api/source-tools`) when explicitly configured; peers, external
 MCP, coded tools, arbitrary REST and private context forwarding remain disabled.
+
+
+## Static assets, security headers and Worker-request separation
+
+`wrangler.jsonc` intentionally sets `assets.run_worker_first` to `["/api/*"]`. Normal SUTRA HTML, hashed JS/CSS, public graphs, text tracks and media should therefore be served by the static asset layer without entering Worker code. Do **not** broaden this to `true` merely to attach headers; that would convert ordinary learner asset traffic into Worker invocations and undermine the shared-capacity plan.
+
+Because static files bypass Worker code, `apps/sutra/public/_headers` is the authoritative default browser-security policy for the learner page. It currently allows only same-origin connections. A future approved public peer origin must be added deliberately and tested before release; there is no wildcard peer/connect source. The Worker applies the same baseline security fields to `/api/*` responses, and build tests compare both layers to prevent accidental drift.
+
+Cache classes are also intentionally split:
+
+- Vite content-hashed `/assets/*` and physically content-versioned `/agents/v/<git-blob>/...` graphs: long-lived immutable.
+- HTML, manifests, links, canonical/unversioned graphs and unversioned media aliases: revalidate.
+- `/api/*`, inference streams and error responses: `no-store`.
+- Media requests carry source-version query keys and byte-level SHA-256 verification before player mount; static media currently remains revalidated rather than claiming immutable filename semantics.
+
+The manifest points to retained graph copies under `/agents/v/<git-blob>/...`. CI computes the Git blob identity of the canonical graph and requires the declared physical version path to contain byte-identical data. A graph edit without a version-path update fails the build.
+
+## Daily resource admission (not a dollar budget)
+In addition to daily call and per-client ceilings, the quota object atomically reserves the exact UTF-8 byte length of the validated outbound JSON request and the configured maximum requested output tokens. `SUTRA_MAX_DAILY_INPUT_BYTES` and `SUTRA_MAX_DAILY_OUTPUT_TOKENS` may be reduced independently. Checked-in disabled configurations allow at most 3,379,200 input JSON bytes and 51,200 requested output tokens per UTC day, still bounded by 100 admitted calls, 8 per client and 2 active calls. A rejected resource reservation produces 429 before any provider contact; an admitted reservation is not refunded after release, cancellation or failure. UTC date rollover resets daily counters but preserves unexpired active leases, preventing an accidental midnight concurrency burst. Legacy same-day state with only call counts is conservatively charged at prior hard per-call maxima. These are resource bounds, not actual provider token counts or billed USD. The provider may tokenize differently, bill failed calls or apply other charges; only observed provider usage/prices and provider-side spend controls support a cost claim. No paid inference is enabled.
+
+## Publisher-funded interoperability facade
+
+The future top-site manifest can publish the caller origin plus `/api/v1` as its default publisher-funded router. The OpenAI-compatible `POST /api/v1/chat/completions` route is not a second provider implementation: it enters the same `handleInference` function as `/api/infer`, so origin checks, visitor-Authorization rejection, exact model allowlist, payload/schema bounds, global/client/resource quota, concurrency lease, fixed upstream, server-only provider key, sanitized usage/SSE stream, cancellation and no automatic retry remain identical.
+
+The route existing in code does **not** mean inference is live. Checked-in configs keep `SUTRA_ENABLE_INFERENCE=false` and an empty model allowlist. A release manifest must not publish the router as usable until the live-provider/cost/release gates pass.
+
+
+### Snapshot-aware learner precondition
+
+The learner sends the public `X-Sutra-Catalog-Sha256` header on its caller-owned inference and source-tools POSTs. A provided value that does not match the Worker's active catalog returns HTTP 409 with `CONTENT_VERSION_MISMATCH` before quota reservation or source-tool execution. The header is not a credential or authorization mechanism; portable clients may omit it under the existing contract. It does not verify factual truth, pin the Worker implementation, or guarantee that already-completed requests can be undone. The browser preflight independently checks the mounted profile/transcript and exact approved graph, and refuses to present an answer from a run that encounters a catalog-version rejection.
+
+### Self-hosted OpenAI-compatible engines (explicit opt-in, not deployed)
+
+Configure a separately owned authenticated HTTPS reverse proxy forwarding only the permitted POST `/v1/chat/completions` to a local Ollama or llama.cpp server. The gateway enforces the worker's bearer secret, mTLS/firewall/rate limits where possible, and never exposes the engine directly. Set `SUTRA_INFERENCE_BACKEND=self_hosted`, `SUTRA_SELF_HOSTED_UPSTREAM_URL=https://operator-owned-gateway.example/v1/chat/completions` (illustrative only), `SUTRA_SELF_HOSTED_TOKEN` (random 32+ character private secret), an exact `SUTRA_MODELS` allowlist plus the normal quotas and origin. The endpoint path is fixed; client-supplied URLs/headers never change it. The worker strips unapproved fields, caps output, checks streaming syntax and returns no completed answer on incompatible tool-call chunks. `max_tokens` and streamed usage are requested in this mode; actual engine support requires a pinned model/runtime compatibility evaluation. Do not enable inference without a secure reachable gateway, tested tool-calling model, resource budget and explicit operator authorization. The checked-in deployment remains disabled.
+
+The configured status also publishes an opaque `inferenceContractId`. The learner includes it as `X-Sutra-Inference-Contract` on every model POST, never on source reads or upstream calls. The Worker validates the exact selected backend, gateway URL, credential, model allowlist, output bound, origin and quota configuration with a domain-separated HMAC before reading the request body or reserving quota. A missing, malformed or stale tag on a snapshot-aware model POST produces HTTP 409 `INFERENCE_CONTRACT_MISMATCH` and `X-Sutra-Precondition: inference`; the learner stops without retry and requires fresh discovery and consent. Portable callers omitting both snapshot headers retain the existing interface. The tag is public configuration-version metadata, not authorization, a proof of operator identity, model weights, gateway behavior or consent enforcement for generic callers. An unchanged gateway URL can still serve changed software or weights. Hosted mode refuses a stale self-hosted URL. No deployment or provider enablement is implied.

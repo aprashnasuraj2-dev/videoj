@@ -8,9 +8,12 @@ not yet been measured. They do not establish factual truth or full web conforman
 | --- | --- | --- |
 | Evidence receipts | `packages/sutra-evidence`: schema, `validateReceipt`, CLI | 22 tests; shape-only versus catalog-matched result |
 | Source tools | `packages/sutra-source-tools`: `list`, `call` | 5 registry tests; bounded literal search and exact cue read |
-| Browser host | `packages/sutra-runtime`: compile/run/load, restricted source MCP, consent-aware peer artifact loader | 65 tests; exact peer resolution, explicit grants, budgets, cancellation and sanitized events |
+| Browser host | `packages/sutra-runtime`: compile/run/load, caller-local peer execution, strict public-read MCP | 87 runtime tests on 2026-11-23; exact peer resolution, private-key canaries, budgets, cancellation and sanitized events |
 | Inference boundary | `packages/sutra-inference` and `services/sutra-api` | Synthetic streams and transaction harness; live provider/model still unverified |
 | Consent inspector | `packages/sutra-consent`: policy, redacted events, bounded JSON helper, plain-browser example | 8 unit tests + standalone Chromium; default deny and exact explicit session scope |
+| Safe trace reports | `packages/sutra-runtime/trace-export.js`: allowlisted execution and consent receipts | Node tests and Chromium user-triggered JSON download; excludes raw prompts/results and credentials |
+| Source comparison | `apps/sutra/src/comparison.js`: scope-aware missing/conflict/structured-match states | 7 deterministic comparison tests and visible Chromium conflict fixture; no semantic truth claim |
+| Review receipt export | `apps/sutra/src/review-export.js`: validated saved local receipt JSON | Browser download and tests reject stale/catalog-mismatched receipts and injected extra fields |
 
 Source tools currently import the evidence package and the pinned runtime schema
 helper; copy those dependencies together. They are not yet a published standalone
@@ -31,3 +34,7 @@ complete the licensing audit, clean-host packaging/reproduction check, contribut
 guide and consenting outside-builder trials. The final submission may link these
 artifacts and actual evidence under Potential Impact; it must not invent usage,
 impact metrics, endorsements or independent peer adoption.
+
+## Evidence boundaries
+
+These source-only building blocks are useful for independent builders to evaluate, but the public package/reproduction phase has not closed. The authored learner component is not itself independent community adoption. The model adapter remains scripted in public-facing examples, and the two-origin peer/MCP browsers use controlled loopback services rather than independently deployed publishers. Structured claim matching is a **comparison aid**, not scientific, legal, or factual verification. The final contribution claim must include exact release revisions and external adoption evidence rather than extrapolating from repository test counts.

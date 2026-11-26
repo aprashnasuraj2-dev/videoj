@@ -1,0 +1,21 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {createReviewStore} from '../src/review-store.js';
+import {createReviewActions} from '../src/review-actions.js';
+const fixture=JSON.parse(fs.readFileSync(new URL('../src/fixtures/timing-source.json',import.meta.url)));
+function setup(){const values=new Map(),downloads=[];let id=0,writes=0;const storage={getItem:k=>values.get(k)??null,setItem(k,v){writes++;values.set(k,v);},removeItem:k=>values.delete(k)};const store=createReviewStore({storage,sources:[fixture.source]});const actions=createReviewActions({store,sources:[fixture.source],idFactory:()=> 'action-'+(++id),download:(json,filename)=>downloads.push({json,filename})});return {store,actions,downloads,storage,get writes(){return writes;}};}
+test('registered effects and single-use confirmed save bind exact proposal ID and receipt',async()=>{const f=setup();assert.deepEqual(f.actions.list().map(a=>[a.name,a.effect]),[['save-review-card','write_local'],['export-receipt','download']]);const cancelled=f.actions.prepare('save-review-card',{receipt:fixture.receipt});f.actions.cancel(cancelled.id);await assert.rejects(f.actions.execute(cancelled.id));assert.equal(f.writes,0);const p=f.actions.prepare('save-review-card',{receipt:fixture.receipt});const saved=await f.actions.execute(p.id);assert.equal(saved.id,p.id);assert.deepEqual(saved.receipt,fixture.receipt);assert.equal(f.writes,1);await assert.rejects(f.actions.execute(p.id));assert.equal(f.writes,1);});
+test('download revalidates current exact saved snapshot; deleted and changed records cannot export',async()=>{const f=setup(),p=f.actions.prepare('save-review-card',{receipt:fixture.receipt}),saved=await f.actions.execute(p.id);const valid=f.actions.prepare('export-receipt',{id:saved.id,snapshot:saved});assert.deepEqual(await f.actions.execute(valid.id),{outcome:'download_requested',id:saved.id});assert.equal(JSON.parse(f.downloads[0].json).truthStatus,'unverified');assert.equal(f.downloads[0].filename,'sutra-source-review.json');const stale=f.actions.prepare('export-receipt',{id:saved.id,snapshot:saved});f.store.remove(saved.id);await assert.rejects(f.actions.execute(stale.id),/changed or was deleted/);assert.equal(f.downloads.length,1);});
+test('provider-like extra action parameters and injected secrets are not accepted or exported',()=>{const f=setup();assert.throws(()=>f.actions.prepare('save-review-card',{receipt:fixture.receipt,providerKey:'PRIVATE_CANARY'}));assert.throws(()=>f.actions.prepare('save-review-card',{receipt:{...fixture.receipt,providerKey:'PRIVATE_CANARY'}}));assert.equal(f.writes,0);});
+
+test('review action constructor refuses accessor-backed source data without invoking getters',()=>{
+ const f=setup(),source=structuredClone(fixture.source);let invoked=0;
+ Object.defineProperty(source,'version',{enumerable:true,get(){invoked++;return 'v1';}});
+ assert.throws(()=>createReviewActions({store:f.store,sources:[source],download:()=>{}}),/Unsafe data property/);
+ assert.equal(invoked,0);assert.equal(f.downloads.length,0);
+});
+
+test('review exports reject extra persisted envelope fields despite an otherwise valid receipt',async()=>{
+ const f=setup(),p=f.actions.prepare('save-review-card',{receipt:fixture.receipt}),saved=await f.actions.execute(p.id);
+ const {createReviewExport}=await import('../src/review-export.js');
+ const output=createReviewExport({...saved,secret:'synthetic-private-canary'},{sources:[fixture.source]});assert.equal(output.receipt.sourceId,fixture.receipt.sourceId);assert.doesNotMatch(JSON.stringify(output),/synthetic-private-canary/);
+});

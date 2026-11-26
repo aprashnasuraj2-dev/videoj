@@ -3,14 +3,38 @@
     {
       "name": "learner",
       "front_man": "learner",
-      "hocon": "./learner.network.json",
+      "hocon": "./v/585c70ba5c6d1ed8d3dd681eae398fe354f909ab/learner.network.json",
       "description": "Local learner/evidence graph; funded inference and peer composition are pending."
     },
     {
       "name": "source_learner",
       "front_man": "learner",
-      "hocon": "./source_learner.network.json",
-      "description": "Scripted source retrieval through bounded same-origin MCP; synthetic catalog, no factual truth claim."
+      "hocon": "./v/085a65783ee5badd8464b6dbcfd341f3a02183ab/source_learner.network.json",
+      "description": "Direct model-directed lesson evidence with quotation-bound source claims and explicit inference/conflict/uncertainty labels."
+    },
+    {
+      "name": "linked_learner",
+      "front_man": "learner",
+      "hocon": "./v/bcf648decc4f80ab57279b4fa72dae0c80b26923/linked_learner.network.json",
+      "description": "Opt-in symbolic guide link; closed default policy, no deployed peer asserted."
+    },
+    {
+      "name": "research_learner",
+      "front_man": "learner",
+      "hocon": "./v/ff40e39c6877a7d91591010ae8a9125d2bda4804/research_learner.network.json",
+      "description": "Model-directed lesson/web research with quotation-bound source claims and explicit inference/conflict/uncertainty labels."
+    },
+    {
+      "name": "source_peer_learner",
+      "front_man": "learner",
+      "hocon": "./v/585ad6e003d35773580fa863ef0dd6a9d4783046/source_peer_learner.network.json",
+      "description": "Caller-resolved compatible peer plus lesson evidence; peer claims remain unverified and quotation-bound."
+    },
+    {
+      "name": "research_peer_learner",
+      "front_man": "learner",
+      "hocon": "./v/14c5c880786b47c6634d5ad18fb5eafb8739971f/research_peer_learner.network.json",
+      "description": "Caller-resolved compatible peer plus lesson/web research; external claims remain unverified and quotation-bound."
     }
   ],
   "allowed_peers": [],

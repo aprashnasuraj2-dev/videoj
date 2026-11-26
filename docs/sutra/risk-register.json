@@ -1,0 +1,1521 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-11-26T12:48:46+05:45",
+  "risks": [
+    {
+      "id": "R-001",
+      "severity": "blocker",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Structured-value match could be misread as source agreement",
+      "mechanism": "Comparison previously emitted a consistent-unverified state when structured values matched even if source excerpts differed.",
+      "userEffect": "A learner or judge could infer agreement that the source text did not establish.",
+      "affectedTasks": [
+        "SUTRA-P045-03",
+        "SUTRA-P045-06"
+      ],
+      "mitigation": "Require excerpt-gated textual match, retain separate disagreement/unreviewed states, link and hash-bind the written source fixture.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/COMPARISON-PROVENANCE-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/CURRENT-METRICS-0EF8A613-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-002",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Evidence/source APIs could invoke ordinary JavaScript accessors",
+      "mechanism": "Direct property access and JSON serialization can invoke getter or toJSON code supplied by an in-process caller.",
+      "userEffect": "A supposedly data-only validation boundary could execute caller-defined JavaScript before rejection.",
+      "affectedTasks": [
+        "SUTRA-X002-01",
+        "SUTRA-X002-02"
+      ],
+      "mitigation": "Inspect own data descriptors without invoking getters, reject unsafe descriptors/custom prototypes/sparse arrays, project primitive catalog fields and bound aggregate text.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "sourceRevision": "337337e6bf912f9e73127c6d2a20a971c5bde866"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-003",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Literal retrieval used unnecessary agent orchestration",
+      "mechanism": "Simple exact wording retrieval traversed the delegated network even when deterministic catalog search was sufficient.",
+      "userEffect": "Higher latency/call count without measured retrieval benefit for literal lookup.",
+      "affectedTasks": [
+        "SUTRA-P054-02",
+        "SUTRA-P054-03",
+        "SUTRA-P054-04",
+        "SUTRA-P054-07",
+        "SUTRA-P054-08"
+      ],
+      "mitigation": "Expose direct zero-model lookup for literal source selection and reserve agent/model paths for tasks that need them.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evaluation/DECISION-DIRECT-LOOKUP.md",
+          "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-004",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Historical metrics could silently survive material source changes",
+      "mechanism": "Progress prose stores source SHAs, but there was no machine path-to-evidence invalidation map.",
+      "userEffect": "A later candidate could accidentally quote benchmark or browser results measured on materially different code.",
+      "affectedTasks": [
+        "SUTRA-P078-04",
+        "SUTRA-P079-01",
+        "SUTRA-P079-05",
+        "SUTRA-P079-06"
+      ],
+      "mitigation": "Revision-bound metric registry plus fail-closed change-impact classification and a PR artifact listing affected suites and stale metrics.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/VERIFICATION-IMPACT-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/CURRENT-METRICS-0EF8A613-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-005",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Held-out semantic evaluation is not human adjudicated",
+      "mechanism": "Engineering-v1 is public development data and therefore unsuitable as independent held-out semantic evidence.",
+      "userEffect": "Quoting it as final accuracy would overstate evidence quality and permit test-set leakage.",
+      "affectedTasks": [
+        "SUTRA-P053-01",
+        "SUTRA-P053-02",
+        "SUTRA-P053-03",
+        "SUTRA-P053-05",
+        "SUTRA-P053-10",
+        "SUTRA-P072-01"
+      ],
+      "mitigation": "Blind neutral-ID review/freeze protocol is implemented; no human-reviewed set is claimed.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/HELDOUT-REVIEW-PROTOCOL-2026-11-24.md",
+          "sourceRevision": "de648590c6f5ae0f05c98a95ce330c016fe2f5a8"
+        }
+      ],
+      "unblockCondition": "Create and human-review the real 20/10/10 set against designated source material, freeze it before final prompt tuning, then run the recorded live model."
+    },
+    {
+      "id": "R-006",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Original rights-cleared lesson and reviewed written guide are missing",
+      "mechanism": "Current learner content is explicitly synthetic and cannot establish real source provenance or semantic support.",
+      "userEffect": "The core demo cannot truthfully claim real educational evidence or final comparison quality.",
+      "affectedTasks": [
+        "SUTRA-P015-01",
+        "SUTRA-P031-03",
+        "SUTRA-P045-10"
+      ],
+      "mitigation": "Synthetic fixtures remain clearly labeled and are never represented as the original lesson.",
+      "evidence": [],
+      "unblockCondition": "Provide rights-cleared original lesson/video, written guide and human factual review evidence."
+    },
+    {
+      "id": "R-007",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Live funded provider economics are unmeasured",
+      "mechanism": "Provider tests use synthetic transport; actual tokens, price basis, run cost and judge-budget reserve are unknown.",
+      "userEffect": "A public judge path could fail or spend unpredictably even though quota mechanics pass synthetic tests.",
+      "affectedTasks": [
+        "SUTRA-P054-01",
+        "SUTRA-P066-01",
+        "SUTRA-P066-02",
+        "SUTRA-P066-03",
+        "SUTRA-P070-02"
+      ],
+      "mitigation": "Quota, concurrency, kill switch and no-retry behavior are implemented; paid inference remains disabled.",
+      "evidence": [],
+      "unblockCondition": "Approve provider/budget, run a small capped live sample, record exact model/token/price basis and preserve judging reserve."
+    },
+    {
+      "id": "R-008",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Physical touch and human screen-reader acceptance are untested",
+      "mechanism": "Desktop/headless engines and automated accessibility checks cannot reproduce physical touch hardware or human assistive-technology use.",
+      "userEffect": "Mobile or assistive users may encounter blockers not visible in CI.",
+      "affectedTasks": [
+        "SUTRA-P077-04",
+        "SUTRA-P077-10",
+        "SUTRA-P049-10"
+      ],
+      "mitigation": "Automated keyboard, zoom, target-size, captions and multi-engine checks are explicitly labeled as non-physical evidence.",
+      "evidence": [],
+      "unblockCondition": "Run the core journey on an available physical iPhone/Android device and complete human screen-reader acceptance."
+    },
+    {
+      "id": "R-009",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Independent public caller/peer interoperability is unproven",
+      "mechanism": "Neutral-consumer and peer tests are same-owner/local synthetic origins rather than independently operated public HTTPS sites.",
+      "userEffect": "Challenge interoperability claims would exceed observed evidence.",
+      "affectedTasks": [
+        "SUTRA-P031-10",
+        "SUTRA-P034-10",
+        "SUTRA-P040-10",
+        "SUTRA-P076-10"
+      ],
+      "mitigation": "Exact-name resolution, CORS, consent, denial and cross-origin behavior are tested locally without claiming outside adoption.",
+      "evidence": [],
+      "unblockCondition": "Obtain authorized public HTTPS caller/peer evidence and outside builder runs after release gates permit it."
+    },
+    {
+      "id": "R-010",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Production Cloudflare request and billing headroom are incomplete",
+      "mechanism": "Read-only account observation lacks Billing Read and no SUTRA production-domain request sample exists.",
+      "userEffect": "Production capacity/cost claims could be wrong despite static routing design.",
+      "affectedTasks": [
+        "SUTRA-P065-07",
+        "SUTRA-P065-08",
+        "SUTRA-P065-10"
+      ],
+      "mitigation": "Static assets are designed outside Worker-first API paths; no production capacity claim is made.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "sourceRevision": "e1122ec58c7a773b41e4470dc0139a897049f912"
+        }
+      ],
+      "unblockCondition": "Obtain authorized billing/headroom evidence and a dated production request sample after deployment gates open."
+    },
+    {
+      "id": "R-011",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Local lexical retrieval silently dropped query constraints and alternate matches",
+      "mechanism": "Partial coverage, discarded short/long terms and phrase score thresholds could hide a required term or competing exact source cue.",
+      "userEffect": "Learners could receive an apparently specific single excerpt despite unmatched constraints or alternative excerpts.",
+      "affectedTasks": [
+        "SUTRA-X007-16",
+        "SUTRA-X007-17",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require full retained term coverage, refuse oversized terms, preserve single-character terms, report ambiguity across all fully matching cues with a five-receipt cap. Semantic review remains separate.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "sourceRevision": "a45764e11ae022bd63b6beff1fd24c6894fd1ae9"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-012",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stream terminal reason and token usage could be overwritten",
+      "mechanism": "A second empty finish frame could replace an incomplete finish, while later or arithmetically inconsistent usage could be treated as final.",
+      "userEffect": "An incomplete answer could appear completed or untrustworthy usage could drive cost reporting.",
+      "affectedTasks": [
+        "SUTRA-X007-18",
+        "SUTRA-P078-02",
+        "SUTRA-P066-01"
+      ],
+      "mitigation": "Reject post-finish choices, repeated/early usage and inconsistent token arithmetic; fail incomplete with no retry. Real-engine compatibility and economics remain open.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "sourceRevision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-013",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Backend identity drift after learner approval",
+      "mechanism": "Same model name/backend type could point at a replaced gateway or changed credentials or limits.",
+      "userEffect": "Approval could silently transfer to a different inference configuration.",
+      "affectedTasks": [
+        "SUTRA-X007-19",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Opaque per-request configuration precondition; reject mismatches before quota/upstream. Does not attest remote model weights. Bind source quota/content and freeze consent before discovery.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "c95042f90c797cac3631d7aca2961a715fbbc064"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-014",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Cancellation during a later inference preflight erases completed evidence",
+      "mechanism": "The old output was cleared before the first new model request.",
+      "userEffect": "A cancelled preflight could destroy the learner's previous valid result.",
+      "affectedTasks": [
+        "SUTRA-X007-20",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Delay clearing to actual model attempt; keep run epoch and stale action guards. Permanently revoke earlier action authority after edit or rediscovery.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "02f442726f22d9ec58d922362cbb775784d10efc"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-015",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Release candidate can inherit stale evidence or unexpected files",
+      "mechanism": "Incomplete source/content binding and unfiltered historical graph files could survive candidate materialization.",
+      "userEffect": "An apparently consistent package could carry stale or unintended public artifacts.",
+      "affectedTasks": [
+        "SUTRA-X008-01",
+        "SUTRA-X008-02"
+      ],
+      "mitigation": "Exact revision/content and byte checks; public path allowlist; actual quota validation; trusted stable source tree. Independent live gates remain. Require intended publication files and exact path map; omit private references and unbound annotations.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "89694bec2a59a3259983ab44d60d9934f5869872"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "dc7bef783a4214ac014911ae310c4af3cd91d771"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-016",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Mutable or cancelled source operation crosses async boundary",
+      "mechanism": "Caller arguments could change during handshake; delayed source results could arrive after abort/timeout.",
+      "userEffect": "Unapproved query or stale receipt enters the run.",
+      "affectedTasks": [
+        "SUTRA-X007-21",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Snapshot descriptor-safe primitive arguments before await; preabort and post-await checks; preserve terminal timeout/cancellation reason.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "ec841cf5451db41432aa76f2d3fd83dfaf3e204e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-017",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Provider interpretation inherits invalid receipt",
+      "mechanism": "Receipt observer errors could be swallowed at transport/runtime boundary, allowing apparent completion.",
+      "userEffect": "Learner sees an interpretation without reliable catalog-matched evidence.",
+      "affectedTasks": [
+        "SUTRA-X007-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Independent final collector snapshot and catalog revalidation; sticky invalidity; reject completion and preserve only valid partial receipts.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "fd65f94aa7fda3dd7ff2291396d29e43c2d40903"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-018",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Detached source action or query drift",
+      "mechanism": "Old controls could retain action authority or overwrite current status; media remount could lose the typed query.",
+      "userEffect": "Incorrect action or lost learner context.",
+      "affectedTasks": [
+        "SUTRA-X007-23",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Check connected/current epoch, reject stale completions, preserve raw query, validate native duration before enabling actions.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "803fa82abdc9425bcf16a5a7d06a342c62a9db7c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-019",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous or coercible content identity",
+      "mechanism": "Multiple sources could be paired with one media/transcript; substring digest or regex coercion could accept misleading identity or execute conversion hooks.",
+      "userEffect": "Wrong source binding or unexpected executable behavior.",
+      "affectedTasks": [
+        "SUTRA-X007-24",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require single bound source, exact segment, strict string validation and final cancellation check.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "cc49b369526a3313c272e3dc5cc29e87457692f6"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-020",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Navigation lifecycle authority drift",
+      "mechanism": "Late discovery could re-enable stale inference approval; pagehide could destroy retained local evidence.",
+      "userEffect": "Unexpected inference permission or broken return navigation.",
+      "affectedTasks": [
+        "SUTRA-X007-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Revoke operation epoch and provider contract, abort stale async work and keep local media paused for persisted pagehide.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "6d069fbe5b549d302fe5db96e049be14f22e090f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-021",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "False-positive native cue seek",
+      "mechanism": "A one-second tolerance could certify a timestamp before or outside a short cue.",
+      "userEffect": "Learner sees a source-seek success not supported by playback.",
+      "affectedTasks": [
+        "SUTRA-X007-26",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Finite half-open interval and bounded start offset; verify source identity and independently reject wrong cue landing.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-022",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous destructive local review outcome",
+      "mechanism": "Storage changes may precede a thrown exception; two-key clear is not atomic.",
+      "userEffect": "Definite refusal or stale export may misrepresent deleted records.",
+      "affectedTasks": [
+        "SUTRA-X009-06",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Classify post-effect failures unknown, refresh storage and invalidate affected action evidence; no replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-023",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Rejected provider response body or late 409 callback",
+      "mechanism": "Binding rejects before downstream stream ownership; aborted transport may still settle.",
+      "userEffect": "Unconsumed stream or stale UI state.",
+      "affectedTasks": [
+        "SUTRA-X010-01",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Dispose rejected/late bodies and guard callbacks with cancellation; exact ingress and no ambient credentials. Extend exact disposal to browser adapter and Worker upstream response ownership before cancellation recheck; known quota lease released once.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "34025444560d62b310154634e94e3bfda5890bde"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-024",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Genuine history restoration not yet observed",
+      "mechanism": "Synthetic pagehide and a real history reload cannot establish BFCache eligibility or restored media behavior.",
+      "userEffect": "Stale local rows or authority may survive a browser freeze.",
+      "affectedTasks": [
+        "SUTRA-X009-07",
+        "SUTRA-X007-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Refresh local state on native persisted pageshow. Actual full Chromium restored original document twice, with and without existing media; verified storage drift, no stale review authority and retained paused blob. Other engines' BFCache eligibility is not asserted.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-025",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Mutable source authority at final provider evidence collector",
+      "mechanism": "Matching only a caller-mutable current catalog could mint newly forged receipts.",
+      "userEffect": "Completed or partial model interpretation could carry changed source evidence.",
+      "affectedTasks": [
+        "SUTRA-X010-02",
+        "SUTRA-X007-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Match immutable original catalog and current validity independently; new negative unit test; full integration required.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "27a4a7034e447365491471e343acc657af17e843"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-026",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Superseded native seek or late written-source verification",
+      "mechanism": "Multiple UI entry points could observe a newer seek's timestamp or stale guide response after navigation.",
+      "userEffect": "An obsolete action could report a source cue reached or written source match.",
+      "affectedTasks": [
+        "SUTRA-X010-03",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "One active native seek owner, abort superseded operations, source identity recheck, explicit comparison action revocation on navigation/mode change. Cancellation does not undo an already-applied native seek.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-027",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Pre-admission request-body chunk overhead",
+      "mechanism": "Array of chunks retained independently of byte ceiling; zero-length chunks and many small chunks increase memory; cancellation could leave reader locked.",
+      "userEffect": "Resource pressure or unavailable requests before quota.",
+      "affectedTasks": [
+        "SUTRA-X010-04",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Single bounded byte buffer, abort recheck before read, fatal UTF-8 and unconditional reader cleanup.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "279aae37f487a8da97f1303a6c48fdd5bc6be586"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-028",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous quota admission after response loss",
+      "mechanism": "Durable Object may commit reserve before lost/cancelled response reveals generated lease ID. Worker cannot release unknown ID; active slot may remain until 45-second expiry.",
+      "userEffect": "Transient concurrency denial; daily reservation charges remain conservative.",
+      "affectedTasks": [
+        "SUTRA-X010-05",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "UTC-day and admission deadline bound to request and rechecked within transaction; lost-response cancellation never contacts upstream or refunds/replays; real local SQLite DO confirms 45-second expiry. Deployed service and cost evidence remain separate gates.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "279aae37f487a8da97f1303a6c48fdd5bc6be586"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-029",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "SSE buffering and terminal lease ordering",
+      "mechanism": "Buffered frames can continue after abort; eager drain ignores downstream demand; DONE may precede lease teardown.",
+      "userEffect": "Memory/resource pressure or apparent success after cancellation.",
+      "affectedTasks": [
+        "SUTRA-X010-06",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bound frames/bytes; pull-driven stream, abort checks and bounded cleanup.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-030",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Server redirect mode incompatible with Workerd",
+      "mechanism": "Browser-supported redirect:error throws in Workerd.",
+      "userEffect": "All legitimate reservations fail in actual runtime.",
+      "affectedTasks": [
+        "SUTRA-X010-07",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Server manual mode with explicit response status/identity refusal; real local runtime regression.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a458822ca1895d6d4484abf2c31ba93eb539ccd5"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-031",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Portable route missing at Pages boundary",
+      "mechanism": "Published API path not in exact ingress allowlist; late service replies can retain body.",
+      "userEffect": "Portable client fails or stale reply leaks resources.",
+      "affectedTasks": [
+        "SUTRA-X010-08",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Exact alias and query parity; abort-safe late body ownership.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1c590629fc9653f552d0a7bde0291c8f705027f1"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-032",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Peer path interpreted as another authority",
+      "mechanism": "URL construction treats authority-like pathname as a network-relative reference.",
+      "userEffect": "Wrong peer origin could inherit consent/private context.",
+      "affectedTasks": [
+        "SUTRA-X010-09",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Assign pathname on the already parsed target and assert origin/path.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a1cda45274ea7fb4c2f3a0a50d1c9cd22e66526b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-033",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Save exception misclassified as rejection",
+      "mechanism": "Storage may commit before native-looking exception; duplicate completion may refer to changed record.",
+      "userEffect": "Misleading rejection, replay or wrong success.",
+      "affectedTasks": [
+        "SUTRA-X010-10",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Exact unchanged readback or unknown; immutable bounded identity and no replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-034",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Verified native media/track source drift",
+      "mechanism": "Native element may change source/track after initial verification.",
+      "userEffect": "Cue/seek success on substituted media.",
+      "affectedTasks": [
+        "SUTRA-X010-11",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin exact source/track identities; revoke/dispose, transcript-only and explicit retry.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-035",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Saved-review export races",
+      "mechanism": "Queued export can target a changed record or report success after navigation or cross-tab invalidation.",
+      "userEffect": "Wrong or stale record download/outcome.",
+      "affectedTasks": [
+        "SUTRA-X010-12",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Serialize export using the cooperative mutation lock; revalidate record and revoke view epoch.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "3478edc0ea515dc43e64fdbf7712b9c859197879"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-036",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Incomplete SSE event and JSON media-type lookalikes",
+      "mechanism": "Line-level parsing could certify an unterminated or named-error terminal; prefix media type admitted lookalikes.",
+      "userEffect": "False completion or unwanted admission.",
+      "affectedTasks": [
+        "SUTRA-X010-13",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require complete bounded SSE event with blank-line delimiter; exact JSON media-type match before body/quota/provider contact.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-037",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stale seek owner keeps waiting after result authority is revoked.",
+      "mechanism": "Stale seek owner keeps waiting after result authority is revoked.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-14",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Cancel outstanding waits, preserve explicit fresh action; cannot undo physical seek already applied.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "643871ffb96a623bf79799b1afa7a4845631df5d"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-038",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Asynchronous remount steals keyboard focus or loses query selection.",
+      "mechanism": "Asynchronous remount steals keyboard focus or loses query selection.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-15",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Capture/restore focused controls only; restore explicit load focus on invalidation. Physical/screen-reader tests remain open.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "c8fc9f4528fa45379c87968964aadb92eb80db63"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-039",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Compact UTF-16 budgeting underestimates downloadable bytes; repeated tail scans waste CPU; caller array metadata may execute.",
+      "mechanism": "Compact UTF-16 budgeting underestimates downloadable bytes; repeated tail scans waste CPU; caller array metadata may execute.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-16",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Own descriptors, bounded prefixes and actual formatted UTF-8 budget; binary-search monotonic balanced prefix. Trusted labels and no executable Proxy sandbox claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "57679f6e9f664034cbbd71b5819ceb838d2d3846"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-040",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Nonempty 202 treated as valid acknowledgement; one-byte held stream delays failure.",
+      "mechanism": "Nonempty 202 treated as valid acknowledgement; one-byte held stream delays failure.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-17",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require zero-byte EOF; malformed response cancels reader, cannot progress discovery. Restricted stateless JSON-only MCP profile, not general SSE support.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "05dbd04ec5243c1fb835769ff9bf45bb7c4e4486"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-041",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Byte-budget bypass via empty or tiny stream fragments",
+      "mechanism": "Unlimited zero-byte chunks and microtask-only reads can starve deadlines; repeated races against one unresolved cancellation promise can retain reactions.",
+      "userEffect": "CPU/memory pressure or delayed cancellation, including pre-admission Worker requests.",
+      "affectedTasks": [
+        "SUTRA-X010-18",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Patch committed: cap empty fragments at 256, large content fragments at 131072, yield every 1024 reads or SSE lines; per-read abort race. Exact CI 19/19, including Workerd.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "05d8948b90972f1fbc1095bf3554f1c3a363c452"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-042",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Native playback left running on history restoration",
+      "mechanism": "Browser freeze during active playback could leave an old operation or media state implicitly active.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-19",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Actual Chromium same-document restored while playing, paused on return; no cross-browser BFCache claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "53151c80d53b9d06b412e9e9292ac18dc26cd4f6"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-043",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stale queued local review outcome",
+      "mechanism": "A queued lock operation can settle after pagehide and overwrite fresh status or attempt download.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-20",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "All review outcome presentation epochs revoked at navigation, cooperative lock and no mutation replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "cbb29f87912ea4349c139765713c04bce60c91fd"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-044",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Hash-consistent but uninspectable written derivative",
+      "mechanism": "Fragment parsing can omit hidden wrapper attributes; source path normalization or claim size mismatch can misrepresent evidence.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-21",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Shared canonical derivative and canonical URLs, exact bytes and metadata, no original-source truth or arbitrary HTML sanitizer claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a72c70fb128e48f08459c957749fbf018a7ad6bd"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-045",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambient request metadata outside consent contract",
+      "mechanism": "Default referrer can reveal caller URL and arbitrary adapter headers can carry private data.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Explicit no-referrer, fixed provider headers, credentialless approved contacts. CORS Origin is a normal transport requirement, not hidden identity.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "baaff96faf5649285b7ffd7ed93ed7842e7dc291"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "be3665ae5608c38ba3af371783d858a275269999"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-046",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Partial or dynamic MCP discovery represented as complete",
+      "mechanism": "A tools/list response can contain the expected tool(s) plus a pagination cursor, while a dynamic tools capability can announce unsupported list-change semantics.",
+      "userEffect": "A partial tool catalog may be represented as a verified fixed read-only capability; malformed discovery may fail inconsistently.",
+      "affectedTasks": [
+        "SUTRA-X010-23",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Refuse pagination, malformed entries and dynamic external capabilities; retain narrow fixed schemas and separate approval.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "be3665ae5608c38ba3af371783d858a275269999"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-047",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Viewer mutates canonical runtime trace or receives post-settlement events",
+      "mechanism": "Canonical stored event shared with observer; trace listener retained after settlement.",
+      "userEffect": "Misleading execution evidence, injected fields or stale UI updates.",
+      "affectedTasks": [
+        "SUTRA-X010-24",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Freeze scalar event, detach observer on settlement, reject closed-run events.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-048",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Adapter identity changes after run admission",
+      "mechanism": "Mutable model object mode and callable read again after asynchronous entry or viewer callback.",
+      "userEffect": "Scripted output can be mislabelled as provider output or invoke an unintended adapter.",
+      "affectedTasks": [
+        "SUTRA-X010-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin original callable, mode and model name at admission; keep receiver binding.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-049",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Mutable host contact dispatch changes between approvals",
+      "mechanism": "A viewer or first contact can replace peer runtime inspector/transport or mutable inspector perform property before the next separately consented operation.",
+      "userEffect": "Unexpected artifact contact or disclosure despite the original decision policy.",
+      "affectedTasks": [
+        "SUTRA-X010-26",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin original callable and receiver, and immutable admitted peer transport. Use original consent state for actual approvals and revocation.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "76d13792d57fdfd321074a026747c72a306337b1"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-050",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Private grant metadata can execute before policy admission",
+      "mechanism": "URL coercion, grant property getters and arbitrary array iteration occur while processing caller-owned private-context grants.",
+      "userEffect": "Unexpected side effects before admission or inconsistent exact grant interpretation.",
+      "affectedTasks": [
+        "SUTRA-X010-27",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bound primitive URL, own enumerable data descriptors, dense ordinary arrays and reserved field rejection before admission.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "76d13792d57fdfd321074a026747c72a306337b1"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b6e059ecd353df776bb41d4349622530bcd20d75"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-051",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Distinct capabilities alias one model-facing tool",
+      "mechanism": "Pinned runner safeName normalizes and truncates paths; duplicate labels overwrite dispatch table entries.",
+      "userEffect": "A model may select one apparent capability while dispatch binds another.",
+      "affectedTasks": [
+        "SUTRA-X010-28",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Preflight exact pinned naming for all references and reject duplicate labels; recheck model-bound tool table.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-052",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Model adapter mutates canonical history or tool validation schema",
+      "mechanism": "Runner passes shared messages and schema references; adapter transformations could widen validation or pollute future prompts.",
+      "userEffect": "Incorrect tool arguments or conversation evidence may be accepted.",
+      "affectedTasks": [
+        "SUTRA-X010-29",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Detach offered history and schema; validate against canonical tool-name/schema map.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-053",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Parent synthesizes completed answer after child exhaustion",
+      "mechanism": "Pinned runner returns empty child text on step exhaustion or budget skip as a normal tool response; host only checked top-level final text.",
+      "userEffect": "A misleading completed answer and extra model spend after a failed dependency.",
+      "affectedTasks": [
+        "SUTRA-X010-30",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Abort host on observed incomplete child or composition-limit trace, preserving prior failure authority.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-054",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Action registration or validation can rewrite reviewed authority",
+      "mechanism": "Definition property access/coercion and validator mutation precede proposal freezing; reentrant callbacks can race pending caps.",
+      "userEffect": "Ambiguous reviewed payload or proposal identity/accounting.",
+      "affectedTasks": [
+        "SUTRA-X010-31",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Strict own-data registration, immutable validator input and preparation reentry refusal.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b9c89b6543c1c99786d86486020d728ac8a7ecda"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-055",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stable browser runtime lacks host-only action registration interface",
+      "mechanism": "Action package and learner UI existed, but the published runtime module did not expose the reviewed host registry.",
+      "userEffect": "Reusable runtime consumer cannot exercise the narrow action API through the same stable module.",
+      "affectedTasks": [
+        "SUTRA-X010-32",
+        "SUTRA-P023-05"
+      ],
+      "mitigation": "Export host registry and test real built module across three engines; retain no model/graph write access.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b9c89b6543c1c99786d86486020d728ac8a7ecda"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-056",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Peer protocol envelope bypasses structured return policy",
+      "mechanism": "Upstream parser preserves arbitrary model-controlled protocol/presentation/proposal metadata; host spreads peer result into parent tool content.",
+      "userEffect": "Structured metadata can bypass the independently approved return-field allowlist.",
+      "affectedTasks": [
+        "SUTRA-X010-33",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Project host-labelled text and approved side-channel fields; discard other metadata; document plain-text residual risk.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b9c89b6543c1c99786d86486020d728ac8a7ecda"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "7fcb6a67e3f17025d2d832f664b5830750e251b0"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-057",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Contact configuration executes metadata before admission",
+      "mechanism": "Peer/MCP options use direct property access, spread, URL coercion and Math.min default timeout before strict validation.",
+      "userEffect": "Unexpected side effects or silently normalized destination before authorized contact.",
+      "affectedTasks": [
+        "SUTRA-X010-34",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Snapshot own data contact options, require primitive bounded URLs, validate timeout before arithmetic.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7fcb6a67e3f17025d2d832f664b5830750e251b0"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-058",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Source contact configuration executes or drifts before admission",
+      "mechanism": "Direct destructuring and source object reuse; explicit dynamic tool catalog not refused.",
+      "userEffect": "Inconsistent source authority or unexpected side effects.",
+      "affectedTasks": [
+        "SUTRA-X010-35",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Own-data source config snapshot, static explicit capability declaration, pin selected origin/transport.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-059",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Server timestamp misrepresented as local receipt observation",
+      "mechanism": "Server controls retrievedAt even after exact catalog match.",
+      "userEffect": "A future or historical timestamp may appear to be the caller's retrieval observation.",
+      "affectedTasks": [
+        "SUTRA-X010-36",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Stamp validated response with caller clock; retain unverified truth label.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-060",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Duplicate tool-call identity can execute before server history rejection",
+      "mechanism": "Host only tracked response-local IDs; API enforces historical uniqueness.",
+      "userEffect": "Repeated source contact/spend and a failed subsequent model call.",
+      "affectedTasks": [
+        "SUTRA-X010-37",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Track prior IDs from canonical conversation; reject contradictory result and extra call metadata before dispatch.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-061",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous duplicate JSON member names accepted as last-wins data",
+      "mechanism": "JSON.parse silently collapses repeated keys, including escaped aliases, across invocation and wire boundaries.",
+      "userEffect": "Different processors or reviewers may disagree on admitted arguments and evidence.",
+      "affectedTasks": [
+        "SUTRA-X010-38",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bounded duplicate-aware scanner before platform parse; reject excessive nesting and preserve ordinary JSON.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-062",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Approved provider destination or question differs from dispatched request",
+      "mechanism": "Standalone transport did not match contract router/graph origin, accepted normalized URLs and reread mutable body; run trimmed consent text and notified model start at adapter entry.",
+      "userEffect": "Ambiguous disclosure scope, incorrect previous-result lifecycle or substituted request data.",
+      "affectedTasks": [
+        "SUTRA-X010-39",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bind exact approved origin and routes, snapshot consumed body, preserve exact question and report actual POST attempt.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "23dc80544c897e8b94371e4c246677dad0b19f80"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-063",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous publication or SSE JSON can select last-wins authority",
+      "mechanism": "Additional artifact and stream loaders still used JSON.parse with duplicate decoded keys; raw content digest did not resolve ambiguous interpretation.",
+      "userEffect": "Different graph, source or completion interpretation across consumers despite matching bytes.",
+      "affectedTasks": [
+        "SUTRA-X010-40",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Reuse bounded duplicate-aware scanner across consented/public artifact and SSE boundaries; preserve portable kit and exact hashes.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "b72f64606d76be1dfe5114af80d15c496ba6dd6b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-064",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Technical lexical qualifiers can collapse into conflicting matches",
+      "mechanism": "Word-only tokenization discards signs, operators, decimal separators, ratios, compound ID punctuation and unit case.",
+      "userEffect": "Local evidence search may show a different technical measurement as a lexical match.",
+      "affectedTasks": [
+        "SUTRA-X010-41",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Conservative technical tokens and exact unit spelling; no conversion, semantics or universal notation claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "5539910d9668bc8e2d3e07c2032038726d8b9ca8"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "0bf20d61ac4b9cfa030e09ebdf3a210946ea9184"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-065",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Receipt seek temporarily removes the focused keyboard control",
+      "mechanism": "Native disabled state is used while the asynchronous cue seek is pending; browser focus may leave the button.",
+      "userEffect": "Keyboard learners can lose their current place when a receipt seek is held, and no focus preservation regression was asserted.",
+      "affectedTasks": [
+        "SUTRA-X010-42",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Keep focusable button and aria-busy; reject repeated activation while busy; preserve result-revocation cancellation and disabled stale controls.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "0bf20d61ac4b9cfa030e09ebdf3a210946ea9184"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "a6e2caa6db8828afec15183eb50745f1311e69f3"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-066",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Featured cue and comparison busy controls have inconsistent keyboard activation behavior",
+      "mechanism": "Featured and guide controls temporarily use native disabled; comparison cue permits repeat activation while waiting.",
+      "userEffect": "Focus can leave the active control or repeated keyboard activation can restart pending work.",
+      "affectedTasks": [
+        "SUTRA-X010-43",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Use explicit aria-busy and synchronous reactivation guard while retaining native cancellation and current operation authority.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "a6e2caa6db8828afec15183eb50745f1311e69f3"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0046.md",
+          "sourceRevision": "ae042db07f51d0cf1e71f002869ce9a65a011d48"
+        }
+      ],
+      "unblockCondition": null
+    }
+  ]
+}

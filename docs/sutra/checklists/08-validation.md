@@ -17,16 +17,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** From a separate clean origin, consume the published SUTRA network using the compatible generic loader. Avoid app-specific imports and inspect the exact artifacts requested.
 - **Phase exit:** The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
 
-- [ ] `SUTRA-P071-01` Create a consumer page on a separate clean origin
-- [ ] `SUTRA-P071-02` Load the published network using a compatible generic loader
-- [ ] `SUTRA-P071-03` Avoid SUTRA-specific imports, private endpoints and hidden state
-- [ ] `SUTRA-P071-04` Verify exact-name manifest resolution and public artifact requests
-- [ ] `SUTRA-P071-05` Run the graph with the consumer’s own active router policy
-- [ ] `SUTRA-P071-06` Check denial and unavailable graph behavior from the consumer
-- [ ] `SUTRA-P071-07` Document reproduction commands and deployment relationships
-- [ ] `SUTRA-P071-08` Distinguish a neutral harness from actual third-party adoption
-- [ ] `SUTRA-P071-09` Produce and review the phase artifact: Independent-consumer harness and reproduction instructions.
-- [ ] `SUTRA-P071-10` Close phase 071 only after its applicable tasks have evidence and its exit condition is observed: The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
+- [x] `SUTRA-P071-01` Create a consumer page on a separate clean origin
+- [x] `SUTRA-P071-02` Load the published network using a compatible generic loader
+- [x] `SUTRA-P071-03` Avoid SUTRA-specific imports, private endpoints and hidden state
+- [x] `SUTRA-P071-04` Verify exact-name manifest resolution and public artifact requests
+- [x] `SUTRA-P071-05` Run the graph with the consumer’s own active router policy
+- [x] `SUTRA-P071-06` Check denial and unavailable graph behavior from the consumer
+- [x] `SUTRA-P071-07` Document reproduction commands and deployment relationships
+- [x] `SUTRA-P071-08` Distinguish a neutral harness from actual third-party adoption
+- [x] `SUTRA-P071-09` Produce and review the phase artifact: Independent-consumer harness and reproduction instructions.
+- [x] `SUTRA-P071-10` Close phase 071 only after its applicable tasks have evidence and its exit condition is observed: The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
 
 ## Phase 072 - Run and report the 40-case evaluation
 
@@ -54,7 +54,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Target >=19/20 successful journeys and p95 <=25 seconds; sample size and provider conditions remain visible.
 
 - [ ] `SUTRA-P073-01` Run the hero task in 20 fresh sessions under stated conditions
-- [ ] `SUTRA-P073-02` Define success before collecting the measurements
+- [x] `SUTRA-P073-02` Define success before collecting the measurements
 - [ ] `SUTRA-P073-03` Record p50/p95 latency and the sample percentile method
 - [ ] `SUTRA-P073-04` Record run cost, retries and contacted origins
 - [ ] `SUTRA-P073-05` Check that user action and evidence validation actually complete
@@ -89,7 +89,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Counterbalance manual transcript search and SUTRA task order where feasible. Measure time-to-valid-evidence and errors; do not infer long-term learning from a short session.
 - **Phase exit:** Target >=30% median task-time reduction with no evidence-accuracy loss; a worse result triggers workflow revision, not selective exclusion.
 
-- [ ] `SUTRA-P075-01` Define an equivalent manual transcript-search baseline task
+- [x] `SUTRA-P075-01` Define an equivalent manual transcript-search baseline task
 - [ ] `SUTRA-P075-02` Counterbalance task order where feasible to reduce learning effects
 - [ ] `SUTRA-P075-03` Compare time to valid evidence rather than time to any answer
 - [ ] `SUTRA-P075-04` Record errors and evidence accuracy for both workflows
@@ -114,7 +114,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P076-05` Log each intervention and blocker rather than coaching invisibly
 - [ ] `SUTRA-P076-06` Keep participant identities out of public research notes
 - [ ] `SUTRA-P076-07` Report zero/one participants honestly if recruitment fails
-- [ ] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
+- [x] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
 - [ ] `SUTRA-P076-09` Produce and review the phase artifact: De-identified setup logs and adoption friction report.
 - [ ] `SUTRA-P076-10` Close phase 076 only after its applicable tasks have evidence and its exit condition is observed: Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
 
@@ -125,15 +125,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run current Chromium, Firefox and WebKit regressions and an available physical iPhone/Android check. Record versions, media decode, seeking, fullscreen, captions, consent and export behavior.
 - **Phase exit:** Core workflow works in supported browsers; emulation is not reported as physical-device evidence.
 
-- [ ] `SUTRA-P077-01` Record current Chromium, Firefox and WebKit versions
-- [ ] `SUTRA-P077-02` Check actual decode, captions, seek and fullscreen behavior
-- [ ] `SUTRA-P077-03` Check graph execution, consent, card export and error states
+- [x] `SUTRA-P077-01` Record current Chromium, Firefox and WebKit versions
+- [x] `SUTRA-P077-02` Check actual decode, captions, seek and fullscreen behavior
+- [x] `SUTRA-P077-03` Check graph execution, consent, card export and error states
 - [ ] `SUTRA-P077-04` Use an available physical iPhone/Android device for touch verification
-- [ ] `SUTRA-P077-05` Label emulated, desktop-engine and physical evidence distinctly
-- [ ] `SUTRA-P077-06` Record unsupported codecs and browser capability limitations
-- [ ] `SUTRA-P077-07` Link failures to the exact source/media revision
-- [ ] `SUTRA-P077-08` Publish a matrix with pass, fail and untested entries
-- [ ] `SUTRA-P077-09` Produce and review the phase artifact: Browser matrix with pass/fail/untested cells.
+- [x] `SUTRA-P077-05` Label emulated, desktop-engine and physical evidence distinctly
+- [x] `SUTRA-P077-06` Record unsupported codecs and browser capability limitations
+- [x] `SUTRA-P077-07` Link failures to the exact source/media revision
+- [x] `SUTRA-P077-08` Publish a matrix with pass, fail and untested entries
+- [x] `SUTRA-P077-09` Produce and review the phase artifact: Browser matrix with pass/fail/untested cells.
 - [ ] `SUTRA-P077-10` Close phase 077 only after its applicable tasks have evidence and its exit condition is observed: Core workflow works in supported browsers; emulation is not reported as physical-device evidence.
 
 ## Phase 078 - Fix the highest-impact observed failures
@@ -143,15 +143,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Prioritize broken evidence, task confusion, peer failures and mobile blockers over cosmetic additions. Update prompts only using development fixtures; preserve the frozen test set.
 - **Phase exit:** No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
-- [ ] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
-- [ ] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
-- [ ] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
-- [ ] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
-- [ ] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
-- [ ] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
+- [x] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
+- [x] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
+- [x] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
+- [x] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
+- [x] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
+- [x] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
 - [ ] `SUTRA-P078-07` Check mobile and keyboard blockers observed in the pilot
-- [ ] `SUTRA-P078-08` Record remaining issue severity and user-visible effect
-- [ ] `SUTRA-P078-09` Produce and review the phase artifact: Issue resolutions tied to source revisions.
+- [x] `SUTRA-P078-08` Record remaining issue severity and user-visible effect
+- [x] `SUTRA-P078-09` Produce and review the phase artifact: Issue resolutions tied to source revisions.
 - [ ] `SUTRA-P078-10` Close phase 078 only after its applicable tasks have evidence and its exit condition is observed: No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
 ## Phase 079 - Recheck affected evidence after fixes
@@ -161,13 +161,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run only checks affected by changes plus the critical integrated journey. Re-run the fixed evaluation set if grounding logic changed; update benchmarks only when their implementation changed.
 - **Phase exit:** Reported metrics correspond to the candidate revision; earlier numbers are not reused after material changes.
 
-- [ ] `SUTRA-P079-01` Identify which checks each stabilization change actually affects
-- [ ] `SUTRA-P079-02` Re-run grounding evaluation when retrieval or claim validation changes
-- [ ] `SUTRA-P079-03` Re-run latency/cost measurements only after relevant behavior changes
-- [ ] `SUTRA-P079-04` Recheck the critical integrated journey after fixes
-- [ ] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
-- [ ] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
-- [ ] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
+- [x] `SUTRA-P079-01` Identify which checks each stabilization change actually affects
+- [x] `SUTRA-P079-02` Re-run grounding evaluation when retrieval or claim validation changes
+- [x] `SUTRA-P079-03` Re-run latency/cost measurements only after relevant behavior changes
+- [x] `SUTRA-P079-04` Recheck the critical integrated journey after fixes
+- [x] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
+- [x] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
+- [x] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
 - [ ] `SUTRA-P079-08` Verify reported metrics match the implementation that will ship
 - [ ] `SUTRA-P079-09` Produce and review the phase artifact: Final affected-check results and comparison against prior data.
 - [ ] `SUTRA-P079-10` Close phase 079 only after its applicable tasks have evidence and its exit condition is observed: Reported metrics correspond to the candidate revision; earlier numbers are not reused after material changes.

@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-24T06:47:55Z",
+  "metrics": [
+    {
+      "id": "engineering_baseline",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "grounding-evaluation"
+      ],
+      "profile": "in-process synthetic model and source handler, no network/paid inference; no held-out semantics",
+      "values": {
+        "retrievalCases": 20,
+        "retrievalPassed": 20,
+        "adversarialCases": 10,
+        "adversarialPassed": 10,
+        "directMedianMs": 0.021067999999992537,
+        "delegatedMedianMs": 2.2866564999999994,
+        "directModelCalls": 0,
+        "delegatedModelCalls": 90,
+        "medianDelegatedModelCalls": 4.5,
+        "directRpc": 0,
+        "delegatedRpc": 90,
+        "providerTokens": null,
+        "semanticPrecision": null
+      }
+    },
+    {
+      "id": "desktop_browser_matrix",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "browser-matrix"
+      ],
+      "profile": "headless desktop engines, synthetic media fixture cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+      "values": {
+        "chromium": "151.0.7922.34 pass",
+        "firefox": "153.0 pass",
+        "webkit": "26.5 pass",
+        "viewport": "1280x800 and 360x800",
+        "physicalTouch": "untested",
+        "humanScreenReader": "untested"
+      }
+    },
+    {
+      "id": "hero_journey",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "critical-journey"
+      ],
+      "profile": "Chromium CI synthetic learner journey",
+      "values": {
+        "result": "pass",
+        "learnerFirstOrder": true,
+        "firstLoadJourneyMap": true,
+        "writtenSourceHashCheck": true,
+        "alteredWrittenSourceRefused": true,
+        "peerDenialPreservesLocalFlow": true,
+        "narrowKeyboardJourney": true,
+        "obsoleteGuideResultDiscarded": true,
+        "mixedContentRecovery": true,
+        "providerSnapshotDriftRejected": true,
+        "freshViewerLocalQuestionToSavedCard": true,
+        "offlineSourceLookupNoNewRequests": true,
+        "sourceOnlyModelCalls": 0,
+        "immediateAccessibleSourceLoadingState": true,
+        "freeSourceQuestionAndReviewCard": true,
+        "nepaliLocalResultsReversible": true
+      }
+    },
+    {
+      "id": "lab_performance",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "performance-profile"
+      ],
+      "profile": "Chromium headless 151.0.7922.34, viewport 1280x800, 1 Mbps down/up, 150 ms laboratory shaping",
+      "values": {
+        "shellGzipBytes": 458664,
+        "transcriptUsableMs": 2913,
+        "encodedBytesAtTranscript": 220976,
+        "mediaRequestsBeforeExplicitLoad": 0,
+        "videoReadyAfterClickMs": 3556,
+        "encodedBytesAfterVideo": 595563,
+        "incrementalEncodedBytesAfterVideo": 374587,
+        "mediaEncodedBytes": null,
+        "nativeSeekFeedbackMs": 66,
+        "mediaEncodedBytesObserved": false,
+        "sourceMediaResponseBytes": 8327,
+        "sourceMediaResponseCount": 1
+      }
+    },
+    {
+      "id": "neutral_peer_interop",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "invalidatedBy": [
+        "peer-interop",
+        "security-boundary"
+      ],
+      "profile": "same-owner local two-origin synthetic consumer; independent public adoption not established",
+      "values": {
+        "result": "pass",
+        "independentExternalAdoption": false
+      }
+    },
+    {
+      "id": "publication_inventory",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "invalidatedBy": [
+        "publication-integrity"
+      ],
+      "profile": "development build, not deployed",
+      "values": {
+        "byteBoundFiles": 68,
+        "networkIdentities": 3
+      }
+    },
+    {
+      "id": "provider_cost",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "invalidatedBy": [
+        "provider-cost"
+      ],
+      "profile": "synthetic provider path only; no live funded provider measured",
+      "values": {
+        "actualProviderTokens": null,
+        "actualRunCost": null,
+        "priceBasis": null,
+        "status": "unmeasured"
+      }
+    },
+    {
+      "id": "security_boundary",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "security-boundary"
+      ],
+      "profile": "finite automated project checks; not universal security proof",
+      "values": {
+        "learnerShell": "pass",
+        "neutralConsumer": "pass",
+        "cloudflareIngress": "pass",
+        "consentDenialZeroContact": true,
+        "callerOwnedModelPolicy": true,
+        "credentialCanaryLeakObserved": false,
+        "externalPublicProduction": "untested",
+        "selfHostedSevenGatewayTestsPassed": true,
+        "implicitPaidFallbackDisabled": true,
+        "checkedInInferenceDisabled": true,
+        "liveHardware": "untested",
+        "browserInferenceCookiesOmitted": true,
+        "browserSourceToolsCookiesOmitted": true,
+        "workerUnknownNestedToolFieldsRejected": true,
+        "gatewayIndependentNestedToolValidation": true,
+        "liveExternalEndpoint": "untested"
+      }
+    },
+    {
+      "id": "local_zero_model_dev",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "grounding-evaluation",
+        "critical-journey"
+      ],
+      "profile": "40 authored synthetic lexical development cases; no human semantic review or provider calls",
+      "values": {
+        "answerable": 20,
+        "matched": 20,
+        "unsupported": 10,
+        "abstained": 10,
+        "adversarialAmbiguous": 10,
+        "handled": 10,
+        "modelCalls": 0,
+        "queryTimeNetworkRequests": 0,
+        "semanticPrecision": null,
+        "realCorpus": false
+      }
+    },
+    {
+      "id": "selfhost_gateway_contract",
+      "sourceRevision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
+      "invalidatedBy": [
+        "local-inference-gateway",
+        "security-boundary",
+        "provider-cost"
+      ],
+      "profile": "seven loopback gateway contract tests and mocked Worker multi-agent SSE; live compute untested",
+      "values": {
+        "gatewayTests": 7,
+        "loopbackOnly": true,
+        "maxConcurrent": 2,
+        "realModelCompatibility": null,
+        "realHardwareCost": null,
+        "serverKeyToBrowser": false,
+        "fullFakeModelHttpChain": true,
+        "abortClosesLocalModelSocket": true,
+        "quotaReleaseOnCancel": true,
+        "nestedToolEnvelopeValidation": true,
+        "prematureHttp200SseEndRejected": true,
+        "quotaLeaseReleasedAfterIncompleteSse": true,
+        "noAutomaticRetryAfterIncompleteSse": true
+      }
+    }
+  ]
+}

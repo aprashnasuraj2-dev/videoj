@@ -1,0 +1,45 @@
+{
+  "schema": 2,
+  "sourceRevision": "0000000000000000000000000000000000000000",
+  "provider": "synthetic-example-not-live",
+  "model": "fixture-only",
+  "currency": "USD",
+  "priceBasis": {
+    "promptPerMillion": 2,
+    "completionPerMillion": 8,
+    "effectiveAt": "2026-11-24T00:00:00Z",
+    "source": "SYNTHETIC TEST PRICE — not a provider quote"
+  },
+  "monthlyRunScenario": 1000,
+  "runs": [
+    {
+      "id": "example-1",
+      "outcome": "completed",
+      "observedAt": "2026-11-24T00:01:00Z",
+      "requests": [
+        {
+          "sequence": 1,
+          "outcome": "completed",
+          "retry": false,
+          "usage": {
+            "promptTokens": 1000,
+            "completionTokens": 200
+          },
+          "latencyMs": 275
+        },
+        {
+          "sequence": 2,
+          "outcome": "completed",
+          "retry": false,
+          "usage": {
+            "promptTokens": 500,
+            "completionTokens": 100
+          },
+          "latencyMs": 400
+        }
+      ]
+    }
+  ],
+  "backend": "hosted",
+  "routerPath": "/api/v1/chat/completions"
+}

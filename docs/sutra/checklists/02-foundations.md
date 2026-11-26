@@ -147,9 +147,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P018-02` Assign immutable source IDs and stable publicly explainable labels
 - [ ] `SUTRA-P018-03` Record source license, publication date and content version
 - [ ] `SUTRA-P018-04` Ensure each hero claim can point to an actual source excerpt
-- [ ] `SUTRA-P018-05` Create a clearly marked conflicting-source fixture for testing
-- [ ] `SUTRA-P018-06` Separate attack fixtures and synthetic contradictions from default learner content
-- [ ] `SUTRA-P018-07` Bound corpus size and avoid arbitrary live web crawling
+- [x] `SUTRA-P018-05` Create a clearly marked conflicting-source fixture for testing
+- [x] `SUTRA-P018-06` Separate attack fixtures and synthetic contradictions from default learner content
+- [x] `SUTRA-P018-07` Bound corpus size and avoid arbitrary live web crawling
 - [ ] `SUTRA-P018-08` Record the corpus manifest and reproducible content hashes
 - [ ] `SUTRA-P018-09` Produce and review the phase artifact: Corpus index and fixture provenance list.
 - [ ] `SUTRA-P018-10` Close phase 018 only after its applicable tasks have evidence and its exit condition is observed: Every public answerable claim has a source; synthetic conflict fixtures are clearly labeled.
@@ -162,11 +162,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Any Pages asset is below 25 MiB; seeking is verified on the selected route before choosing it.
 
 - [ ] `SUTRA-P019-01` Measure final MP4/WebM file sizes including audio and container overhead
-- [ ] `SUTRA-P019-02` Check each Pages asset against the actual per-file size limit
+- [x] `SUTRA-P019-02` Check each Pages asset against the actual per-file size limit
 - [ ] `SUTRA-P019-03` Test Range responses, content types and CORS on proposed media hosting
 - [ ] `SUTRA-P019-04` Test real seeking and decoding before selecting the final delivery route
 - [ ] `SUTRA-P019-05` Prefer verified media hosting over routing video through the main Patro Worker
-- [ ] `SUTRA-P019-06` Set intentional poster, preload and low-bandwidth transcript behavior
+- [x] `SUTRA-P019-06` Set intentional poster, preload and low-bandwidth transcript behavior
 - [ ] `SUTRA-P019-07` Avoid unapproved media uploads or duplicate assets when hashes already match
 - [ ] `SUTRA-P019-08` Record bitrate, duration, byte count and chosen media origin
 - [ ] `SUTRA-P019-09` Produce and review the phase artifact: Media delivery decision and byte/bitrate inventory.
@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run the isolated app build, inspect dependency boundaries and review the corpus and architecture. Confirm that the product still tells one coherent story.
 - **Phase exit:** App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.
 
-- [ ] `SUTRA-P020-01` Review the app package and dependency boundary against repository instructions
+- [x] `SUTRA-P020-01` Review the app package and dependency boundary against repository instructions
 - [ ] `SUTRA-P020-02` Confirm the corpus, transcript and media provenance are available
-- [ ] `SUTRA-P020-03` Confirm the runtime spike resolved the highest integration uncertainty
-- [ ] `SUTRA-P020-04` Run the documented new-app build at a recorded source revision
-- [ ] `SUTRA-P020-05` Record missing participant inputs without presenting them as completed
-- [ ] `SUTRA-P020-06` Resolve any output-directory collision before feature implementation
-- [ ] `SUTRA-P020-07` Review the hero narrative against the current scope and effort
-- [ ] `SUTRA-P020-08` Record a foundation gate decision with named unresolved blockers
-- [ ] `SUTRA-P020-09` Produce and review the phase artifact: Milestone A review tied to the current SHA.
+- [x] `SUTRA-P020-03` Confirm the runtime spike resolved the highest integration uncertainty
+- [x] `SUTRA-P020-04` Run the documented new-app build at a recorded source revision
+- [x] `SUTRA-P020-05` Record missing participant inputs without presenting them as completed
+- [x] `SUTRA-P020-06` Resolve any output-directory collision before feature implementation
+- [x] `SUTRA-P020-07` Review the hero narrative against the current scope and effort
+- [x] `SUTRA-P020-08` Record a foundation gate decision with named unresolved blockers
+- [x] `SUTRA-P020-09` Produce and review the phase artifact: Milestone A review tied to the current SHA.
 - [ ] `SUTRA-P020-10` Close phase 020 only after its applicable tasks have evidence and its exit condition is observed: App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.

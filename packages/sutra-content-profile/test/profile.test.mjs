@@ -1,0 +1,264 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {deriveReviewedTracks,readVerifiedLessonMedia,MAX_REVIEWED_MEDIA_BYTES,readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
+const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"},"transcript":{"path":"/transcripts/synthetic-timing.txt","sha256":"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
+const catalog={
+  "schema": 1,
+  "contentVersion": "synthetic-timing-v1",
+  "sources": [
+    {
+      "id": "synthetic-timing-fixture",
+      "version": "v1",
+      "hash": "a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d",
+      "mediaHash": "cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+      "duration": 8,
+      "cues": [
+        {
+          "id": "timing-marker",
+          "start": 2,
+          "end": 4,
+          "text": "Synthetic timing marker. This is not a training instruction."
+        }
+      ]
+    }
+  ]
+};
+const response=(data,url)=>new Response(typeof data==='string'?data:JSON.stringify(data),{headers:{'Content-Type':'application/json','Content-Length':String(typeof data==='string'?new TextEncoder().encode(data).length:new TextEncoder().encode(JSON.stringify(data)).length)}}); 
+test('profile validates one exact primary source and produces an unverified featured receipt',()=>{
+ const c=validateContentProfile(profile,catalog);assert.equal(c.source.id,'synthetic-timing-fixture');assert.equal(c.featuredCue.id,'timing-marker');
+ const r=receiptForFeatured(c);assert.equal(r.sourceHash,c.source.hash);assert.equal(r.mediaHash,c.source.mediaHash);assert.equal(r.verification,'unverified');assert.equal(r.retrievedAt,'2026-11-23T00:00:00Z');
+});
+test('loader binds catalog bytes to profile hash and same-origin paths',async()=>{
+ const catalogText="{\n  \"schema\": 1,\n  \"contentVersion\": \"synthetic-timing-v1\",\n  \"sources\": [\n    {\n      \"id\": \"synthetic-timing-fixture\",\n      \"version\": \"v1\",\n      \"hash\": \"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d\",\n      \"mediaHash\": \"cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e\",\n      \"duration\": 8,\n      \"cues\": [\n        {\n          \"id\": \"timing-marker\",\n          \"start\": 2,\n          \"end\": 4,\n          \"text\": \"Synthetic timing marker. This is not a training instruction.\"\n        }\n      ]\n    }\n  ]\n}\n";
+ const fetchImpl=async url=>url.endsWith('/content-profile.json')?new Response(JSON.stringify(profile),{headers:{'Content-Type':'application/json'}}):url.endsWith('/source-catalog.json')?new Response(catalogText,{headers:{'Content-Type':'application/json'}}):url.endsWith('/transcripts/synthetic-timing.txt')?new Response('Synthetic timing marker. This is not a training instruction.\n',{headers:{'Content-Type':'text/plain'}}):new Response('',{status:404});
+ const c=await loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl});assert.equal(c.profile.mode,'synthetic');assert.match(c.artifacts.catalogSha256,/^[a-f0-9]{64}$/);
+});
+test('catalog drift, cross-root refs, missing reviewed guide and malformed cues fail closed',async()=>{
+ const bad=structuredClone(profile);bad.catalog.sha256='f'.repeat(64);assert.equal(validateContentProfile(bad,catalog).profile.catalog.sha256,'f'.repeat(64),'shape validation does not possess catalog bytes; loader performs the hash comparison');
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';reviewed.guideClaim=null;assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
+ const broken=structuredClone(catalog);broken.sources[0].cues[0].end=999;assert.throws(()=>validateContentProfile(profile,broken),/CONTENT_CATALOG/);
+ const catalogText="{\n  \"schema\": 1,\n  \"contentVersion\": \"synthetic-timing-v1\",\n  \"sources\": [\n    {\n      \"id\": \"synthetic-timing-fixture\",\n      \"version\": \"v1\",\n      \"hash\": \"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d\",\n      \"mediaHash\": \"cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e\",\n      \"duration\": 8,\n      \"cues\": [\n        {\n          \"id\": \"timing-marker\",\n          \"start\": 2,\n          \"end\": 4,\n          \"text\": \"Synthetic timing marker. This is not a training instruction.\"\n        }\n      ]\n    }\n  ]\n}\n";const fetchImpl=async url=>url.endsWith('/content-profile.json')?new Response(JSON.stringify(bad),{headers:{'Content-Type':'application/json'}}):url.endsWith('/source-catalog.json')?new Response(catalogText,{headers:{'Content-Type':'application/json'}}):new Response('Synthetic timing marker. This is not a training instruction.\n',{headers:{'Content-Type':'text/plain'}});
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl}),/CONTENT_CATALOG_HASH/);
+});
+test('accessor-backed or executable-looking profile data is rejected without invoking it',()=>{
+ let touched=0;const bad=structuredClone(profile);Object.defineProperty(bad,'title',{enumerable:true,get(){touched++;return 'x';}});
+ assert.throws(()=>validateContentProfile(bad,catalog));assert.equal(touched,0);
+});
+
+test('reviewed mode requires an independently declared written claim and video claim remains bounded metadata',()=>{
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';
+ assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
+ reviewed.transcript.path='/transcripts/release/'+reviewed.transcript.sha256+'/lesson.txt';
+ reviewed.media.video='/media/release/'+catalog.sources[0].mediaHash+'/lesson.mp4';
+ reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+'f'.repeat(64)+'/reviewed.html#claim',sourceHash:'f'.repeat(64)};
+ const c=validateContentProfile(reviewed,catalog);assert.equal(c.profile.guideClaim.scope,c.profile.videoClaim.scope);
+ const bad=structuredClone(profile);bad.videoClaim.scope='';assert.throws(()=>validateContentProfile(bad,catalog),/CONTENT_VIDEO_CLAIM/);
+});
+
+test('public media/guide references are same-origin root paths without traversal, queries or protocol-relative escape',()=>{
+ for(const badPath of ['../media/x.mp4','//evil.example/x.mp4','/media/../secret','/media/x.mp4?token=1']){
+  const p=structuredClone(profile);p.media.video=badPath;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_MEDIA/);
+ }
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';
+ for(const badHref of ['../guides/x.html#c','//evil.example/x#c','/guides/../x#c','/guides/x.html?x=1#c','/guides/x.html']){
+  reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:badHref,sourceHash:'f'.repeat(64)};
+  assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
+ }
+});
+
+test('loader verifies the published transcript bytes and cue inclusion before exposing content',async()=>{
+ const catalogText="{\n  \"schema\": 1,\n  \"contentVersion\": \"synthetic-timing-v1\",\n  \"sources\": [\n    {\n      \"id\": \"synthetic-timing-fixture\",\n      \"version\": \"v1\",\n      \"hash\": \"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d\",\n      \"mediaHash\": \"cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e\",\n      \"duration\": 8,\n      \"cues\": [\n        {\n          \"id\": \"timing-marker\",\n          \"start\": 2,\n          \"end\": 4,\n          \"text\": \"Synthetic timing marker. This is not a training instruction.\"\n        }\n      ]\n    }\n  ]\n}\n";
+ const baseFetch=text=>async url=>url.endsWith('/content-profile.json')?new Response(JSON.stringify(profile),{headers:{'Content-Type':'application/json'}}):url.endsWith('/source-catalog.json')?new Response(catalogText,{headers:{'Content-Type':'application/json'}}):new Response(text,{headers:{'Content-Type':'text/plain'}});
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:baseFetch('altered transcript\n')}),/CONTENT_TRANSCRIPT_HASH/);
+ const p=structuredClone(profile);p.transcript.sha256='f'.repeat(64);assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PRIMARY/);
+});
+test('reviewed mode requires hash-addressed media, transcript and written guide paths',()=>{
+ const p=structuredClone(profile);p.mode='reviewed';p.transcript.path='/transcripts/release/'+p.transcript.sha256+'/lesson.txt';p.media.video='/media/release/'+catalog.sources[0].mediaHash+'/lesson.mp4';
+ p.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:p.videoClaim.scope,claimKey:p.videoClaim.claimKey,value:p.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+'f'.repeat(64)+'/guide.html#claim',sourceHash:'f'.repeat(64)};
+ assert.equal(validateContentProfile(p,catalog).profile.mode,'reviewed');
+ const bad=structuredClone(p);bad.media.video='/media/lesson.mp4';assert.throws(()=>validateContentProfile(bad,catalog),/CONTENT_ADDRESSING/);
+});
+
+test('URL normalization and encoded traversal cannot escape the declared artifact path',()=>{
+ for(const path of ['/media/%2e%2e/x.mp4','/media/./x.mp4','/media//x.mp4','/\t/evil.example/x.mp4','/media/x.mp4\n','/media/%5csecret.mp4']){
+  const p=structuredClone(profile);p.media.video=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_MEDIA/);
+ }
+ for(const path of ['./%2e%2e/catalog.json','./nested/../catalog.json','./catalog.json\n','./nested//catalog.json']){
+  const p=structuredClone(profile);p.catalog.path=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_CATALOG_REF/);
+ }
+ for(const path of ['/transcripts/%2e%2e/secret.txt','/transcripts/x.txt\t']){
+  const p=structuredClone(profile);p.transcript.path=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_TRANSCRIPT/);
+ }
+});
+
+test('content reader bounds decoded streams without relying on Content-Length and cancels on rejection',async()=>{
+ let cancelled=false,reads=0;
+ const stream=new ReadableStream({pull(c){reads++;c.enqueue(new Uint8Array(8));},cancel(){cancelled=true;}});
+ await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:12,fetchImpl:async()=>new Response(stream)}),/CONTENT_SIZE/);
+ assert.equal(cancelled,true);assert.ok(reads<=4);
+ const good=await readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:3,fetchImpl:async()=>new Response(new Uint8Array([1,2,3]))});
+ assert.deepEqual([...good.bytes],[1,2,3]);
+ let contacts=0;
+ await assert.rejects(readContentBytes({url:'https://elsewhere.example/source',origin:'https://sutra.example',maxBytes:3,fetchImpl:async()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,0);
+});
+test('content reader cancellation releases a held-open body and rejects before a pre-cancelled fetch',async()=>{
+ const controller=new AbortController();let cancelled=false,contacts=0;
+ const stream=new ReadableStream({cancel(){cancelled=true;}});
+ const pending=readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:async()=>{contacts++;return new Response(stream);}});
+ await new Promise(resolve=>setTimeout(resolve,5));controller.abort();
+ await assert.rejects(pending);assert.equal(cancelled,true);
+ await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:async()=>{contacts++;}}));
+ assert.equal(contacts,1);
+});
+
+test('schema one refuses a second catalog source with no independently bound transcript or media',async()=>{
+ const extra=structuredClone(catalog);extra.sources.push({...structuredClone(extra.sources[0]),id:'unbound-secondary',hash:'e'.repeat(64),mediaHash:'d'.repeat(64),cues:[{id:'unbound-claim',start:0,end:1,text:'This text does not exist in the declared transcript.'}]});
+ const bytes=JSON.stringify(extra),p=structuredClone(profile);p.catalog.sha256=createHash('sha256').update(bytes).digest('hex');
+ assert.throws(()=>validateContentProfile(p,extra),/CONTENT_UNBOUND_SOURCE/);
+ const contacted=[];const fetchImpl=async url=>{contacted.push(url);return new Response(url.endsWith('/content-profile.json')?JSON.stringify(p):bytes,{headers:{'Content-Type':'application/json'}});};
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl}),/CONTENT_UNBOUND_SOURCE/);
+ assert.equal(contacted.length,2,'reject the unbound catalog before fetching transcript or mounting any receipt');
+});
+test('reviewed artifact address requires exact digest path segment, not a substring or fragment',()=>{
+ const p=structuredClone(profile);p.mode='reviewed';
+ const mediaHash=catalog.sources[0].mediaHash,transcriptHash=p.transcript.sha256,guideHash='f'.repeat(64);
+ p.media.video='/media/release/'+mediaHash+'/lesson.mp4';p.transcript.path='/transcripts/release/'+transcriptHash+'/lesson.txt';
+ p.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:p.videoClaim.scope,claimKey:p.videoClaim.claimKey,value:p.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+guideHash+'/guide.html#claim',sourceHash:guideHash};
+ assert.equal(validateContentProfile(p,catalog).profile.mode,'reviewed');
+ for(const alter of [q=>q.media.video='/media/release/not-'+mediaHash+'/lesson.mp4',q=>q.transcript.path='/transcripts/release/'+transcriptHash+'-suffix/lesson.txt',q=>q.guideClaim.sourceHref='/guides/guide.html#'+guideHash]){
+  const q=structuredClone(p);alter(q);assert.throws(()=>validateContentProfile(q,catalog),/CONTENT_ADDRESSING/);
+ }
+});
+
+
+test('artifact hashes and identifiers reject coercible objects without executing conversion hooks',()=>{
+ let touched=0;const value={toString(){touched++;return catalog.sources[0].hash;}};
+ const bad=structuredClone(catalog);bad.sources[0].hash=value;
+ assert.throws(()=>validateContentProfile(profile,bad),/CONTENT_CATALOG/);assert.equal(touched,0);
+ const p=structuredClone(profile);p.featuredCueId={toString(){touched++;return 'timing-marker';}};
+ assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PROFILE/);assert.equal(touched,0);
+});
+
+
+test('late noncooperative response is disposed after cancellation without reading its body',async()=>{
+ const controller=new AbortController();let resolveFetch,cancelled=0;
+ const late=new Promise(resolve=>{resolveFetch=resolve;});
+ const pending=readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:()=>late});
+ controller.abort();await assert.rejects(pending,/CONTENT_CANCELLED/);
+ resolveFetch(new Response(new ReadableStream({cancel(){cancelled++;}})));
+ await new Promise(resolve=>setTimeout(resolve,0));assert.equal(cancelled,1);
+});
+test('complete artifact reads reject partial status and content-range even when bytes fit',async()=>{
+ for(const response of [new Response('abc',{status:206}),new Response('abc',{headers:{'Content-Range':'bytes 0-2/3'}})]){
+  await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:8,fetchImpl:async()=>response}),/CONTENT_RESPONSE/);
+  assert.equal(response.body.locked,false);
+ }
+});
+test('tiny fragments preserve exact bytes without an array of retained chunks',async()=>{
+ let i=0;const expected=Uint8Array.from({length:33000},(_,j)=>j%251);
+ const stream=new ReadableStream({pull(controller){if(i===expected.length)controller.close();else controller.enqueue(expected.subarray(i,++i));}});
+ const result=await readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:expected.length,fetchImpl:async()=>new Response(stream)});
+ assert.deepEqual(result.bytes,expected);
+});
+
+test('reviewed media requires complete exact bytes, type, digest path and no credentials',async()=>{
+ const bytes=new Uint8Array([1,2,3,4]),mediaHash=createHash('sha256').update(bytes).digest('hex'),origin='https://sutra.example',url=origin+'/media/release/'+mediaHash+'/lesson.webm';let calls=0;
+ const fetchImpl=async (target,options)=>{calls++;assert.equal(target,url);assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');assert.equal(options.headers.Accept,'video/webm');return new Response(bytes,{headers:{'Content-Type':'video/webm'}});};
+ const verified=await readVerifiedLessonMedia({url,origin,mediaHash,mode:'reviewed',fetchImpl});assert.deepEqual(verified.bytes,bytes);assert.equal(verified.mime,'video/webm');assert.equal(calls,1);
+ for(const r of [new Response(new Uint8Array([1,2,3,5]),{headers:{'Content-Type':'video/webm'}}),new Response(bytes,{headers:{'Content-Type':'text/html'}}),new Response(bytes,{status:206,headers:{'Content-Type':'video/webm'}}),new Response(bytes,{headers:{'Content-Type':'video/webm','Content-Length':String(MAX_REVIEWED_MEDIA_BYTES+1)}})]){
+  await assert.rejects(readVerifiedLessonMedia({url,origin,mediaHash,mode:'reviewed',fetchImpl:async()=>r}));
+ }
+ await assert.rejects(readVerifiedLessonMedia({url:origin+'/media/not-'+mediaHash+'/lesson.webm',origin,mediaHash,mode:'reviewed',fetchImpl}),/CONTENT_MEDIA_CONFIG/);assert.equal(calls,1);
+});
+
+test('reviewed native tracks preserve exact cue wording, deterministic order and millisecond timing',()=>{
+ const source={duration:8,cues:[{id:'later',start:4,end:6,text:'A & B < C --> D'},{id:'earlier',start:0.125,end:4,text:'Literal <b>tag</b>'}]};
+ const tracks=deriveReviewedTracks(source);
+ assert.match(tracks.captions,/earlier\n00:00:00\.125 --> 00:00:04\.000\nLiteral &lt;b&gt;tag&lt;\/b&gt;/);
+ assert.match(tracks.captions,/A &amp; B &lt; C --&gt; D/);
+ assert.ok(tracks.captions.indexOf('earlier')<tracks.captions.indexOf('later'));assert.match(tracks.chapters,/earlier-chapter/);
+ const overlap=structuredClone(source);overlap.cues[0].start=3;assert.equal(deriveReviewedTracks(overlap).chapters,null);assert.match(deriveReviewedTracks(overlap).captions,/later/);
+ const fractional=structuredClone(source);fractional.cues[1].start=.1255;assert.throws(()=>deriveReviewedTracks(fractional),/CONTENT_TRACK_TIMING/);
+ const zero=structuredClone(source);zero.cues[1].end=.125;assert.throws(()=>deriveReviewedTracks(zero),/CONTENT_TRACK_TIMING/);
+});
+
+test('artifact reads reject same-origin response substitution and fragment-bearing request before bytes are accepted',async()=>{
+ const origin='https://sutra.example',url=origin+'/source';let cancelled=false,contacts=0;
+ const response=new Response(new ReadableStream({cancel(){cancelled=true;}}));Object.defineProperty(response,'url',{value:origin+'/other'});
+ await assert.rejects(readContentBytes({origin,url,maxBytes:32,fetchImpl:async()=>{contacts++;return response;}}),/CONTENT_RESPONSE/);
+ assert.equal(cancelled,true);
+ await assert.rejects(readContentBytes({origin,url:url+'#fragment',maxBytes:32,fetchImpl:async()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,1);
+});
+test('profile loader rejects JSON content type lookalikes without reading additional artifacts',async()=>{
+ let contacts=0;
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async()=>{contacts++;return new Response(JSON.stringify(profile),{headers:{'Content-Type':'text/application/json'}});}}),/CONTENT_RESPONSE/);
+ assert.equal(contacts,1);
+});
+
+test('public content reader rejects non-HTTP(S) same-origin blob and wrong media type before reading',async()=>{
+ const origin='https://sutra.example';let contacts=0,cancelled=0,pulls=0;
+ await assert.rejects(readContentBytes({url:'blob:'+origin+'/fixture',origin,maxBytes:32,fetchImpl:()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,0);
+ const response=new Response(new ReadableStream({pull(){pulls++;},cancel(){cancelled++;}}),{headers:{'Content-Type':'text/html'}});
+ await assert.rejects(readContentBytes({url:origin+'/media/file.mp4',origin,maxBytes:32,accept:'video/mp4',fetchImpl:()=>{contacts++;return response;}}),/CONTENT_MEDIA_RESPONSE/);
+ assert.equal(contacts,1);assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
+});
+
+test('artifact readers bound empty fragments and yield to cancellation during tiny-fragment transport',async()=>{
+ let pulls=0,cancelled=0;
+ const response=new Response(new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}}));
+ const origin='https://sutra.example',url=origin+'/source';
+ await assert.rejects(readContentBytes({origin,url,maxBytes:32,fetchImpl:()=>response}),/CONTENT_SIZE/);
+ assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+ const controller=new AbortController();let count=0;
+ const busy=new Response(new ReadableStream({pull(c){count++;c.enqueue(Uint8Array.of(1));}}));
+ const timer=setTimeout(()=>controller.abort(),0);
+ try{await assert.rejects(readContentBytes({origin,url,maxBytes:65536,signal:controller.signal,fetchImpl:()=>busy}));assert.ok(count<=1025);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
+});
+
+test('claim metadata rejects unknown nested values, cycles and unbounded dates before cloning',()=>{
+ let touched=0;
+ const nested={};Object.defineProperty(nested,'secret',{enumerable:true,get(){touched++;return 'private';}});
+ const cyclic={};cyclic.self=cyclic;
+ for(const extra of [nested,cyclic]){
+  const p=structuredClone(profile);p.videoClaim.extra=extra;
+  assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_VIDEO_CLAIM/);
+ }
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';
+ reviewed.transcript.path='/transcripts/release/'+reviewed.transcript.sha256+'/lesson.txt';
+ reviewed.media.video='/media/release/'+catalog.sources[0].mediaHash+'/lesson.mp4';
+ reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+'f'.repeat(64)+'/reviewed.html#claim',sourceHash:'f'.repeat(64),observedAt:'2024-02-29T09:00:00+05:45',dateBasis:'Date of observation'};
+ assert.equal(validateContentProfile(reviewed,catalog).profile.guideClaim.dateBasis,'Date of observation');
+ for(const [field,value] of [['extra',nested],['observedAt',nested],['observedAt','2026-02-29T00:00:00Z'],['observedAt','2026-01-01T24:00:00Z'],['dateBasis',cyclic],['dateBasis','x'.repeat(121)]]){
+  const p=structuredClone(reviewed);p.guideClaim[field]=value;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_GUIDE/);
+ }
+ for(const value of ['2026-02-30T00:00:00Z','2026-01-01T24:00:00Z','2026-01-01T00:00:60Z']){
+  const p=structuredClone(profile);p.observedAt=value;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PROFILE/);
+ }
+ assert.equal(touched,0,'unknown or invalid nested data must not reach structuredClone getters');
+});
+
+test('known artifact MIME is checked before opening a potentially held response body',async()=>{
+ for(const [accept,error] of [['application/json','CONTENT_RESPONSE'],['text/plain','CONTENT_TRANSCRIPT_TYPE'],['text/html','CONTENT_RESPONSE']]){
+  let cancelled=0,pulls=0;const response=new Response(new ReadableStream({pull(){pulls++;},cancel(){cancelled++;}}),{headers:{'Content-Type':'application/octet-stream'}});
+  await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,accept,fetchImpl:()=>response}),new RegExp(error));
+  assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
+ }
+});
+
+test('byte-hash-matched catalog still refuses ambiguous JSON member identity',async()=>{
+ const ambiguous='{"schema":0,'+JSON.stringify(catalog).slice(1);
+ const p=structuredClone(profile);p.catalog.sha256=createHash('sha256').update(ambiguous).digest('hex');
+ const calls=[];
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async url=>{
+  calls.push(url);return response(url.endsWith('content-profile.json')?p:ambiguous,url);
+ }}),/CONTENT_JSON/);
+ assert.equal(calls.length,2,'even correct raw catalog digest cannot establish unambiguous data');
+});
+test('ambiguous content profile cannot request its declared catalog',async()=>{
+ const calls=[];
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async url=>{
+  calls.push(url);return response('{"mode":"reviewed",'+JSON.stringify(profile).slice(1),url);
+ }}),/CONTENT_JSON/);
+ assert.equal(calls.length,1);
+});

@@ -72,3 +72,64 @@ test('executable peer metadata and malformed graph fail closed',async()=>{
   }}),e=>e.code===code);
  }
 });
+
+test('approved peer that never responds hits bounded artifact timeout without fallback',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const start=Date.now();
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,timeoutMs:25,fetchImpl:async()=>new Promise(()=>{})}),e=>e.code==='ARTIFACT_TIMEOUT');
+ assert.ok(Date.now()-start<1000);
+});
+test('404 peer manifest and invalid JSON are visible artifact failures',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('missing',{status:404})}),e=>e.code==='MANIFEST_UNAVAILABLE');
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('{bad',{headers:{'Content-Type':'application/json'}})}),e=>e.code==='MANIFEST_UNAVAILABLE');
+});
+
+test('authority-like site path cannot replace the peer URL origin during manifest resolution',async()=>{
+ const target='https://peer.example//other.example/agents/%74ransit';
+ const manifestUrl='https://peer.example//other.example/agents/agent-manifest.json';
+ const graphUrl='https://peer.example//other.example/agents/transit.network.json';
+ const intents=[],calls=[];
+ const inspector=createConsentInspector({decide:async intent=>{intents.push([intent.origin,intent.resource]);return {decision:'allow',scope:'once'};}});
+ const fetchImpl=async url=>{
+  calls.push(url);
+  assert.ok([manifestUrl,graphUrl].includes(url),'no implicit authority switch');
+  return response(url===manifestUrl?manifest():graph);
+ };
+ const loaded=await loadPeerNetwork({peerUrl:target,inspector,fetchImpl});
+ assert.equal(loaded.name,'transit');assert.equal(loaded.origin,'https://peer.example');
+ assert.deepEqual(loaded.artifacts,{manifest:manifestUrl,definition:graphUrl});
+ assert.deepEqual(calls,[manifestUrl,graphUrl]);assert.deepEqual(intents,calls.map(url=>['https://peer.example',url]));
+});
+
+
+test('standalone peer loader refuses executable configuration and coercible destination or timeout before contact',async()=>{
+ let touched=0,contacts=0,decisions=0;
+ const inspector=createConsentInspector({decide:async()=>{decisions++;return 'allow';}});
+ const fetchImpl=async()=>{contacts++;throw Error('no contact expected');};
+ const valid={peerUrl,inspector,fetchImpl};
+ for(const key of ['peerUrl','inspector','fetchImpl','timeoutMs']){
+  const bad={...valid};Object.defineProperty(bad,key,{enumerable:true,get(){touched++;return valid[key];}});
+  await assert.rejects(loadPeerNetwork(bad),e=>e.code==='PEER_CONFIG');
+ }
+ const hidden={...valid};Object.defineProperty(hidden,'extra',{value:true});
+ await assert.rejects(loadPeerNetwork(hidden),e=>e.code==='PEER_CONFIG');
+ for(const url of [{toString(){touched++;return peerUrl;}},'https://peer.example/agents/tra\tnsit','https://peer.example/'+('a'.repeat(2048))+'/transit'])await assert.rejects(loadPeerNetwork({...valid,peerUrl:url}),e=>e.code==='PEER_URL');
+ await assert.rejects(loadPeerNetwork({...valid,timeoutMs:{valueOf(){touched++;return 50;}}}),e=>e.code==='LIMIT_CONFIG');
+ assert.equal(touched,0);assert.equal(contacts,0);assert.equal(decisions,0);
+});
+
+test('ambiguous peer publication fails before model or additional graph consent',async()=>{
+ for(const stage of ['manifest','graph']){
+  const intents=[],calls=[];
+  const inspector=createConsentInspector({decide:async intent=>{intents.push(intent.kind);return {decision:'allow',scope:'once'};}});
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{
+   const isManifest=url.endsWith('agent-manifest.json');calls.push(url);
+   const body=isManifest?(stage==='manifest'?'{"networks":[],"networks":'+JSON.stringify(manifest().networks)+'}':JSON.stringify(manifest())):
+    '{"tools":[],'+JSON.stringify(graph).slice(1);
+   return new Response(body,{headers:{'Content-Type':'application/json'}});
+  }}),e=>e.code===(stage==='manifest'?'MANIFEST_UNAVAILABLE':'GRAPH_UNAVAILABLE'));
+  assert.equal(calls.length,stage==='manifest'?1:2);
+  assert.deepEqual(intents,stage==='manifest'?['peer_manifest']:['peer_manifest','peer_graph']);
+ }
+});

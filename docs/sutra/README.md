@@ -20,6 +20,15 @@ When the user says **“continue with sutra”** (case-insensitive), read the re
 | [DECISIONS.md](DECISIONS.md) | Rationale, optional omissions, scope changes and reversals |
 | [COVERAGE.md](COVERAGE.md) | Cross-cutting requirement coverage, acceptance targets and evidence rules |
 | [BASELINE.md](BASELINE.md) | PDF provenance, known source revision, rules/spec and planning assumptions |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | SUTRA clean-install, component entry points, issue/security and contribution boundaries |
+| [CHANGELOG.md](CHANGELOG.md) | Pre-release changelog policy; no invented public versions |
+| [Technical_Report.md](Technical_Report.md) | Pre-release implementation report with source-to-claim mapping and explicit untested limits |
+| [COMMUNITY_TOOLS_AND_IMPACT.md](COMMUNITY_TOOLS_AND_IMPACT.md) | Reusable-tool jobs, claim boundaries and maintenance limits without invented adoption |
+| [JUDGING_AVAILABILITY_RUNBOOK.md](JUDGING_AVAILABILITY_RUNBOOK.md) | Official judging-window conversion, residual availability risks and manual recovery plan |
+| [MEASUREMENT_PROTOCOLS.md](MEASUREMENT_PROTOCOLS.md) | Pre-registered live-run success definition and equivalent manual transcript baseline |
+| [PERMISSION_ASSET_INVENTORY.md](PERMISSION_ASSET_INVENTORY.md) | Permission-sensitive asset categories and default exclusion rule; not permission evidence |
+| [PARTICIPANT_HANDOFF.md](PARTICIPANT_HANDOFF.md) | Public-safe eligibility/availability status and genuine-human handoff tasks |
+| [REMAINING_GATE_MAP.md](REMAINING_GATE_MAP.md) | Remaining external/final-state gate classes and their real re-open conditions |
 | [evidence/README.md](evidence/README.md) | Evidence conventions without private data or fabricated outcomes |
 
 ## Read-only progress commands
@@ -36,4 +45,4 @@ The script reads the tracker and exits nonzero for inconsistent IDs, missing clo
 
 The checklist is comprehensive initial coverage, not a guarantee against unknown failures. Add discoveries to [added scope](checklists/11-added-scope.md) and record revised acceptance when justified. Do product work and use the register as a handoff; never substitute tracker activity for implementation or verification.
 
-Target final ZIP handoff: **9 January 2027**. Official deadline baseline: **11 January 2027, 21:45 Asia/Kathmandu (16:00 UTC)**, subject to live re-verification. Proposed origins `sutra.aafnaipatro.com` and `sutra-guide.aafnaipatro.com` are not established deployment facts.
+Target final ZIP handoff: **9 January 2027**. Official deadline baseline: **11 January 2027, 21:45 Asia/Kathmandu (16:00 UTC)**, subject to live re-verification. The SUTRA caller app is currently public on CloudflareB at `https://sutra-c70.pages.dev/`; the content profile remains synthetic development content. No separate peer production origin or owned custom `.dev` domain is established yet.

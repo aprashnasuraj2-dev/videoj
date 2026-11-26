@@ -8,3 +8,53 @@ test('MCP redirect/HTML fallback and oversized replies refused',async()=>{for(co
 test('cancellation interrupts noncooperating source transport',async()=>{const abort=new AbortController();const client=createSourceMcp({...sourceTools,signal:abort.signal,fetchImpl:()=>new Promise(()=>{})});const pending=client.listTools();abort.abort();await assert.rejects(pending);});
 
 test('unavailable source discovery and failed source calls terminate the whole composition',async()=>{for(const method of ['initialize','tools/call']){let calls=0;await assert.rejects(runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{calls++;if(JSON.parse(opts.body).method===method)throw Error('private transport failure');return transport(url,opts);}}}),e=>e.code==='CAPABILITY_UNAVAILABLE'&&!e.message.includes('private'));assert.ok(calls>0);}});
+
+test('source quota and availability failures preserve bounded failure codes through the runtime',async()=>{
+ for(const [status,code] of [[429,'SOURCE_QUOTA'],[503,'SOURCE_UNAVAILABLE']]){
+  let toolCalls=0;
+  await assert.rejects(runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{
+   const method=JSON.parse(opts.body).method;
+   if(method==='tools/call'){toolCalls++;return new Response('private source capacity detail',{status});}
+   return transport(url,opts);
+  }}}),e=>e.code===code&&!e.message.includes('private source capacity detail'));
+  assert.equal(toolCalls,1);
+ }
+});
+
+test('composition timeout while a source call is held does not become a source error or complete later',async()=>{
+ let observed=0,deliver,receipts=0,late;
+ const pending=runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),limits:{timeoutMs:200},sourceTools:{...sourceTools,onReceipt(){receipts++;},fetchImpl:async(url,opts)=>{
+  if(JSON.parse(opts.body).method==='tools/call'){
+   observed++;late=await transport(url,opts);return new Promise(r=>deliver=r);
+  }
+  return transport(url,opts);
+ }}});
+ await assert.rejects(pending,e=>e.code==='TIMEOUT'&&e.diagnostics.reason==='TIMEOUT');
+ assert.equal(observed,1);assert.equal(receipts,0);
+ deliver(late);await new Promise(r=>setTimeout(r,0));assert.equal(receipts,0,'late valid response cannot enter stopped composition');assert.equal(observed,1);
+});
+
+test('runtime source options refuse executable metadata before any model or source contact',async()=>{
+ let touched=0,models=0,contacts=0;
+ const opts={...sourceTools,fetchImpl:()=>{contacts++;}};
+ Object.defineProperty(opts,'origin',{enumerable:true,get(){touched++;return 'https://sutra.test';}});
+ await assert.rejects(runNetwork({definition:graph,request:'find timing',model:{mode:'scripted-test',chat(){models++;}},sourceTools:opts}),e=>e.code==='SOURCE_CONFIG');
+ assert.equal(touched,0);assert.equal(models,0);assert.equal(contacts,0);
+});
+test('source host origin and transport are pinned across runtime observer mutations',async()=>{
+ const seen=[],config={...sourceTools,fetchImpl:async(url,opts)=>{seen.push(url);return transport(url,opts);}};
+ let substituted=0;
+ const result=await runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:config,onEvent(){config.origin='https://other.test';config.fetchImpl=()=>{substituted++;throw Error('wrong destination');};}});
+ assert.match(result.text,/Synthetic timing marker/);assert.equal(substituted,0);assert.ok(seen.length>=4);assert.ok(seen.every(url=>url==='https://sutra.test/api/source-tools'));
+});
+
+test('duplicate call identity in a later source-agent round stops before repeated source transport',async()=>{
+ let modelCalls=0,reads=0;
+ const model={mode:'scripted-test',chat({tools}){
+  modelCalls++;
+  const name=tools.some(t=>t.function.name==='evidence')?'evidence':'mcp_search_lesson';
+  return {content:'',finishReason:'tool_calls',toolCalls:[{id:name==='evidence'?'delegate':'duplicate-source-read',type:'function',function:{name,arguments:name==='evidence'?'{"request":"find timing"}':'{"query":"timing"}'}}]};
+ }};
+ await assert.rejects(runNetwork({definition:graph,request:'find timing',model,sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{if(JSON.parse(opts.body).method==='tools/call')reads++;return transport(url,opts);}}}),e=>e.code==='TOOL_CALL'&&e.diagnostics.modelCalls===3);
+ assert.equal(modelCalls,3);assert.equal(reads,1);
+});

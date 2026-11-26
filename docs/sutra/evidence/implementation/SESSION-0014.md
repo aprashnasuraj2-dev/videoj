@@ -1,0 +1,18 @@
+# Session 0014 — verified engineering and remaining boundaries
+
+Observed implementation: f69d6c169cd588a4ebaef938884a986714da71eb. Green [full learner job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536932/job/138151640636), [standalone starter](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658), [Open Kit](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536924/job/138151640456), [ingress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536919/job/138151640727). Observation timestamp 2026-11-24T01:39:34Z UTC. Development only.
+
+## Observed results
+- Learner 72/72, consent/inference/source/API 55/55, runtime 99/99, guide publication 8/8, all ten pinned upstream module hashes, ten Chromium profiles. Standalone evidence library 27/27.
+- Starter generated outside repo, clean offline install and three independent tests, exact-name second-origin publication, standalone Chromium two-agent execution and local proposal cancellation/confirmation. No external contact during standalone learner run.
+- Open Kit 68 files, three individually documented/license-preserving components, exact candidate SHA, deterministic inventory, archive extraction and rejection of bounded secret-pattern/tamper cases. Not official certification or proof against every secret type; development distribution only.
+- Local review deletion removes last key, preserves unrelated storage, rejects replay and recovers corrupt storage after explicit approval. BYOK is not shipped; P068 full scope remains open. Saved write readback and persisted-ID uniqueness identified as separate X001 engineering tasks.
+- Synthetic provider path: opt-in model configuration, 4 calls, 80/20 fixture input/output tokens, no automatic retry, independently validated receipts and unverified interpretation displayed separately, cancellation leaves video controls functional. No actual paid model or billing proof. Resource limits: 100 calls/day, 8/client/day, 2 simultaneous, 3,379,200 outbound JSON bytes/day, 51,200 requested output tokens/day, max 512/call. UTC rollover preserves unexpired leases. These are resource ceilings, not a dollar budget.
+- Local performance profile Chromium at 1 Mbps/150ms: 405,051 shell gzip bytes, transcript usable 1,721 ms, no media before explicit load, video ready 3,509 ms, native seek feedback 66 ms. A laboratory observation, not a production guarantee.
+- The separate two-account candidate already compiled (74 learner files, 8 guide files, 72 byte-identical learner files). No real account access or deployment. Participant subsequently prohibited further deployment work while core checklist remains incomplete.
+
+## In-progress engineering — not credited
+P071 neutral consumer at 40107b5fb1f6bb2dbb94e65193db007cd4052883 exercised direct vendor runtime and exact artifact loading before timing out on missing artifact: the browser hid the 404 due to missing CORS. [Failed job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307217621/job/138153884347). Fix c10155d78fe7329638c6e8182a23fa8074df9df6 classifies unavailable CORS transport and adds missing-CORS regression, plus explicit running/cancelling state. Await passing exact-revision CI; preserve failed evidence. No P071 completion claim.
+
+## Remaining priority
+P026 lifecycle/retry accounting; P029 real learner local action registration and readback; P028 shared budgets and safe partial results; P022 symbolic links and publication inventory; P071 independent consumer; P077 browser matrix. Keep funded visitor, actual rights-reviewed corpus, human acceptance, production HTTPS/account telemetry and official submission pending. No public deployment or DNS work in upcoming engineering sessions.

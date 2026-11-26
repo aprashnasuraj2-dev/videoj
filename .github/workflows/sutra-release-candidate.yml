@@ -1,0 +1,32 @@
+name: Validate SUTRA release-candidate artifact gate
+on:
+  pull_request:
+    paths:
+      - 'tools/sutra-release-candidate/**'
+      - '.github/workflows/sutra-release-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tools/sutra-release-candidate/*.test.mjs
+      - name: Build development bundle required by candidate materializer
+        working-directory: apps/sutra
+        run: npm ci && npm run build
+      - name: Incomplete release template must not materialize
+        run: |
+          set +e
+          node tools/sutra-release-candidate/cli.mjs tools/sutra-release-candidate/release-config.template.json apps/sutra/dist "$RUNNER_TEMP/sutra-release"
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ] || [ -e "$RUNNER_TEMP/sutra-release" ]; then
+            echo "Incomplete release template unexpectedly produced a candidate" >&2
+            exit 1
+          fi

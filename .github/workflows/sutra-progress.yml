@@ -29,3 +29,5 @@ jobs:
         run: node --check docs/sutra/tools/progress.mjs
       - name: Validate checklist IDs, evidence records and resume pointers
         run: node docs/sutra/tools/progress.mjs check
+      - name: Validate stabilization risk register
+        run: node --test docs/sutra/tools/risk.test.mjs

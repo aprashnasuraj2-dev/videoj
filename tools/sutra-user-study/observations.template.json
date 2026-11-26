@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "note": "TEMPLATE ONLY — no participant observations. Fill only after consented study using the frozen plan.",
+  "observations": [
+    {
+      "participant": "P01",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P01",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P02",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P02",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P03",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P03",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P04",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P04",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P05",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P05",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P06",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P06",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P07",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P07",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P08",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P08",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P09",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P09",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P10",
+      "method": "sutra",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    },
+    {
+      "participant": "P10",
+      "method": "manual",
+      "variant": null,
+      "success": null,
+      "validEvidence": null,
+      "durationSeconds": null,
+      "assistanceCount": null,
+      "criticalError": null
+    }
+  ]
+}

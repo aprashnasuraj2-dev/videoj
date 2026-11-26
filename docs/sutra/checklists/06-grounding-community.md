@@ -17,16 +17,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Implement deterministic cue search with source filters, interval boundaries and result caps before optional semantic retrieval. Return IDs and excerpts that the answer validator can verify.
 - **Phase exit:** Queries return only corpus-backed cue IDs; irrelevant or absent material returns no supported answer.
 
-- [ ] `SUTRA-P051-01` Implement deterministic transcript retrieval before optional semantic search
-- [ ] `SUTRA-P051-02` Use stable cue and source identifiers in all results
-- [ ] `SUTRA-P051-03` Bound query length, candidate count and excerpt size
-- [ ] `SUTRA-P051-04` Respect corpus/source filters and actual timestamp boundaries
-- [ ] `SUTRA-P051-05` Return no supported match for absent or irrelevant material
-- [ ] `SUTRA-P051-06` Keep source text distinct from model-authored summaries
-- [ ] `SUTRA-P051-07` Verify the same fixed query has reproducible evidence candidates
-- [ ] `SUTRA-P051-08` Record retrieval failure cases before adjusting model prompts
-- [ ] `SUTRA-P051-09` Produce and review the phase artifact: Retrieval module and fixed query fixtures.
-- [ ] `SUTRA-P051-10` Close phase 051 only after its applicable tasks have evidence and its exit condition is observed: Queries return only corpus-backed cue IDs; irrelevant or absent material returns no supported answer.
+- [x] `SUTRA-P051-01` Implement deterministic transcript retrieval before optional semantic search
+- [x] `SUTRA-P051-02` Use stable cue and source identifiers in all results
+- [x] `SUTRA-P051-03` Bound query length, candidate count and excerpt size
+- [x] `SUTRA-P051-04` Respect corpus/source filters and actual timestamp boundaries
+- [x] `SUTRA-P051-05` Return no supported match for absent or irrelevant material
+- [x] `SUTRA-P051-06` Keep source text distinct from model-authored summaries
+- [x] `SUTRA-P051-07` Verify the same fixed query has reproducible evidence candidates
+- [x] `SUTRA-P051-08` Record retrieval failure cases before adjusting model prompts
+- [x] `SUTRA-P051-09` Produce and review the phase artifact: Retrieval module and fixed query fixtures.
+- [x] `SUTRA-P051-10` Close phase 051 only after its applicable tasks have evidence and its exit condition is observed: Queries return only corpus-backed cue IDs; irrelevant or absent material returns no supported answer.
 
 ## Phase 052 - Validate evidence before rendering claims
 
@@ -35,16 +35,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Check source hashes, cue existence, timestamps, quotation fidelity and structured claim references. Downgrade unsupported statements and label model interpretation separately.
 - **Phase exit:** Fabricated cue IDs and altered quotations fail; supported results retain clickable source links.
 
-- [ ] `SUTRA-P052-01` Validate every rendered cue ID against the active corpus
-- [ ] `SUTRA-P052-02` Check timestamps and source/media version hashes
-- [ ] `SUTRA-P052-03` Compare quotations to actual source text with documented normalization
-- [ ] `SUTRA-P052-04` Require structured claim-to-evidence references before verification labels
-- [ ] `SUTRA-P052-05` Mark interpretation separately from source-backed excerpts
-- [ ] `SUTRA-P052-06` Reject invented sources, altered quotes and impossible timestamp intervals
-- [ ] `SUTRA-P052-07` Avoid treating schema validity as semantic verification
-- [ ] `SUTRA-P052-08` Preserve an explicit unsupported state when validation fails
-- [ ] `SUTRA-P052-09` Produce and review the phase artifact: Answer-evidence validation pipeline.
-- [ ] `SUTRA-P052-10` Close phase 052 only after its applicable tasks have evidence and its exit condition is observed: Fabricated cue IDs and altered quotations fail; supported results retain clickable source links.
+- [x] `SUTRA-P052-01` Validate every rendered cue ID against the active corpus
+- [x] `SUTRA-P052-02` Check timestamps and source/media version hashes
+- [x] `SUTRA-P052-03` Compare quotations to actual source text with documented normalization
+- [x] `SUTRA-P052-04` Require structured claim-to-evidence references before verification labels
+- [x] `SUTRA-P052-05` Mark interpretation separately from source-backed excerpts
+- [x] `SUTRA-P052-06` Reject invented sources, altered quotes and impossible timestamp intervals
+- [x] `SUTRA-P052-07` Avoid treating schema validity as semantic verification
+- [x] `SUTRA-P052-08` Preserve an explicit unsupported state when validation fails
+- [x] `SUTRA-P052-09` Produce and review the phase artifact: Answer-evidence validation pipeline.
+- [x] `SUTRA-P052-10` Close phase 052 only after its applicable tasks have evidence and its exit condition is observed: Fabricated cue IDs and altered quotations fail; supported results retain clickable source links.
 
 ## Phase 053 - Create a precommitted evaluation set
 
@@ -56,11 +56,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P053-01` Create 20 answerable cases with human-reviewed expected cue references
 - [ ] `SUTRA-P053-02` Create 10 unanswerable cases that require abstention
 - [ ] `SUTRA-P053-03` Create 10 conflict or adversarial cases with expected safe handling
-- [ ] `SUTRA-P053-04` Define supported-claim precision and citation validity denominators
+- [x] `SUTRA-P053-04` Define supported-claim precision and citation validity denominators
 - [ ] `SUTRA-P053-05` Freeze cases and rubric before final prompt tuning
-- [ ] `SUTRA-P053-06` Separate development examples from the held-out evaluation set
+- [x] `SUTRA-P053-06` Separate development examples from the held-out evaluation set
 - [ ] `SUTRA-P053-07` Version later corrections and explain why expectations changed
-- [ ] `SUTRA-P053-08` Preserve failures rather than removing difficult cases from scoring
+- [x] `SUTRA-P053-08` Preserve failures rather than removing difficult cases from scoring
 - [ ] `SUTRA-P053-09` Produce and review the phase artifact: Versioned evaluation set and scoring rubric.
 - [ ] `SUTRA-P053-10` Close phase 053 only after its applicable tasks have evidence and its exit condition is observed: Each case has a human-reviewed expected result; test-set leakage and later modifications are disclosed.
 
@@ -72,14 +72,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.
 
 - [ ] `SUTRA-P054-01` Measure the baseline number of model calls and token usage
-- [ ] `SUTRA-P054-02` Compare agent coordination against direct transcript lookup
-- [ ] `SUTRA-P054-03` Restrict delegation to source selection and useful verification roles
-- [ ] `SUTRA-P054-04` Remove redundant agent hops and repeated large context
-- [ ] `SUTRA-P054-05` Use concise structured tool returns rather than unbounded narrative
-- [ ] `SUTRA-P054-06` Keep source-reference checks outside model preference
-- [ ] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
-- [ ] `SUTRA-P054-08` Do not use the number of agents as a quality metric
-- [ ] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
+- [x] `SUTRA-P054-02` Compare agent coordination against direct transcript lookup
+- [x] `SUTRA-P054-03` Restrict delegation to source selection and useful verification roles
+- [x] `SUTRA-P054-04` Remove redundant agent hops and repeated large context
+- [x] `SUTRA-P054-05` Use concise structured tool returns rather than unbounded narrative
+- [x] `SUTRA-P054-06` Keep source-reference checks outside model preference
+- [x] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
+- [x] `SUTRA-P054-08` Do not use the number of agents as a quality metric
+- [x] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
 - [ ] `SUTRA-P054-10` Close phase 054 only after its applicable tasks have evidence and its exit condition is observed: The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.
 
 ## Phase 055 - Handle uncertainty and conflicting sources
@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Require visible abstention when evidence is missing or contradictory. Distinguish excerpt-backed claims, interpretations and proposals. Do not present technical learning output as certification.
 - **Phase exit:** All unanswerable/conflicting evaluation cases avoid fabricated citations; disagreements retain separate source identities.
 
-- [ ] `SUTRA-P055-01` Define visible states for unsupported claim and unresolved conflict
-- [ ] `SUTRA-P055-02` Require abstention when the corpus does not support the requested answer
-- [ ] `SUTRA-P055-03` Keep multiple conflicting source identities inspectable
-- [ ] `SUTRA-P055-04` Label inference and interpretation rather than calling them verified facts
-- [ ] `SUTRA-P055-05` Avoid unsupported technical certification or operational guarantees
+- [x] `SUTRA-P055-01` Define visible states for unsupported claim and unresolved conflict
+- [x] `SUTRA-P055-02` Require abstention when the corpus does not support the requested answer
+- [x] `SUTRA-P055-03` Keep multiple conflicting source identities inspectable
+- [x] `SUTRA-P055-04` Label inference and interpretation rather than calling them verified facts
+- [x] `SUTRA-P055-05` Avoid unsupported technical certification or operational guarantees
 - [ ] `SUTRA-P055-06` Test all unanswerable and conflicting evaluation fixtures
-- [ ] `SUTRA-P055-07` Verify the assistant does not fabricate citations to avoid refusal
-- [ ] `SUTRA-P055-08` Explain next useful human step without overstating source reliability
-- [ ] `SUTRA-P055-09` Produce and review the phase artifact: Uncertainty states and conflict-resolution guidance.
+- [x] `SUTRA-P055-07` Verify the assistant does not fabricate citations to avoid refusal
+- [x] `SUTRA-P055-08` Explain next useful human step without overstating source reliability
+- [x] `SUTRA-P055-09` Produce and review the phase artifact: Uncertainty states and conflict-resolution guidance.
 - [ ] `SUTRA-P055-10` Close phase 055 only after its applicable tasks have evidence and its exit condition is observed: All unanswerable/conflicting evaluation cases avoid fabricated citations; disagreements retain separate source identities.
 
 ## Phase 056 - Add stale-source and media-drift checks
@@ -107,16 +107,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Bind receipts to source/media hashes and dates; detect updated transcripts and replaced video files. Ask for revalidation instead of silently retaining obsolete cue links.
 - **Phase exit:** Replacing a fixture invalidates prior evidence links or marks them stale; hashes are described as integrity checks only.
 
-- [ ] `SUTRA-P056-01` Bind existing receipts to source and media version hashes
-- [ ] `SUTRA-P056-02` Detect replaced transcripts and changed video duration
-- [ ] `SUTRA-P056-03` Invalidate or visibly mark stale cue references after version drift
-- [ ] `SUTRA-P056-04` Avoid silently migrating a source ID onto unrelated content
-- [ ] `SUTRA-P056-05` Define compatibility rules for schema and receipt versions
-- [ ] `SUTRA-P056-06` Test stale stored cards across application reloads
-- [ ] `SUTRA-P056-07` Preserve previous provenance for diagnosing mismatches
-- [ ] `SUTRA-P056-08` Explain that integrity and freshness checks do not prove source truth
-- [ ] `SUTRA-P056-09` Produce and review the phase artifact: Version migration behavior and stale-card warning.
-- [ ] `SUTRA-P056-10` Close phase 056 only after its applicable tasks have evidence and its exit condition is observed: Replacing a fixture invalidates prior evidence links or marks them stale; hashes are described as integrity checks only.
+- [x] `SUTRA-P056-01` Bind existing receipts to source and media version hashes
+- [x] `SUTRA-P056-02` Detect replaced transcripts and changed video duration
+- [x] `SUTRA-P056-03` Invalidate or visibly mark stale cue references after version drift
+- [x] `SUTRA-P056-04` Avoid silently migrating a source ID onto unrelated content
+- [x] `SUTRA-P056-05` Define compatibility rules for schema and receipt versions
+- [x] `SUTRA-P056-06` Test stale stored cards across application reloads
+- [x] `SUTRA-P056-07` Preserve previous provenance for diagnosing mismatches
+- [x] `SUTRA-P056-08` Explain that integrity and freshness checks do not prove source truth
+- [x] `SUTRA-P056-09` Produce and review the phase artifact: Version migration behavior and stale-card warning.
+- [x] `SUTRA-P056-10` Close phase 056 only after its applicable tasks have evidence and its exit condition is observed: Replacing a fixture invalidates prior evidence links or marks them stale; hashes are described as integrity checks only.
 
 ## Phase 057 - Extract the standalone evidence validator
 
@@ -161,16 +161,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Build a minimal two-agent example with manifest, links, runtime wiring, sample local action and clear deploy instructions. Use synthetic licensed data and preserve runtime attribution.
 - **Phase exit:** A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
-- [ ] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
-- [ ] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
-- [ ] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
-- [ ] `SUTRA-P059-04` Document default inference setup without embedding real secrets
-- [ ] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
-- [ ] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
-- [ ] `SUTRA-P059-07` Retain required upstream license and NOTICE material
-- [ ] `SUTRA-P059-08` Verify clean publication and exact-name network loading
-- [ ] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
-- [ ] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
+- [x] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
+- [x] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
+- [x] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
+- [x] `SUTRA-P059-04` Document default inference setup without embedding real secrets
+- [x] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
+- [x] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
+- [x] `SUTRA-P059-07` Retain required upstream license and NOTICE material
+- [x] `SUTRA-P059-08` Verify clean publication and exact-name network loading
+- [x] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
+- [x] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
 ## Phase 060 - Publish a versioned Open Kit candidate
 
@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Write quickstarts, API boundaries, Apache-compatible notices and troubleshooting. Add a community test command described as project checks, not an official certification suite.
 - **Phase exit:** Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
 
-- [ ] `SUTRA-P060-01` Assign an immutable candidate version to each community artifact
-- [ ] `SUTRA-P060-02` Write a purpose, quickstart and public entry point for each tool
-- [ ] `SUTRA-P060-03` Explain supported environments and incompatible optional capabilities
-- [ ] `SUTRA-P060-04` Include troubleshooting for schema, CORS, consent and router failures
-- [ ] `SUTRA-P060-05` Expose public source and runnable synthetic examples
-- [ ] `SUTRA-P060-06` Label project checks as project checks rather than official certification
-- [ ] `SUTRA-P060-07` Scan archives for private material and secret canaries
-- [ ] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
-- [ ] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
-- [ ] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
+- [x] `SUTRA-P060-01` Assign an immutable candidate version to each community artifact
+- [x] `SUTRA-P060-02` Write a purpose, quickstart and public entry point for each tool
+- [x] `SUTRA-P060-03` Explain supported environments and incompatible optional capabilities
+- [x] `SUTRA-P060-04` Include troubleshooting for schema, CORS, consent and router failures
+- [x] `SUTRA-P060-05` Expose public source and runnable synthetic examples
+- [x] `SUTRA-P060-06` Label project checks as project checks rather than official certification
+- [x] `SUTRA-P060-07` Scan archives for private material and secret canaries
+- [x] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
+- [x] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
+- [x] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
