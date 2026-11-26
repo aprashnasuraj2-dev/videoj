@@ -14,10 +14,11 @@ test('history store profile is Linux-only and known network filesystems fail clo
   const profile=classifyHistoryFilesystemType(magic);assert.equal(profile.remote,true);assert.equal(profile.name,name);
   assert.throws(()=>assertHistoryFilesystemType(magic),new RegExp('HISTORY_STORE_UNSUPPORTED_FILESYSTEM_'+name));
  }
- const ext=assertHistoryFilesystemType(0xef53);assert.equal(ext.remote,false);assert.equal(ext.portableAcrossFilesystems,false);
+ const ext=assertHistoryFilesystemType(0xef53);assert.equal(ext.remote,false);assert.equal(ext.supported,true);assert.equal(ext.name,'EXT2_3_4');assert.equal(ext.portableAcrossFilesystems,false);
+ assert.throws(()=>assertHistoryFilesystemType(0x794c7630),/HISTORY_STORE_UNSUPPORTED_FILESYSTEM_0x794c7630/);
 });
 test('actual CI filesystem is observed but does not create a portability claim',async t=>{
  const dir=await mkdtemp(join(tmpdir(),'sutra-history-fs-profile-'));t.after(()=>rm(dir,{recursive:true,force:true}));
- const profile=await inspectHistoryFilesystem(dir);assert.equal(profile.remote,false);assert.equal(profile.portableAcrossFilesystems,false);
+ const profile=await inspectHistoryFilesystem(dir);assert.equal(profile.remote,false);assert.equal(profile.supported,true);assert.equal(profile.typeHex,'0xef53');assert.equal(profile.portableAcrossFilesystems,false);
  console.log('SUTRA_HISTORY_FILESYSTEM_PROFILE '+JSON.stringify({platform:process.platform,...profile}));
 });

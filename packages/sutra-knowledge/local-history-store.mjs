@@ -12,22 +12,27 @@ export const MAX_HISTORY_BYTES=262144;
 const MAX=MAX_HISTORY_BYTES,PIN=/^sha256:[a-f0-9]{64}$/;
 const FLOCK_MARKER='sutra-history-kernel-flock/v1\n',FLOCK='/usr/bin/flock';
 const fail=c=>{throw TypeError('HISTORY_STORE_'+c);};
+const SUPPORTED_FILESYSTEMS=new Map([[0xef53n,'EXT2_3_4']]);
 const REMOTE_FILESYSTEMS=new Map([
  [0x6969n,'NFS'],[0xff534d42n,'CIFS'],[0xfe534d42n,'SMB2'],[0x517bn,'SMB'],
  [0x01021997n,'9P'],[0x5346414fn,'AFS'],[0x73757245n,'CODA'],[0x00c36400n,'CEPH'],[0x564cn,'NCP']
 ]);
 export const HISTORY_STORE_PROFILE=Object.freeze({
- version:1,platform:'linux',directory:'private local filesystem',crossFilesystemPortability:'NOT_CLAIMED',
- knownRemoteFilesystemsRefused:Object.freeze([...REMOTE_FILESYSTEMS.values()])
+ version:1,platform:'linux',directory:'private EXT2/3/4 filesystem (magic 0xef53)',crossFilesystemPortability:'NOT_CLAIMED',
+ supportedFilesystemTypes:Object.freeze([...SUPPORTED_FILESYSTEMS.values()]),knownRemoteFilesystemsRefused:Object.freeze([...REMOTE_FILESYSTEMS.values()])
 });
 export const historyStorePlatformSupported=platform=>platform==='linux';
 export function classifyHistoryFilesystemType(type){
  let value;try{value=BigInt(type)&0xffffffffn;}catch{fail('FILESYSTEM_TYPE');}
- const name=REMOTE_FILESYSTEMS.get(value)??'UNCLASSIFIED_LOCAL_OR_VIRTUAL';
- return Object.freeze({typeHex:'0x'+value.toString(16),name,remote:REMOTE_FILESYSTEMS.has(value),portableAcrossFilesystems:false});
+ const remote=REMOTE_FILESYSTEMS.has(value),supported=SUPPORTED_FILESYSTEMS.has(value);
+ const name=REMOTE_FILESYSTEMS.get(value)??SUPPORTED_FILESYSTEMS.get(value)??'UNSUPPORTED_UNCLASSIFIED';
+ return Object.freeze({typeHex:'0x'+value.toString(16),name,remote,supported,portableAcrossFilesystems:false});
 }
 export function assertHistoryFilesystemType(type){
- const profile=classifyHistoryFilesystemType(type);if(profile.remote)fail('UNSUPPORTED_FILESYSTEM_'+profile.name);return profile;
+ const profile=classifyHistoryFilesystemType(type);
+ if(profile.remote)fail('UNSUPPORTED_FILESYSTEM_'+profile.name);
+ if(!profile.supported)fail('UNSUPPORTED_FILESYSTEM_'+profile.typeHex);
+ return profile;
 }
 export async function inspectHistoryFilesystem(directory){
  if(!historyStorePlatformSupported(process.platform)||typeof directory!=='string'||!directory)fail('PLATFORM_OR_PATH');

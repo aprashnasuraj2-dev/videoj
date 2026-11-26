@@ -19,7 +19,7 @@
 
 | PR | Workstream | Observed exact head at V2-197 reconciliation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `eb5830e8a7c7b37f0c487af99f62997f29960a5b` | [exact V2-199 knowledge/browser/accessibility passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45792157072) |
+| #50 | central V2 | `7f2eec4a3fbeaea4b01066ed4eca975ca45a4e69` | [exact V2-200 knowledge/browser/accessibility passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45792842281) |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `61714c3c095ad254486b250c80cc84b0481dfdd2` | [423/423 scoped JS passed; atomic correction/withdrawal, prior-state refusal and restored replay](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -84,8 +84,8 @@ Existing base: immutable snapshots, local CAS, fsync/atomic publication, subproc
 - [x] `V2-HIST-004` Verify branch/fork/restore/diff histories across multiple generations while preserving conflicting empirical claims.
 - [x] `V2-HIST-005` Establish an externally retained monotonic witness workflow and bounded lost-response recovery without blind replay.
 - [x] `V2-HIST-006` Test coordinated rollback scenarios: local store rollback, witness rollback and stale retained-view combinations.
-- [~] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
-- [ ] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
+- [x] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
+- [~] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
 - [ ] `V2-HIST-009` Perform physical/hardware power-loss durability evidence when available; do not substitute SIGKILL for power loss.
 - [ ] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
 
