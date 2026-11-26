@@ -23,3 +23,7 @@ Child JS regression is not full integration evidence. Maintain exact source revi
 ## Parallel session — candidate
 Add independently pinned explicit mapping review over replayed compiler results; preserve excluded and unresolved alternatives including opposite arithmetic outcomes. Reject unknown/duplicate/forged judgments. No semantic certification or automatic selection. Next: browser review integration and independent annotation of material ambiguity.
 Exact child CI pending.
+
+
+## Portable mapping review record
+Export full reviewed inputs and all alternative judgments under independent contract, plan, review and snapshot pins. Replay recomputes every conditional result and refuses a self-repinned forged result or substituted review. Full record bounded by existing casePin cap. Same-implementation replay, no semantic certification or independent human identity. Next: browser wiring and cross-language profile. Exact CI pending.

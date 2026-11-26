@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {casePin} from '../pinned-investigation.js';
 import {sealReviewedDraft} from '../reviewed-draft.js';
-import {reviewQuestionMapping} from '../question-mapping-review.js';
+import {reviewQuestionMapping,exportQuestionMappingReview,replayQuestionMappingReview} from '../question-mapping-review.js';
 async function fixture(){
  const question='Is current higher than prior?',text='A: 12; B: 10; C: 8;',type={kind:'currency_amount',unit:'USD',scope:'same_company',dimension:[0,0,0]};
  const c=await sealReviewedDraft(JSON.stringify({version:1,question,sources:[{id:'source',lineage:'root',text}],bindings:[['a','12'],['b','10'],['c','8']].map(([id,v])=>({id,sourceId:'source',start:text.indexOf(v),end:text.indexOf(v)+v.length,type}))}));
@@ -17,4 +17,16 @@ test('partial human review preserves opposite results and unresolved alternative
 });
 test('unknown, duplicated, or forged review choices refuse',async()=>{
  const f=await fixture();for(const choices of [[{id:'unknown',judgment:'plausible'}],[{id:'question_1',judgment:'verified'}],[{id:'question_1',judgment:'plausible'},{id:'question_1',judgment:'excluded'}]])await assert.rejects(run(f,choices),/MAPPING_REVIEW_CHOICE/);
+});
+
+
+test('portable mapping review requires all independently retained pins and recomputes the complete result',async()=>{
+ const f=await fixture(),reviewText=JSON.stringify({version:1,contractPin:f.contractPin,planPin:f.planPin,choices:[{id:'question_1',judgment:'plausible'}]}),reviewPin=await casePin(reviewText);
+ const x=await exportQuestionMappingReview({...f,reviewText,reviewPin}),args={snapshotText:x.snapshotText,snapshotPin:x.snapshotPin,expectedContractPin:f.contractPin,expectedPlanPin:f.planPin,expectedReviewPin:reviewPin};
+ assert.deepEqual(await replayQuestionMappingReview(args),x.result);
+ await assert.rejects(replayQuestionMappingReview({...args,expectedReviewPin:'sha256:'+'0'.repeat(64)}),/MAPPING_REVIEW_SNAPSHOT_INPUT_PINS/);
+ const mutant=JSON.parse(x.snapshotText);mutant.result.rows[1].judgment='excluded';const snapshotText=JSON.stringify(mutant);
+ await assert.rejects(replayQuestionMappingReview({...args,snapshotText,snapshotPin:await casePin(snapshotText)}),/MAPPING_REVIEW_REPLAY_DIVERGENCE/);
+ const stale=JSON.parse(x.snapshotText);stale.reviewText=JSON.stringify({...JSON.parse(reviewText),choices:[]});stale.reviewPin=await casePin(stale.reviewText);const staleText=JSON.stringify(stale);
+ await assert.rejects(replayQuestionMappingReview({...args,snapshotText:staleText,snapshotPin:await casePin(staleText)}),/MAPPING_REVIEW_SNAPSHOT_INPUT_PINS/);
 });
