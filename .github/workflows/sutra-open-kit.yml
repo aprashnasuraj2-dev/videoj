@@ -5,6 +5,8 @@ on:
       - 'tools/sutra-open-kit/**'
       - 'tools/sutra-starter/**'
       - 'packages/sutra-*/**'
+      - 'docs/sutra/CONTRIBUTING.md'
+      - 'docs/sutra/CHANGELOG.md'
       - '.github/workflows/sutra-open-kit.yml'
   workflow_dispatch:
 permissions:
