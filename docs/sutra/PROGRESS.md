@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0051 — 2026-11-26
+
+**750/1,107 overall verified; 644/1,000 original; 350 pending; six omissions; one hardware blocker.** P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 are verified from the pre-release technical/community artifacts plus Open Kit run 45806619487/job 139863464177 (5/5 tests; clean distribution checks). The technical report now uses the checklist-requested `Technical_Report.md` filename via a byte-preserving rename. [Evidence](evidence/implementation/SESSION-0051.md).
+
+P085-04/10 and P086-02/03/05/09/10 remain pending. The judging runbook is implemented but P089 remains uncredited until its corrected formatting-tolerant contract executes. No public release/adoption/provider/human claim was created.
+
 ## Session 0050 — 2026-11-26
 
 **737/1,107 overall verified; 631/1,000 original; 363 pending; six omissions; one hardware blocker.** Phase 088 now has a CI-checked pre-release contributor path and changelog policy: P088-01..07 and P088-09 are verified. Open Kit run 45806012457/job 139861341692 passed the documentation contract and clean source-distribution checks. [Evidence](evidence/implementation/SESSION-0050.md).
