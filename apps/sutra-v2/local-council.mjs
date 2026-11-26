@@ -7,6 +7,7 @@ import {runExpressionCouncil} from '../../packages/sutra-knowledge/expression-co
 import {createExpressionReviewReceipt} from '../../packages/sutra-knowledge/expression-review-receipt.js';
 import {sealExpressionInvestigation} from '../../packages/sutra-knowledge/expression-investigation.js';
 import {casePin} from '../../packages/sutra-knowledge/pinned-investigation.js';
+import {admitCouncilDisclosure,projectCouncilBindings} from '../../packages/sutra-knowledge/council-disclosure.js';
 const VERSION='sutra-local-expression-council/v1',MAX=262144;
 const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/,ENV=/^SUTRA_LOCAL_[A-Z0-9_]{1,64}$/;
 const keys=(x,ks)=>x&&typeof x==='object'&&!Array.isArray(x)&&Object.keys(x).length===ks.length&&ks.every(k=>Object.hasOwn(x,k));
@@ -36,7 +37,7 @@ async function admit(c){
   agents.add(x.id);usedConnections.add(x.connectionId);
  }
  if(usedConnections.size!==connections.size)fail('UNUSED_CONNECTION');
- if(!keys(c.disclosure,['bindingIds','includeValues'])||!Array.isArray(c.disclosure.bindingIds)||c.disclosure.bindingIds.length<1||c.disclosure.bindingIds.length>16||new Set(c.disclosure.bindingIds).size!==c.disclosure.bindingIds.length||c.disclosure.bindingIds.some(x=>typeof x!=='string'||!ID.test(x))||typeof c.disclosure.includeValues!=='boolean')fail('DISCLOSURE');
+ const disclosure=admitCouncilDisclosure(c.disclosure,[...agents]);
  await validateReviewedContract(c.contractText,c.contractPin);
  const contract=parseUniqueJson(c.contractText,{maxChars:MAX,maxDepth:9});
  if(!text(contract.question.text,2000)||c.disclosure.bindingIds.some(id=>!contract.bindings.some(b=>b.id===id)))fail('DISCLOSURE');
@@ -44,7 +45,7 @@ async function admit(c){
  let workspace;
  try{workspace=createProtocolWorkspace({connections:c.connections.map(x=>({id:x.id,label:x.label,protocol:x.protocol,endpoint:x.endpoint,transportClass:'local',models:x.models})),exchange:local.exchange,globalLimits:c.budget,defaultProfileLimits:c.budget});}
  catch(e){local.close();throw e;}
- return {local,workspace,contract};
+ return {local,workspace,contract,disclosure};
 }
 async function main(){
  const args=process.argv.slice(2),preview=args.length===0||args.length===1&&args[0]==='--plan';
@@ -54,8 +55,8 @@ async function main(){
  // Exact input-byte approval binds routes, credential aliases, question, source
  // contract, limits and disclosure. Reject changes before credential enrollment.
  if(execute&&args[3]!==planPin)fail('PLAN_PIN_MISMATCH');
- const {local,workspace,contract}=await admit(config);
- const plan={version:VERSION,mode:'LOCAL_PLAN_ONLY',planPin,contractPin:config.contractPin,question:contract.question.text,disclosure:config.disclosure,disclosedBindings:contract.bindings.filter(b=>config.disclosure.bindingIds.includes(b.id)).map(b=>({id:b.id,type:b.type,...(config.disclosure.includeValues?{valueLexeme:b.span.quote}:{})})),connections:config.connections,agents:config.agents,roundPolicy:config.roundPolicy,maxRounds:config.maxRounds,maximumAgentSlots:config.agents.length*config.maxRounds,budget:config.budget,maxOutputTokensPerCall:config.maxOutputTokens,timeoutMs:config.timeoutMs,transportDeadlineMs:config.transportDeadlineMs,qualification:'Preview contains the exact question and approved binding descriptors, and selected numeric values only when requested. Prior conditional outcomes may reveal relations. Credential environment names are not credential values. Literal loopback processes may forward data or incur cost. The optional --export-version includes the full reviewed contract in local stdout; share carefully. The plan pin binds bytes, not endpoint ownership or model identity.'};
+ const {local,workspace,contract,disclosure}=await admit(config);
+ const plan={version:VERSION,mode:'LOCAL_PLAN_ONLY',planPin,contractPin:config.contractPin,question:contract.question.text,disclosure:config.disclosure,disclosedBindings:disclosure.explicit?null:projectCouncilBindings(contract,disclosure),agentDisclosures:disclosure.scopes.map(scope=>({...scope,bindings:projectCouncilBindings(contract,scope)})),connections:config.connections,agents:config.agents,roundPolicy:config.roundPolicy,maxRounds:config.maxRounds,maximumAgentSlots:config.agents.length*config.maxRounds,budget:config.budget,maxOutputTokensPerCall:config.maxOutputTokens,timeoutMs:config.timeoutMs,transportDeadlineMs:config.transportDeadlineMs,qualification:'Preview contains the exact question and approved binding descriptors, and selected numeric values only when requested. Prior conditional outcomes may reveal relations. Credential environment names are not credential values. Literal loopback processes may forward data or incur cost. The optional --export-version includes the full reviewed contract in local stdout; share carefully. The plan pin binds bytes, not endpoint ownership or model identity.'};
  try{
   if(!execute){process.stdout.write(JSON.stringify(plan)+'\n');return;}
   // Resolve every configured credential and enroll before dispatch. A missing
@@ -124,6 +125,6 @@ async function main(){
 }
 main().catch(error=>{
  // Do not print untrusted provider text, input, stack, endpoint or credential.
- const known=['INPUT_SIZE','INPUT_ENCODING','CONFIG','BUDGET','TEAM','CONNECTION','AGENT','UNUSED_CONNECTION','DISCLOSURE','EXPLICIT_APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','EXPORT_SIZE','EXPORT_SHAPE','LOCAL_CREDENTIAL_REQUIRED','ENDPOINT','ROUTE','PROFILE','REQUEST','SECRET_ECHO','PROVIDER_RESULT','AUTH'];
+ const known=['INPUT_SIZE','INPUT_ENCODING','CONFIG','BUDGET','TEAM','CONNECTION','AGENT','UNUSED_CONNECTION','DISCLOSURE','DISCLOSURE_FLOW','EXPLICIT_APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','EXPORT_SIZE','EXPORT_SHAPE','LOCAL_CREDENTIAL_REQUIRED','ENDPOINT','ROUTE','PROFILE','REQUEST','SECRET_ECHO','PROVIDER_RESULT','AUTH'];
  process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(error?.code)?error.code:'LOCAL_COUNCIL_REFUSED'})+'\n');process.exitCode=1;
 });

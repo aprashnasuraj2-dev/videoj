@@ -41,7 +41,7 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:op});
      if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)councilFail('PROPOSAL_REFUSED');
      const value=result.value;if(!councilClosed(value,['text'])||typeof value.text!=='string')councilFail('PROPOSAL_REFUSED');
-     const candidate=admit(value.text);
+     const candidate=admit(value.text,publicRoute);
      if(candidate===null)return {...base,status:'ABSTAINED'};
      if(!councilText(candidate,4096))councilFail('PROPOSAL_REFUSED');
      return {...base,status:'PROPOSED',candidateKey:candidate};

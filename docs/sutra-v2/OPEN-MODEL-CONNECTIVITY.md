@@ -41,3 +41,6 @@ Local operator execution requires the exact previewed input pin. Optional full l
 
 ## V2-161 hosted public-route policy candidate
 Conservative all-answer public IP admission, explicit route/model, one-use time-bounded DNS address pin and original TLS hostname descriptor. No public network client or credential authority; future socket-level enforcement and real provider tests remain separately gated.
+
+## V2-162 per-agent disclosure candidate
+Optional complete per-agent binding/value scopes and directed peer feedback. Peer scope must flow only to an equal or broader recipient; an apparently common expression may encode choices influenced by hidden bindings. No strong noninterference claim for shared endpoints or global execution metadata. Existing uniform scope remains compatible.

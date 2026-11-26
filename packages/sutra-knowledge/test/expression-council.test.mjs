@@ -95,3 +95,33 @@ test('new compiled proposals and missing team members do not trigger a false sta
  assert.equal(q.rounds.length,3);assert.equal(q.agreement,'INCOMPLETE');assert.equal(q.reviewPlan.state,'REVIEW_SINGLE_PROPOSAL');
  await assert.rejects(run(b,{roundPolicy:'model-decides'}),e=>e.code==='CONFIG');
 });
+
+test('asymmetric provider scope allows only approved upward feedback and never sends high-scope formulas downward',async()=>{
+ const s=setup(()=>proposal(correct),()=>proposal(alternative));
+ const disclosure={bindingIds:bindings,includeValues:true,agentScopes:[
+  {agentId:'director',bindingIds:bindings,includeValues:true,feedbackFrom:['challenger']},
+  {agentId:'challenger',bindingIds:['ocf25','ocf26'],includeValues:false,feedbackFrom:[]}
+ ]};
+ const r=await run(s,{disclosure});
+ assert.equal(r.state,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(r.candidates.length,2);
+ const high=s.seen.filter(x=>x.providerId==='my-llm').map(x=>x.operation),low=s.seen.filter(x=>x.providerId==='other-llm').map(x=>x.operation);
+ assert.equal(high[1].feedback.length,2);assert.equal(low[1].feedback.length,1);assert.equal(low[1].feedback[0].agentId,'challenger');
+ assert.ok(high[0].bindings.every(b=>Object.hasOwn(b,'valueLexeme')));
+ for(const secret of ['ppe25','ppe26','136162','115948',correct,'director'])assert.equal(JSON.stringify(low).includes(secret),false,secret);
+ assert.deepEqual(r.disclosure.agentScopes,disclosure.agentScopes);
+});
+test('sender choice is tainted by full visible scope even if its formula uses only common bindings',async()=>{
+ const s=setup(()=>proposal(alternative),()=>proposal(alternative));
+ const d={bindingIds:bindings,includeValues:false,agentScopes:[{agentId:'director',bindingIds:bindings,includeValues:false,feedbackFrom:[]},{agentId:'challenger',bindingIds:['ocf25','ocf26'],includeValues:false,feedbackFrom:['director']}]};
+ await assert.rejects(run(s,{disclosure:d}),e=>e.code==='DISCLOSURE_FLOW');assert.equal(s.seen.length,0);
+ const valueScopes={...d,includeValues:true,agentScopes:[{agentId:'director',bindingIds:['ocf25','ocf26'],includeValues:true,feedbackFrom:[]},{agentId:'challenger',bindingIds:['ocf25','ocf26'],includeValues:false,feedbackFrom:['director']}]};
+ await assert.rejects(run(s,{disclosure:valueScopes}),e=>e.code==='DISCLOSURE_FLOW');assert.equal(s.seen.length,0);
+});
+test('agent-specific guessed hidden binding refuses despite a wider team envelope, missing grants and overbroad values refuse preflight',async()=>{
+ const s=setup(()=>proposal(correct),()=>proposal(correct));
+ const d={bindingIds:bindings,includeValues:false,agentScopes:[{agentId:'director',bindingIds:bindings,includeValues:false,feedbackFrom:[]},{agentId:'challenger',bindingIds:['ocf25','ocf26'],includeValues:false,feedbackFrom:[]}]};
+ const r=await run(s,{disclosure:d});assert.equal(r.rounds[0].agents[1].status,'REFUSED');assert.equal(r.candidates.length,1);assert.equal(r.rounds[1].agents.length,1);
+ const t=setup(()=>proposal(correct),()=>proposal(correct));
+ for(const scopes of [d.agentScopes.slice(0,1),[d.agentScopes[0],{...d.agentScopes[1],includeValues:true}],[d.agentScopes[0],{...d.agentScopes[1],bindingIds:['not_present']}],[d.agentScopes[0],{...d.agentScopes[1],feedbackFrom:['challenger']}]])await assert.rejects(run(t,{disclosure:{...d,agentScopes:scopes}}),e=>e.code==='DISCLOSURE');
+ assert.equal(t.seen.length,0);
+});

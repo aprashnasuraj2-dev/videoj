@@ -70,3 +70,14 @@ test('approval binds exact configuration including disclosure, routes, budgets a
  const valuePlan=await run({...config,disclosure:{...config.disclosure,includeValues:true}});assert.equal(valuePlan.code,0);assert.equal(JSON.parse(valuePlan.stdout).disclosedBindings.find(x=>x.id==='ocf25').valueLexeme,'136162');assert.equal(requests.length,0);
  const defaultOut=await run(config,args,{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(defaultOut.code,0,defaultOut.stderr);assert.equal(JSON.parse(defaultOut.stdout).investigationStatus,'NOT_REQUESTED');
 });
+
+test('local operator preview binds directional per-agent disclosure, rejects downward flow without contact',async t=>{
+ const {requests,config}=await fixture(t);
+ const d={bindingIds:['ocf25','ppe25','ocf26','ppe26'],includeValues:true,agentScopes:[{agentId:'director',bindingIds:['ocf25','ocf26'],includeValues:false,feedbackFrom:[]},{agentId:'challenger',bindingIds:['ocf25','ppe25','ocf26','ppe26'],includeValues:true,feedbackFrom:['director']}]};
+ const c={...config,disclosure:d};const p=await run(c);assert.equal(p.code,0,p.stderr);const plan=JSON.parse(p.stdout);
+ assert.equal(plan.disclosedBindings,null);assert.equal(plan.agentDisclosures[0].bindings.length,2);assert.ok(plan.agentDisclosures[0].bindings.every(b=>!Object.hasOwn(b,'valueLexeme')));assert.ok(plan.agentDisclosures[1].bindings.every(b=>Object.hasOwn(b,'valueLexeme')));
+ const bad={...c,disclosure:{...d,agentScopes:[{...d.agentScopes[0],feedbackFrom:['challenger']},d.agentScopes[1]]}};const refusal=await run(bad,await approved(bad),{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(refusal.code,1);assert.match(refusal.stderr,/DISCLOSURE_FLOW/);assert.equal(requests.length,0);
+ const x=await run(c,await approved(c),{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(x.code,0,x.stderr);
+ const low=requests.filter(r=>r.path==='/chat').map(r=>r.op),high=requests.filter(r=>r.path==='/messages').map(r=>r.op);
+ assert.equal(low[1].feedback.length,1);assert.equal(high[1].feedback.length,2);assert.equal(JSON.stringify(low).includes('ppe25'),false);assert.equal(JSON.stringify(low).includes('136162'),false);
+});
