@@ -1,5 +1,7 @@
 # 07. Resilience and cost control
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **21-25 Dec 2026**. This is a target window, not proof of work.
@@ -94,11 +96,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P065-03` Check request precedence for the two proposed subdomains
 - [x] `SUTRA-P065-04` Serve graphs, runtime modules, transcripts and public HTML statically
 - [x] `SUTRA-P065-05` Avoid run-worker-first patterns that unnecessarily invoke dynamic code
-- [ ] `SUTRA-P065-06` Keep media delivery outside the main Patro application Worker
-- [ ] `SUTRA-P065-07` Calculate headroom using account-wide usage and retry assumptions
-- [ ] `SUTRA-P065-08` Record a dated request sample showing which requests invoke Workers
 - [x] `SUTRA-P065-09` Produce and review the phase artifact: Route/quota budget and before/after request sample.
-- [ ] `SUTRA-P065-10` Close phase 065 only after its applicable tasks have evidence and its exit condition is observed: A static visit does not invoke the main Patro application Worker; inference calls are counted separately from asset and media requests.
 
 ## Phase 066 - Measure model usage and enforce spend
 
@@ -107,16 +105,8 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Record model, token counts, retries, request counts and measured run cost. Use configured provider prices; cap sponsored runs and preserve readable non-AI content after exhaustion.
 - **Phase exit:** Projected monthly cost derives from observed runs; disabling sponsored inference stops additional paid requests.
 
-- [ ] `SUTRA-P066-01` Measure model calls, input/output tokens and retries per completed run
-- [ ] `SUTRA-P066-02` Record provider model identifier and the actual price basis
-- [ ] `SUTRA-P066-03` Calculate mean and high-percentile observed run cost
-- [ ] `SUTRA-P066-04` Check the effect of doubled context and retry usage
-- [ ] `SUTRA-P066-05` Configure funded run/token caps and a readable exhaustion state
 - [x] `SUTRA-P066-06` Verify the stop control prevents new paid upstream requests
-- [ ] `SUTRA-P066-07` Reserve funds for judging after development use
 - [x] `SUTRA-P066-08` Keep static learning content usable when sponsored inference stops
-- [ ] `SUTRA-P066-09` Produce and review the phase artifact: Measured cost report and budget kill switch.
-- [ ] `SUTRA-P066-10` Close phase 066 only after its applicable tasks have evidence and its exit condition is observed: Projected monthly cost derives from observed runs; disabling sponsored inference stops additional paid requests.
 
 ## Phase 067 - Benchmark low-bandwidth interaction
 
@@ -161,16 +151,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Use a permitted synthetic load of 20 simultaneous sessions against staging with model stubs, then a small capped live run. Measure limits without consuming production quota unnecessarily.
 - **Phase exit:** No cross-session state leakage occurs; server limits hold and lab load is not advertised as proven internet-scale capacity.
 
-- [ ] `SUTRA-P069-01` Use a permitted staging environment and an explicit test ceiling
 - [x] `SUTRA-P069-02` Run 20 simultaneous synthetic sessions with model stubs first
 - [x] `SUTRA-P069-03` Verify per-session state and consent do not leak across sessions
 - [x] `SUTRA-P069-04` Inspect concurrency and request limits under failures
-- [ ] `SUTRA-P069-05` Perform only a small capped live model load sample
-- [ ] `SUTRA-P069-06` Record CPU/request/token behavior and observed errors
 - [x] `SUTRA-P069-07` Do not consume production quota merely to generate impressive load numbers
 - [x] `SUTRA-P069-08` State that laboratory load does not establish internet-scale reliability
 - [x] `SUTRA-P069-09` Produce and review the phase artifact: Load results and capacity assumptions.
-- [ ] `SUTRA-P069-10` Close phase 069 only after its applicable tasks have evidence and its exit condition is observed: No cross-session state leakage occurs; server limits hold and lab load is not advertised as proven internet-scale capacity.
 
 ## Phase 070 - Close the resilience milestone
 
@@ -180,12 +166,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** No credential leak, consent bypass, double write, broken default judge path or uncontrolled spend remains open.
 
 - [x] `SUTRA-P070-01` Review all privacy, consent and ambiguous-write results together
-- [ ] `SUTRA-P070-02` Confirm the funded default judge path works after hardening
-- [ ] `SUTRA-P070-03` Check media, source versions, route usage and cost caps
 - [x] `SUTRA-P070-04` Fix any credential canary leak before proceeding
 - [x] `SUTRA-P070-05` Cut optional BYOK or polish if critical boundaries remain unresolved
 - [x] `SUTRA-P070-06` Document unresolved limitations with practical user effects
 - [x] `SUTRA-P070-07` Keep waived optional work separate from failed mandatory gates
 - [x] `SUTRA-P070-08` Record the resilience milestone revision and evidence links
 - [x] `SUTRA-P070-09` Produce and review the phase artifact: Milestone D risk register with resolved blockers.
-- [ ] `SUTRA-P070-10` Close phase 070 only after its applicable tasks have evidence and its exit condition is observed: No credential leak, consent bypass, double write, broken default judge path or uncontrolled spend remains open.
