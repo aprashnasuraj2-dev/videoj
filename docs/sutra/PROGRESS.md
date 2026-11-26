@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0054 — 2026-11-26
+
+**768/1,107 overall verified; 662/1,000 original; 332 pending; six omissions; one hardware blocker.** P001-05, P018-05/07, P073-02, P075-01 and P081-05/08 are newly verified. Exact source `69d57d5bce0cce8c7dd0b40ba90e8548774b8f0b` had the relevant build, app/unit, package/API, vendor/runtime and peer steps green on learner run 45809483294/job 139873282707; its Chromium step was still running and is not used for these checks. [Evidence](evidence/implementation/SESSION-0054.md).
+
+P018-06 remains pending because the optional synthetic-conflict demonstration is still reachable in the normal learner UI. No real lesson rights, human study, provider measurement or release state is inferred.
+
 ## Session 0053 — 2026-11-26
 
 **761/1,107 overall verified; 655/1,000 original; 339 pending; six omissions; one hardware blocker.** P076-08, P083-08 and P084-07 are verified as claim-boundary tasks from Open Kit run 45808726066/job 139870685754: 6/6 documentation/package tests plus clean distribution checks. [Evidence](evidence/implementation/SESSION-0053.md).
