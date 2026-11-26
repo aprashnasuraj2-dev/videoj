@@ -1,6 +1,8 @@
-# Dependency-aware engineering roadmap — V2-011
+# Dependency-aware engineering roadmap — V2-190
 
-This is the active phase index and new engineering-gate register. The original requirement IDs, descriptions, checkboxes and historical evidence remain in [CHECKLIST.md](CHECKLIST.md), [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); see [roadmap.json](roadmap.json) for structured records and crosswalk. Historical checkboxes are not equivalent to formal verification. New gates close only with their own observed evidence. P0 = blocking safety/correctness; P1 = product/verification; P2 = deferred/conditional. Risk is independent of priority. No percentage-complete metric.
+> **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
+
+This is the broad phase/dependency and engineering-gate register; it is not an execution queue. The original requirement IDs, descriptions, checkboxes and historical evidence remain in [CHECKLIST.md](CHECKLIST.md), [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); see [roadmap.json](roadmap.json) for structured records and crosswalk. Historical checkboxes are not equivalent to formal verification. New gates close only with their own observed evidence. P0 = blocking safety/correctness; P1 = product/verification; P2 = deferred/conditional. Risk is independent of priority. No percentage-complete metric.
 
 ## Phase 00 — Repository integrity and reproducibility
 
@@ -1503,3 +1505,14 @@ Validation-only PR #61 refreshed to `c34dc954f7a35857e24a9d5f8795f3e61fc359dd` f
 | #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer | End-to-end natural-language reasoning, matched actual model metering |
 
 Next: observe exact CI; integrate #52 persistent knowledge and #53 semantic review into #58 unified workspace using existing APIs; extend independent interval/statistical replay and end-to-end benchmark. No real provider, human, physical hardware, public deployment or release evidence claimed.
+
+
+## V2-189 — optional web access plan (2026-11-26)
+
+> Historical decision superseded by V2-190 standalone scope; do not implement the integration described here.
+
+User supplied ten TypeScript files. Added four bounded checklist tasks WEB-001–004 under existing #54 acquisition, with #57 security, #58 UI and #55 replay reuse. [Integration contract and source fingerprints](WEB-ACCESS.md). No new workstream, no live provider test, no runtime enabled, no gate promoted. Existing N003 cursor and immediate CI reconciliation unchanged. Parent `2e1fce3dc5740d6f57127da6b6c8611f6f984c30`. Proposed host-only consented GET and source snapshot admission; reject current prototype's DNS/transport/MIME/taint gaps rather than import wholesale. 164 outstanding engineering tasks including one active; six external blockers.
+
+## V2-190 — standalone web scope and exact-head observation (2026-11-26)
+
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. Supersedes V2-189 integration language, retained below/in history as historical evidence only. Ten original TypeScript reference fingerprints retained; no runtime implementation or verification credit. Central observed parent `3d33e6466e9a997c0c0151780cf8fbc405898c34`; exact knowledge run [45785358772](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation. #58 exact head `e163e9a9a293a4be9c713f2b2967de33d91b07bd`: [workspace run 45779650243](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631) failed at 200% text resize (320px viewport, 384px document scroll width, no overflowing element detected by prior diagnostic); baseline browser journey passed, separate parallel run 45779650347 succeeded. #61 exact `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled; stale manifest, validation-only, DO NOT MERGE. N003 remains active. No new gate credit; 164 engineering items including active (160 foundation plus four optional), six external blockers.

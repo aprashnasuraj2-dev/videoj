@@ -1,5 +1,7 @@
 # 05. Coherent learner experience
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **11-15 Dec 2026**. This is a target window, not proof of work.
@@ -26,7 +28,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [-] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
 - [x] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
 - [x] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
-- [ ] `SUTRA-P041-10` Close phase 041 only after its applicable tasks have evidence and its exit condition is observed: A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 
 ## Phase 042 - Integrate the DHAGO reusable player
 
@@ -145,14 +146,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation
 - [x] `SUTRA-P048-02` Keep English complete for judges and external builders
-- [ ] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity
 - [x] `SUTRA-P048-04` Retain original source excerpts when translations are shown
 - [x] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
 - [x] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
 - [x] `SUTRA-P048-07` Check fallback text and missing localization keys
 - [x] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
-- [ ] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list.
-- [ ] `SUTRA-P048-10` Close phase 048 only after its applicable tasks have evidence and its exit condition is observed: Language switching retains run state and cue links; English remains complete for judges and community builders.
 
 ## Phase 049 - Complete accessibility and mobile checks
 
@@ -167,10 +165,8 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P049-04` Verify 360px layouts without horizontal clipping of core controls
 - [x] `SUTRA-P049-05` Test touch targets and modal focus restoration
 - [x] `SUTRA-P049-06` Run an automated accessibility audit and review its actual findings
-- [ ] `SUTRA-P049-07` Exercise available physical touch hardware separately from emulation
 - [x] `SUTRA-P049-08` Record device/browser versions, unresolved barriers and their user impact
 - [x] `SUTRA-P049-09` Produce and review the phase artifact: Accessibility findings and corrected high-impact issues.
-- [ ] `SUTRA-P049-10` Close phase 049 only after its applicable tasks have evidence and its exit condition is observed: Core task is keyboard usable; no critical automated accessibility finding remains; physical and emulated tests are labeled separately.
 
 ## Phase 050 - Close the complete-product milestone
 
@@ -180,7 +176,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
 
 - [x] `SUTRA-P050-01` Complete the hero journey without console commands or hidden setup
-- [ ] `SUTRA-P050-02` Check first-load instructions and default funded inference discovery
 - [x] `SUTRA-P050-03` Inspect all loading, empty, denied, conflict and success transitions
 - [x] `SUTRA-P050-04` Confirm evidence selection and saved-card feedback are consistent
 - [x] `SUTRA-P050-05` Verify peer refusal leaves local lesson/transcript functionality useful
@@ -188,4 +183,3 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P050-07` Prioritize usability blockers over additional features
 - [x] `SUTRA-P050-08` Record the complete-product gate against the current build revision
 - [x] `SUTRA-P050-09` Produce and review the phase artifact: Milestone C walkthrough and remaining issue priorities.
-- [ ] `SUTRA-P050-10` Close phase 050 only after its applicable tasks have evidence and its exit condition is observed: A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.

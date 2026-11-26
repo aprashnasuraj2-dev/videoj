@@ -1290,3 +1290,71 @@ Validation-only PR #61 refreshed to `c34dc954f7a35857e24a9d5f8795f3e61fc359dd` f
 | #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer | End-to-end natural-language reasoning, matched actual model metering |
 
 Next: observe exact CI; integrate #52 persistent knowledge and #53 semantic review into #58 unified workspace using existing APIs; extend independent interval/statistical replay and end-to-end benchmark. No real provider, human, physical hardware, public deployment or release evidence claimed.
+
+## V2-185 — remaining-work checklist reset and SUTRA1 queue retirement — 2026-11-26
+
+- User explicitly retired/deleted the 379 remaining SUTRA1 pending checklist items and required “continue with SUTRA” to work from the renewed V2 checklist.
+- Verified legacy checklist distribution before retirement: 18 + 42 + 6 + 6 + 8 + 11 + 19 + 68 + 100 + 100 + 1 = **379 unchecked tasks** across the eleven legacy checklist files.
+- Removed only `[ ]` legacy task lines. Retained 714 verified task records, six historical omissions, one historical blocker record and Git history.
+- Replaced `docs/sutra/CHECKLIST.md` with a historical-only retirement index; retired the V1 machine cursor and redirected legacy continuation/README to V2.
+- Replaced `docs/sutra-v2/CHECKLIST.md` with a remaining-work-only execution checklist covering immediate CI/register reconciliation, PRs #51–#60, the 21 Living Knowledge exits, unresolved V2 foundation phases, cross-register obligations and external blockers.
+- Rewrote root `AGENTS.md` and `docs/sutra-v2/CONTINUE.md` so the V2 checklist is the sole active work queue. Updated V2 `progress.json` to session `V2-185-checklist-reset` and next queue beginning `V2-N001`.
+- Baseline before this decision/session checkpoint: `undefined`. This is documentation/work-selection reconciliation only; no child implementation is promoted by these commits.
+- Known current verification work remains: #52 exact scoped CI, #54 exact scoped CI, #58 accessibility browser CI and #61 current combined validation.
+- No release, merge, paid inference, real credential, deployment, outreach or submission authorization.
+
+**Next:** execute `V2-N001` by reconciling PR #52 exact-head CI, then proceed through the new checklist’s dependency-aware order.
+
+
+## V2-186 — exact-head reconciliation and bounded fixture repairs (26 November 2026)
+
+Central source observed: `93ece692b610542f11d0ca7ff2cd08dcf9b44c6e`. [45777994160](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45777994160) knowledge job 139766262422 passed, browser job 139766262682 in progress at observation; no full central gate credit. All child PRs remain open drafts. Compare API: children share merge base `092c7971602ee9e294e467efbb0d72c44121e480`, each 32 commits behind. #61 is 24 behind/10 ahead, merge base `deb40e01ea02d48d290790ea751039f519b85e8d`; its manifest lacks the three new corrections.
+
+| PR | Exact observed head | Scoped workflow | Ahead/behind central observed source |
+| --- | --- | --- | --- |
+| #51 | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) | 5/32 |
+| #52 | `82009e27fb07bbb8039af5c6341e004113a2c4d6` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778757664) | 9/32 |
+| #53 | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) | 7/32 |
+| #54 | `0818f78b4551fcfcdd2ff08bf50f1c519d2842c1` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778763117) | 5/32 |
+| #55 | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) | 4/32 |
+| #56 | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) | 6/32 |
+| #57 | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) | 5/32 |
+| #58 | `bef407d18994f5cf4557124c1aadeab38d4d994d` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782354) | 10/32 |
+| #59 | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) | 6/32 |
+| #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | 5/32 |
+
+- N001 / #52: job 139721389913 (run 45757208682) cancelled after prolonged silence. Double-escaped subprocess readiness regex/newline and signature domains, double-hashed fixture context pin. Corrected these, bounded readiness to five seconds, registered teardown before readiness. Exact new candidate CI pending.
+- N002 / #54: job 139721402756 (run 45757527623) cancelled after prolonged silence. Same readiness/domain escape bug; bounded startup/teardown, awaited cleartext rejection assertion. Exact new candidate CI pending.
+- N003 / #58: job 139721412626 (run 45760669191) showed actual assertion failure at workspace-accessibility.cjs:23 (200% root-font resize overflow), then orphaned Chromium due to shadowed outer browser variable. Corrected teardown and added overflowing-element diagnostics; product reflow fix remains open. New browser run [45778782419](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782419) pending.
+- N004/N005 / #61: head `ad295ae83bcafb48d489ef96475c80a22bac3c16`; combined browser 139723844439 passed, knowledge 139723844819 and parallel 139723844344 cancelled, workspace 139723845163 shows same reflow assertion. Requested reruns 45757208682, 45757527623, 45765046894 and 45765046841 before corrections; no credit for newer sources. #61 remains validation-only; refresh manifest after fixes.
+- N006: reconciled ten heads and documented drift against immutable central source. N007/N008: added missing N005 in machine next/default order and normalized current child register; remaining cross-register audits open. No broad gate credit.
+
+Next active: N001 passing exact CI on corrected witness fixture; independently advance N002/N003 then refresh and verify #61. Preserve all previous failures; no merge, release, external action or fabricated evidence.
+
+
+## V2-187 — scoped history and acquisition verification (26 November 2026)
+
+Central parent: `0b14cb66a75019502fa473bb88dc462067761c53`. Exact observations:
+- PR #52: `ae8630ec7d472263f8f8fffb16062bfbc10f96af`; [job 139769828804](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804), 422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery. Close only V2-N001, V2-HIST-001.
+- PR #54: `2336566c64c4ce461042bec8b34c01c22356aba3`; [job 139770463685](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957/job/139770463685), 407+5+2 tests passed, authenticated separate-process receipt and acquisition path. Close only V2-N002, V2-ACQ-001.
+- PR #58: `4a9095387cfb0e9edd8aceddb747eaa35edeb94d`; [job 139770644359](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779317805/job/139770644359), workspace browser failed: primary action not in first viewport: conflicted. Keep N003 active.
+- Retained failed intermediate #52 job 139768775225: raw signed head/genesis digest incorrectly rehashed; fixed digest identity and recovery precondition. #54 job 139768793844: REVISION_PIN on positive replay; corrected fixture to valid two-world policy, signer and pinned version. #58 job 139768855899: 529px document width at 320px / 200% root size; CSS wrapping candidate subsequently failed first-viewport action in conflicted state. No full browser acceptance.
+- #61 manifest is stale; do not merge or transfer old green results. Rebuild only after correction and inspect current base drift.
+- V2 machine cursor and roadmap metadata normalized; legacy tracker retirement handling still requires implementation. N007/N008 remain open until audit and exact central evidence. No broad gate promotion.
+- Next: N003 browser corrective iteration, N004/N005 refreshed combined validation. No release, merge, paid inference, external contact or production change.
+
+
+## V2-188 — queue invariants and workspace candidate (26 November 2026)
+
+Parent `78d00276ea23f1d5cd5888e582fc951f2921864f`. #58 new candidate `e163e9a9a293a4be9c713f2b2967de33d91b07bd` restores three compact metric columns and removes compulsory full-width header navigation, retaining wrapping/min-width protections. Prior job 139770644359 failed conflicted-state first-viewport action at 360x800; exact new browser evidence pending. No acceptance change. Add V2 read-only checklist/queue validator, tests for count, duplicate ID, legacy fallback and missing evidence, and a central CI step. Historical V1 tracker recognizes explicit retirement and redirects next-task output, retaining its evidence audit. Candidate verification remains open (N007/N008/N012). N003 remains active; 160 outstanding engineering items, six external blockers. #61 remains stale and validation-only.
+
+
+## V2-189 — optional web access plan (2026-11-26)
+
+> Historical decision superseded by V2-190 standalone scope; do not implement the integration described here.
+
+User supplied ten TypeScript files. Added four bounded checklist tasks WEB-001–004 under existing #54 acquisition, with #57 security, #58 UI and #55 replay reuse. [Integration contract and source fingerprints](WEB-ACCESS.md). No new workstream, no live provider test, no runtime enabled, no gate promoted. Existing N003 cursor and immediate CI reconciliation unchanged. Parent `2e1fce3dc5740d6f57127da6b6c8611f6f984c30`. Proposed host-only consented GET and source snapshot admission; reject current prototype's DNS/transport/MIME/taint gaps rather than import wholesale. 164 outstanding engineering tasks including one active; six external blockers.
+
+## V2-190 — standalone web scope and exact-head observation (2026-11-26)
+
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. Supersedes V2-189 integration language, retained below/in history as historical evidence only. Ten original TypeScript reference fingerprints retained; no runtime implementation or verification credit. Central observed parent `3d33e6466e9a997c0c0151780cf8fbc405898c34`; exact knowledge run [45785358772](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation. #58 exact head `e163e9a9a293a4be9c713f2b2967de33d91b07bd`: [workspace run 45779650243](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631) failed at 200% text resize (320px viewport, 384px document scroll width, no overflowing element detected by prior diagnostic); baseline browser journey passed, separate parallel run 45779650347 succeeded. #61 exact `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled; stale manifest, validation-only, DO NOT MERGE. N003 remains active. No new gate credit; 164 engineering items including active (160 foundation plus four optional), six external blockers.

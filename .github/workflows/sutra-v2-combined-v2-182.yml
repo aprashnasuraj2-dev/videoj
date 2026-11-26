@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Audit sole V2 execution queue
+        run: node --test docs/sutra-v2/tools/checklist.test.mjs
       - uses: actions/setup-node@v4
         with:
           node-version: 24

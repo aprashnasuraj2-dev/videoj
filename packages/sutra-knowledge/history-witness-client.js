@@ -12,6 +12,7 @@ export class HistoryWitnessError extends Error{constructor(code){super('History 
 const fail=c=>{throw new HistoryWitnessError(c);};
 const digestBytes=pin=>{if(typeof pin!=='string'||!PIN.test(pin))fail('PIN');return Buffer.from(pin.slice(7),'hex');};
 const pinBytes=bytes=>'sha256:'+createHash('sha256').update(bytes).digest('hex');
+const digestPin=bytes=>'sha256:'+Buffer.from(bytes).toString('hex');
 const b64=bytes=>Buffer.from(bytes).toString('base64url');
 const unb64=text=>{if(typeof text!=='string'||!/^[A-Za-z0-9_-]+$/.test(text))fail('VIEW');const b=Buffer.from(text,'base64url');if(b64(b)!==text)fail('VIEW');return b;};
 const rawPublic=key=>{
@@ -26,7 +27,7 @@ function parseView(bytes,{context,authority,witness,genesis}){
  const b=Buffer.from(bytes);if(b.length!==VIEW_SIZE)fail('VIEW');
  const body=b.subarray(0,68),signature=b.subarray(68),sequence=body.readUInt32BE(0),g=body.subarray(4,36),head=body.subarray(36,68);
  if(!g.equals(genesis)||sequence===0!==head.equals(g)||!edVerify(null,viewMessage(context,authority.raw,body),witness.key,signature))fail('VIEW');
- return Object.freeze({sequence,genesisPin:pinBytes(g),headPin:pinBytes(head),viewBytes:b64(b),viewPin:pinBytes(b)});
+ return Object.freeze({sequence,genesisPin:digestPin(g),headPin:digestPin(head),viewBytes:b64(b),viewPin:pinBytes(b)});
 }
 function trustedShape(x){
  if(!x||typeof x!=='object'||Array.isArray(x)||Object.keys(x).length!==5||!Number.isSafeInteger(x.sequence)||x.sequence<0||!PIN.test(x.genesisPin)||!PIN.test(x.headPin)||!PIN.test(x.viewPin)||typeof x.viewBytes!=='string')fail('TRUSTED_VIEW');
@@ -87,7 +88,7 @@ export function openExternallyWitnessedHistoryStore({store,witness}={}){
    return Object.freeze({history,witness:next});
   },
   async recoverAfterAmbiguousAdvance({beforePin,expectedHead,trustedView}={}){
-   const known=witness.verifyTrusted(trustedView),live=await witness.attest();
+   const known=witness.verifyTrusted(trustedView);if(known.headPin!==beforePin||beforePin===expectedHead)fail('TRUSTED_HEAD');const live=await witness.attest();
    if(live.genesisPin!==known.genesisPin)fail('WITNESS_RESET');
    if(sameTrusted(live,known)){
     const history=await store.read(expectedHead);

@@ -36,11 +36,13 @@ for (const file of files) {
     tasks.set(id, { id, phase: group, state: statuses[marker], title, file: `docs/sutra/checklists/${file}`, line: index + 1 });
   }
 }
+const retired = state.retirement?.retired_by_user_direction === true && state.retirement?.active_execution_queue === false;
+if (retired && (state.retirement.removed_pending_tasks !== 379 || state.retirement.active_checklist !== 'docs/sutra-v2/CHECKLIST.md' || state.current_task !== null || state.next_task !== null || !Array.isArray(state.ready_engineering_queue) || state.ready_engineering_queue.length || tasks.size !== 721 || [...tasks.values()].some(t=>t.state==='pending'||t.state==='active'))) errors.push('Invalid V1 retirement or historical retention');
 const expected = new Set();
 for (let phase = 1; phase <= 100; phase++) for (let item = 1; item <= 10; item++) {
   const id = `SUTRA-P${String(phase).padStart(3, '0')}-${String(item).padStart(2, '0')}`;
   expected.add(id);
-  if (!tasks.has(id)) errors.push(`Missing original task: ${id}`);
+  if (!retired && !tasks.has(id)) errors.push(`Missing original task: ${id}`);
 }
 for (const task of tasks.values()) if (task.phase.startsWith('P') && !expected.has(task.id)) errors.push(`Unexpected original task: ${task.id}; append discoveries using Xnnn IDs`);
 if (state.schema_version !== 1 || state.project !== 'SUTRA') errors.push('Unsupported handoff schema/project');
@@ -108,10 +110,10 @@ for (let i = 1; i <= 100; i++) {
   const phase = `P${String(i).padStart(3, '0')}`;
   const members = [...tasks.values()].filter(t => t.phase === phase);
   const counts = Object.fromEntries(Object.values(statuses).map(s => [s, members.filter(t => t.state === s).length]));
-  const closed = members.every(t => ['verified','omitted'].includes(t.state));
+  const closed = members.length === 10 && members.every(t => ['verified','omitted'].includes(t.state));
   const exit = tasks.get(`SUTRA-${phase}-10`);
-  if (exit?.state === 'verified' && !closed) errors.push(`${phase}: exit checked before all applicable phase items close`);
-  phases.push({ phase, ...counts, completion: closed ? (counts.omitted ? 'complete_with_omissions' : 'verified_complete') : 'incomplete' });
+  if (!retired && exit?.state === 'verified' && !closed) errors.push(`${phase}: exit checked before all applicable phase items close`);
+  phases.push({ phase, ...counts, completion: retired ? 'historical_only' : closed ? (counts.omitted ? 'complete_with_omissions' : 'verified_complete') : 'incomplete' });
 }
 if (!['not_started','building','delivered'].includes(state.submission?.package_state)) errors.push('Invalid package_state');
 if (!['not_started','draft','submitted'].includes(state.submission?.devpost_state)) errors.push('Invalid devpost_state');
@@ -141,7 +143,9 @@ if (command === 'phase') {
   if (asJson) console.log(JSON.stringify({ ...report, phase, tasks:selected },null,2));
   else for (const task of selected) console.log(`${task.id} [${task.state}] ${task.title}\n  ${task.file}:${task.line}`);
 } else if (asJson) console.log(JSON.stringify(report,null,2));
-else if (command === 'next') {
+else if (command === 'next' && retired) {
+  console.log('V1 retired. Use docs/sutra-v2/CHECKLIST.md and docs/sutra-v2/CONTINUE.md; no V1 task may be resumed.');
+} else if (command === 'next') {
   console.log(`Current: ${state.current_task ?? 'none'}\nNext original task: ${state.next_task ?? 'none'}\nIndependent engineering queue: ${(state.ready_engineering_queue ?? []).join(', ') || 'none'}\nAction: ${state.next_action}\nVerify dependencies and current source before execution.`);
 } else {
   console.log(`SUTRA: ${tasks.size} tasks; ${counts.verified} verified, ${counts.active} active, ${counts.blocked} blocked, ${counts.omitted} omitted, ${counts.pending} pending.`);

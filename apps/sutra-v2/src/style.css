@@ -57,3 +57,40 @@ header a.studio-entry{letter-spacing:0;font-size:.8rem;white-space:normal;text-a
 .studio-handoff{margin:16px 0;padding:14px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;overflow-wrap:anywhere}.studio-handoff pre{white-space:pre-wrap;overflow-wrap:anywhere}.studio-handoff[hidden]{display:none}
 
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Preserve layout under narrow viewport + enlarged root fonts. Wrap controls and
+   navigation rather than clipping or suppressing horizontal overflow. */
+@media(max-width:420px){
+ header{flex-wrap:wrap;align-items:flex-start}
+ header .brand{flex:0 1 auto;max-width:100%;overflow-wrap:anywhere}
+ header .studio-nav{flex:0 1 auto;min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-start}
+ header .studio-nav .studio-entry{flex:0 1 auto;min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .guide-heading{flex-wrap:wrap;overflow-wrap:anywhere}
+ main,main>*{min-width:0;max-width:100%}
+ #reviewed-workspace,#reviewed-workspace section,#reviewed-workspace details{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ #reviewed-workspace .pinned-fields{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}
+ #reviewed-workspace .pinned-fields>*{min-width:0;max-width:100%}
+ #reviewed-workspace button,#reviewed-workspace select,#reviewed-workspace textarea,#reviewed-workspace input{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ #reviewed-workspace textarea{width:100%}
+ #reviewed-workspace input[type=file]{width:100%}
+ .studio-metrics,.debug-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .studio-metrics>div,.debug-metrics>div{min-width:0;overflow-wrap:anywhere}
+}
+
+/* Narrow layouts must contain intrinsic text, controls and grid tracks even
+   when root text is enlarged. Do not hide horizontal document overflow. */
+@media(max-width:420px){
+ body{overflow-wrap:anywhere}
+ header,footer,main,.panel,.engineering-labs,.studio,.studio-card,.studio-next,.controls,.section-head,.graph-title{min-inline-size:0;max-inline-size:100%}
+ main :where(section,article,div,details,fieldset,form,nav){min-inline-size:0}
+ main :where(h1,h2,h3,h4,p,summary,legend,label,code,small,strong,span,a){overflow-wrap:anywhere}
+ main :where(button,input,select,textarea){min-inline-size:0;max-inline-size:100%}
+ main button{white-space:normal;overflow-wrap:anywhere}
+ main fieldset{min-inline-size:0;max-inline-size:100%}
+ main legend{max-inline-size:100%;white-space:normal}
+ main :where(.provider-grid,.provider-profiles,.provider-form,.debug-result,.debug-grid,.capsule-fields,.studio-grid,.studio-settings,.studio-methods,.review-type-grid,.graph){grid-template-columns:minmax(0,1fr)}
+ main .studio-next>*{min-inline-size:0;max-inline-size:100%;overflow-wrap:anywhere}
+ main .metrics strong,main .studio-metrics strong,main .debug-metrics strong{overflow-wrap:anywhere}
+ main pre{min-inline-size:0;max-inline-size:100%;white-space:pre-wrap;overflow-wrap:anywhere}
+ main :where(img,video,svg,canvas){max-inline-size:100%}
+}

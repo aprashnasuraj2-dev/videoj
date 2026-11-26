@@ -1,5 +1,7 @@
 # 03. Browser agent runtime
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **1-5 Dec 2026**. This is a target window, not proof of work.
@@ -55,14 +57,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P023-01` Mount the pinned browser runtime in the standalone app
 - [x] `SUTRA-P023-02` Parse the public graph in JavaScript executed by the browser
-- [ ] `SUTRA-P023-03` Start a real front-agent invocation using configured inference
 - [x] `SUTRA-P023-04` Observe an internal agent delegation and structured return
 - [x] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
 - [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
-- [ ] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
-- [ ] `SUTRA-P023-10` Close phase 023 only after its applicable tasks have evidence and its exit condition is observed: Browser traces prove graph execution and internal delegation; a server-only chat endpoint is insufficient.
 
 ## Phase 024 - Add pre-execution network validation
 
@@ -90,15 +89,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
 - [x] `SUTRA-P025-01` Implement one narrow same-origin default-inference endpoint
-- [ ] `SUTRA-P025-02` Select a fixed approved provider origin and permitted model list
 - [x] `SUTRA-P025-03` Keep the provider credential in server-managed configuration only
 - [x] `SUTRA-P025-04` Enforce input size, output token and model request ceilings
 - [x] `SUTRA-P025-05` Stream supported provider responses through the bounded adapter
 - [x] `SUTRA-P025-06` Prevent arbitrary URL forwarding and server-side request forgery
-- [ ] `SUTRA-P025-07` Verify a clean visitor can run without supplying credentials
 - [x] `SUTRA-P025-08` Check generated assets, logs and error responses for secret exposure
 - [x] `SUTRA-P025-09` Produce and review the phase artifact: Default inference endpoint and setup documentation.
-- [ ] `SUTRA-P025-10` Close phase 025 only after its applicable tasks have evidence and its exit condition is observed: A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
 ## Phase 026 - Support streaming, cancellation and errors
 

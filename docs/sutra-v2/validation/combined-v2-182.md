@@ -14,3 +14,7 @@ Exact c34dc954f7a35857e24a9d5f8795f3e61fc359dd, job 139722015352: legacy substri
 
 ## Base ancestry reconciliation and independent interval refresh
 Previous head `59faf60eb73ac9064fde1c9b28205d6e87e3887c` was non-mergeable against advanced central documentation and no new workflows were observed. Both exact trees were inspected: seven central documentation changes and two #55 changes, none overlapped modified validation content. Copy those exact blobs and attach `deb40e01ea02d48d290790ea751039f519b85e8d` as a second parent of the validation-only commit. No child PR or validation PR is merged into central. New #55 scoped run 45764898229 succeeded at `1a429e24a4fca63affccedf138150480b3ee87c2`. Exact combined CI required; current head is not release evidence.
+
+## V2-192 — exact central and child refresh
+
+Prior validation `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled. Central source `66440d22c457a819eebba666e8c74837f9eac382`; updated exact child heads #52, #54, #58 listed in manifest. Verified all 38 changed path blobs against previous sources and validation tree; no overlap with validation-only adapters. Canonical knowledge and browser jobs reproduced byte-for-byte after removing exact validation branch guards. No new CI credit, release or merge into central. Validation-only ancestry records the exact central source. Do not merge PR #61.

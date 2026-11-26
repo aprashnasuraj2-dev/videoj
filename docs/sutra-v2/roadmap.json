@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-179",
+  "session": "V2-190-standalone-web-scope",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3311,7 +3311,7 @@
         "V2-LK06-SEMANTIC-WORLDS",
         "V2-D24-DISCLOSURE-FRONTIER"
       ],
-      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open. V2-138 freezes 30 acquisition development cases before evaluator; explicit expected minimax objective and root; no independent expert annotations or empirical costs. V2-139 candidate executes 30 frozen cases through actual planner and independent matched oracle; exact CI pending; no broad gate credit. V2-140 separate adversarial branching regression checks adaptive versus fixed subsets with identical loss/exposure; not part of frozen 30 cases; CI pending. V2-139 exact acquisition 30/30 matched independent oracle; fixed subset tied exact objective 126; no general superiority.",
+      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open. V2-138 freezes 30 acquisition development cases before evaluator; explicit expected minimax objective and root; no independent expert annotations or empirical costs. V2-139 candidate executes 30 frozen cases through actual planner and independent matched oracle; exact CI pending; no broad gate credit. V2-140 separate adversarial branching regression checks adaptive versus fixed subsets with identical loss/exposure; not part of frozen 30 cases; CI pending. V2-139 exact acquisition 30/30 matched independent oracle; fixed subset tied exact objective 126; no general superiority. V2-189 planned optional web search/read input adapter under WEB-001–004; no status or broad gate credit change.",
       "acceptance": "Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.",
       "evidence": [
         {
@@ -4322,5 +4322,57 @@
       "Expand independent interval/statistical verifier, then run end-to-end reasoning evaluation rather than duplicate gold-program execution."
     ],
     "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion."
+  },
+  "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
+  "executionPolicy": "Only the active V2 checklist selects tasks; broad roadmap statuses retain their prior evidence boundaries.",
+  "webAccess": {
+    "session": "V2-190-standalone-web-scope",
+    "status": "planned",
+    "scope": "standalone optional future capability, disabled and unregistered by default; no core integration",
+    "contract": "docs/sutra-v2/WEB-ACCESS.md",
+    "owner": "independent optional module",
+    "tasks": [
+      {
+        "id": "V2-WEB-001",
+        "priority": "P0",
+        "owner": "independent optional module",
+        "dependencies": [],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-002",
+        "priority": "P1",
+        "owner": "independent optional module",
+        "dependencies": [
+          "V2-WEB-001"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-003",
+        "priority": "P1",
+        "owner": "independent optional module",
+        "dependencies": [
+          "V2-WEB-002"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-004",
+        "priority": "P1",
+        "owner": "independent optional module",
+        "dependencies": [
+          "V2-WEB-003"
+        ],
+        "status": "pending"
+      }
+    ],
+    "enablement": "isolated exact security, correctness and compatibility verification; live use separately authorized; future integration separate architectural decision",
+    "broadGateCredit": false,
+    "sourceRevision": "3d33e6466e9a997c0c0151780cf8fbc405898c34",
+    "coreGateDependency": false,
+    "defaultEnabled": false,
+    "defaultRegistered": false,
+    "foundationPriority": "after higher-priority foundation work"
   }
 }

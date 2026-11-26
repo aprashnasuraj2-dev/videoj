@@ -1,5 +1,7 @@
 # 02. Repository and source foundations
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **27-30 Nov 2026**. This is a target window, not proof of work.
@@ -89,16 +91,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Record or obtain permission for a 3-5 minute instructional video and a written handover checklist. Use synthetic device readings; remove customer information, employer marks and unauthorized material.
 - **Phase exit:** Rights and factual review are documented; the film contains the steps needed by the hero query.
 
-- [ ] `SUTRA-P015-01` Select one factual 3-5 minute lesson matching the hero task
-- [ ] `SUTRA-P015-02` Create or obtain explicit rights for footage, narration and written checklist
-- [ ] `SUTRA-P015-03` Remove customer data, internal credentials and unauthorized employer marks
-- [ ] `SUTRA-P015-04` Use synthetic device readings and non-sensitive demonstrations
-- [ ] `SUTRA-P015-05` Have a competent content owner review the technical sequence
-- [ ] `SUTRA-P015-06` Verify the actual recording contains the answerable steps being demonstrated
-- [ ] `SUTRA-P015-07` Record media owner, license, capture date and permitted public use
-- [ ] `SUTRA-P015-08` Keep raw private permissions outside Git and publish only safe provenance
-- [ ] `SUTRA-P015-09` Produce and review the phase artifact: Original lesson files, text checklist and provenance record.
-- [ ] `SUTRA-P015-10` Close phase 015 only after its applicable tasks have evidence and its exit condition is observed: Rights and factual review are documented; the film contains the steps needed by the hero query.
 
 ## Phase 016 - Create transcript, captions and cue IDs
 
@@ -107,16 +99,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Create timestamped transcript segments and captions; manually check cue boundaries and technical wording. Give every segment a stable ID tied to a specific media version.
 - **Phase exit:** All timestamps satisfy 0 <= start < end <= actual duration; spot checks match spoken content.
 
-- [ ] `SUTRA-P016-01` Transcribe spoken lesson content with stable segment identifiers
-- [ ] `SUTRA-P016-02` Create valid WebVTT captions with correct ordering and encoding
-- [ ] `SUTRA-P016-03` Compare cue starts and ends to the actual media duration
-- [ ] `SUTRA-P016-04` Manually check technical words, units and ambiguous spoken terms
-- [ ] `SUTRA-P016-05` Distinguish source transcript text from translated or summarized text
-- [ ] `SUTRA-P016-06` Tie captions and transcript metadata to the exact media version
-- [ ] `SUTRA-P016-07` Check missing, overlapping and zero-length cue handling
-- [ ] `SUTRA-P016-08` Spot-check multiple cues against real playback before declaring alignment
-- [ ] `SUTRA-P016-09` Produce and review the phase artifact: WebVTT captions, transcript JSON and cue map.
-- [ ] `SUTRA-P016-10` Close phase 016 only after its applicable tasks have evidence and its exit condition is observed: All timestamps satisfy 0 <= start < end <= actual duration; spot checks match spoken content.
 
 ## Phase 017 - Define the evidence receipt contract
 
@@ -143,16 +125,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Package the main video and at least two written source pages with immutable IDs, version dates and licensed text. Include a deliberately conflicting training fixture outside the default learner path.
 - **Phase exit:** Every public answerable claim has a source; synthetic conflict fixtures are clearly labeled.
 
-- [ ] `SUTRA-P018-01` Index the original film, transcript and at least two written pages
-- [ ] `SUTRA-P018-02` Assign immutable source IDs and stable publicly explainable labels
-- [ ] `SUTRA-P018-03` Record source license, publication date and content version
-- [ ] `SUTRA-P018-04` Ensure each hero claim can point to an actual source excerpt
-- [ ] `SUTRA-P018-05` Create a clearly marked conflicting-source fixture for testing
-- [ ] `SUTRA-P018-06` Separate attack fixtures and synthetic contradictions from default learner content
-- [ ] `SUTRA-P018-07` Bound corpus size and avoid arbitrary live web crawling
-- [ ] `SUTRA-P018-08` Record the corpus manifest and reproducible content hashes
-- [ ] `SUTRA-P018-09` Produce and review the phase artifact: Corpus index and fixture provenance list.
-- [ ] `SUTRA-P018-10` Close phase 018 only after its applicable tasks have evidence and its exit condition is observed: Every public answerable claim has a source; synthetic conflict fixtures are clearly labeled.
 
 ## Phase 019 - Plan video delivery using actual size
 
@@ -161,16 +133,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Measure encodes, choose poster/preload policy and test the intended media host for byte ranges, CORS and content types. Use a separate approved R2/CDN location if Pages limits or seeking require it.
 - **Phase exit:** Any Pages asset is below 25 MiB; seeking is verified on the selected route before choosing it.
 
-- [ ] `SUTRA-P019-01` Measure final MP4/WebM file sizes including audio and container overhead
-- [ ] `SUTRA-P019-02` Check each Pages asset against the actual per-file size limit
-- [ ] `SUTRA-P019-03` Test Range responses, content types and CORS on proposed media hosting
-- [ ] `SUTRA-P019-04` Test real seeking and decoding before selecting the final delivery route
-- [ ] `SUTRA-P019-05` Prefer verified media hosting over routing video through the main Patro Worker
-- [ ] `SUTRA-P019-06` Set intentional poster, preload and low-bandwidth transcript behavior
-- [ ] `SUTRA-P019-07` Avoid unapproved media uploads or duplicate assets when hashes already match
-- [ ] `SUTRA-P019-08` Record bitrate, duration, byte count and chosen media origin
-- [ ] `SUTRA-P019-09` Produce and review the phase artifact: Media delivery decision and byte/bitrate inventory.
-- [ ] `SUTRA-P019-10` Close phase 019 only after its applicable tasks have evidence and its exit condition is observed: Any Pages asset is below 25 MiB; seeking is verified on the selected route before choosing it.
 
 ## Phase 020 - Close the foundation milestone
 
@@ -180,7 +142,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.
 
 - [x] `SUTRA-P020-01` Review the app package and dependency boundary against repository instructions
-- [ ] `SUTRA-P020-02` Confirm the corpus, transcript and media provenance are available
 - [x] `SUTRA-P020-03` Confirm the runtime spike resolved the highest integration uncertainty
 - [x] `SUTRA-P020-04` Run the documented new-app build at a recorded source revision
 - [x] `SUTRA-P020-05` Record missing participant inputs without presenting them as completed
@@ -188,4 +149,3 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P020-07` Review the hero narrative against the current scope and effort
 - [x] `SUTRA-P020-08` Record a foundation gate decision with named unresolved blockers
 - [x] `SUTRA-P020-09` Produce and review the phase artifact: Milestone A review tied to the current SHA.
-- [ ] `SUTRA-P020-10` Close phase 020 only after its applicable tasks have evidence and its exit condition is observed: App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.

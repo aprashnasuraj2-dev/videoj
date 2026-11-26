@@ -1,5 +1,7 @@
 # 08. User and interoperability validation
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **26-30 Dec 2026**. This is a target window, not proof of work.
@@ -35,16 +37,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Execute the frozen corpus tests against the chosen live model. Report citation validity, supported-claim precision, abstention and conflict behavior separately. Preserve failures.
 - **Phase exit:** Targets: 100% syntactically valid references, >=95% supported-claim precision and no invented citations on the 20 unsupported/conflict cases.
 
-- [ ] `SUTRA-P072-01` Run the frozen 40 cases on the recorded live model version
-- [ ] `SUTRA-P072-02` Retain all per-case raw classifications and redacted evidence
-- [ ] `SUTRA-P072-03` Calculate citation syntax validity with explicit denominators
-- [ ] `SUTRA-P072-04` Have a reviewer assess supported-claim precision against actual source text
-- [ ] `SUTRA-P072-05` Score abstention and conflict preservation separately
-- [ ] `SUTRA-P072-06` Record every invented or incorrect citation rather than averaging it away
-- [ ] `SUTRA-P072-07` Compare actual results with precommitted targets
-- [ ] `SUTRA-P072-08` Document small-sample and evaluator limitations
-- [ ] `SUTRA-P072-09` Produce and review the phase artifact: Evaluation CSV/JSON and readable results table.
-- [ ] `SUTRA-P072-10` Close phase 072 only after its applicable tasks have evidence and its exit condition is observed: Targets: 100% syntactically valid references, >=95% supported-claim precision and no invented citations on the 20 unsupported/conflict cases.
 
 ## Phase 073 - Measure the hero path over 20 live runs
 
@@ -53,16 +45,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Repeat the hero request across fresh sessions. Record success criteria, p50/p95 latency, per-run spend, origin contacts and human action completion.
 - **Phase exit:** Target >=19/20 successful journeys and p95 <=25 seconds; sample size and provider conditions remain visible.
 
-- [ ] `SUTRA-P073-01` Run the hero task in 20 fresh sessions under stated conditions
-- [ ] `SUTRA-P073-02` Define success before collecting the measurements
-- [ ] `SUTRA-P073-03` Record p50/p95 latency and the sample percentile method
-- [ ] `SUTRA-P073-04` Record run cost, retries and contacted origins
-- [ ] `SUTRA-P073-05` Check that user action and evidence validation actually complete
-- [ ] `SUTRA-P073-06` Preserve failed runs and classify failure mechanisms
-- [ ] `SUTRA-P073-07` Record provider identifier, dates and source revision
-- [ ] `SUTRA-P073-08` Report the actual success fraction rather than a reliability guarantee
-- [ ] `SUTRA-P073-09` Produce and review the phase artifact: Dated 20-run benchmark with failure reasons.
-- [ ] `SUTRA-P073-10` Close phase 073 only after its applicable tasks have evidence and its exit condition is observed: Target >=19/20 successful journeys and p95 <=25 seconds; sample size and provider conditions remain visible.
 
 ## Phase 074 - Run a small real-user pilot
 
@@ -71,16 +53,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Recruit 10 consenting target users if available. Ask them to complete the defined learning task without coaching. Use de-identified observations and voluntary feedback.
 - **Phase exit:** Target >=8/10 unaided completions; report actual n, recruitment source and assistance rather than assuming representativeness.
 
-- [ ] `SUTRA-P074-01` Recruit consenting users matching the chosen technician-learning audience
-- [ ] `SUTRA-P074-02` Keep outreach and participation voluntary and user-authorized
-- [ ] `SUTRA-P074-03` Use the defined task without coaching or hidden setup
-- [ ] `SUTRA-P074-04` Record actual participant count and unaided completion outcome
-- [ ] `SUTRA-P074-05` Record assistance, task time and observed misunderstandings
-- [ ] `SUTRA-P074-06` De-identify notes and exclude unnecessary personal data
-- [ ] `SUTRA-P074-07` Separate convenience-sample feedback from validated market demand
-- [ ] `SUTRA-P074-08` Preserve failures and recruitment shortfall if fewer than ten participate
-- [ ] `SUTRA-P074-09` Produce and review the phase artifact: Pilot notes, completion rates and usability issues.
-- [ ] `SUTRA-P074-10` Close phase 074 only after its applicable tasks have evidence and its exit condition is observed: Target >=8/10 unaided completions; report actual n, recruitment source and assistance rather than assuming representativeness.
 
 ## Phase 075 - Compare against a manual baseline
 
@@ -89,16 +61,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Counterbalance manual transcript search and SUTRA task order where feasible. Measure time-to-valid-evidence and errors; do not infer long-term learning from a short session.
 - **Phase exit:** Target >=30% median task-time reduction with no evidence-accuracy loss; a worse result triggers workflow revision, not selective exclusion.
 
-- [ ] `SUTRA-P075-01` Define an equivalent manual transcript-search baseline task
-- [ ] `SUTRA-P075-02` Counterbalance task order where feasible to reduce learning effects
-- [ ] `SUTRA-P075-03` Compare time to valid evidence rather than time to any answer
-- [ ] `SUTRA-P075-04` Record errors and evidence accuracy for both workflows
-- [ ] `SUTRA-P075-05` Compute paired results and report actual sample size
-- [ ] `SUTRA-P075-06` Keep outliers unless a documented exclusion rule applies
-- [ ] `SUTRA-P075-07` Explain convenience-sample and same-corpus practice effects
-- [ ] `SUTRA-P075-08` If manual search wins, revise scope and disclose the counterevidence
-- [ ] `SUTRA-P075-09` Produce and review the phase artifact: Paired task comparison and limitations.
-- [ ] `SUTRA-P075-10` Close phase 075 only after its applicable tasks have evidence and its exit condition is observed: Target >=30% median task-time reduction with no evidence-accuracy loss; a worse result triggers workflow revision, not selective exclusion.
 
 ## Phase 076 - Run two outside-builder Open Kit trials
 
@@ -107,16 +69,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Invite two consenting developers outside the project to install one tool or starter from the public docs. Record time to first success and every intervention. Do not send invitations automatically.
 - **Phase exit:** Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
 
-- [ ] `SUTRA-P076-01` Seek two consenting developers outside the project through authorized outreach
-- [ ] `SUTRA-P076-02` Give each only the public quickstart and installation task
-- [ ] `SUTRA-P076-03` Record environment and exact tool release version
-- [ ] `SUTRA-P076-04` Measure time to first valid receipt or agent invocation
-- [ ] `SUTRA-P076-05` Log each intervention and blocker rather than coaching invisibly
-- [ ] `SUTRA-P076-06` Keep participant identities out of public research notes
-- [ ] `SUTRA-P076-07` Report zero/one participants honestly if recruitment fails
-- [ ] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
-- [ ] `SUTRA-P076-09` Produce and review the phase artifact: De-identified setup logs and adoption friction report.
-- [ ] `SUTRA-P076-10` Close phase 076 only after its applicable tasks have evidence and its exit condition is observed: Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
 
 ## Phase 077 - Complete the browser and device matrix
 
@@ -128,13 +80,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P077-01` Record current Chromium, Firefox and WebKit versions
 - [x] `SUTRA-P077-02` Check actual decode, captions, seek and fullscreen behavior
 - [x] `SUTRA-P077-03` Check graph execution, consent, card export and error states
-- [ ] `SUTRA-P077-04` Use an available physical iPhone/Android device for touch verification
 - [x] `SUTRA-P077-05` Label emulated, desktop-engine and physical evidence distinctly
 - [x] `SUTRA-P077-06` Record unsupported codecs and browser capability limitations
 - [x] `SUTRA-P077-07` Link failures to the exact source/media revision
 - [x] `SUTRA-P077-08` Publish a matrix with pass, fail and untested entries
 - [x] `SUTRA-P077-09` Produce and review the phase artifact: Browser matrix with pass/fail/untested cells.
-- [ ] `SUTRA-P077-10` Close phase 077 only after its applicable tasks have evidence and its exit condition is observed: Core workflow works in supported browsers; emulation is not reported as physical-device evidence.
 
 ## Phase 078 - Fix the highest-impact observed failures
 
@@ -144,15 +94,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
 - [x] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
-- [ ] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
 - [x] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
 - [x] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
 - [x] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
 - [x] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
-- [ ] `SUTRA-P078-07` Check mobile and keyboard blockers observed in the pilot
 - [x] `SUTRA-P078-08` Record remaining issue severity and user-visible effect
 - [x] `SUTRA-P078-09` Produce and review the phase artifact: Issue resolutions tied to source revisions.
-- [ ] `SUTRA-P078-10` Close phase 078 only after its applicable tasks have evidence and its exit condition is observed: No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
 ## Phase 079 - Recheck affected evidence after fixes
 
@@ -168,9 +115,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
 - [x] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
 - [x] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
-- [ ] `SUTRA-P079-08` Verify reported metrics match the implementation that will ship
-- [ ] `SUTRA-P079-09` Produce and review the phase artifact: Final affected-check results and comparison against prior data.
-- [ ] `SUTRA-P079-10` Close phase 079 only after its applicable tasks have evidence and its exit condition is observed: Reported metrics correspond to the candidate revision; earlier numbers are not reused after material changes.
 
 ## Phase 080 - Freeze a release candidate
 
@@ -179,13 +123,3 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Tag an immutable candidate, freeze the scope and assemble the actual evidence. Assess each judging criterion without predicting a prize outcome.
 - **Phase exit:** Conformance passes; core product and Open Kit links work; remaining issues have honest impact descriptions.
 
-- [ ] `SUTRA-P080-01` Freeze the intended release scope and immutable candidate revision
-- [ ] `SUTRA-P080-02` Confirm conformance gates and the funded judge path
-- [ ] `SUTRA-P080-03` Assemble the actual product, browser and evaluation evidence
-- [ ] `SUTRA-P080-04` Verify reusable tool candidate links and clean-host examples
-- [ ] `SUTRA-P080-05` Record each unresolved issue with practical effect
-- [ ] `SUTRA-P080-06` Assess all four judging criteria using observed work only
-- [ ] `SUTRA-P080-07` Separate prospective impact from measured small-sample results
-- [ ] `SUTRA-P080-08` Prevent new optional features from delaying the stable candidate
-- [ ] `SUTRA-P080-09` Produce and review the phase artifact: Milestone E release candidate and factual evidence index.
-- [ ] `SUTRA-P080-10` Close phase 080 only after its applicable tasks have evidence and its exit condition is observed: Conformance passes; core product and Open Kit links work; remaining issues have honest impact descriptions.

@@ -14,7 +14,7 @@ const pem=k=>k.export({format:'pem',type:k.type==='private'?'pkcs8':'spki'}).toS
 const raw=k=>Buffer.from(createPublicKey(k).export({format:'der',type:'spki'})).subarray(-32);
 const childCode=String.raw`
 import http from 'node:http';import {createPrivateKey,createPublicKey,sign,verify} from 'node:crypto';
-const V=Buffer.from('SUTRA/shared-authority-witness-view/v1\\0'),T=Buffer.from('SUTRA/shared-authority-witness-transition/v1\\0'),A=Buffer.from('SUTRA/shared-authority-witness-attestation/v1\\0');
+const V=Buffer.from('SUTRA/shared-authority-witness-view/v1\0'),T=Buffer.from('SUTRA/shared-authority-witness-transition/v1\0'),A=Buffer.from('SUTRA/shared-authority-witness-attestation/v1\0');
 const ctx=Buffer.from(process.env.CTX,'hex'),genesis=Buffer.from(process.env.GENESIS,'hex'),authorityPem=Buffer.from(process.env.AUTHORITY,'base64').toString(),witnessPem=Buffer.from(process.env.WITNESS,'base64').toString(),authority=createPublicKey(authorityPem),authorityRaw=Buffer.from(authority.export({format:'der',type:'spki'})).subarray(-32),witness=createPrivateKey(witnessPem);
 let sequence=0,head=Buffer.from(genesis);
 const view=()=>{const body=Buffer.alloc(68);body.writeUInt32BE(sequence,0);genesis.copy(body,4);head.copy(body,36);return Buffer.concat([body,sign(null,Buffer.concat([V,ctx,authorityRaw,body]),witness)]);};
@@ -24,12 +24,12 @@ const server=http.createServer(async(req,res)=>{const chunks=[];for await(const 
  if(req.url==='/witness'){if(body.length!==128){res.statusCode=400;return res.end();}const before=body.subarray(0,32),after=body.subarray(32,64),sig=body.subarray(64);if(!before.equals(head)||after.equals(before)||!verify(null,Buffer.concat([T,ctx,before,after]),authority,sig)){res.statusCode=409;return res.end();}head=Buffer.from(after);sequence++;return res.end(view());}
  res.statusCode=400;res.end();
 });
-server.listen(0,'127.0.0.1',()=>process.stdout.write(String(server.address().port)+'\\n'));process.on('SIGTERM',()=>server.close(()=>process.exit(0)));
+server.listen(0,'127.0.0.1',()=>process.stdout.write(String(server.address().port)+'\n'));process.on('SIGTERM',()=>server.close(()=>process.exit(0)));
 `;
 async function witnessProcess(t,{context,genesis,authority,witness}){
  const p=spawn(process.execPath,['--input-type=module','-e',childCode],{env:{...process.env,CTX:context.toString('hex'),GENESIS:genesis.toString('hex'),AUTHORITY:Buffer.from(pem(authority.publicKey)).toString('base64'),WITNESS:Buffer.from(pem(witness.privateKey)).toString('base64')},stdio:['ignore','pipe','pipe']});
- let stderr='';p.stderr.on('data',d=>stderr+=d);const port=await new Promise((resolve,reject)=>{let s='';p.stdout.on('data',d=>{s+=d;const m=s.match(/^(\\d+)\\n/);if(m)resolve(Number(m[1]));});p.once('exit',code=>reject(Error('witness exited '+code+' '+stderr)));});
- t.after(()=>{p.kill('SIGTERM');});return {process:p,origin:'http://127.0.0.1:'+port};
+ t.after(()=>{if(p.exitCode===null&&p.signalCode===null)p.kill('SIGKILL');});
+ let stderr='';p.stderr.on('data',d=>stderr=(stderr+d).slice(-4096));const port=await new Promise((resolve,reject)=>{let s='';const timer=setTimeout(()=>{p.kill('SIGKILL');reject(Error('witness startup timed out '+stderr));},5000);const done=(err,value)=>{clearTimeout(timer);err?reject(err):resolve(value);};p.stdout.on('data',d=>{s+=d;const m=s.match(/^(\d+)\n/);if(m)done(null,Number(m[1]));});p.once('error',e=>done(e));p.once('exit',code=>done(Error('witness exited '+code+' '+stderr)));});return {process:p,origin:'http://127.0.0.1:'+port};
 }
 async function fixture(t){
  const dir=await mkdtemp(join(tmpdir(),'sutra-witnessed-history-'));t.after(()=>rm(dir,{recursive:true,force:true}));
@@ -37,7 +37,7 @@ async function fixture(t){
  const store=await openLocalHistoryStore(dir);await store.initialize(root.historyText,root.digest);
  const authority=generateKeyPairSync('ed25519'),witness=generateKeyPairSync('ed25519'),context=createHash('sha256').update('sutra-history-witness-test').digest();
  const server=await witnessProcess(t,{context,genesis:Buffer.from(root.digest.slice(7),'hex'),authority,witness});
- let byte=1;const client=createHistoryWitnessClient({origin:server.origin,contextPin:pin(context),genesisPin:root.digest,authorityPublicKey:pem(authority.publicKey),authorityPrivateKey:pem(authority.privateKey),witnessPublicKey:pem(witness.publicKey),randomBytes:n=>Buffer.alloc(n,byte++)});
+ let byte=1;const client=createHistoryWitnessClient({origin:server.origin,contextPin:'sha256:'+context.toString('hex'),genesisPin:root.digest,authorityPublicKey:pem(authority.publicKey),authorityPrivateKey:pem(authority.privateKey),witnessPublicKey:pem(witness.publicKey),randomBytes:n=>Buffer.alloc(n,byte++)});
  return {dir,a,b,root,next,store,client,server,authority,witness,context};
 }
 test('fresh challenge-bound witness detects local rollback and refuses stale independently retained view',async t=>{
@@ -53,7 +53,7 @@ test('witness challenge replay and process rollback are refused even with same s
  const f=await fixture(t),trusted=await f.client.attest(),wrapped=openExternallyWitnessedHistoryStore({store:f.store,witness:f.client}),advanced=await wrapped.appendFresh({expectedHead:f.root.digest,nextText:f.next.historyText,nextPin:f.next.digest,trustedView:trusted});
  f.server.process.kill('SIGTERM');await new Promise(r=>setTimeout(r,30));
  const reset=await witnessProcess(t,{context:f.context,genesis:Buffer.from(f.root.digest.slice(7),'hex'),authority:f.authority,witness:f.witness});
- let b=90;const rolled=createHistoryWitnessClient({origin:reset.origin,contextPin:pin(f.context),genesisPin:f.root.digest,authorityPublicKey:pem(f.authority.publicKey),authorityPrivateKey:pem(f.authority.privateKey),witnessPublicKey:pem(f.witness.publicKey),randomBytes:n=>Buffer.alloc(n,b++)});
+ let b=90;const rolled=createHistoryWitnessClient({origin:reset.origin,contextPin:'sha256:'+f.context.toString('hex'),genesisPin:f.root.digest,authorityPublicKey:pem(f.authority.publicKey),authorityPrivateKey:pem(f.authority.privateKey),witnessPublicKey:pem(f.witness.publicKey),randomBytes:n=>Buffer.alloc(n,b++)});
  const rolledStore=openExternallyWitnessedHistoryStore({store:f.store,witness:rolled});
  await assert.rejects(rolledStore.readFresh({expectedHead:f.next.digest,trustedView:advanced.witness}),e=>['WITNESS_ROLLBACK','WITNESS_ADVANCED'].includes(e.code));
 });

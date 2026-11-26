@@ -600,3 +600,27 @@ Use a separate non-merge validation draft to materialize exact child blobs, reta
 
 ### V2-183-reuse-first-reconciliation
 Reuse-first selection: preserve v1 and v2 historical statuses. Record scoped child implementation/CI and unresolved integration or external acceptance separately, not as new broad gate credit. Combined validation materializes all ten exact child heads without merging; two disjoint HTML insertions and exact impact mappings were reconciled without replacing the underlying components. No public release, live inference or automatic merge.
+
+## V2-DECISION-0185 — Retire SUTRA1 pending queue; V2 remaining-work checklist is sole cursor (2026-11-26)
+
+**Decision:** By explicit user direction, retire and remove the 379 remaining unchecked SUTRA1 tasks from active execution. Preserve verified/omitted/blocked historical records and Git history. Replace the active SUTRA2 checklist with a remaining-work-only checklist covering current branch reconciliation, ten parallel workstreams, 21 Living Knowledge exit gates, unresolved foundation phases, cross-register obligations and genuine external blockers.
+
+**Continuation semantics:** “Continue with SUTRA” now means reconcile exact current V2 remote heads/CI and execute the next dependency-ready unchecked item in `docs/sutra-v2/CHECKLIST.md`. Former V1 pending/next IDs are never selected by default.
+
+**Why:** The old 1,000-task learner/competition checklist no longer represents the renewed living-knowledge product and was causing cursor drift. Keeping its 379 unchecked tasks active would duplicate or conflict with the V2 roadmap. Git history preserves the retired tasks, so removing them from current files does not erase provenance.
+
+**Counterexample / boundary:** V1 verified evidence, security constraints and failures may still be reused when a current V2 task explicitly depends on them. Retirement is not completion, waiver, release authorization or proof that every old capability is unnecessary; any still-required capability must exist as an active V2 checklist/roadmap item.
+
+**Release/authority:** No merge, public deployment, paid inference, real credentials, outreach, release or submission is authorized by this decision.
+
+
+
+## V2-DECISION-0189 — Optional web discovery/read as existing evidence adapter (2026-11-26)
+
+> Historical decision superseded by V2-190 standalone scope; do not implement the integration described here.
+
+Decision: add four bounded tasks under #54 evidence acquisition; retain current runtime, consent, budgets, taint and workspace; use the supplied prototype as design input, not an executable second foundation. Default disabled; host-owned credentialless HTTPS GET only with scoped disclosure consent and exact source review. Search rankings do not prove truth or independence. No automatic fetch, external authority, public relay or deployment. See [WEB-ACCESS.md](WEB-ACCESS.md). Existing broad gate statuses and active CI cursor unchanged.
+
+## V2-190 — standalone web scope and exact-head observation (2026-11-26)
+
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization. Supersedes V2-189 integration language, retained below/in history as historical evidence only. Ten original TypeScript reference fingerprints retained; no runtime implementation or verification credit. Central observed parent `3d33e6466e9a997c0c0151780cf8fbc405898c34`; exact knowledge run [45785358772](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45785358772) in progress at observation. #58 exact head `e163e9a9a293a4be9c713f2b2967de33d91b07bd`: [workspace run 45779650243](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779650243/job/139771714631) failed at 200% text resize (320px viewport, 384px document scroll width, no overflowing element detected by prior diagnostic); baseline browser journey passed, separate parallel run 45779650347 succeeded. #61 exact `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parallel runs cancelled on attempt 2, workspace run cancelled; stale manifest, validation-only, DO NOT MERGE. N003 remains active. No new gate credit; 164 engineering items including active (160 foundation plus four optional), six external blockers.

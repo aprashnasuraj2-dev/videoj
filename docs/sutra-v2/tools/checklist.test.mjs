@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {auditChecklist} from './checklist.mjs';
+const read=n=>fs.readFileSync(new URL(n,import.meta.url),'utf8');
+const fixture=()=>[read('../CHECKLIST.md'),JSON.parse(read('../progress.json')),JSON.parse(read('../roadmap.json')),JSON.parse(read('../../sutra/progress.json'))];
+test('live checklist and machine queues reconcile',()=>assert.deepEqual(auditChecklist(...fixture()).errors,[]));
+test('duplicate checklist ID fails',()=>{const f=fixture();f[0]+='\n'+f[0].split('\n').find(l=>l.startsWith('- [')&&l.includes('`V2-'));assert.ok(auditChecklist(...f).errors.some(e=>e.includes('Duplicate task')));});
+test('count, legacy fallback, stale session and validation merge mutation fail',()=>{for(const mutate of [f=>f[1].activeChecklist.remainingTasks++,f=>f[3].next_task='SUTRA-P001-01',f=>f[2].session='stale-session',f=>f[1].activeChecklist.validationMergeAllowed=true,f=>f[1].next.push('SUTRA-P001-01')]){const f=fixture();mutate(f);assert.ok(auditChecklist(...f).errors.length);}});
+test('closed item without evidence fails',()=>{const f=fixture();f[1].verified=[];assert.ok(auditChecklist(...f).errors.some(e=>e.includes('lacks source-bound evidence')));});
