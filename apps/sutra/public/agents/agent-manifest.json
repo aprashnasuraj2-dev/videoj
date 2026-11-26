@@ -9,7 +9,7 @@
     {
       "name": "source_learner",
       "front_man": "learner",
-      "hocon": "./v/08b60445a7e5b5fc7d8dee10bd76883e30c22d84/source_learner.network.json",
+      "hocon": "./v/d36734b9a15909190495fcd8a29bf821902bd6dc/source_learner.network.json",
       "description": "Bounded source retrieval with mechanical broad-search refusal and abstention semantics; development catalog remains synthetic."
     },
     {
@@ -21,7 +21,7 @@
     {
       "name": "research_learner",
       "front_man": "learner",
-      "hocon": "./v/2b9d212fc1ff233a06cd35e1e571628e4622ee87/research_learner.network.json",
+      "hocon": "./v/573cc12362d42b41f46de4afc62b757064a597c3/research_learner.network.json",
       "description": "Model-directed lesson evidence plus optional bounded public web research; retrieved claims remain unverified."
     }
   ],
