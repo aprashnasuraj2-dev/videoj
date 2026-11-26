@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {compareClaimPair,syntheticComparison} from '../src/comparison.js';
+import {compareClaimPair} from '../src/comparison.js';
+import {syntheticComparison} from './fixtures/synthetic-comparison.mjs';
 import {buildUncertaintyGuidance} from '../src/uncertainty-guidance.js';
 
 const pair=()=>structuredClone(syntheticComparison);
