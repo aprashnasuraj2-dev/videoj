@@ -24,3 +24,16 @@ test('substitution can change conditional result but not evidence identity or gr
  const limited=setup('provider-c','custom/c','[ppe26] > [ppe25]');const z=await runExpressionCouncil({...common,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:limited.routes,workspace:limited.workspace});
  assert.equal(z.candidates.length,0);assert.equal(z.rounds[0].agents[0].status,'REFUSED');assert.equal(limited.seen.length,1);
 });
+
+import {prepareApprovedExpressionCouncil} from '../approved-expression-council.js';
+test('one-shot plan binds exact route, scope and question; replacement needs a new capability',async()=>{
+ const f=await compilerFinanceFixture(),a=setup('provider-a','custom/a'),b=setup('provider-b','custom/b'),disclosure={bindingIds:['ocf25','ocf26'],includeValues:false};
+ const common={contractText:f.contractText,contractPin:f.pin,disclosure,maxRounds:1};
+ const x=await prepareApprovedExpressionCouncil({...common,routes:a.routes,workspace:a.workspace}),y=await prepareApprovedExpressionCouncil({...common,routes:b.routes,workspace:b.workspace});
+ assert.notEqual(x.planPin,y.planPin);assert.equal(a.seen.length+b.seen.length,0);assert.equal(JSON.stringify(x.plan).includes('136162'),false);
+ await assert.rejects(y.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_PIN/);assert.equal(b.seen.length,0);
+ disclosure.bindingIds.push('ppe25');a.routes[0].role='unapproved changed role';
+ const r=await x.execute({approveDisclosure:true,approvedPlanPin:x.planPin});assert.equal(r.contractDigest,f.pin);assert.equal(a.seen[0].role,'Propose a comparison');assert.deepEqual(a.seen[0].bindings.map(x=>x.id),['ocf25','ocf26']);
+ await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_CONSUMED/);assert.equal(a.seen.length,1);
+ const r2=await y.execute({approveDisclosure:true,approvedPlanPin:y.planPin});assert.equal(r2.candidates[0].proposalDigest,r.candidates[0].proposalDigest);assert.equal(b.seen.length,1);
+});

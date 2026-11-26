@@ -23,3 +23,8 @@ Child JS regression is not full integration evidence. Maintain exact source revi
 ## Parallel session candidate
 New actual council regression: two providers run concurrently with same pinned contract and disclosure but opposite formulas and conditional results. Separate per-workspace budget accounting; a replacement provider guessing undisclosed fields is refused. No real provider/model identity or shared production budget proof.
 Exact child CI pending.
+
+
+## V2-182 candidate
+One-shot in-memory explicit council approval captures exact host workspace/route handles, pinned contract, displayed binding disclosure, budgets and feedback policy. Replacement needs new preview and approval; plan bytes are not a capability. Regression mutates caller arrays/role after preview, refuses other route pin and repeated execution, preserves compiled proposal identity. Live identity and UI remain unverified.
+Exact child CI pending.
