@@ -188,4 +188,4 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P050-07` Prioritize usability blockers over additional features
 - [x] `SUTRA-P050-08` Record the complete-product gate against the current build revision
 - [x] `SUTRA-P050-09` Produce and review the phase artifact: Milestone C walkthrough and remaining issue priorities.
-- [ ] `SUTRA-P050-10` Close phase 050 only after its applicable tasks have evidence and its exit condition is observed: A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
+- [x] `SUTRA-P050-10` Close phase 050 only after its applicable tasks have evidence and its exit condition is observed: A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
