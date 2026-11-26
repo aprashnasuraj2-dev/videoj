@@ -7,7 +7,7 @@ on:
       - 'packages/sutra-*/**'
       - 'docs/sutra/CONTRIBUTING.md'
       - 'docs/sutra/CHANGELOG.md'
-      - 'docs/sutra/TECHNICAL_REPORT.md'
+      - 'docs/sutra/Technical_Report.md'
       - 'docs/sutra/COMMUNITY_TOOLS_AND_IMPACT.md'
       - 'docs/sutra/JUDGING_AVAILABILITY_RUNBOOK.md'
       - '.github/workflows/sutra-open-kit.yml'
