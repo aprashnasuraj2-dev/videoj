@@ -16,3 +16,8 @@ No merge, release, live inference or external contact authorized. Child JS CI is
 ## Parallel session candidate
 Add strict pinned common per-case budget protocol and usage admission for both paired arms. Missing, duplicated, unknown or over-cap cases refuse. Distinguish declared held-out split/caps from actual frozen benchmark, metering and independent annotation. Next: independently annotated case manifest, actual run logs and comparison against seven baselines.
 Exact child CI pending.
+
+
+## V2-182 candidate
+Add pinned split manifest audit with exact per-case content digest and declared source-lineage collision detection across development/held-out splits; match held-out case IDs to independently pinned gold labels, preserve unknown ancestry. No real benchmark run or training contamination claim. Next: rights-cleared independently annotated cases and actual paired metering.
+Exact child CI pending.
