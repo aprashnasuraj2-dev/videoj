@@ -23,3 +23,8 @@ Child JS regression is not full integration evidence. Maintain exact source revi
 ## Parallel session candidate
 Execute existing independently implemented Python Fraction/hashlib verifier from child JS CI on 13 generated positive and 12 forged receipt cases. Cover zero division, propagated blocking, negative rationals, dimensional incompatibility and actual fresh/cache parity. Same-project independent algorithm, not external independent operation. Next: independent domain semantic and interval profiles.
 Exact child CI pending.
+
+
+## V2-182 candidate
+Independent Python replay now challenges revision with identical derived sum but changed premises, permutation, dangling references, duplicates and cycles. Three valid and four invalid cases execute independently; same numerical result cannot authorize stale provenance. Cross-language domain-specific verification still pending.
+Exact child CI pending.
