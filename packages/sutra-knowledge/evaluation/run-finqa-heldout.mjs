@@ -1,0 +1,1 @@
+import fs from 'node:fs/promises';import {runFinQAHeldOutBenchmark} from '../finqa-heldout-benchmark.js';const corpus=JSON.parse(await fs.readFile(new URL('./finqa-public-test-heldout.json',import.meta.url),'utf8'));process.stdout.write(JSON.stringify(await runFinQAHeldOutBenchmark(corpus),null,2)+'\n');

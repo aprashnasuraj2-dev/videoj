@@ -1,0 +1,4906 @@
+{
+  "version": 1,
+  "name": "FinQA public test held-out comparative subset",
+  "license": "MIT",
+  "upstream": {
+    "repository": "czyssrs/FinQA",
+    "commit": "0f16e2867befa6840783e58be38c9efb9229d742",
+    "path": "dataset/test.json",
+    "gitBlobSha1": "59958c7c3bb3b21f4dff6bc912a0fe0ae710aee0",
+    "caseCount": 1147
+  },
+  "selection": {
+    "algorithm": "unsigned FNV-1a 32-bit over UTF-16 code units of id; ascending rank then id",
+    "developmentRanks": [
+      1,
+      24
+    ],
+    "heldOutRanks": [
+      25,
+      64
+    ],
+    "count": 40,
+    "nextRank": 210062564
+  },
+  "frozenProfile": {
+    "operations": [
+      "add",
+      "subtract",
+      "multiply",
+      "divide"
+    ],
+    "source": "operations frozen from disjoint ranks 1-24 before held-out labels/programs were inspected"
+  },
+  "inventory": [
+    {
+      "id": "IP/2006/page_30.pdf-4",
+      "rank": 2895264
+    },
+    {
+      "id": "DRE/2007/page_56.pdf-3",
+      "rank": 2938304
+    },
+    {
+      "id": "AMT/2012/page_118.pdf-3",
+      "rank": 8733886
+    },
+    {
+      "id": "STT/2006/page_95.pdf-1",
+      "rank": 10523316
+    },
+    {
+      "id": "DRE/2007/page_56.pdf-2",
+      "rank": 19715923
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-1",
+      "rank": 20388609
+    },
+    {
+      "id": "AMT/2012/page_118.pdf-2",
+      "rank": 25511505
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-4",
+      "rank": 32799515
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-4",
+      "rank": 33986582
+    },
+    {
+      "id": "DRE/2007/page_56.pdf-1",
+      "rank": 36493542
+    },
+    {
+      "id": "C/2018/page_175.pdf-1",
+      "rank": 41242792
+    },
+    {
+      "id": "STT/2006/page_95.pdf-3",
+      "rank": 44078554
+    },
+    {
+      "id": "PNC/2015/page_93.pdf-1",
+      "rank": 47864572
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-4",
+      "rank": 52691182
+    },
+    {
+      "id": "AMT/2012/page_118.pdf-4",
+      "rank": 59066743
+    },
+    {
+      "id": "STT/2006/page_95.pdf-2",
+      "rank": 60856173
+    },
+    {
+      "id": "RSG/2010/page_98.pdf-1",
+      "rank": 63607347
+    },
+    {
+      "id": "BLK/2017/page_121.pdf-1",
+      "rank": 63754228
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-2",
+      "rank": 67541820
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-4",
+      "rank": 70721466
+    },
+    {
+      "id": "RSG/2009/page_140.pdf-1",
+      "rank": 73906555
+    },
+    {
+      "id": "C/2018/page_175.pdf-3",
+      "rank": 74798030
+    },
+    {
+      "id": "RSG/2010/page_98.pdf-2",
+      "rank": 80384966
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-1",
+      "rank": 83132372
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-3",
+      "rank": 84319439
+    },
+    {
+      "id": "SLB/2015/page_59.pdf-1",
+      "rank": 85626074
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-2",
+      "rank": 86246420
+    },
+    {
+      "id": "IP/2006/page_30.pdf-1",
+      "rank": 86783359
+    },
+    {
+      "id": "RSG/2009/page_140.pdf-2",
+      "rank": 90684174
+    },
+    {
+      "id": "C/2018/page_175.pdf-2",
+      "rank": 91575649
+    },
+    {
+      "id": "BLK/2017/page_121.pdf-3",
+      "rank": 97309466
+    },
+    {
+      "id": "PNC/2015/page_93.pdf-2",
+      "rank": 98197429
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-3",
+      "rank": 103024039
+    },
+    {
+      "id": "IP/2006/page_30.pdf-2",
+      "rank": 103560978
+    },
+    {
+      "id": "GPN/2014/page_92.pdf-1",
+      "rank": 112609820
+    },
+    {
+      "id": "PNC/2007/page_92.pdf-1",
+      "rank": 112944804
+    },
+    {
+      "id": "ALLE/2015/page_24.pdf-1",
+      "rank": 113373495
+    },
+    {
+      "id": "BLK/2017/page_121.pdf-2",
+      "rank": 114087085
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-3",
+      "rank": 116687610
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-1",
+      "rank": 117874677
+    },
+    {
+      "id": "IP/2006/page_30.pdf-3",
+      "rank": 120338597
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-1",
+      "rank": 124540060
+    },
+    {
+      "id": "C/2018/page_175.pdf-4",
+      "rank": 125130887
+    },
+    {
+      "id": "AMT/2014/page_149.pdf-1",
+      "rank": 125305620
+    },
+    {
+      "id": "ALLE/2015/page_24.pdf-2",
+      "rank": 130151114
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-2",
+      "rank": 133465229
+    },
+    {
+      "id": "AES/2002/page_128.pdf-2",
+      "rank": 135306672
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-1",
+      "rank": 136579277
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-2",
+      "rank": 142947848
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-3",
+      "rank": 150366720
+    },
+    {
+      "id": "AES/2002/page_128.pdf-3",
+      "rank": 152084291
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-3",
+      "rank": 158095298
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-3",
+      "rank": 159725467
+    },
+    {
+      "id": "GPN/2014/page_92.pdf-2",
+      "rank": 162942677
+    },
+    {
+      "id": "PNC/2007/page_92.pdf-2",
+      "rank": 163277661
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-2",
+      "rank": 167144339
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-2",
+      "rank": 174872917
+    },
+    {
+      "id": "AMT/2014/page_149.pdf-2",
+      "rank": 175638477
+    },
+    {
+      "id": "CB/2008/page_229.pdf-4",
+      "rank": 176507326
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-1",
+      "rank": 183921958
+    },
+    {
+      "id": "AES/2002/page_128.pdf-1",
+      "rank": 185639529
+    },
+    {
+      "id": "AMAT/2013/page_37.pdf-2",
+      "rank": 192935107
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-1",
+      "rank": 193280705
+    },
+    {
+      "id": "AMAT/2013/page_37.pdf-1",
+      "rank": 209712726
+    },
+    {
+      "id": "CB/2008/page_229.pdf-2",
+      "rank": 210062564
+    },
+    {
+      "id": "JPM/2014/page_70.pdf-2",
+      "rank": 215535591
+    },
+    {
+      "id": "K/2013/page_23.pdf-1",
+      "rank": 216086975
+    },
+    {
+      "id": "CB/2008/page_229.pdf-3",
+      "rank": 226840183
+    },
+    {
+      "id": "ADI/2019/page_29.pdf-1",
+      "rank": 228720316
+    },
+    {
+      "id": "IPG/2017/page_92.pdf-4",
+      "rank": 231138393
+    },
+    {
+      "id": "JPM/2014/page_70.pdf-1",
+      "rank": 232313210
+    },
+    {
+      "id": "K/2013/page_23.pdf-2",
+      "rank": 232864594
+    },
+    {
+      "id": "AES/2002/page_128.pdf-4",
+      "rank": 235972386
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-4",
+      "rank": 243613562
+    },
+    {
+      "id": "IPG/2017/page_92.pdf-3",
+      "rank": 247916012
+    },
+    {
+      "id": "AWK/2018/page_146.pdf-4",
+      "rank": 252657873
+    },
+    {
+      "id": "ETFC/2011/page_144.pdf-1",
+      "rank": 259441792
+    },
+    {
+      "id": "CB/2008/page_229.pdf-1",
+      "rank": 260395421
+    },
+    {
+      "id": "ADI/2019/page_29.pdf-3",
+      "rank": 262275554
+    },
+    {
+      "id": "IPG/2017/page_92.pdf-2",
+      "rank": 264693631
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-4",
+      "rank": 267810053
+    },
+    {
+      "id": "AWK/2018/page_146.pdf-3",
+      "rank": 269435492
+    },
+    {
+      "id": "ADI/2019/page_29.pdf-2",
+      "rank": 279053173
+    },
+    {
+      "id": "GPN/2013/page_87.pdf-1",
+      "rank": 280184987
+    },
+    {
+      "id": "IPG/2017/page_92.pdf-1",
+      "rank": 281471250
+    },
+    {
+      "id": "AWK/2018/page_146.pdf-2",
+      "rank": 286213111
+    },
+    {
+      "id": "MS/2013/page_139.pdf-1",
+      "rank": 294194868
+    },
+    {
+      "id": "GPN/2013/page_87.pdf-2",
+      "rank": 296962606
+    },
+    {
+      "id": "AWK/2018/page_146.pdf-1",
+      "rank": 302990730
+    },
+    {
+      "id": "ETFC/2011/page_144.pdf-2",
+      "rank": 309774649
+    },
+    {
+      "id": "GPN/2013/page_87.pdf-3",
+      "rank": 313740225
+    },
+    {
+      "id": "FIS/2016/page_31.pdf-3",
+      "rank": 314281608
+    },
+    {
+      "id": "ETR/2008/page_442.pdf-2",
+      "rank": 314629883
+    },
+    {
+      "id": "DISH/2010/page_117.pdf-1",
+      "rank": 324797267
+    },
+    {
+      "id": "GPN/2013/page_87.pdf-4",
+      "rank": 330517844
+    },
+    {
+      "id": "FIS/2016/page_31.pdf-2",
+      "rank": 331059227
+    },
+    {
+      "id": "ETR/2008/page_442.pdf-1",
+      "rank": 331407502
+    },
+    {
+      "id": "IP/2006/page_75.pdf-4",
+      "rank": 332076083
+    },
+    {
+      "id": "DISH/2010/page_117.pdf-2",
+      "rank": 341574886
+    },
+    {
+      "id": "MS/2013/page_139.pdf-2",
+      "rank": 344527725
+    },
+    {
+      "id": "FIS/2016/page_31.pdf-1",
+      "rank": 347836846
+    },
+    {
+      "id": "SNA/2013/page_84.pdf-1",
+      "rank": 353664811
+    },
+    {
+      "id": "MRO/2004/page_46.pdf-4",
+      "rank": 361893078
+    },
+    {
+      "id": "AAPL/2006/page_131.pdf-1",
+      "rank": 366112672
+    },
+    {
+      "id": "SNA/2013/page_84.pdf-2",
+      "rank": 370442430
+    },
+    {
+      "id": "IP/2006/page_75.pdf-1",
+      "rank": 382408940
+    },
+    {
+      "id": "FIS/2016/page_45.pdf-2",
+      "rank": 385176736
+    },
+    {
+      "id": "SNA/2013/page_84.pdf-3",
+      "rank": 387220049
+    },
+    {
+      "id": "MRO/2004/page_46.pdf-2",
+      "rank": 395448316
+    },
+    {
+      "id": "FIS/2016/page_45.pdf-3",
+      "rank": 401954355
+    },
+    {
+      "id": "MRO/2004/page_46.pdf-3",
+      "rank": 412225935
+    },
+    {
+      "id": "IP/2006/page_75.pdf-3",
+      "rank": 415964178
+    },
+    {
+      "id": "AAPL/2006/page_131.pdf-2",
+      "rank": 416445529
+    },
+    {
+      "id": "AMT/2007/page_127.pdf-4",
+      "rank": 422934067
+    },
+    {
+      "id": "ECL/2017/page_94.pdf-2",
+      "rank": 424609771
+    },
+    {
+      "id": "FIS/2016/page_31.pdf-4",
+      "rank": 431724941
+    },
+    {
+      "id": "IP/2006/page_75.pdf-2",
+      "rank": 432741797
+    },
+    {
+      "id": "FIS/2016/page_45.pdf-1",
+      "rank": 435509593
+    },
+    {
+      "id": "HIG/2004/page_140.pdf-3",
+      "rank": 440356716
+    },
+    {
+      "id": "ECL/2017/page_94.pdf-1",
+      "rank": 441387390
+    },
+    {
+      "id": "MRO/2004/page_46.pdf-1",
+      "rank": 445781173
+    },
+    {
+      "id": "ADBE/2008/page_89.pdf-4",
+      "rank": 446973145
+    },
+    {
+      "id": "MSI/2007/page_70.pdf-1",
+      "rank": 453771596
+    },
+    {
+      "id": "MSI/2008/page_69.pdf-1",
+      "rank": 454308695
+    },
+    {
+      "id": "ECL/2017/page_69.pdf-2",
+      "rank": 454664219
+    },
+    {
+      "id": "HIG/2004/page_140.pdf-2",
+      "rank": 457134335
+    },
+    {
+      "id": "ADBE/2008/page_89.pdf-3",
+      "rank": 463750764
+    },
+    {
+      "id": "C/2008/page_22.pdf-4",
+      "rank": 469044283
+    },
+    {
+      "id": "MSI/2008/page_69.pdf-2",
+      "rank": 471086314
+    },
+    {
+      "id": "ECL/2017/page_69.pdf-1",
+      "rank": 471441838
+    },
+    {
+      "id": "AMT/2007/page_127.pdf-1",
+      "rank": 473266924
+    },
+    {
+      "id": "HIG/2004/page_140.pdf-1",
+      "rank": 473911954
+    },
+    {
+      "id": "VNO/2014/page_57.pdf-2",
+      "rank": 480246220
+    },
+    {
+      "id": "ADBE/2008/page_89.pdf-2",
+      "rank": 480528383
+    },
+    {
+      "id": "FIS/2016/page_45.pdf-4",
+      "rank": 485842450
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-4",
+      "rank": 486450846
+    },
+    {
+      "id": "MSI/2007/page_70.pdf-3",
+      "rank": 487326834
+    },
+    {
+      "id": "MSI/2008/page_69.pdf-3",
+      "rank": 487863933
+    },
+    {
+      "id": "ADBE/2008/page_89.pdf-1",
+      "rank": 497306002
+    },
+    {
+      "id": "MSI/2007/page_70.pdf-2",
+      "rank": 504104453
+    },
+    {
+      "id": "AMT/2007/page_127.pdf-3",
+      "rank": 506822162
+    },
+    {
+      "id": "UNP/2016/page_52.pdf-4",
+      "rank": 516371963
+    },
+    {
+      "id": "C/2008/page_22.pdf-1",
+      "rank": 519377140
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-2",
+      "rank": 520006084
+    },
+    {
+      "id": "C/2009/page_243.pdf-2",
+      "rank": 523599587
+    },
+    {
+      "id": "AMT/2007/page_127.pdf-2",
+      "rank": 523599781
+    },
+    {
+      "id": "NCLH/2018/page_97.pdf-2",
+      "rank": 526189456
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-3",
+      "rank": 527067240
+    },
+    {
+      "id": "ANSS/2016/page_47.pdf-1",
+      "rank": 528615848
+    },
+    {
+      "id": "VNO/2014/page_57.pdf-1",
+      "rank": 530579077
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-3",
+      "rank": 536783703
+    },
+    {
+      "id": "C/2009/page_243.pdf-1",
+      "rank": 540377206
+    },
+    {
+      "id": "NCLH/2018/page_97.pdf-3",
+      "rank": 542967075
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-2",
+      "rank": 543844859
+    },
+    {
+      "id": "C/2008/page_22.pdf-3",
+      "rank": 552932378
+    },
+    {
+      "id": "MAR/2018/page_43.pdf-1",
+      "rank": 553518675
+    },
+    {
+      "id": "MKTX/2012/page_42.pdf-1",
+      "rank": 560423040
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-1",
+      "rank": 560622478
+    },
+    {
+      "id": "MRK/2013/page_3.pdf-1",
+      "rank": 560834140
+    },
+    {
+      "id": "ILMN/2008/page_82.pdf-2",
+      "rank": 565110152
+    },
+    {
+      "id": "UNP/2016/page_52.pdf-1",
+      "rank": 566704820
+    },
+    {
+      "id": "C/2008/page_22.pdf-2",
+      "rank": 569709997
+    },
+    {
+      "id": "MAR/2018/page_43.pdf-2",
+      "rank": 570296294
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-1",
+      "rank": 570338941
+    },
+    {
+      "id": "BLK/2012/page_145.pdf-1",
+      "rank": 574846171
+    },
+    {
+      "id": "NCLH/2018/page_97.pdf-1",
+      "rank": 576522313
+    },
+    {
+      "id": "ANSS/2016/page_47.pdf-2",
+      "rank": 578948705
+    },
+    {
+      "id": "ADI/2011/page_61.pdf-1",
+      "rank": 584100872
+    },
+    {
+      "id": "BLK/2012/page_145.pdf-2",
+      "rank": 591623790
+    },
+    {
+      "id": "MKTX/2012/page_42.pdf-3",
+      "rank": 593978278
+    },
+    {
+      "id": "AMT/2008/page_107.pdf-4",
+      "rank": 595903558
+    },
+    {
+      "id": "UNP/2016/page_52.pdf-3",
+      "rank": 600260058
+    },
+    {
+      "id": "LMT/2016/page_49.pdf-1",
+      "rank": 603826576
+    },
+    {
+      "id": "DRE/2012/page_40.pdf-1",
+      "rank": 603827943
+    },
+    {
+      "id": "BLK/2012/page_145.pdf-3",
+      "rank": 608401409
+    },
+    {
+      "id": "MKTX/2012/page_42.pdf-2",
+      "rank": 610755897
+    },
+    {
+      "id": "MRK/2013/page_3.pdf-2",
+      "rank": 611166997
+    },
+    {
+      "id": "UNP/2011/page_33.pdf-1",
+      "rank": 613801456
+    },
+    {
+      "id": "ILMN/2008/page_82.pdf-1",
+      "rank": 615443009
+    },
+    {
+      "id": "UNP/2016/page_52.pdf-2",
+      "rank": 617037677
+    },
+    {
+      "id": "AMT/2008/page_107.pdf-2",
+      "rank": 629458796
+    },
+    {
+      "id": "ADI/2011/page_61.pdf-2",
+      "rank": 634433729
+    },
+    {
+      "id": "LMT/2016/page_49.pdf-3",
+      "rank": 637381814
+    },
+    {
+      "id": "DG/2009/page_77.pdf-1",
+      "rank": 643299667
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-4",
+      "rank": 644510573
+    },
+    {
+      "id": "AMT/2008/page_107.pdf-3",
+      "rank": 646236415
+    },
+    {
+      "id": "UNP/2011/page_33.pdf-3",
+      "rank": 647356694
+    },
+    {
+      "id": "LMT/2016/page_49.pdf-2",
+      "rank": 654159433
+    },
+    {
+      "id": "HOLX/2009/page_127.pdf-1",
+      "rank": 661773219
+    },
+    {
+      "id": "UNP/2011/page_33.pdf-2",
+      "rank": 664134313
+    },
+    {
+      "id": "HOLX/2009/page_127.pdf-2",
+      "rank": 678550838
+    },
+    {
+      "id": "AMT/2008/page_107.pdf-1",
+      "rank": 679791653
+    },
+    {
+      "id": "RL/2008/page_23.pdf-1",
+      "rank": 680301780
+    },
+    {
+      "id": "LMT/2016/page_49.pdf-4",
+      "rank": 687714671
+    },
+    {
+      "id": "HOLX/2009/page_127.pdf-3",
+      "rank": 695328457
+    },
+    {
+      "id": "UNP/2011/page_33.pdf-4",
+      "rank": 697689551
+    },
+    {
+      "id": "HOLX/2009/page_127.pdf-4",
+      "rank": 712106076
+    },
+    {
+      "id": "DISCA/2014/page_64.pdf-1",
+      "rank": 713196792
+    },
+    {
+      "id": "GIS/2018/page_110.pdf-2",
+      "rank": 720660732
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-5",
+      "rank": 722732648
+    },
+    {
+      "id": "RL/2008/page_23.pdf-2",
+      "rank": 730634637
+    },
+    {
+      "id": "GIS/2018/page_110.pdf-3",
+      "rank": 737438351
+    },
+    {
+      "id": "ETFC/2007/page_18.pdf-1",
+      "rank": 738084459
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-4",
+      "rank": 739510267
+    },
+    {
+      "id": "DISCA/2014/page_64.pdf-3",
+      "rank": 746752030
+    },
+    {
+      "id": "JPM/2015/page_82.pdf-1",
+      "rank": 752965964
+    },
+    {
+      "id": "D/2002/page_87.pdf-4",
+      "rank": 754116435
+    },
+    {
+      "id": "ETFC/2007/page_18.pdf-2",
+      "rank": 754862078
+    },
+    {
+      "id": "MRO/2017/page_96.pdf-1",
+      "rank": 758622584
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-4",
+      "rank": 759103312
+    },
+    {
+      "id": "DISCA/2014/page_64.pdf-2",
+      "rank": 763529649
+    },
+    {
+      "id": "GIS/2018/page_110.pdf-1",
+      "rank": 770993589
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-6",
+      "rank": 773065505
+    },
+    {
+      "id": "MMM/2013/page_75.pdf-1",
+      "rank": 775001672
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-5",
+      "rank": 775880931
+    },
+    {
+      "id": "RSG/2013/page_123.pdf-2",
+      "rank": 780758132
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-1",
+      "rank": 789843124
+    },
+    {
+      "id": "GS/2015/page_188.pdf-4",
+      "rank": 790472211
+    },
+    {
+      "id": "MRO/2017/page_96.pdf-3",
+      "rank": 792177822
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-6",
+      "rank": 792658550
+    },
+    {
+      "id": "CME/2010/page_69.pdf-4",
+      "rank": 797577345
+    },
+    {
+      "id": "JPM/2015/page_82.pdf-2",
+      "rank": 803298821
+    },
+    {
+      "id": "D/2002/page_87.pdf-1",
+      "rank": 804449292
+    },
+    {
+      "id": "AMT/2012/page_50.pdf-1",
+      "rank": 805582211
+    },
+    {
+      "id": "MRO/2017/page_96.pdf-2",
+      "rank": 808955441
+    },
+    {
+      "id": "CME/2010/page_69.pdf-3",
+      "rank": 814354964
+    },
+    {
+      "id": "HOLX/2008/page_143.pdf-1",
+      "rank": 816709516
+    },
+    {
+      "id": "CB/2010/page_103.pdf-1",
+      "rank": 818298111
+    },
+    {
+      "id": "AMT/2012/page_50.pdf-2",
+      "rank": 822359830
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-3",
+      "rank": 823398362
+    },
+    {
+      "id": "MMM/2013/page_75.pdf-2",
+      "rank": 825334529
+    },
+    {
+      "id": "RSG/2013/page_123.pdf-1",
+      "rank": 831090989
+    },
+    {
+      "id": "CME/2010/page_69.pdf-2",
+      "rank": 831132583
+    },
+    {
+      "id": "CB/2010/page_103.pdf-2",
+      "rank": 835075730
+    },
+    {
+      "id": "D/2002/page_87.pdf-3",
+      "rank": 838004530
+    },
+    {
+      "id": "AMT/2012/page_50.pdf-3",
+      "rank": 839137449
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-2",
+      "rank": 840175981
+    },
+    {
+      "id": "GS/2015/page_188.pdf-1",
+      "rank": 840805068
+    },
+    {
+      "id": "MRO/2017/page_96.pdf-4",
+      "rank": 842510679
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-1",
+      "rank": 842991407
+    },
+    {
+      "id": "JPM/2010/page_281.pdf-3",
+      "rank": 847324300
+    },
+    {
+      "id": "CME/2010/page_69.pdf-1",
+      "rank": 847910202
+    },
+    {
+      "id": "VRTX/2006/page_111.pdf-4",
+      "rank": 850369899
+    },
+    {
+      "id": "D/2002/page_87.pdf-2",
+      "rank": 854782149
+    },
+    {
+      "id": "AMT/2012/page_50.pdf-4",
+      "rank": 855915068
+    },
+    {
+      "id": "RCL/2012/page_75.pdf-1",
+      "rank": 856512567
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-2",
+      "rank": 857731288
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-2",
+      "rank": 859769026
+    },
+    {
+      "id": "JPM/2010/page_281.pdf-2",
+      "rank": 864101919
+    },
+    {
+      "id": "HOLX/2008/page_143.pdf-2",
+      "rank": 867042373
+    },
+    {
+      "id": "C/2009/page_63.pdf-4",
+      "rank": 869177379
+    },
+    {
+      "id": "RCL/2012/page_75.pdf-2",
+      "rank": 873290186
+    },
+    {
+      "id": "GS/2015/page_188.pdf-3",
+      "rank": 874360306
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-3",
+      "rank": 874508907
+    },
+    {
+      "id": "C/2008/page_44.pdf-1",
+      "rank": 874651072
+    },
+    {
+      "id": "AON/2007/page_175.pdf-1",
+      "rank": 874983327
+    },
+    {
+      "id": "SLG/2011/page_91.pdf-3",
+      "rank": 876546645
+    },
+    {
+      "id": "JPM/2010/page_281.pdf-1",
+      "rank": 880879538
+    },
+    {
+      "id": "RCL/2012/page_75.pdf-3",
+      "rank": 890067805
+    },
+    {
+      "id": "RSG/2018/page_94.pdf-1",
+      "rank": 891125423
+    },
+    {
+      "id": "GS/2015/page_188.pdf-2",
+      "rank": 891137925
+    },
+    {
+      "id": "AON/2007/page_175.pdf-2",
+      "rank": 891760946
+    },
+    {
+      "id": "AAL/2014/page_15.pdf-4",
+      "rank": 893510833
+    },
+    {
+      "id": "VRTX/2006/page_111.pdf-1",
+      "rank": 900702756
+    },
+    {
+      "id": "RSG/2018/page_94.pdf-2",
+      "rank": 907903042
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-1",
+      "rank": 908064145
+    },
+    {
+      "id": "AAL/2014/page_15.pdf-3",
+      "rank": 910288452
+    },
+    {
+      "id": "CB/2010/page_83.pdf-2",
+      "rank": 911998715
+    },
+    {
+      "id": "NWS/2019/page_116.pdf-1",
+      "rank": 913097727
+    },
+    {
+      "id": "HOLX/2007/page_93.pdf-1",
+      "rank": 917569443
+    },
+    {
+      "id": "C/2009/page_63.pdf-1",
+      "rank": 919510236
+    },
+    {
+      "id": "C/2008/page_44.pdf-2",
+      "rank": 924983929
+    },
+    {
+      "id": "AAL/2014/page_15.pdf-2",
+      "rank": 927066071
+    },
+    {
+      "id": "CB/2010/page_83.pdf-1",
+      "rank": 928776334
+    },
+    {
+      "id": "NWS/2019/page_116.pdf-2",
+      "rank": 929875346
+    },
+    {
+      "id": "VRTX/2006/page_111.pdf-3",
+      "rank": 934257994
+    },
+    {
+      "id": "HOLX/2007/page_93.pdf-2",
+      "rank": 934347062
+    },
+    {
+      "id": "AAL/2014/page_15.pdf-1",
+      "rank": 943843690
+    },
+    {
+      "id": "V/2008/page_180.pdf-1",
+      "rank": 950827904
+    },
+    {
+      "id": "VRTX/2006/page_111.pdf-2",
+      "rank": 951035613
+    },
+    {
+      "id": "C/2009/page_63.pdf-3",
+      "rank": 953065474
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-4",
+      "rank": 958397002
+    },
+    {
+      "id": "MSI/2012/page_87.pdf-4",
+      "rank": 958625371
+    },
+    {
+      "id": "C/2009/page_63.pdf-2",
+      "rank": 969843093
+    },
+    {
+      "id": "V/2008/page_180.pdf-3",
+      "rank": 984383142
+    },
+    {
+      "id": "V/2008/page_180.pdf-2",
+      "rank": 1001160761
+    },
+    {
+      "id": "MSI/2012/page_87.pdf-1",
+      "rank": 1008958228
+    },
+    {
+      "id": "JKHY/2017/page_26.pdf-2",
+      "rank": 1023551512
+    },
+    {
+      "id": "UPS/2016/page_114.pdf-1",
+      "rank": 1040308540
+    },
+    {
+      "id": "JKHY/2017/page_26.pdf-3",
+      "rank": 1040329131
+    },
+    {
+      "id": "MSI/2012/page_87.pdf-3",
+      "rank": 1042513466
+    },
+    {
+      "id": "LMT/2014/page_50.pdf-1",
+      "rank": 1043504000
+    },
+    {
+      "id": "ILMN/2003/page_58.pdf-1",
+      "rank": 1044134711
+    },
+    {
+      "id": "AMT/2007/page_29.pdf-4",
+      "rank": 1053387214
+    },
+    {
+      "id": "SYY/2006/page_71.pdf-1",
+      "rank": 1058734028
+    },
+    {
+      "id": "MSI/2012/page_87.pdf-2",
+      "rank": 1059291085
+    },
+    {
+      "id": "STT/2009/page_127.pdf-4",
+      "rank": 1060117590
+    },
+    {
+      "id": "ILMN/2003/page_58.pdf-2",
+      "rank": 1060912330
+    },
+    {
+      "id": "JKHY/2017/page_26.pdf-1",
+      "rank": 1073884369
+    },
+    {
+      "id": "LMT/2014/page_50.pdf-3",
+      "rank": 1077059238
+    },
+    {
+      "id": "ILMN/2003/page_58.pdf-3",
+      "rank": 1077689949
+    },
+    {
+      "id": "BDX/2018/page_106.pdf-2",
+      "rank": 1078070576
+    },
+    {
+      "id": "AMT/2007/page_29.pdf-2",
+      "rank": 1086942452
+    },
+    {
+      "id": "UPS/2016/page_114.pdf-2",
+      "rank": 1090641397
+    },
+    {
+      "id": "STT/2009/page_127.pdf-2",
+      "rank": 1093672828
+    },
+    {
+      "id": "LMT/2014/page_50.pdf-2",
+      "rank": 1093836857
+    },
+    {
+      "id": "BDX/2018/page_106.pdf-3",
+      "rank": 1094848195
+    },
+    {
+      "id": "AMT/2007/page_29.pdf-3",
+      "rank": 1103720071
+    },
+    {
+      "id": "SYY/2006/page_71.pdf-2",
+      "rank": 1109066885
+    },
+    {
+      "id": "STT/2009/page_127.pdf-3",
+      "rank": 1110450447
+    },
+    {
+      "id": "BLK/2015/page_124.pdf-4",
+      "rank": 1119331886
+    },
+    {
+      "id": "BDX/2018/page_106.pdf-1",
+      "rank": 1128403433
+    },
+    {
+      "id": "GS/2017/page_86.pdf-2",
+      "rank": 1131754368
+    },
+    {
+      "id": "AMT/2007/page_29.pdf-1",
+      "rank": 1137275309
+    },
+    {
+      "id": "STT/2009/page_127.pdf-1",
+      "rank": 1144005685
+    },
+    {
+      "id": "GS/2017/page_86.pdf-3",
+      "rank": 1148531987
+    },
+    {
+      "id": "NKE/2009/page_43.pdf-1",
+      "rank": 1151899663
+    },
+    {
+      "id": "BLK/2015/page_124.pdf-2",
+      "rank": 1152887124
+    },
+    {
+      "id": "NKE/2009/page_43.pdf-2",
+      "rank": 1168677282
+    },
+    {
+      "id": "BLK/2015/page_124.pdf-3",
+      "rank": 1169664743
+    },
+    {
+      "id": "AMT/2003/page_27.pdf-1",
+      "rank": 1172270459
+    },
+    {
+      "id": "GS/2017/page_86.pdf-1",
+      "rank": 1182087225
+    },
+    {
+      "id": "ABC/2005/page_49.pdf-4",
+      "rank": 1184255312
+    },
+    {
+      "id": "BLK/2015/page_124.pdf-1",
+      "rank": 1203219981
+    },
+    {
+      "id": "MO/2014/page_62.pdf-4",
+      "rank": 1204893307
+    },
+    {
+      "id": "AMT/2003/page_27.pdf-3",
+      "rank": 1205825697
+    },
+    {
+      "id": "GPN/2013/page_92.pdf-2",
+      "rank": 1219536392
+    },
+    {
+      "id": "GS/2014/page_165.pdf-4",
+      "rank": 1221488299
+    },
+    {
+      "id": "GS/2017/page_86.pdf-4",
+      "rank": 1232420082
+    },
+    {
+      "id": "GPN/2013/page_92.pdf-3",
+      "rank": 1236314011
+    },
+    {
+      "id": "MO/2014/page_62.pdf-1",
+      "rank": 1255226164
+    },
+    {
+      "id": "JPM/2008/page_87.pdf-2",
+      "rank": 1256684580
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-2",
+      "rank": 1259851024
+    },
+    {
+      "id": "JKHY/2019/page_18.pdf-3",
+      "rank": 1260397116
+    },
+    {
+      "id": "ABC/2005/page_49.pdf-1",
+      "rank": 1268143407
+    },
+    {
+      "id": "GPN/2013/page_92.pdf-1",
+      "rank": 1269869249
+    },
+    {
+      "id": "GS/2014/page_165.pdf-1",
+      "rank": 1271821156
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-3",
+      "rank": 1276628643
+    },
+    {
+      "id": "JKHY/2019/page_18.pdf-2",
+      "rank": 1277174735
+    },
+    {
+      "id": "GS/2013/page_85.pdf-1",
+      "rank": 1279036800
+    },
+    {
+      "id": "MO/2014/page_62.pdf-3",
+      "rank": 1288781402
+    },
+    {
+      "id": "AES/2010/page_227.pdf-1",
+      "rank": 1293016368
+    },
+    {
+      "id": "JKHY/2019/page_18.pdf-1",
+      "rank": 1293952354
+    },
+    {
+      "id": "ETR/2016/page_374.pdf-1",
+      "rank": 1301457427
+    },
+    {
+      "id": "GS/2014/page_165.pdf-3",
+      "rank": 1305376394
+    },
+    {
+      "id": "MO/2014/page_62.pdf-2",
+      "rank": 1305559021
+    },
+    {
+      "id": "JPM/2008/page_87.pdf-1",
+      "rank": 1307017437
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-1",
+      "rank": 1310183881
+    },
+    {
+      "id": "GS/2013/page_85.pdf-3",
+      "rank": 1312592038
+    },
+    {
+      "id": "ETR/2016/page_374.pdf-2",
+      "rank": 1318235046
+    },
+    {
+      "id": "GS/2014/page_165.pdf-2",
+      "rank": 1322154013
+    },
+    {
+      "id": "AES/2010/page_227.pdf-3",
+      "rank": 1326571606
+    },
+    {
+      "id": "GS/2013/page_85.pdf-2",
+      "rank": 1329369657
+    },
+    {
+      "id": "ETR/2016/page_374.pdf-3",
+      "rank": 1335012665
+    },
+    {
+      "id": "AES/2010/page_227.pdf-2",
+      "rank": 1343349225
+    },
+    {
+      "id": "JPM/2003/page_106.pdf-3",
+      "rank": 1348762728
+    },
+    {
+      "id": "AAPL/2006/page_100.pdf-4",
+      "rank": 1350281491
+    },
+    {
+      "id": "ETR/2016/page_374.pdf-4",
+      "rank": 1351790284
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-4",
+      "rank": 1360516738
+    },
+    {
+      "id": "JPM/2003/page_106.pdf-2",
+      "rank": 1365540347
+    },
+    {
+      "id": "STT/2009/page_25.pdf-2",
+      "rank": 1368592907
+    },
+    {
+      "id": "BLL/2012/page_31.pdf-3",
+      "rank": 1374834712
+    },
+    {
+      "id": "AES/2010/page_227.pdf-4",
+      "rank": 1376904463
+    },
+    {
+      "id": "JPM/2003/page_106.pdf-1",
+      "rank": 1382317966
+    },
+    {
+      "id": "ETFC/2012/page_24.pdf-2",
+      "rank": 1383598051
+    },
+    {
+      "id": "STT/2009/page_25.pdf-1",
+      "rank": 1385370526
+    },
+    {
+      "id": "BLL/2012/page_31.pdf-2",
+      "rank": 1391612331
+    },
+    {
+      "id": "ETFC/2012/page_24.pdf-1",
+      "rank": 1400375670
+    },
+    {
+      "id": "AAPL/2006/page_100.pdf-1",
+      "rank": 1400614348
+    },
+    {
+      "id": "ETR/2008/page_298.pdf-4",
+      "rank": 1406212208
+    },
+    {
+      "id": "BLL/2012/page_31.pdf-1",
+      "rank": 1408389950
+    },
+    {
+      "id": "STT/2007/page_111.pdf-3",
+      "rank": 1422259392
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-1",
+      "rank": 1422577280
+    },
+    {
+      "id": "UA/2011/page_69.pdf-1",
+      "rank": 1429015664
+    },
+    {
+      "id": "AAPL/2006/page_100.pdf-3",
+      "rank": 1434169586
+    },
+    {
+      "id": "PKG/2013/page_88.pdf-2",
+      "rank": 1434282332
+    },
+    {
+      "id": "STT/2007/page_111.pdf-2",
+      "rank": 1439037011
+    },
+    {
+      "id": "AAPL/2006/page_100.pdf-2",
+      "rank": 1450947205
+    },
+    {
+      "id": "HST/2018/page_135.pdf-1",
+      "rank": 1452772042
+    },
+    {
+      "id": "STT/2007/page_111.pdf-1",
+      "rank": 1455814630
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-3",
+      "rank": 1456132518
+    },
+    {
+      "id": "JPM/2003/page_106.pdf-4",
+      "rank": 1466206061
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-2",
+      "rank": 1472910137
+    },
+    {
+      "id": "UA/2011/page_69.pdf-2",
+      "rank": 1479348521
+    },
+    {
+      "id": "PKG/2013/page_88.pdf-1",
+      "rank": 1484615189
+    },
+    {
+      "id": "AMT/2016/page_49.pdf-2",
+      "rank": 1486553176
+    },
+    {
+      "id": "ETR/2008/page_298.pdf-1",
+      "rank": 1490100303
+    },
+    {
+      "id": "BLL/2012/page_31.pdf-4",
+      "rank": 1492278045
+    },
+    {
+      "id": "UPS/2012/page_32.pdf-1",
+      "rank": 1492732803
+    },
+    {
+      "id": "AMT/2016/page_49.pdf-3",
+      "rank": 1503330795
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-4",
+      "rank": 1506465375
+    },
+    {
+      "id": "ETR/2008/page_298.pdf-2",
+      "rank": 1506877922
+    },
+    {
+      "id": "UPS/2012/page_32.pdf-2",
+      "rank": 1509510422
+    },
+    {
+      "id": "PPG/2006/page_42.pdf-1",
+      "rank": 1509939184
+    },
+    {
+      "id": "SNA/2007/page_29.pdf-1",
+      "rank": 1511705615
+    },
+    {
+      "id": "JPM/2008/page_117.pdf-1",
+      "rank": 1515325247
+    },
+    {
+      "id": "AON/2010/page_86.pdf-2",
+      "rank": 1518850275
+    },
+    {
+      "id": "ETR/2008/page_298.pdf-3",
+      "rank": 1523655541
+    },
+    {
+      "id": "UPS/2012/page_32.pdf-3",
+      "rank": 1526288041
+    },
+    {
+      "id": "SNA/2007/page_29.pdf-2",
+      "rank": 1528483234
+    },
+    {
+      "id": "JPM/2008/page_117.pdf-2",
+      "rank": 1532102866
+    },
+    {
+      "id": "AON/2010/page_86.pdf-1",
+      "rank": 1535627894
+    },
+    {
+      "id": "AMT/2016/page_49.pdf-1",
+      "rank": 1536886033
+    },
+    {
+      "id": "STT/2007/page_111.pdf-4",
+      "rank": 1539702725
+    },
+    {
+      "id": "UPS/2012/page_32.pdf-4",
+      "rank": 1543065660
+    },
+    {
+      "id": "PPG/2006/page_42.pdf-3",
+      "rank": 1543494422
+    },
+    {
+      "id": "SNA/2007/page_29.pdf-3",
+      "rank": 1545260853
+    },
+    {
+      "id": "MRO/2003/page_45.pdf-2",
+      "rank": 1551573140
+    },
+    {
+      "id": "HUM/2014/page_44.pdf-1",
+      "rank": 1553299424
+    },
+    {
+      "id": "MSI/2014/page_76.pdf-3",
+      "rank": 1555101264
+    },
+    {
+      "id": "PPG/2006/page_42.pdf-2",
+      "rank": 1560272041
+    },
+    {
+      "id": "MRO/2003/page_45.pdf-3",
+      "rank": 1568350759
+    },
+    {
+      "id": "MSI/2014/page_76.pdf-2",
+      "rank": 1571878883
+    },
+    {
+      "id": "AMT/2016/page_49.pdf-4",
+      "rank": 1587218890
+    },
+    {
+      "id": "MSI/2014/page_76.pdf-1",
+      "rank": 1588656502
+    },
+    {
+      "id": "FIS/2012/page_48.pdf-3",
+      "rank": 1591700048
+    },
+    {
+      "id": "PPG/2006/page_42.pdf-4",
+      "rank": 1593827279
+    },
+    {
+      "id": "MRO/2003/page_45.pdf-1",
+      "rank": 1601905997
+    },
+    {
+      "id": "ETR/2016/page_23.pdf-4",
+      "rank": 1605021875
+    },
+    {
+      "id": "FIS/2012/page_48.pdf-2",
+      "rank": 1608477667
+    },
+    {
+      "id": "DG/2010/page_136.pdf-1",
+      "rank": 1620663511
+    },
+    {
+      "id": "FIS/2012/page_48.pdf-1",
+      "rank": 1625255286
+    },
+    {
+      "id": "IP/2006/page_31.pdf-1",
+      "rank": 1634184676
+    },
+    {
+      "id": "DG/2010/page_136.pdf-2",
+      "rank": 1637441130
+    },
+    {
+      "id": "AON/2018/page_87.pdf-2",
+      "rank": 1639361936
+    },
+    {
+      "id": "ETR/2016/page_23.pdf-1",
+      "rank": 1655354732
+    },
+    {
+      "id": "AON/2018/page_87.pdf-3",
+      "rank": 1656139555
+    },
+    {
+      "id": "IP/2006/page_31.pdf-3",
+      "rank": 1667739914
+    },
+    {
+      "id": "HOLX/2007/page_126.pdf-2",
+      "rank": 1670598391
+    },
+    {
+      "id": "DXC/2018/page_56.pdf-3",
+      "rank": 1673586488
+    },
+    {
+      "id": "IP/2006/page_31.pdf-2",
+      "rank": 1684517533
+    },
+    {
+      "id": "HOLX/2007/page_126.pdf-1",
+      "rank": 1687376010
+    },
+    {
+      "id": "ETR/2016/page_23.pdf-3",
+      "rank": 1688909970
+    },
+    {
+      "id": "AON/2018/page_87.pdf-1",
+      "rank": 1689694793
+    },
+    {
+      "id": "DXC/2018/page_56.pdf-2",
+      "rank": 1690364107
+    },
+    {
+      "id": "CE/2013/page_16.pdf-2",
+      "rank": 1698990075
+    },
+    {
+      "id": "MRO/2011/page_108.pdf-1",
+      "rank": 1700985260
+    },
+    {
+      "id": "ETR/2016/page_23.pdf-2",
+      "rank": 1705687589
+    },
+    {
+      "id": "DXC/2018/page_56.pdf-1",
+      "rank": 1707141726
+    },
+    {
+      "id": "FIS/2012/page_48.pdf-4",
+      "rank": 1709143381
+    },
+    {
+      "id": "CE/2013/page_16.pdf-1",
+      "rank": 1715767694
+    },
+    {
+      "id": "DRE/2008/page_46.pdf-4",
+      "rank": 1716508369
+    },
+    {
+      "id": "DRE/2008/page_46.pdf-3",
+      "rank": 1733285988
+    },
+    {
+      "id": "AON/2018/page_87.pdf-4",
+      "rank": 1740027650
+    },
+    {
+      "id": "DG/2007/page_67.pdf-1",
+      "rank": 1746698624
+    },
+    {
+      "id": "AMT/2006/page_113.pdf-3",
+      "rank": 1747660888
+    },
+    {
+      "id": "DRE/2008/page_46.pdf-2",
+      "rank": 1750063607
+    },
+    {
+      "id": "MRO/2011/page_108.pdf-2",
+      "rank": 1751318117
+    },
+    {
+      "id": "AMT/2006/page_113.pdf-2",
+      "rank": 1764438507
+    },
+    {
+      "id": "DRE/2008/page_46.pdf-1",
+      "rank": 1766841226
+    },
+    {
+      "id": "AMT/2006/page_113.pdf-1",
+      "rank": 1781216126
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-1",
+      "rank": 1787592272
+    },
+    {
+      "id": "DG/2007/page_67.pdf-2",
+      "rank": 1797031481
+    },
+    {
+      "id": "CDNS/2018/page_66.pdf-4",
+      "rank": 1807805027
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-3",
+      "rank": 1821147510
+    },
+    {
+      "id": "PNC/2014/page_111.pdf-1",
+      "rank": 1836620184
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-2",
+      "rank": 1837925129
+    },
+    {
+      "id": "ZBH/2007/page_67.pdf-2",
+      "rank": 1840764664
+    },
+    {
+      "id": "MRO/2003/page_84.pdf-3",
+      "rank": 1848903848
+    },
+    {
+      "id": "GS/2012/page_142.pdf-2",
+      "rank": 1850059744
+    },
+    {
+      "id": "CDNS/2018/page_66.pdf-1",
+      "rank": 1858137884
+    },
+    {
+      "id": "AMT/2006/page_113.pdf-4",
+      "rank": 1865104221
+    },
+    {
+      "id": "MRO/2003/page_84.pdf-2",
+      "rank": 1865681467
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-4",
+      "rank": 1865962638
+    },
+    {
+      "id": "GS/2012/page_142.pdf-3",
+      "rank": 1866837363
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-4",
+      "rank": 1871480367
+    },
+    {
+      "id": "MRO/2003/page_84.pdf-1",
+      "rank": 1882459086
+    },
+    {
+      "id": "PNC/2014/page_111.pdf-2",
+      "rank": 1886953041
+    },
+    {
+      "id": "ZBH/2007/page_67.pdf-1",
+      "rank": 1891097521
+    },
+    {
+      "id": "CDNS/2018/page_66.pdf-3",
+      "rank": 1891693122
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-2",
+      "rank": 1899517876
+    },
+    {
+      "id": "GS/2012/page_142.pdf-1",
+      "rank": 1900392601
+    },
+    {
+      "id": "CDNS/2018/page_66.pdf-2",
+      "rank": 1908470741
+    },
+    {
+      "id": "ETFC/2012/page_43.pdf-2",
+      "rank": 1912708316
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-3",
+      "rank": 1916295495
+    },
+    {
+      "id": "AWK/2012/page_117.pdf-4",
+      "rank": 1920954209
+    },
+    {
+      "id": "APD/2018/page_30.pdf-2",
+      "rank": 1924594281
+    },
+    {
+      "id": "ETFC/2012/page_43.pdf-3",
+      "rank": 1929485935
+    },
+    {
+      "id": "AWK/2012/page_117.pdf-3",
+      "rank": 1937731828
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-1",
+      "rank": 1949850733
+    },
+    {
+      "id": "GS/2012/page_142.pdf-4",
+      "rank": 1950725458
+    },
+    {
+      "id": "GS/2014/page_74.pdf-2",
+      "rank": 1952489040
+    },
+    {
+      "id": "AWK/2012/page_117.pdf-2",
+      "rank": 1954509447
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-1",
+      "rank": 1962714227
+    },
+    {
+      "id": "ETFC/2012/page_43.pdf-1",
+      "rank": 1963041173
+    },
+    {
+      "id": "MRO/2003/page_84.pdf-4",
+      "rank": 1966347181
+    },
+    {
+      "id": "AWK/2012/page_117.pdf-1",
+      "rank": 1971287066
+    },
+    {
+      "id": "GPN/2018/page_94.pdf-2",
+      "rank": 1977330483
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-2",
+      "rank": 1979491846
+    },
+    {
+      "id": "AMT/2003/page_102.pdf-2",
+      "rank": 1981308104
+    },
+    {
+      "id": "CE/2009/page_65.pdf-2",
+      "rank": 1984397086
+    },
+    {
+      "id": "JPM/2014/page_122.pdf-1",
+      "rank": 1988664640
+    },
+    {
+      "id": "GPN/2018/page_94.pdf-1",
+      "rank": 1994108102
+    },
+    {
+      "id": "AMT/2010/page_99.pdf-2",
+      "rank": 1996118171
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-3",
+      "rank": 1996269465
+    },
+    {
+      "id": "AMT/2003/page_102.pdf-3",
+      "rank": 1998085723
+    },
+    {
+      "id": "GS/2014/page_74.pdf-1",
+      "rank": 2002821897
+    },
+    {
+      "id": "SNA/2007/page_49.pdf-2",
+      "rank": 2005647544
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-4",
+      "rank": 2013047084
+    },
+    {
+      "id": "GS/2015/page_171.pdf-1",
+      "rank": 2018586660
+    },
+    {
+      "id": "SNA/2007/page_49.pdf-3",
+      "rank": 2022425163
+    },
+    {
+      "id": "ETFC/2018/page_153.pdf-2",
+      "rank": 2027314420
+    },
+    {
+      "id": "AMT/2003/page_102.pdf-1",
+      "rank": 2031640961
+    },
+    {
+      "id": "LMT/2012/page_73.pdf-4",
+      "rank": 2033554846
+    },
+    {
+      "id": "JPM/2014/page_122.pdf-2",
+      "rank": 2038997497
+    },
+    {
+      "id": "GS/2015/page_171.pdf-3",
+      "rank": 2052141898
+    },
+    {
+      "id": "SNA/2007/page_49.pdf-1",
+      "rank": 2055980401
+    },
+    {
+      "id": "LMT/2012/page_73.pdf-2",
+      "rank": 2067110084
+    },
+    {
+      "id": "GS/2015/page_171.pdf-2",
+      "rank": 2068919517
+    },
+    {
+      "id": "AMT/2003/page_102.pdf-4",
+      "rank": 2081973818
+    },
+    {
+      "id": "LMT/2012/page_73.pdf-3",
+      "rank": 2083887703
+    },
+    {
+      "id": "UNP/2010/page_21.pdf-1",
+      "rank": 2084580936
+    },
+    {
+      "id": "UNP/2011/page_24.pdf-1",
+      "rank": 2100628232
+    },
+    {
+      "id": "SNA/2007/page_49.pdf-4",
+      "rank": 2106313258
+    },
+    {
+      "id": "GS/2014/page_51.pdf-1",
+      "rank": 2108005792
+    },
+    {
+      "id": "LMT/2012/page_73.pdf-1",
+      "rank": 2117442941
+    },
+    {
+      "id": "UNP/2010/page_21.pdf-3",
+      "rank": 2118136174
+    },
+    {
+      "id": "PNC/2012/page_100.pdf-1",
+      "rank": 2124368896
+    },
+    {
+      "id": "HII/2015/page_88.pdf-1",
+      "rank": 2126155635
+    },
+    {
+      "id": "ADI/2010/page_60.pdf-1",
+      "rank": 2127155236
+    },
+    {
+      "id": "UNP/2011/page_24.pdf-3",
+      "rank": 2134183470
+    },
+    {
+      "id": "UNP/2010/page_21.pdf-2",
+      "rank": 2134913793
+    },
+    {
+      "id": "UNP/2011/page_24.pdf-2",
+      "rank": 2150961089
+    },
+    {
+      "id": "GIS/2017/page_31.pdf-1",
+      "rank": 2157488376
+    },
+    {
+      "id": "PNC/2012/page_100.pdf-3",
+      "rank": 2157924134
+    },
+    {
+      "id": "GS/2014/page_51.pdf-2",
+      "rank": 2158338649
+    },
+    {
+      "id": "ZBH/2008/page_57.pdf-1",
+      "rank": 2161481043
+    },
+    {
+      "id": "UNP/2010/page_21.pdf-4",
+      "rank": 2168469031
+    },
+    {
+      "id": "PNC/2012/page_100.pdf-2",
+      "rank": 2174701753
+    },
+    {
+      "id": "ZBH/2008/page_57.pdf-2",
+      "rank": 2178258662
+    },
+    {
+      "id": "UNP/2011/page_24.pdf-4",
+      "rank": 2184516327
+    },
+    {
+      "id": "UNP/2009/page_35.pdf-1",
+      "rank": 2186876575
+    },
+    {
+      "id": "GIS/2017/page_31.pdf-3",
+      "rank": 2191043614
+    },
+    {
+      "id": "ZBH/2008/page_57.pdf-3",
+      "rank": 2195036281
+    },
+    {
+      "id": "UNP/2009/page_35.pdf-2",
+      "rank": 2203654194
+    },
+    {
+      "id": "RCL/2016/page_6.pdf-1",
+      "rank": 2203698235
+    },
+    {
+      "id": "MRO/2006/page_93.pdf-4",
+      "rank": 2203991750
+    },
+    {
+      "id": "GIS/2017/page_31.pdf-2",
+      "rank": 2207821233
+    },
+    {
+      "id": "ZBH/2008/page_57.pdf-4",
+      "rank": 2211813900
+    },
+    {
+      "id": "FIS/2006/page_31.pdf-1",
+      "rank": 2212516783
+    },
+    {
+      "id": "RCL/2016/page_6.pdf-2",
+      "rank": 2220475854
+    },
+    {
+      "id": "FIS/2006/page_31.pdf-2",
+      "rank": 2229294402
+    },
+    {
+      "id": "ALXN/2016/page_153.pdf-4",
+      "rank": 2236235889
+    },
+    {
+      "id": "EMR/2017/page_78.pdf-1",
+      "rank": 2237540392
+    },
+    {
+      "id": "MRO/2006/page_93.pdf-2",
+      "rank": 2237546988
+    },
+    {
+      "id": "CME/2010/page_91.pdf-2",
+      "rank": 2239059112
+    },
+    {
+      "id": "GIS/2017/page_31.pdf-4",
+      "rank": 2241376471
+    },
+    {
+      "id": "ETR/2003/page_157.pdf-1",
+      "rank": 2244300240
+    },
+    {
+      "id": "MRO/2013/page_39.pdf-1",
+      "rank": 2248651367
+    },
+    {
+      "id": "ALXN/2016/page_153.pdf-3",
+      "rank": 2253013508
+    },
+    {
+      "id": "MRO/2006/page_93.pdf-3",
+      "rank": 2254324607
+    },
+    {
+      "id": "LMT/2014/page_77.pdf-1",
+      "rank": 2254351491
+    },
+    {
+      "id": "SLB/2012/page_56.pdf-2",
+      "rank": 2263439723
+    },
+    {
+      "id": "AON/2007/page_171.pdf-1",
+      "rank": 2264777955
+    },
+    {
+      "id": "MRO/2013/page_39.pdf-2",
+      "rank": 2265428986
+    },
+    {
+      "id": "APD/2016/page_40.pdf-2",
+      "rank": 2265802972
+    },
+    {
+      "id": "ALXN/2016/page_153.pdf-2",
+      "rank": 2269791127
+    },
+    {
+      "id": "LMT/2014/page_77.pdf-2",
+      "rank": 2271129110
+    },
+    {
+      "id": "BKR/2017/page_56.pdf-2",
+      "rank": 2275360968
+    },
+    {
+      "id": "SLB/2012/page_56.pdf-1",
+      "rank": 2280217342
+    },
+    {
+      "id": "AON/2007/page_171.pdf-2",
+      "rank": 2281555574
+    },
+    {
+      "id": "MRO/2013/page_39.pdf-3",
+      "rank": 2282206605
+    },
+    {
+      "id": "ALXN/2016/page_153.pdf-1",
+      "rank": 2286568746
+    },
+    {
+      "id": "EMR/2017/page_78.pdf-2",
+      "rank": 2287873249
+    },
+    {
+      "id": "MRO/2006/page_93.pdf-1",
+      "rank": 2287879845
+    },
+    {
+      "id": "LMT/2014/page_77.pdf-3",
+      "rank": 2287906729
+    },
+    {
+      "id": "CME/2010/page_91.pdf-1",
+      "rank": 2289391969
+    },
+    {
+      "id": "BKR/2017/page_56.pdf-3",
+      "rank": 2292138587
+    },
+    {
+      "id": "ETR/2003/page_157.pdf-2",
+      "rank": 2294633097
+    },
+    {
+      "id": "AON/2007/page_171.pdf-3",
+      "rank": 2298333193
+    },
+    {
+      "id": "LMT/2014/page_77.pdf-4",
+      "rank": 2304684348
+    },
+    {
+      "id": "AON/2007/page_171.pdf-4",
+      "rank": 2315110812
+    },
+    {
+      "id": "APD/2016/page_40.pdf-1",
+      "rank": 2316135829
+    },
+    {
+      "id": "BKR/2017/page_56.pdf-1",
+      "rank": 2325693825
+    },
+    {
+      "id": "AMAT/2018/page_33.pdf-1",
+      "rank": 2329857331
+    },
+    {
+      "id": "KHC/2018/page_132.pdf-1",
+      "rank": 2339361872
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-5",
+      "rank": 2344857622
+    },
+    {
+      "id": "AMAT/2018/page_33.pdf-2",
+      "rank": 2346634950
+    },
+    {
+      "id": "SYY/2005/page_70.pdf-2",
+      "rank": 2349725395
+    },
+    {
+      "id": "TFX/2017/page_78.pdf-3",
+      "rank": 2352096048
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-4",
+      "rank": 2361635241
+    },
+    {
+      "id": "TFX/2017/page_78.pdf-2",
+      "rank": 2368873667
+    },
+    {
+      "id": "CDW/2017/page_38.pdf-1",
+      "rank": 2369710948
+    },
+    {
+      "id": "MAR/2004/page_45.pdf-1",
+      "rank": 2371928136
+    },
+    {
+      "id": "KHC/2018/page_132.pdf-3",
+      "rank": 2372917110
+    },
+    {
+      "id": "BKR/2017/page_56.pdf-4",
+      "rank": 2376026682
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-3",
+      "rank": 2378412860
+    },
+    {
+      "id": "APD/2018/page_121.pdf-2",
+      "rank": 2379048278
+    },
+    {
+      "id": "BLL/2011/page_32.pdf-3",
+      "rank": 2379396376
+    },
+    {
+      "id": "GIS/2019/page_68.pdf-1",
+      "rank": 2385009756
+    },
+    {
+      "id": "TFX/2017/page_78.pdf-1",
+      "rank": 2385651286
+    },
+    {
+      "id": "KHC/2018/page_132.pdf-2",
+      "rank": 2389694729
+    },
+    {
+      "id": "ADBE/2008/page_74.pdf-4",
+      "rank": 2391564297
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-2",
+      "rank": 2395190479
+    },
+    {
+      "id": "BLL/2011/page_32.pdf-2",
+      "rank": 2396173995
+    },
+    {
+      "id": "GS/2018/page_78.pdf-2",
+      "rank": 2398248528
+    },
+    {
+      "id": "AAPL/2005/page_43.pdf-2",
+      "rank": 2403967384
+    },
+    {
+      "id": "NWS/2017/page_119.pdf-1",
+      "rank": 2405864460
+    },
+    {
+      "id": "UNP/2009/page_42.pdf-4",
+      "rank": 2408325214
+    },
+    {
+      "id": "ADBE/2008/page_74.pdf-3",
+      "rank": 2408341916
+    },
+    {
+      "id": "C/2009/page_45.pdf-1",
+      "rank": 2411948232
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-1",
+      "rank": 2411968098
+    },
+    {
+      "id": "BLL/2011/page_32.pdf-1",
+      "rank": 2412951614
+    },
+    {
+      "id": "GS/2018/page_78.pdf-3",
+      "rank": 2415026147
+    },
+    {
+      "id": "CDW/2017/page_38.pdf-2",
+      "rank": 2420043805
+    },
+    {
+      "id": "MAR/2004/page_45.pdf-2",
+      "rank": 2422260993
+    },
+    {
+      "id": "ADBE/2008/page_74.pdf-2",
+      "rank": 2425119535
+    },
+    {
+      "id": "JPM/2005/page_80.pdf-1",
+      "rank": 2432326387
+    },
+    {
+      "id": "GIS/2019/page_68.pdf-2",
+      "rank": 2435342613
+    },
+    {
+      "id": "UNP/2009/page_42.pdf-2",
+      "rank": 2441880452
+    },
+    {
+      "id": "ADBE/2008/page_74.pdf-1",
+      "rank": 2441897154
+    },
+    {
+      "id": "BLK/2012/page_33.pdf-1",
+      "rank": 2444205963
+    },
+    {
+      "id": "RSG/2016/page_139.pdf-1",
+      "rank": 2444635523
+    },
+    {
+      "id": "UNP/2007/page_25.pdf-1",
+      "rank": 2447630184
+    },
+    {
+      "id": "GS/2018/page_78.pdf-1",
+      "rank": 2448581385
+    },
+    {
+      "id": "HOLX/2009/page_151.pdf-3",
+      "rank": 2448655596
+    },
+    {
+      "id": "JPM/2005/page_80.pdf-2",
+      "rank": 2449104006
+    },
+    {
+      "id": "HOLX/2006/page_100.pdf-1",
+      "rank": 2454907407
+    },
+    {
+      "id": "NWS/2017/page_119.pdf-2",
+      "rank": 2456197317
+    },
+    {
+      "id": "UNP/2009/page_42.pdf-3",
+      "rank": 2458658071
+    },
+    {
+      "id": "BLK/2012/page_33.pdf-2",
+      "rank": 2460983582
+    },
+    {
+      "id": "RSG/2016/page_139.pdf-2",
+      "rank": 2461413142
+    },
+    {
+      "id": "C/2009/page_45.pdf-2",
+      "rank": 2462281089
+    },
+    {
+      "id": "MMM/2007/page_23.pdf-2",
+      "rank": 2463867235
+    },
+    {
+      "id": "HOLX/2009/page_151.pdf-2",
+      "rank": 2465433215
+    },
+    {
+      "id": "HWM/2018/page_96.pdf-2",
+      "rank": 2466351992
+    },
+    {
+      "id": "HOLX/2006/page_100.pdf-2",
+      "rank": 2471685026
+    },
+    {
+      "id": "BLK/2012/page_33.pdf-3",
+      "rank": 2477761201
+    },
+    {
+      "id": "MMM/2007/page_23.pdf-1",
+      "rank": 2480644854
+    },
+    {
+      "id": "UNP/2007/page_25.pdf-3",
+      "rank": 2481185422
+    },
+    {
+      "id": "HOLX/2009/page_151.pdf-1",
+      "rank": 2482210834
+    },
+    {
+      "id": "GS/2013/page_149.pdf-4",
+      "rank": 2483529798
+    },
+    {
+      "id": "DRE/2002/page_15.pdf-1",
+      "rank": 2486740736
+    },
+    {
+      "id": "UNP/2009/page_42.pdf-1",
+      "rank": 2492213309
+    },
+    {
+      "id": "BLK/2012/page_33.pdf-4",
+      "rank": 2494538820
+    },
+    {
+      "id": "BLL/2011/page_32.pdf-4",
+      "rank": 2496839709
+    },
+    {
+      "id": "UNP/2007/page_25.pdf-2",
+      "rank": 2497963041
+    },
+    {
+      "id": "GS/2018/page_78.pdf-4",
+      "rank": 2498914242
+    },
+    {
+      "id": "ETR/2004/page_281.pdf-2",
+      "rank": 2503202316
+    },
+    {
+      "id": "V/2014/page_126.pdf-1",
+      "rank": 2510828307
+    },
+    {
+      "id": "HWM/2018/page_96.pdf-1",
+      "rank": 2516684849
+    },
+    {
+      "id": "GS/2013/page_149.pdf-2",
+      "rank": 2517085036
+    },
+    {
+      "id": "DRE/2002/page_15.pdf-3",
+      "rank": 2520295974
+    },
+    {
+      "id": "V/2014/page_126.pdf-2",
+      "rank": 2527605926
+    },
+    {
+      "id": "DVN/2012/page_77.pdf-3",
+      "rank": 2528882712
+    },
+    {
+      "id": "UNP/2007/page_25.pdf-4",
+      "rank": 2531518279
+    },
+    {
+      "id": "GS/2013/page_149.pdf-3",
+      "rank": 2533862655
+    },
+    {
+      "id": "AAPL/2003/page_48.pdf-2",
+      "rank": 2536551883
+    },
+    {
+      "id": "DRE/2002/page_15.pdf-2",
+      "rank": 2537073593
+    },
+    {
+      "id": "ABMD/2007/page_78.pdf-4",
+      "rank": 2539678878
+    },
+    {
+      "id": "LMT/2015/page_89.pdf-4",
+      "rank": 2542529606
+    },
+    {
+      "id": "DVN/2012/page_77.pdf-2",
+      "rank": 2545660331
+    },
+    {
+      "id": "CMCSA/2008/page_36.pdf-2",
+      "rank": 2550891848
+    },
+    {
+      "id": "AAPL/2003/page_48.pdf-1",
+      "rank": 2553329502
+    },
+    {
+      "id": "ETR/2004/page_281.pdf-1",
+      "rank": 2553535173
+    },
+    {
+      "id": "DVN/2012/page_77.pdf-1",
+      "rank": 2562437950
+    },
+    {
+      "id": "AWK/2017/page_148.pdf-1",
+      "rank": 2563739667
+    },
+    {
+      "id": "AMT/2012/page_144.pdf-2",
+      "rank": 2567050992
+    },
+    {
+      "id": "GS/2013/page_149.pdf-1",
+      "rank": 2567417893
+    },
+    {
+      "id": "CMCSA/2008/page_36.pdf-3",
+      "rank": 2567669467
+    },
+    {
+      "id": "DRE/2002/page_15.pdf-4",
+      "rank": 2570628831
+    },
+    {
+      "id": "ECL/2017/page_79.pdf-1",
+      "rank": 2572209331
+    },
+    {
+      "id": "ABMD/2007/page_78.pdf-2",
+      "rank": 2573234116
+    },
+    {
+      "id": "LMT/2015/page_89.pdf-2",
+      "rank": 2576084844
+    },
+    {
+      "id": "AWK/2017/page_148.pdf-2",
+      "rank": 2580517286
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-1",
+      "rank": 2587621784
+    },
+    {
+      "id": "ECL/2017/page_79.pdf-2",
+      "rank": 2588986950
+    },
+    {
+      "id": "ABMD/2007/page_78.pdf-3",
+      "rank": 2590011735
+    },
+    {
+      "id": "LMT/2015/page_89.pdf-3",
+      "rank": 2592862463
+    },
+    {
+      "id": "AWK/2017/page_148.pdf-3",
+      "rank": 2597294905
+    },
+    {
+      "id": "ABMD/2008/page_86.pdf-4",
+      "rank": 2601034310
+    },
+    {
+      "id": "CMCSA/2008/page_36.pdf-1",
+      "rank": 2601224705
+    },
+    {
+      "id": "MRO/2007/page_136.pdf-1",
+      "rank": 2607708008
+    },
+    {
+      "id": "CE/2016/page_19.pdf-1",
+      "rank": 2610494936
+    },
+    {
+      "id": "AWK/2017/page_148.pdf-4",
+      "rank": 2614072524
+    },
+    {
+      "id": "CMCSA/2015/page_67.pdf-2",
+      "rank": 2618519788
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-3",
+      "rank": 2621177022
+    },
+    {
+      "id": "ABMD/2007/page_78.pdf-1",
+      "rank": 2623566973
+    },
+    {
+      "id": "SNA/2007/page_69.pdf-1",
+      "rank": 2624004771
+    },
+    {
+      "id": "LMT/2015/page_89.pdf-1",
+      "rank": 2626417701
+    },
+    {
+      "id": "GS/2018/page_69.pdf-1",
+      "rank": 2628936547
+    },
+    {
+      "id": "MRO/2004/page_125.pdf-1",
+      "rank": 2630092819
+    },
+    {
+      "id": "AMT/2008/page_94.pdf-1",
+      "rank": 2632450276
+    },
+    {
+      "id": "ABMD/2008/page_86.pdf-2",
+      "rank": 2634589548
+    },
+    {
+      "id": "CMCSA/2015/page_67.pdf-3",
+      "rank": 2635297407
+    },
+    {
+      "id": "UAA/2016/page_42.pdf-2",
+      "rank": 2637111048
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-2",
+      "rank": 2637954641
+    },
+    {
+      "id": "SNA/2007/page_69.pdf-2",
+      "rank": 2640782390
+    },
+    {
+      "id": "CE/2016/page_19.pdf-3",
+      "rank": 2644050174
+    },
+    {
+      "id": "GS/2018/page_69.pdf-2",
+      "rank": 2645714166
+    },
+    {
+      "id": "MRO/2004/page_125.pdf-2",
+      "rank": 2646870438
+    },
+    {
+      "id": "ABMD/2008/page_86.pdf-3",
+      "rank": 2651367167
+    },
+    {
+      "id": "UAA/2016/page_42.pdf-3",
+      "rank": 2653888667
+    },
+    {
+      "id": "SNA/2007/page_69.pdf-3",
+      "rank": 2657560009
+    },
+    {
+      "id": "MRO/2007/page_136.pdf-2",
+      "rank": 2658040865
+    },
+    {
+      "id": "CE/2016/page_19.pdf-2",
+      "rank": 2660827793
+    },
+    {
+      "id": "GS/2018/page_69.pdf-3",
+      "rank": 2662491785
+    },
+    {
+      "id": "AMT/2008/page_94.pdf-3",
+      "rank": 2666005514
+    },
+    {
+      "id": "CMCSA/2015/page_67.pdf-1",
+      "rank": 2668852645
+    },
+    {
+      "id": "L/2009/page_84.pdf-1",
+      "rank": 2669277768
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-4",
+      "rank": 2671509879
+    },
+    {
+      "id": "GS/2018/page_69.pdf-4",
+      "rank": 2679269404
+    },
+    {
+      "id": "AMT/2008/page_94.pdf-2",
+      "rank": 2682783133
+    },
+    {
+      "id": "ABMD/2008/page_86.pdf-1",
+      "rank": 2684922405
+    },
+    {
+      "id": "UAA/2016/page_42.pdf-1",
+      "rank": 2687443905
+    },
+    {
+      "id": "ETR/2004/page_212.pdf-4",
+      "rank": 2688808190
+    },
+    {
+      "id": "CE/2016/page_19.pdf-4",
+      "rank": 2694383031
+    },
+    {
+      "id": "L/2009/page_84.pdf-3",
+      "rank": 2702833006
+    },
+    {
+      "id": "FIS/2010/page_70.pdf-2",
+      "rank": 2708624818
+    },
+    {
+      "id": "L/2009/page_84.pdf-2",
+      "rank": 2719610625
+    },
+    {
+      "id": "ETR/2004/page_212.pdf-2",
+      "rank": 2722363428
+    },
+    {
+      "id": "IP/2006/page_35.pdf-1",
+      "rank": 2728471880
+    },
+    {
+      "id": "UAA/2016/page_42.pdf-4",
+      "rank": 2737776762
+    },
+    {
+      "id": "ETR/2004/page_212.pdf-3",
+      "rank": 2739141047
+    },
+    {
+      "id": "ANSS/2012/page_93.pdf-4",
+      "rank": 2750200078
+    },
+    {
+      "id": "L/2009/page_84.pdf-4",
+      "rank": 2753165863
+    },
+    {
+      "id": "IP/2006/page_35.pdf-3",
+      "rank": 2762027118
+    },
+    {
+      "id": "ETR/2004/page_212.pdf-1",
+      "rank": 2772696285
+    },
+    {
+      "id": "GRMN/2008/page_73.pdf-1",
+      "rank": 2777070205
+    },
+    {
+      "id": "IP/2006/page_35.pdf-2",
+      "rank": 2778804737
+    },
+    {
+      "id": "AMT/2006/page_104.pdf-4",
+      "rank": 2780239113
+    },
+    {
+      "id": "ANSS/2012/page_93.pdf-2",
+      "rank": 2783755316
+    },
+    {
+      "id": "GS/2014/page_40.pdf-2",
+      "rank": 2794310007
+    },
+    {
+      "id": "AMT/2006/page_104.pdf-3",
+      "rank": 2797016732
+    },
+    {
+      "id": "ANSS/2012/page_93.pdf-3",
+      "rank": 2800532935
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-4",
+      "rank": 2809518232
+    },
+    {
+      "id": "GS/2014/page_40.pdf-1",
+      "rank": 2811087626
+    },
+    {
+      "id": "ECL/2016/page_52.pdf-1",
+      "rank": 2811667219
+    },
+    {
+      "id": "IP/2006/page_35.pdf-4",
+      "rank": 2812359975
+    },
+    {
+      "id": "AMT/2006/page_104.pdf-2",
+      "rank": 2813794351
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-4",
+      "rank": 2824483654
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-5",
+      "rank": 2826295851
+    },
+    {
+      "id": "ECL/2016/page_52.pdf-2",
+      "rank": 2828444838
+    },
+    {
+      "id": "AMT/2006/page_104.pdf-1",
+      "rank": 2830571970
+    },
+    {
+      "id": "ANSS/2012/page_93.pdf-1",
+      "rank": 2834088173
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-4",
+      "rank": 2838331745
+    },
+    {
+      "id": "HII/2015/page_121.pdf-4",
+      "rank": 2838757456
+    },
+    {
+      "id": "RSG/2010/page_57.pdf-2",
+      "rank": 2839965191
+    },
+    {
+      "id": "ECL/2016/page_52.pdf-3",
+      "rank": 2845222457
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-4",
+      "rank": 2850345318
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-3",
+      "rank": 2855109364
+    },
+    {
+      "id": "RSG/2010/page_57.pdf-1",
+      "rank": 2856742810
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-2",
+      "rank": 2858038892
+    },
+    {
+      "id": "ECL/2016/page_52.pdf-4",
+      "rank": 2862000076
+    },
+    {
+      "id": "EOG/2018/page_75.pdf-2",
+      "rank": 2862618244
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-2",
+      "rank": 2871886983
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-3",
+      "rank": 2874816511
+    },
+    {
+      "id": "HWM/2017/page_42.pdf-2",
+      "rank": 2877135928
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-2",
+      "rank": 2883900556
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-1",
+      "rank": 2888664602
+    },
+    {
+      "id": "MMM/2015/page_93.pdf-2",
+      "rank": 2889595707
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-1",
+      "rank": 2893406327
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-3",
+      "rank": 2900678175
+    },
+    {
+      "id": "MMM/2015/page_93.pdf-1",
+      "rank": 2906373326
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-1",
+      "rank": 2908371749
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-2",
+      "rank": 2910183946
+    },
+    {
+      "id": "GS/2013/page_126.pdf-2",
+      "rank": 2912913451
+    },
+    {
+      "id": "EOG/2018/page_75.pdf-1",
+      "rank": 2912951101
+    },
+    {
+      "id": "HII/2015/page_121.pdf-1",
+      "rank": 2922645551
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-3",
+      "rank": 2926961565
+    },
+    {
+      "id": "GS/2013/page_126.pdf-1",
+      "rank": 2929691070
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-1",
+      "rank": 2934233413
+    },
+    {
+      "id": "HII/2015/page_121.pdf-2",
+      "rank": 2939423170
+    },
+    {
+      "id": "HII/2015/page_121.pdf-3",
+      "rank": 2956200789
+    },
+    {
+      "id": "NCLH/2018/page_64.pdf-4",
+      "rank": 2957576776
+    },
+    {
+      "id": "C/2008/page_65.pdf-2",
+      "rank": 2960673432
+    },
+    {
+      "id": "DISCA/2011/page_49.pdf-3",
+      "rank": 2970548200
+    },
+    {
+      "id": "C/2008/page_65.pdf-3",
+      "rank": 2977451051
+    },
+    {
+      "id": "DISCA/2011/page_49.pdf-2",
+      "rank": 2987325819
+    },
+    {
+      "id": "CDW/2015/page_70.pdf-2",
+      "rank": 2990848775
+    },
+    {
+      "id": "IP/2009/page_45.pdf-4",
+      "rank": 2992144193
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-4",
+      "rank": 2995405808
+    },
+    {
+      "id": "RSG/2015/page_98.pdf-1",
+      "rank": 2997361312
+    },
+    {
+      "id": "HOLX/2006/page_71.pdf-1",
+      "rank": 3001585616
+    },
+    {
+      "id": "DISCA/2011/page_49.pdf-1",
+      "rank": 3004103438
+    },
+    {
+      "id": "CDW/2015/page_70.pdf-1",
+      "rank": 3007626394
+    },
+    {
+      "id": "IP/2009/page_45.pdf-3",
+      "rank": 3008921812
+    },
+    {
+      "id": "C/2008/page_65.pdf-1",
+      "rank": 3011006289
+    },
+    {
+      "id": "IP/2009/page_45.pdf-2",
+      "rank": 3025699431
+    },
+    {
+      "id": "NCLH/2018/page_64.pdf-1",
+      "rank": 3041464871
+    },
+    {
+      "id": "IP/2009/page_45.pdf-1",
+      "rank": 3042477050
+    },
+    {
+      "id": "RSG/2015/page_98.pdf-2",
+      "rank": 3047694169
+    },
+    {
+      "id": "NCLH/2018/page_64.pdf-2",
+      "rank": 3058242490
+    },
+    {
+      "id": "SLG/2001/page_48.pdf-1",
+      "rank": 3064973092
+    },
+    {
+      "id": "NCLH/2018/page_64.pdf-3",
+      "rank": 3075020109
+    },
+    {
+      "id": "V/2010/page_28.pdf-1",
+      "rank": 3075449954
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-1",
+      "rank": 3079293903
+    },
+    {
+      "id": "DISCA/2011/page_49.pdf-4",
+      "rank": 3087991533
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-2",
+      "rank": 3096071522
+    },
+    {
+      "id": "EL/2008/page_59.pdf-1",
+      "rank": 3097400836
+    },
+    {
+      "id": "SLG/2001/page_48.pdf-3",
+      "rank": 3098528330
+    },
+    {
+      "id": "GRMN/2008/page_85.pdf-1",
+      "rank": 3110453948
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-3",
+      "rank": 3112849141
+    },
+    {
+      "id": "SLG/2001/page_48.pdf-2",
+      "rank": 3115305949
+    },
+    {
+      "id": "MAS/2012/page_26.pdf-2",
+      "rank": 3120579696
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-2",
+      "rank": 3121629864
+    },
+    {
+      "id": "HWM/2015/page_173.pdf-2",
+      "rank": 3134319667
+    },
+    {
+      "id": "MAS/2012/page_26.pdf-3",
+      "rank": 3137357315
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-3",
+      "rank": 3138407483
+    },
+    {
+      "id": "FIS/2016/page_9.pdf-2",
+      "rank": 3147301672
+    },
+    {
+      "id": "EL/2008/page_59.pdf-2",
+      "rank": 3147733693
+    },
+    {
+      "id": "HWM/2015/page_173.pdf-1",
+      "rank": 3151097286
+    },
+    {
+      "id": "DVN/2018/page_35.pdf-4",
+      "rank": 3158650913
+    },
+    {
+      "id": "GRMN/2008/page_85.pdf-2",
+      "rank": 3160786805
+    },
+    {
+      "id": "FIS/2016/page_9.pdf-3",
+      "rank": 3164079291
+    },
+    {
+      "id": "MAS/2012/page_26.pdf-1",
+      "rank": 3170912553
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-1",
+      "rank": 3171962721
+    },
+    {
+      "id": "DVN/2018/page_35.pdf-3",
+      "rank": 3175428532
+    },
+    {
+      "id": "MRO/2008/page_45.pdf-4",
+      "rank": 3176279075
+    },
+    {
+      "id": "JPM/2015/page_137.pdf-1",
+      "rank": 3186180011
+    },
+    {
+      "id": "DVN/2018/page_35.pdf-2",
+      "rank": 3192206151
+    },
+    {
+      "id": "C/2015/page_96.pdf-2",
+      "rank": 3196499216
+    },
+    {
+      "id": "FIS/2016/page_9.pdf-1",
+      "rank": 3197634529
+    },
+    {
+      "id": "GS/2012/page_121.pdf-2",
+      "rank": 3201931087
+    },
+    {
+      "id": "JPM/2015/page_137.pdf-2",
+      "rank": 3202957630
+    },
+    {
+      "id": "PNC/2012/page_247.pdf-1",
+      "rank": 3206865984
+    },
+    {
+      "id": "DVN/2018/page_35.pdf-1",
+      "rank": 3208983770
+    },
+    {
+      "id": "RSG/2012/page_93.pdf-1",
+      "rank": 3210936680
+    },
+    {
+      "id": "C/2015/page_96.pdf-3",
+      "rank": 3213276835
+    },
+    {
+      "id": "GS/2012/page_121.pdf-1",
+      "rank": 3218708706
+    },
+    {
+      "id": "JPM/2015/page_137.pdf-3",
+      "rank": 3219735249
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-4",
+      "rank": 3222295578
+    },
+    {
+      "id": "MRO/2008/page_45.pdf-1",
+      "rank": 3226611932
+    },
+    {
+      "id": "JPM/2010/page_273.pdf-1",
+      "rank": 3230703815
+    },
+    {
+      "id": "ANET/2015/page_156.pdf-1",
+      "rank": 3234713523
+    },
+    {
+      "id": "GS/2017/page_179.pdf-3",
+      "rank": 3235491032
+    },
+    {
+      "id": "JPM/2015/page_137.pdf-4",
+      "rank": 3236512868
+    },
+    {
+      "id": "PNC/2012/page_247.pdf-3",
+      "rank": 3240421222
+    },
+    {
+      "id": "BLL/2006/page_67.pdf-4",
+      "rank": 3242121011
+    },
+    {
+      "id": "ETR/2017/page_372.pdf-1",
+      "rank": 3244713868
+    },
+    {
+      "id": "C/2015/page_96.pdf-1",
+      "rank": 3246832073
+    },
+    {
+      "id": "JPM/2010/page_273.pdf-2",
+      "rank": 3247481434
+    },
+    {
+      "id": "FIS/2016/page_9.pdf-4",
+      "rank": 3247967386
+    },
+    {
+      "id": "ANET/2015/page_156.pdf-2",
+      "rank": 3251491142
+    },
+    {
+      "id": "GS/2017/page_179.pdf-2",
+      "rank": 3252268651
+    },
+    {
+      "id": "PNC/2012/page_247.pdf-2",
+      "rank": 3257198841
+    },
+    {
+      "id": "MRO/2008/page_45.pdf-3",
+      "rank": 3260167170
+    },
+    {
+      "id": "RSG/2012/page_93.pdf-2",
+      "rank": 3261269537
+    },
+    {
+      "id": "PNC/2012/page_65.pdf-1",
+      "rank": 3265992296
+    },
+    {
+      "id": "GS/2017/page_179.pdf-1",
+      "rank": 3269046270
+    },
+    {
+      "id": "MRO/2008/page_45.pdf-2",
+      "rank": 3276944789
+    },
+    {
+      "id": "ETR/2017/page_372.pdf-3",
+      "rank": 3278269106
+    },
+    {
+      "id": "LMT/2014/page_91.pdf-4",
+      "rank": 3287633232
+    },
+    {
+      "id": "PNC/2012/page_247.pdf-4",
+      "rank": 3290754079
+    },
+    {
+      "id": "BLL/2006/page_67.pdf-1",
+      "rank": 3292453868
+    },
+    {
+      "id": "ETR/2017/page_372.pdf-2",
+      "rank": 3295046725
+    },
+    {
+      "id": "PNC/2012/page_65.pdf-3",
+      "rank": 3299547534
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-4",
+      "rank": 3311905446
+    },
+    {
+      "id": "PNC/2012/page_65.pdf-2",
+      "rank": 3316325153
+    },
+    {
+      "id": "GS/2013/page_72.pdf-2",
+      "rank": 3318040675
+    },
+    {
+      "id": "BLL/2006/page_67.pdf-3",
+      "rank": 3326009106
+    },
+    {
+      "id": "AWK/2013/page_122.pdf-1",
+      "rank": 3330646259
+    },
+    {
+      "id": "PNC/2012/page_65.pdf-5",
+      "rank": 3333102772
+    },
+    {
+      "id": "GS/2013/page_72.pdf-1",
+      "rank": 3334818294
+    },
+    {
+      "id": "BLL/2006/page_67.pdf-2",
+      "rank": 3342786725
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-2",
+      "rank": 3345460684
+    },
+    {
+      "id": "MS/2013/page_132.pdf-2",
+      "rank": 3346291096
+    },
+    {
+      "id": "AWK/2013/page_122.pdf-2",
+      "rank": 3347423878
+    },
+    {
+      "id": "PNC/2012/page_65.pdf-4",
+      "rank": 3349880391
+    },
+    {
+      "id": "GS/2017/page_179.pdf-4",
+      "rank": 3352934365
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-4",
+      "rank": 3360686121
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-3",
+      "rank": 3362238303
+    },
+    {
+      "id": "UPS/2007/page_98.pdf-2",
+      "rank": 3362438480
+    },
+    {
+      "id": "AWK/2013/page_122.pdf-3",
+      "rank": 3364201497
+    },
+    {
+      "id": "LMT/2014/page_91.pdf-1",
+      "rank": 3371521327
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-3",
+      "rank": 3377463740
+    },
+    {
+      "id": "AWK/2013/page_122.pdf-4",
+      "rank": 3380979116
+    },
+    {
+      "id": "LMT/2014/page_91.pdf-2",
+      "rank": 3388298946
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-2",
+      "rank": 3394241359
+    },
+    {
+      "id": "GPN/2010/page_87.pdf-3",
+      "rank": 3395706360
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-1",
+      "rank": 3395793541
+    },
+    {
+      "id": "MS/2013/page_132.pdf-1",
+      "rank": 3396623953
+    },
+    {
+      "id": "AMT/2016/page_125.pdf-4",
+      "rank": 3404196339
+    },
+    {
+      "id": "LMT/2014/page_91.pdf-3",
+      "rank": 3405076565
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-1",
+      "rank": 3411018978
+    },
+    {
+      "id": "GPN/2010/page_87.pdf-2",
+      "rank": 3412483979
+    },
+    {
+      "id": "UPS/2007/page_98.pdf-1",
+      "rank": 3412771337
+    },
+    {
+      "id": "GPN/2010/page_87.pdf-1",
+      "rank": 3429261598
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-2",
+      "rank": 3448885424
+    },
+    {
+      "id": "AMT/2016/page_125.pdf-1",
+      "rank": 3454529196
+    },
+    {
+      "id": "HOLX/2003/page_52.pdf-1",
+      "rank": 3454912032
+    },
+    {
+      "id": "PKG/2005/page_74.pdf-2",
+      "rank": 3463491216
+    },
+    {
+      "id": "RSG/2016/page_145.pdf-1",
+      "rank": 3465465740
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-3",
+      "rank": 3465663043
+    },
+    {
+      "id": "BLK/2014/page_120.pdf-4",
+      "rank": 3466560283
+    },
+    {
+      "id": "PKG/2005/page_74.pdf-3",
+      "rank": 3480268835
+    },
+    {
+      "id": "AMT/2016/page_125.pdf-3",
+      "rank": 3488084434
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-1",
+      "rank": 3499218281
+    },
+    {
+      "id": "AMT/2016/page_125.pdf-2",
+      "rank": 3504862053
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-3",
+      "rank": 3505532536
+    },
+    {
+      "id": "PKG/2005/page_74.pdf-1",
+      "rank": 3513824073
+    },
+    {
+      "id": "BLK/2014/page_120.pdf-1",
+      "rank": 3516893140
+    },
+    {
+      "id": "AAPL/2004/page_68.pdf-1",
+      "rank": 3518498281
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-2",
+      "rank": 3522310155
+    },
+    {
+      "id": "DRE/2005/page_30.pdf-1",
+      "rank": 3529764744
+    },
+    {
+      "id": "AON/2015/page_96.pdf-1",
+      "rank": 3535073240
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-1",
+      "rank": 3539087774
+    },
+    {
+      "id": "ETR/2004/page_239.pdf-4",
+      "rank": 3539919257
+    },
+    {
+      "id": "CME/2017/page_89.pdf-2",
+      "rank": 3541929024
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-4",
+      "rank": 3549551138
+    },
+    {
+      "id": "BLK/2014/page_120.pdf-3",
+      "rank": 3550448378
+    },
+    {
+      "id": "ETR/2004/page_239.pdf-3",
+      "rank": 3556696876
+    },
+    {
+      "id": "CME/2017/page_89.pdf-3",
+      "rank": 3558706643
+    },
+    {
+      "id": "PKG/2005/page_74.pdf-4",
+      "rank": 3564156930
+    },
+    {
+      "id": "BLK/2014/page_120.pdf-2",
+      "rank": 3567225997
+    },
+    {
+      "id": "AON/2015/page_96.pdf-3",
+      "rank": 3568628478
+    },
+    {
+      "id": "PKG/2002/page_52.pdf-1",
+      "rank": 3572512592
+    },
+    {
+      "id": "ETR/2004/page_239.pdf-2",
+      "rank": 3573474495
+    },
+    {
+      "id": "DRE/2005/page_30.pdf-2",
+      "rank": 3580097601
+    },
+    {
+      "id": "AON/2015/page_96.pdf-2",
+      "rank": 3585406097
+    },
+    {
+      "id": "PPG/2018/page_85.pdf-3",
+      "rank": 3586131120
+    },
+    {
+      "id": "ETR/2004/page_239.pdf-1",
+      "rank": 3590252114
+    },
+    {
+      "id": "CME/2017/page_89.pdf-1",
+      "rank": 3592261881
+    },
+    {
+      "id": "RSG/2018/page_135.pdf-2",
+      "rank": 3596797560
+    },
+    {
+      "id": "PPG/2018/page_85.pdf-2",
+      "rank": 3602908739
+    },
+    {
+      "id": "RSG/2016/page_135.pdf-1",
+      "rank": 3605449575
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-5",
+      "rank": 3606198250
+    },
+    {
+      "id": "HUM/2009/page_105.pdf-2",
+      "rank": 3617854555
+    },
+    {
+      "id": "AON/2015/page_96.pdf-4",
+      "rank": 3618961335
+    },
+    {
+      "id": "PPG/2018/page_85.pdf-1",
+      "rank": 3619686358
+    },
+    {
+      "id": "PKG/2002/page_52.pdf-2",
+      "rank": 3622845449
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-4",
+      "rank": 3622975869
+    },
+    {
+      "id": "SNA/2018/page_31.pdf-3",
+      "rank": 3631949836
+    },
+    {
+      "id": "HUM/2009/page_105.pdf-1",
+      "rank": 3634632174
+    },
+    {
+      "id": "BKNG/2016/page_33.pdf-4",
+      "rank": 3635422595
+    },
+    {
+      "id": "CME/2017/page_89.pdf-4",
+      "rank": 3642594738
+    },
+    {
+      "id": "RSG/2018/page_135.pdf-1",
+      "rank": 3647130417
+    },
+    {
+      "id": "SNA/2018/page_31.pdf-2",
+      "rank": 3648727455
+    },
+    {
+      "id": "BLL/2010/page_35.pdf-1",
+      "rank": 3650910496
+    },
+    {
+      "id": "SNA/2018/page_31.pdf-1",
+      "rank": 3665505074
+    },
+    {
+      "id": "ETR/2011/page_301.pdf-1",
+      "rank": 3669581124
+    },
+    {
+      "id": "IPG/2006/page_77.pdf-2",
+      "rank": 3670072968
+    },
+    {
+      "id": "DVN/2015/page_79.pdf-2",
+      "rank": 3673537208
+    },
+    {
+      "id": "GRMN/2006/page_68.pdf-1",
+      "rank": 3678594719
+    },
+    {
+      "id": "BLL/2010/page_35.pdf-3",
+      "rank": 3684465734
+    },
+    {
+      "id": "BKNG/2016/page_33.pdf-1",
+      "rank": 3685755452
+    },
+    {
+      "id": "IPG/2006/page_77.pdf-3",
+      "rank": 3686850587
+    },
+    {
+      "id": "DVN/2015/page_79.pdf-3",
+      "rank": 3690314827
+    },
+    {
+      "id": "GRMN/2006/page_68.pdf-2",
+      "rank": 3695372338
+    },
+    {
+      "id": "UA/2007/page_70.pdf-2",
+      "rank": 3700800444
+    },
+    {
+      "id": "BLL/2010/page_35.pdf-2",
+      "rank": 3701243353
+    },
+    {
+      "id": "ETR/2011/page_301.pdf-3",
+      "rank": 3703136362
+    },
+    {
+      "id": "PPG/2018/page_85.pdf-4",
+      "rank": 3703574453
+    },
+    {
+      "id": "MS/2007/page_179.pdf-1",
+      "rank": 3708892367
+    },
+    {
+      "id": "ADBE/1999/page_64.pdf-2",
+      "rank": 3714947696
+    },
+    {
+      "id": "BKNG/2016/page_33.pdf-3",
+      "rank": 3719310690
+    },
+    {
+      "id": "ETR/2011/page_301.pdf-2",
+      "rank": 3719913981
+    },
+    {
+      "id": "IPG/2006/page_77.pdf-1",
+      "rank": 3720405825
+    },
+    {
+      "id": "MMM/2007/page_84.pdf-1",
+      "rank": 3721837877
+    },
+    {
+      "id": "DVN/2015/page_79.pdf-1",
+      "rank": 3723870065
+    },
+    {
+      "id": "MS/2007/page_179.pdf-2",
+      "rank": 3725669986
+    },
+    {
+      "id": "ADBE/1999/page_64.pdf-3",
+      "rank": 3731725315
+    },
+    {
+      "id": "BLL/2010/page_35.pdf-4",
+      "rank": 3734798591
+    },
+    {
+      "id": "BKNG/2016/page_33.pdf-2",
+      "rank": 3736088309
+    },
+    {
+      "id": "GS/2017/page_132.pdf-1",
+      "rank": 3741496003
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-3",
+      "rank": 3750812856
+    },
+    {
+      "id": "UA/2007/page_70.pdf-1",
+      "rank": 3751133301
+    },
+    {
+      "id": "CME/2017/page_40.pdf-5",
+      "rank": 3752959550
+    },
+    {
+      "id": "GS/2017/page_132.pdf-2",
+      "rank": 3758273622
+    },
+    {
+      "id": "JPM/2010/page_120.pdf-2",
+      "rank": 3761257843
+    },
+    {
+      "id": "ADBE/1999/page_64.pdf-1",
+      "rank": 3765280553
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-2",
+      "rank": 3767590475
+    },
+    {
+      "id": "CME/2017/page_40.pdf-4",
+      "rank": 3769737169
+    },
+    {
+      "id": "IPG/2006/page_77.pdf-4",
+      "rank": 3770738682
+    },
+    {
+      "id": "MO/2016/page_19.pdf-1",
+      "rank": 3774317048
+    },
+    {
+      "id": "PNC/2012/page_68.pdf-4",
+      "rank": 3774968552
+    },
+    {
+      "id": "GS/2017/page_132.pdf-3",
+      "rank": 3775051241
+    },
+    {
+      "id": "JPM/2010/page_120.pdf-1",
+      "rank": 3778035462
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-1",
+      "rank": 3784368094
+    },
+    {
+      "id": "CME/2017/page_40.pdf-3",
+      "rank": 3786514788
+    },
+    {
+      "id": "PNC/2012/page_68.pdf-5",
+      "rank": 3791746171
+    },
+    {
+      "id": "GS/2017/page_132.pdf-4",
+      "rank": 3791828860
+    },
+    {
+      "id": "UPS/2007/page_49.pdf-4",
+      "rank": 3792383144
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-4",
+      "rank": 3796282547
+    },
+    {
+      "id": "CME/2017/page_40.pdf-2",
+      "rank": 3803292407
+    },
+    {
+      "id": "INTC/2013/page_31.pdf-1",
+      "rank": 3805430259
+    },
+    {
+      "id": "CME/2010/page_123.pdf-4",
+      "rank": 3805531758
+    },
+    {
+      "id": "GS/2013/page_63.pdf-1",
+      "rank": 3806336696
+    },
+    {
+      "id": "MO/2016/page_19.pdf-3",
+      "rank": 3807872286
+    },
+    {
+      "id": "CME/2017/page_40.pdf-1",
+      "rank": 3820070026
+    },
+    {
+      "id": "INTC/2013/page_31.pdf-2",
+      "rank": 3822207878
+    },
+    {
+      "id": "CME/2010/page_123.pdf-5",
+      "rank": 3822309377
+    },
+    {
+      "id": "MO/2016/page_19.pdf-2",
+      "rank": 3824649905
+    },
+    {
+      "id": "INTC/2013/page_31.pdf-3",
+      "rank": 3838985497
+    },
+    {
+      "id": "CME/2010/page_123.pdf-2",
+      "rank": 3839086996
+    },
+    {
+      "id": "HIG/2011/page_53.pdf-4",
+      "rank": 3839880518
+    },
+    {
+      "id": "GS/2013/page_63.pdf-3",
+      "rank": 3839891934
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-1",
+      "rank": 3846615404
+    },
+    {
+      "id": "FBHS/2017/page_22.pdf-2",
+      "rank": 3851351255
+    },
+    {
+      "id": "INTC/2013/page_31.pdf-4",
+      "rank": 3855763116
+    },
+    {
+      "id": "CME/2010/page_123.pdf-3",
+      "rank": 3855864615
+    },
+    {
+      "id": "GS/2013/page_63.pdf-2",
+      "rank": 3856669553
+    },
+    {
+      "id": "MO/2016/page_19.pdf-4",
+      "rank": 3858205143
+    },
+    {
+      "id": "PNC/2012/page_68.pdf-1",
+      "rank": 3858856647
+    },
+    {
+      "id": "IP/2009/page_84.pdf-2",
+      "rank": 3861926920
+    },
+    {
+      "id": "FBHS/2017/page_22.pdf-1",
+      "rank": 3868128874
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-4",
+      "rank": 3868256189
+    },
+    {
+      "id": "HIG/2011/page_53.pdf-2",
+      "rank": 3873435756
+    },
+    {
+      "id": "PNC/2012/page_68.pdf-2",
+      "rank": 3875634266
+    },
+    {
+      "id": "UPS/2007/page_49.pdf-1",
+      "rank": 3876271239
+    },
+    {
+      "id": "IP/2009/page_84.pdf-3",
+      "rank": 3878704539
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-3",
+      "rank": 3880170642
+    },
+    {
+      "id": "CME/2010/page_123.pdf-1",
+      "rank": 3889419853
+    },
+    {
+      "id": "HIG/2011/page_53.pdf-3",
+      "rank": 3890213375
+    },
+    {
+      "id": "PNC/2012/page_68.pdf-3",
+      "rank": 3892411885
+    },
+    {
+      "id": "UPS/2007/page_49.pdf-2",
+      "rank": 3893048858
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-2",
+      "rank": 3896948261
+    },
+    {
+      "id": "PPG/2008/page_52.pdf-4",
+      "rank": 3899085576
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-4",
+      "rank": 3900651912
+    },
+    {
+      "id": "C/2009/page_197.pdf-1",
+      "rank": 3901073998
+    },
+    {
+      "id": "UPS/2007/page_49.pdf-3",
+      "rank": 3909826477
+    },
+    {
+      "id": "IP/2009/page_84.pdf-1",
+      "rank": 3912259777
+    },
+    {
+      "id": "STT/2011/page_69.pdf-4",
+      "rank": 3913101608
+    },
+    {
+      "id": "SNA/2013/page_34.pdf-1",
+      "rank": 3917506604
+    },
+    {
+      "id": "UNP/2006/page_15.pdf-1",
+      "rank": 3918190072
+    },
+    {
+      "id": "STT/2014/page_54.pdf-2",
+      "rank": 3921852773
+    },
+    {
+      "id": "HIG/2011/page_53.pdf-1",
+      "rank": 3923768613
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-3",
+      "rank": 3927633240
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-4",
+      "rank": 3927909232
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-4",
+      "rank": 3930590832
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-2",
+      "rank": 3944410859
+    },
+    {
+      "id": "GS/2012/page_189.pdf-1",
+      "rank": 3947185376
+    },
+    {
+      "id": "ETR/2013/page_21.pdf-2",
+      "rank": 3949328256
+    },
+    {
+      "id": "AES/2001/page_33.pdf-4",
+      "rank": 3950183600
+    },
+    {
+      "id": "SNA/2013/page_34.pdf-3",
+      "rank": 3951061842
+    },
+    {
+      "id": "ZBH/2015/page_57.pdf-2",
+      "rank": 3951618940
+    },
+    {
+      "id": "UNP/2006/page_15.pdf-3",
+      "rank": 3951745310
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-1",
+      "rank": 3961188478
+    },
+    {
+      "id": "IP/2009/page_84.pdf-4",
+      "rank": 3962592634
+    },
+    {
+      "id": "ETR/2013/page_21.pdf-3",
+      "rank": 3966105875
+    },
+    {
+      "id": "SNA/2013/page_34.pdf-2",
+      "rank": 3967839461
+    },
+    {
+      "id": "ZBH/2015/page_57.pdf-3",
+      "rank": 3968396559
+    },
+    {
+      "id": "UNP/2006/page_15.pdf-2",
+      "rank": 3968522929
+    },
+    {
+      "id": "ADI/2010/page_80.pdf-3",
+      "rank": 3974287704
+    },
+    {
+      "id": "IP/2006/page_38.pdf-4",
+      "rank": 3979393736
+    },
+    {
+      "id": "GS/2012/page_189.pdf-3",
+      "rank": 3980740614
+    },
+    {
+      "id": "PPG/2008/page_52.pdf-1",
+      "rank": 3982973671
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-1",
+      "rank": 3984540007
+    },
+    {
+      "id": "ADI/2010/page_80.pdf-2",
+      "rank": 3991065323
+    },
+    {
+      "id": "STT/2011/page_69.pdf-1",
+      "rank": 3996989703
+    },
+    {
+      "id": "GS/2012/page_189.pdf-2",
+      "rank": 3997518233
+    },
+    {
+      "id": "ETR/2013/page_21.pdf-1",
+      "rank": 3999661113
+    },
+    {
+      "id": "PPG/2008/page_52.pdf-2",
+      "rank": 3999751290
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-2",
+      "rank": 4001317626
+    },
+    {
+      "id": "ZBH/2015/page_57.pdf-1",
+      "rank": 4001951797
+    },
+    {
+      "id": "UNP/2006/page_15.pdf-4",
+      "rank": 4002078167
+    },
+    {
+      "id": "SNA/2013/page_83.pdf-3",
+      "rank": 4003502768
+    },
+    {
+      "id": "ADI/2010/page_80.pdf-1",
+      "rank": 4007842942
+    },
+    {
+      "id": "C/2018/page_176.pdf-2",
+      "rank": 4009590564
+    },
+    {
+      "id": "ETR/2011/page_17.pdf-3",
+      "rank": 4010666156
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-1",
+      "rank": 4011797327
+    },
+    {
+      "id": "STT/2011/page_69.pdf-2",
+      "rank": 4013767322
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-1",
+      "rank": 4014478927
+    },
+    {
+      "id": "PPG/2008/page_52.pdf-3",
+      "rank": 4016528909
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-3",
+      "rank": 4018095245
+    },
+    {
+      "id": "SNA/2013/page_83.pdf-2",
+      "rank": 4020280387
+    },
+    {
+      "id": "ETR/2011/page_17.pdf-2",
+      "rank": 4027443775
+    },
+    {
+      "id": "BLL/2010/page_37.pdf-4",
+      "rank": 4027571425
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-2",
+      "rank": 4028574946
+    },
+    {
+      "id": "STT/2011/page_69.pdf-3",
+      "rank": 4030544941
+    },
+    {
+      "id": "GS/2012/page_189.pdf-4",
+      "rank": 4031073471
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-2",
+      "rank": 4031256546
+    },
+    {
+      "id": "AES/2001/page_33.pdf-1",
+      "rank": 4034071695
+    },
+    {
+      "id": "SNA/2013/page_83.pdf-1",
+      "rank": 4037058006
+    },
+    {
+      "id": "ETR/2017/page_143.pdf-3",
+      "rank": 4040293640
+    },
+    {
+      "id": "ETR/2011/page_17.pdf-1",
+      "rank": 4044221394
+    },
+    {
+      "id": "BLL/2010/page_37.pdf-3",
+      "rank": 4044349044
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-4",
+      "rank": 4045076573
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-3",
+      "rank": 4045352565
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-3",
+      "rank": 4048034165
+    },
+    {
+      "id": "DVN/2014/page_87.pdf-1",
+      "rank": 4048145231
+    },
+    {
+      "id": "ETR/2013/page_21.pdf-4",
+      "rank": 4049993970
+    },
+    {
+      "id": "AES/2001/page_33.pdf-2",
+      "rank": 4050849314
+    },
+    {
+      "id": "K/2006/page_52.pdf-2",
+      "rank": 4056586344
+    },
+    {
+      "id": "ETR/2017/page_143.pdf-2",
+      "rank": 4057071259
+    },
+    {
+      "id": "BLL/2010/page_37.pdf-2",
+      "rank": 4061126663
+    },
+    {
+      "id": "IP/2006/page_38.pdf-1",
+      "rank": 4063281831
+    },
+    {
+      "id": "UNP/2018/page_74.pdf-4",
+      "rank": 4063672249
+    },
+    {
+      "id": "DVN/2014/page_87.pdf-2",
+      "rank": 4064922850
+    },
+    {
+      "id": "AES/2001/page_33.pdf-3",
+      "rank": 4067626933
+    },
+    {
+      "id": "K/2006/page_52.pdf-3",
+      "rank": 4073363963
+    },
+    {
+      "id": "ETR/2017/page_143.pdf-1",
+      "rank": 4073848878
+    },
+    {
+      "id": "BLL/2010/page_37.pdf-1",
+      "rank": 4077904282
+    },
+    {
+      "id": "AMT/2005/page_102.pdf-1",
+      "rank": 4079718355
+    },
+    {
+      "id": "IP/2006/page_38.pdf-2",
+      "rank": 4080059450
+    },
+    {
+      "id": "UNP/2018/page_74.pdf-3",
+      "rank": 4080449868
+    },
+    {
+      "id": "DVN/2014/page_87.pdf-3",
+      "rank": 4081700469
+    },
+    {
+      "id": "MO/2014/page_39.pdf-1",
+      "rank": 4096335016
+    },
+    {
+      "id": "AMT/2005/page_102.pdf-2",
+      "rank": 4096495974
+    },
+    {
+      "id": "IP/2006/page_38.pdf-3",
+      "rank": 4096837069
+    },
+    {
+      "id": "SNA/2012/page_110.pdf-3",
+      "rank": 4096932452
+    },
+    {
+      "id": "ZBH/2009/page_58.pdf-4",
+      "rank": 4097202246
+    },
+    {
+      "id": "UNP/2018/page_74.pdf-2",
+      "rank": 4097227487
+    },
+    {
+      "id": "PNC/2008/page_122.pdf-2",
+      "rank": 4103915608
+    },
+    {
+      "id": "K/2006/page_52.pdf-1",
+      "rank": 4106919201
+    },
+    {
+      "id": "AMT/2005/page_102.pdf-3",
+      "rank": 4113273593
+    },
+    {
+      "id": "SNA/2012/page_110.pdf-2",
+      "rank": 4113710071
+    },
+    {
+      "id": "UNP/2018/page_74.pdf-1",
+      "rank": 4114005106
+    },
+    {
+      "id": "PM/2017/page_32.pdf-2",
+      "rank": 4114114280
+    },
+    {
+      "id": "AOS/2010/page_18.pdf-1",
+      "rank": 4115035164
+    },
+    {
+      "id": "AON/2007/page_188.pdf-1",
+      "rank": 4118432307
+    },
+    {
+      "id": "FBHS/2017/page_83.pdf-1",
+      "rank": 4128958007
+    },
+    {
+      "id": "MO/2014/page_39.pdf-3",
+      "rank": 4129890254
+    },
+    {
+      "id": "SNA/2012/page_110.pdf-1",
+      "rank": 4130487690
+    },
+    {
+      "id": "ZBH/2009/page_58.pdf-2",
+      "rank": 4130757484
+    },
+    {
+      "id": "AON/2007/page_188.pdf-2",
+      "rank": 4135209926
+    },
+    {
+      "id": "AES/2001/page_85.pdf-4",
+      "rank": 4136208809
+    },
+    {
+      "id": "FBHS/2017/page_83.pdf-2",
+      "rank": 4145735626
+    },
+    {
+      "id": "MO/2014/page_39.pdf-2",
+      "rank": 4146667873
+    },
+    {
+      "id": "ZBH/2009/page_58.pdf-3",
+      "rank": 4147535103
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-4",
+      "rank": 4150736694
+    },
+    {
+      "id": "AON/2007/page_188.pdf-3",
+      "rank": 4151987545
+    },
+    {
+      "id": "AES/2001/page_85.pdf-3",
+      "rank": 4152986428
+    },
+    {
+      "id": "FIS/2017/page_64.pdf-4",
+      "rank": 4154170624
+    },
+    {
+      "id": "PNC/2008/page_122.pdf-1",
+      "rank": 4154248465
+    },
+    {
+      "id": "JPM/2012/page_140.pdf-2",
+      "rank": 4156178895
+    },
+    {
+      "id": "GS/2013/page_220.pdf-2",
+      "rank": 4160219864
+    },
+    {
+      "id": "PM/2017/page_32.pdf-1",
+      "rank": 4164447137
+    },
+    {
+      "id": "AOS/2010/page_18.pdf-2",
+      "rank": 4165368021
+    },
+    {
+      "id": "DG/2005/page_44.pdf-2",
+      "rank": 4168097840
+    },
+    {
+      "id": "AON/2007/page_188.pdf-4",
+      "rank": 4168765164
+    },
+    {
+      "id": "AES/2001/page_85.pdf-2",
+      "rank": 4169764047
+    },
+    {
+      "id": "JPM/2012/page_140.pdf-1",
+      "rank": 4172956514
+    },
+    {
+      "id": "GS/2013/page_220.pdf-3",
+      "rank": 4176997483
+    },
+    {
+      "id": "MO/2014/page_39.pdf-4",
+      "rank": 4180223111
+    },
+    {
+      "id": "ZBH/2009/page_58.pdf-1",
+      "rank": 4181090341
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-2",
+      "rank": 4184291932
+    },
+    {
+      "id": "DG/2005/page_44.pdf-3",
+      "rank": 4184875459
+    },
+    {
+      "id": "AES/2001/page_85.pdf-1",
+      "rank": 4186541666
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-3",
+      "rank": 4201069551
+    },
+    {
+      "id": "GS/2013/page_220.pdf-1",
+      "rank": 4210552721
+    },
+    {
+      "id": "ABMD/2006/page_43.pdf-1",
+      "rank": 4214608416
+    },
+    {
+      "id": "DG/2005/page_44.pdf-1",
+      "rank": 4218430697
+    },
+    {
+      "id": "GIS/2015/page_62.pdf-1",
+      "rank": 4231880066
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-1",
+      "rank": 4234624789
+    },
+    {
+      "id": "FIS/2017/page_64.pdf-1",
+      "rank": 4238058719
+    },
+    {
+      "id": "ABMD/2006/page_43.pdf-3",
+      "rank": 4248163654
+    },
+    {
+      "id": "AAL/2015/page_114.pdf-1",
+      "rank": 4251776967
+    },
+    {
+      "id": "FIS/2017/page_64.pdf-2",
+      "rank": 4254836338
+    },
+    {
+      "id": "STT/2006/page_95.pdf-4",
+      "rank": 4255157755
+    },
+    {
+      "id": "GS/2013/page_220.pdf-4",
+      "rank": 4260885578
+    },
+    {
+      "id": "ABMD/2006/page_43.pdf-2",
+      "rank": 4264941273
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-2",
+      "rank": 4265023048
+    },
+    {
+      "id": "AAL/2015/page_114.pdf-2",
+      "rank": 4268554586
+    },
+    {
+      "id": "AMT/2012/page_118.pdf-1",
+      "rank": 4270145944
+    },
+    {
+      "id": "FIS/2017/page_64.pdf-3",
+      "rank": 4271613957
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-3",
+      "rank": 4281800667
+    }
+  ],
+  "cases": [
+    {
+      "id": "HUM/2017/page_118.pdf-3",
+      "rank": 84319439,
+      "question": "in 2017 what was the percent of the total amortization expense that was due in 2019",
+      "program": "add(64, 54), add(52, #0), add(#1, 19), add(#2, 16), divide(54, #3)",
+      "answer": "0.26341"
+    },
+    {
+      "id": "SLB/2015/page_59.pdf-1",
+      "rank": 85626074,
+      "question": "what was the percent of the share under this new share repurchase program as of december 312015",
+      "program": "divide(8.6, const_10)",
+      "answer": "0.86"
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-2",
+      "rank": 86246420,
+      "question": "how much more money was expensed per outstanding basic weighted-average share in the year ended dec 31 , 2013 compared to the year ended dec 31 , 2014?",
+      "program": "divide(156.6, 17.3), divide(170.6, 21.9), subtract(#0, #1)",
+      "answer": "1.26207"
+    },
+    {
+      "id": "IP/2006/page_30.pdf-1",
+      "rank": 86783359,
+      "question": "brazilian paper sales represented what percentage of printing papers in 2006?",
+      "program": "divide(496, 6930)",
+      "answer": "0.07157"
+    },
+    {
+      "id": "RSG/2009/page_140.pdf-2",
+      "rank": 90684174,
+      "question": "what was the percentage decline in the weighted- average estimated fair values of stock options from 2007 to 2008",
+      "program": "subtract(4.36, 6.49), divide(#0, 6.49)",
+      "answer": "-0.3282"
+    },
+    {
+      "id": "C/2018/page_175.pdf-2",
+      "rank": 91575649,
+      "question": "what percentage of total principal transactions revenue in 2016 was do to interest rate risks?",
+      "program": "divide(4229, 7857)",
+      "answer": "0.53825"
+    },
+    {
+      "id": "BLK/2017/page_121.pdf-3",
+      "rank": 97309466,
+      "question": "what is the percentage change in the carrying value of company's interest in pennymac from 2016 to 2017?",
+      "program": "subtract(342, 301), divide(#0, 301)",
+      "answer": "0.13621"
+    },
+    {
+      "id": "PNC/2015/page_93.pdf-2",
+      "rank": 98197429,
+      "question": "for principle and interest products , what percent of the total was due in 2020 and thereafter?",
+      "program": "divide(5758, 7975)",
+      "answer": "0.72201"
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-3",
+      "rank": 103024039,
+      "question": "if the anti-dilutive common shares were not excluded from the diluted weighted-average shares outstanding for the year ended december 31 , 2015 , what would the total diluted weighted-average shares outstanding be , in millions?",
+      "program": "add(171.8, 0.4)",
+      "answer": "172.2"
+    },
+    {
+      "id": "IP/2006/page_30.pdf-2",
+      "rank": 103560978,
+      "question": "brazilian paper sales represented what percentage of printing papers in 2005?",
+      "program": "divide(465, 7170)",
+      "answer": "0.06485"
+    },
+    {
+      "id": "GPN/2014/page_92.pdf-1",
+      "rank": 112609820,
+      "question": "what is the total value of securities issued and approved by security holders , ( in millions ) ?",
+      "program": "multiply(766801, 40.85), divide(#0, const_1000000)",
+      "answer": "31.32382"
+    },
+    {
+      "id": "PNC/2007/page_92.pdf-1",
+      "rank": 112944804,
+      "question": "at december 31 , 2007 , what percentage of the $ 14.4 billion of home equity loans ( included in 201cconsumer 201d in the table above ) had a loan-to-value ratio greater than 90%.?",
+      "program": "divide(2.7, 14.4)",
+      "answer": "0.1875"
+    },
+    {
+      "id": "ALLE/2015/page_24.pdf-1",
+      "rank": 113373495,
+      "question": "considering the year 2015 , what is the percentage of reserves for environmental matters related to remediation of sites?",
+      "program": "divide(2.8, 15.2)",
+      "answer": "0.18421"
+    },
+    {
+      "id": "BLK/2017/page_121.pdf-2",
+      "rank": 114087085,
+      "question": "what percent does the unamortized discount and debt issuance costs reduce the carrying amount by?",
+      "program": "divide(27, 5041)",
+      "answer": "0.00536"
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-3",
+      "rank": 116687610,
+      "question": "what is the percentage increase from beginning to end of 2008 in unrecognized tax benefits?",
+      "program": "subtract(148.8, 134.8), divide(#0, 134.8), multiply(#1, const_100)",
+      "answer": "10.38576"
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-1",
+      "rank": 117874677,
+      "question": "what was the percent of the decline in amortization expense for other intangible assets from 2016 to 2017",
+      "program": "subtract(75, 77), divide(#0, 77)",
+      "answer": "-0.02597"
+    },
+    {
+      "id": "IP/2006/page_30.pdf-3",
+      "rank": 120338597,
+      "question": "what was the profit margin of printing papers in 2005",
+      "program": "divide(473, 7170)",
+      "answer": "0.06597"
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-1",
+      "rank": 124540060,
+      "question": "what portion of the total 2015 restructuring programs is related to termination benefits?",
+      "program": "divide(5009, 6304)",
+      "answer": "0.79457"
+    },
+    {
+      "id": "C/2018/page_175.pdf-4",
+      "rank": 125130887,
+      "question": "what was the percent of the principal transactions revenue associated with foreign exchange risks in 2017",
+      "program": "divide(2435, 9475)",
+      "answer": "0.25699"
+    },
+    {
+      "id": "AMT/2014/page_149.pdf-1",
+      "rank": 125305620,
+      "question": "was the change in asset impairment charges between 2014 and 2013 in us$ m?",
+      "program": "subtract(11.2, 15.9)",
+      "answer": "-4.7"
+    },
+    {
+      "id": "ALLE/2015/page_24.pdf-2",
+      "rank": 130151114,
+      "question": "considering the year 2014 , what are the variation between the expenses for environmental remediation at sites and the reserves environmental matters , in millions?",
+      "program": "subtract(8.8, 2.9)",
+      "answer": "5.9"
+    },
+    {
+      "id": "IPG/2008/page_72.pdf-2",
+      "rank": 133465229,
+      "question": "what is the net change in the balance of unrecognized tax benefits during 2008?",
+      "program": "subtract(148.8, 134.8)",
+      "answer": "14"
+    },
+    {
+      "id": "AES/2002/page_128.pdf-2",
+      "rank": 135306672,
+      "question": "what was the decrease in rental expense ( millions ) for operating leases in continuing operations from 2003 to 2003?",
+      "program": "subtract(31, 30)",
+      "answer": "1"
+    },
+    {
+      "id": "CDW/2015/page_93.pdf-1",
+      "rank": 136579277,
+      "question": "what was the average amount expensed by the company for the company contributions to the profit sharing and other savings plans from 2013 to 2015 in millions",
+      "program": "add(19.8, 21.9), add(17.3, #0), divide(#1, const_3)",
+      "answer": "19.66667"
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-2",
+      "rank": 142947848,
+      "question": "what is the percentage decrease in the minimum contribution to benefit pension plans due to the relied act?",
+      "program": "subtract(460, 525), divide(#0, 525)",
+      "answer": "-0.12381"
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-3",
+      "rank": 150366720,
+      "question": "what is the current ratio of blockbuster at the point of acquisition?",
+      "program": "divide(153258, 86080)",
+      "answer": "1.78041"
+    },
+    {
+      "id": "AES/2002/page_128.pdf-3",
+      "rank": 152084291,
+      "question": "what percentage of total future minimum lease commitments is due in 2003?",
+      "program": "divide(30, 169)",
+      "answer": "0.17751"
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-3",
+      "rank": 158095298,
+      "question": "what would the total restructuring charges be without including prior years of 2014?",
+      "program": "add(170, 7819)",
+      "answer": "7989"
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-3",
+      "rank": 159725467,
+      "question": "what is the total amount expected to be paid for pensions and retiree medical and other in the next 12 months?",
+      "program": "add(574, 173)",
+      "answer": "747"
+    },
+    {
+      "id": "GPN/2014/page_92.pdf-2",
+      "rank": 162942677,
+      "question": "what is the total value of securities approved by security holders but net yer issued , ( in millions ) ?",
+      "program": "multiply(8945694, 40.85), divide(#0, const_1000000)",
+      "answer": "365.4316"
+    },
+    {
+      "id": "PNC/2007/page_92.pdf-2",
+      "rank": 163277661,
+      "question": "for 2007 and 2006 in millions , what was average residential mortgage loan balance?",
+      "program": "add(9557, 6337), divide(#0, const_2)",
+      "answer": "7947"
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-2",
+      "rank": 167144339,
+      "question": "hard assets were what percent of the total blockbuster purchase price?",
+      "program": "divide(28663, 233584)",
+      "answer": "0.12271"
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-2",
+      "rank": 174872917,
+      "question": "what portion of the total 2015 restructuring programs is related to facility closer costs?",
+      "program": "divide(231, 6304)",
+      "answer": "0.03664"
+    },
+    {
+      "id": "AMT/2014/page_149.pdf-2",
+      "rank": 175638477,
+      "question": "what would 2014 contingent consideration be without the foreign currency translation adjustment , in millions?",
+      "program": "add(4934, 28524)",
+      "answer": "33458"
+    },
+    {
+      "id": "CB/2008/page_229.pdf-4",
+      "rank": 176507326,
+      "question": "in 2009 what was the ratio of the statutory capital and surplus to the statutory net income of the bermuda subsidiaries",
+      "program": "divide(7001, 684)",
+      "answer": "10.23538"
+    },
+    {
+      "id": "DISH/2011/page_122.pdf-1",
+      "rank": 183921958,
+      "question": "what is the working capital of blockbuster at the point of acquisition?",
+      "program": "subtract(153258, 86080)",
+      "answer": "67178"
+    },
+    {
+      "id": "AES/2002/page_128.pdf-1",
+      "rank": 185639529,
+      "question": "total discontinued operations represent what percentage of total future minimum lease commitments?",
+      "program": "divide(14, 169)",
+      "answer": "0.08284"
+    },
+    {
+      "id": "AMAT/2013/page_37.pdf-2",
+      "rank": 192935107,
+      "question": "what is the total return if 100000 are invested in s&p500 in 2008 and sold in 2011?",
+      "program": "subtract(138.29, const_100), divide(100000, const_100), multiply(#1, #0)",
+      "answer": "38290"
+    },
+    {
+      "id": "AAL/2010/page_72.pdf-1",
+      "rank": 193280705,
+      "question": "from 2016-2020 what was the ratio of the pension to the retiree medical and other service costs",
+      "program": "divide(4959, 989)",
+      "answer": "5.01416"
+    },
+    {
+      "id": "AMAT/2013/page_37.pdf-1",
+      "rank": 209712726,
+      "question": "what is the total return if 100000 are invested in applied materials in 2008 and sold in 2011?",
+      "program": "divide(100000, const_100), subtract(118.21, const_100), multiply(#0, #1)",
+      "answer": "18210"
+    }
+  ]
+}
