@@ -1,5 +1,7 @@
 # SUTRA — Living, verifiable knowledge
 
+> **Active execution queue reset (2026-11-26):** The user retired the 379 remaining SUTRA1 pending tasks. [CHECKLIST.md](CHECKLIST.md) is now the sole remaining-work execution queue. “Continue with SUTRA” means reconcile current V2 remote state and execute the next dependency-ready unchecked item from that checklist; V1 pending/next items are historical and must not be resumed by default.
+
 SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
 [Binding product mandate](LIVING-KNOWLEDGE.md) · [Open model connectivity](OPEN-MODEL-CONNECTIVITY.md) · [Continuation](CONTINUE.md) · [Checklist](CHECKLIST.md) · [Roadmap](ROADMAP.md) · [Sessions](SESSIONS.md) · [Machine progress](progress.json)
@@ -18,7 +20,7 @@ Active direction approved 2026-11-25. SUTRA compiles explicit claims into domain
 
 [Migration](MIGRATION.md) · [Continuation procedure](CONTINUE.md) · [Plan](PLAN.md) · [Checklist](CHECKLIST.md) · [Active phased roadmap](ROADMAP.md) · [Session evidence](SESSIONS.md) · [Kernel](../../packages/sutra-knowledge/README.md) · [Proof Capsule](PROOF_CAPSULE.md) · [Conditional diagnosis](DIAGNOSIS.md) · [Guided challenge](DEMO.md) · [World trace](WORLD_TRACE.md) · [Assumption sensitivity](ASSUMPTIONS.md) · [Offline verifier](OFFLINE_VERIFIER.md) · [Root impact](ROOT_IMPACT.md) · [Wire parity](WIRE_PARITY.md)
 
-Resume on branch `sutra/v2-knowledge-compiler`. “Continue with SUTRA” means continue the latest unfinished SUTRA work across sessions: resolve the current remote HEAD/PR and intervening CI first, then follow [CONTINUE.md](CONTINUE.md), implement the next dependency-ready work, and keep code, checklist, roadmap, progress cursor and session evidence synchronized as the work changes. Do not stop after merely reporting status when independent authorized engineering remains. The SUTRA1 workspace in `docs/sutra/` is preserved and its continuation/checkpoint/release logic and reusable source remain inherited context; its old learner checklist is historical input, not the SUTRA2 priority queue.
+Resume from the actual current V2 remote state, not a hard-coded branch SHA. “Continue with SUTRA” follows [CONTINUE.md](CONTINUE.md) and the sole active [remaining-work checklist](CHECKLIST.md): reconcile central/child/validation heads and exact CI, then implement the next dependency-ready unchecked item. The SUTRA1 workspace remains historical evidence and reusable source only; its 379 former pending tasks have been retired from execution.
 
 First candidate implements exact rational/dimensional operations, typed conditional constraints, a bounded dependency DAG, digest-bound results, selective calculation reuse and same-implementation replay. This is a narrow executable slice, not yet an agent network or an end-user website. All new capability credit requires actual tests and exact source evidence.
 
