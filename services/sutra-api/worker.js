@@ -1,3 +1,4 @@
+import {publicWebResearchStatus} from './web-research-config.js';
 import {handleWebResearch} from './web-research.js';
 import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,isJsonRequest,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
@@ -13,7 +14,7 @@ const sourceTools=createSourceTools(activeContent.sources);
 const bindingKeys=['SUTRA_CONTENT_VERSION','SUTRA_CONTENT_MODE','SUTRA_CATALOG_SHA256','SUTRA_TRANSCRIPT_SHA256'];
 export function contentBindingMatches(env={}){
  const configured=bindingKeys.some(key=>env[key]!==undefined);
- const required=env.SUTRA_ENABLE_INFERENCE==='true'||env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
+ const required=env.SUTRA_ENABLE_INFERENCE==='true'||env.SUTRA_ENABLE_WEB_RESEARCH==='true'||env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
  if(!configured)return !required;
  if(bindingKeys.some(key=>typeof env[key]!=='string'||!env[key]))return false;
  return env.SUTRA_CONTENT_VERSION===activeContent.profile.contentVersion&&env.SUTRA_CONTENT_MODE===activeContent.profile.mode&&
@@ -143,8 +144,8 @@ export default {async fetch(request,env){
  else if(path==='/api/web/search'||path==='/api/web/read')response=await handleWebResearch(request,env);
  else if(path==='/api/status'&&request.method==='GET'){
   let contractId=null;if(inferenceStatus(env)){try{contractId=await inferenceContractId(env);}catch{}}
-  const configured=!!contractId;
-  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode,inferenceContractId:contractId}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
+  const configured=!!contractId,webResearch=configured?publicWebResearchStatus(env):'disabled';
+  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode,inferenceContractId:contractId}:{}),sourceTools:'catalog',webResearch,content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
  }
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));

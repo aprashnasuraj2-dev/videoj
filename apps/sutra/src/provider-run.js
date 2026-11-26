@@ -1,3 +1,4 @@
+import {createProviderWebTools} from './provider-web-tools.js';
 import {parseUniqueJson} from '../../../packages/sutra-consent/strict-json.js';
 import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
@@ -60,14 +61,14 @@ function postOptions(options){
 // Own a closed primitive consent record before discovery or a callback can run.
 export function snapshotApprovedContract(value){
  try{
-  const keys=['backend','model','inferenceContractId','router','content','graphUrl','frontMan','graphSha256'];
+  const keys=['backend','model','inferenceContractId','router','content','graphUrl','frontMan','graphSha256','webResearch'];
   const innerKeys=['profileSha256','catalogSha256','transcriptSha256','contentVersion','contentMode','primarySourceId'];
   const data=snapshotDataRecord(value,keys.length),inner=snapshotDataRecord(data.content,innerKeys.length);
   if(Object.keys(data).length!==keys.length||Object.keys(inner).length!==innerKeys.length||
      keys.some(k=>k!=='content'&&(typeof data[k]!=='string'||!data[k]||data[k].length>2048))||
      innerKeys.some(k=>typeof inner[k]!=='string'||!inner[k]||inner[k].length>256))throw Error();
   const hash=v=>/^[a-f0-9]{64}$/.test(v);
-  if(!['hosted','self_hosted'].includes(data.backend)||!modelPattern.test(data.model)||data.model==='mock-1'||
+  if(!['hosted','self_hosted'].includes(data.backend)||!modelPattern.test(data.model)||data.model==='mock-1'||!['configured','disabled'].includes(data.webResearch)||
      ![data.inferenceContractId,data.graphSha256,inner.profileSha256,inner.catalogSha256,inner.transcriptSha256].every(hash))throw Error();
   const content=Object.freeze(Object.fromEntries(innerKeys.map(k=>[k,inner[k]])));
   return Object.freeze(Object.fromEntries(keys.map(k=>[k,k==='content'?content:data[k]])));
@@ -121,8 +122,8 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
  try{
   const data=await readPublicJson({url:origin+'/api/status',origin,fetchImpl,signal:controller.signal,maxBytes:4096});
-  if(data.sourceTools!=='catalog'||data.factualTruth!=='unverified'||!['configured','disabled'].includes(data.inference)||!plain(data.content)||Object.keys(data.content).some(k=>!['mode','contentVersion','catalogSha256','primarySourceId'].includes(k)))throw Error('Invalid status');
-  const allowedDisabled=['inference','sourceTools','content','factualTruth'];
+  if(data.sourceTools!=='catalog'||data.factualTruth!=='unverified'||!['configured','disabled'].includes(data.inference)||!['configured','disabled'].includes(data.webResearch)||!plain(data.content)||Object.keys(data.content).some(k=>!['mode','contentVersion','catalogSha256','primarySourceId'].includes(k)))throw Error('Invalid status');
+  const allowedDisabled=['inference','sourceTools','webResearch','content','factualTruth'];
   const allowedConfigured=[...allowedDisabled,'model','routerBase','publisherFunded','byok','backend','inferenceContractId'];
   const allowed=data.inference==='disabled'?allowedDisabled:allowedConfigured;
   if(Object.keys(data).some(k=>!allowed.includes(k)))throw Error('Unexpected status metadata');
@@ -137,15 +138,16 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   if(!plain(router)||Object.keys(router).some(k=>!['base_url','mock','publisher_funded'].includes(k))||router.base_url!==origin+data.routerBase||router.mock!==false||router.publisher_funded!==true)throw Error('Published router does not match configured provider');
   if(manifest.coded_tools||manifest.actions||manifest.deployment?.direct_byok!==false)throw Error('Published deployment contradicts no-BYOK policy');
   if(!Array.isArray(manifest.networks))throw Error('Missing published networks');
-  const entries=manifest.networks.filter(x=>plain(x)&&x.name==='source_learner');
-  if(entries.length!==1||typeof entries[0].hocon!=='string'||typeof entries[0].front_man!=='string')throw Error('Missing exact source learner');
+  const selectedNetwork=data.webResearch==='configured'?'research_learner':'source_learner';
+  const entries=manifest.networks.filter(x=>plain(x)&&x.name===selectedNetwork);
+  if(entries.length!==1||typeof entries[0].hocon!=='string'||typeof entries[0].front_man!=='string')throw Error('Missing exact learner network');
   const graphUrl=new URL(entries[0].hocon,origin+'/agents/');
   if(graphUrl.origin!==origin||graphUrl.username||graphUrl.password||graphUrl.search||graphUrl.hash||!graphUrl.pathname.startsWith('/agents/'))throw Error('Invalid source learner URL');
   const graph=await readPublicJson({url:graphUrl.href,origin,fetchImpl,signal:controller.signal,maxBytes:65536});
   if(!plain(graph.llm_config)||Object.keys(graph.llm_config).some(k=>k!=='model_name')||graph.llm_config.model_name!==data.model)throw Error('Published model does not match configured provider');
-  const published={definition:graph,name:'source_learner',frontMan:entries[0].front_man,artifacts:{manifest:origin+'/agents/agent-manifest.json',definition:graphUrl.href}};
-  compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true});
-  const contract=Object.freeze({backend:data.backend,model:data.model,inferenceContractId:data.inferenceContractId,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph)});
+  const published={definition:graph,name:selectedNetwork,frontMan:entries[0].front_man,artifacts:{manifest:origin+'/agents/agent-manifest.json',definition:graphUrl.href}};
+  compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true,allowWebTools:data.webResearch==='configured'});
+  const contract=Object.freeze({backend:data.backend,model:data.model,inferenceContractId:data.inferenceContractId,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph),webResearch:data.webResearch});
   controller.signal.throwIfAborted();
   return {state:'configured',model:data.model,backend:data.backend,contract,published};
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
@@ -158,6 +160,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
  assertContractOrigin(contract,origin);
  if(typeof fetchImpl!=='function'||typeof onPrecondition!=='function'||typeof onModelDispatch!=='function')throw contractError();
  const permitted=new Set([origin+'/api/v1/chat/completions',origin+'/api/source-tools']);
+ if(contract.webResearch==='configured'){permitted.add(origin+'/api/web/search');permitted.add(origin+'/api/web/read');}
  return async(url,options={})=>{
   if(typeof url!=='string'||!permitted.has(url))throw Error('PROVIDER_ROUTE');
   const {body,signal}=postOptions(options);
@@ -165,8 +168,9 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
   // Reconstruct the complete header contract instead of forwarding arbitrary
   // adapter metadata or trying to enumerate every possible credential header.
   const headers=new Headers({'Content-Type':'application/json','X-Sutra-Catalog-Sha256':contract.content.catalogSha256});
-  if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
-  else{headers.set('Accept','application/json, text/event-stream');headers.set('MCP-Protocol-Version','2025-06-18');}
+  if(target.pathname==='/api/v1/chat/completions'||target.pathname.startsWith('/api/web/'))headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
+  if(target.pathname==='/api/source-tools'){headers.set('Accept','application/json, text/event-stream');headers.set('MCP-Protocol-Version','2025-06-18');}
+  else headers.set('Accept','application/json');
   signal?.throwIfAborted();
   let response,received,finished=false;
   const dispose=value=>{try{void Promise.resolve(value?.body?.cancel()).catch(()=>{});}catch{}};
@@ -223,14 +227,15 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   catch(error){if(controller.signal.aborted||error?.code==='CONTENT_CHANGED')throw error;throw contractError();}
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
-  const result=await runNetwork({...fresh.published,request:question,model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)}});
+  const webTools=approvedContract.webResearch==='configured'?createProviderWebTools({origin,fetchImpl:boundFetch}):undefined;
+  const result=await runNetwork({...fresh.published,request:question,model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)},...(webTools?{webTools}:{})});
   if(contractRejected)throw Error('Inference configuration precondition rejected.');
   if(catalogRejected)throw Error('Catalog precondition rejected.');
   const evidence=receiptCollector.snapshot();
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
   if(!evidence.receipts.length){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
-  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:usage.snapshot(),truthStatus:'unverified'};
+  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch:result.webResearch??null,usage:usage.snapshot(),truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';

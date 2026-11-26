@@ -17,6 +17,12 @@
       "front_man": "learner",
       "hocon": "./v/bcf648decc4f80ab57279b4fa72dae0c80b26923/linked_learner.network.json",
       "description": "Opt-in symbolic guide link; closed default policy, no deployed peer asserted."
+    },
+    {
+      "name": "research_learner",
+      "front_man": "learner",
+      "hocon": "./v/2b9d212fc1ff233a06cd35e1e571628e4622ee87/research_learner.network.json",
+      "description": "Model-directed lesson evidence plus optional bounded public web research; retrieved claims remain unverified."
     }
   ],
   "allowed_peers": [],
