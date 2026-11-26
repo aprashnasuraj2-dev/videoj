@@ -44,17 +44,18 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
   observedAt:receipt.retrievedAt,dateBasis:videoClaim.dateBasis
  }:null;
  const controls=node('div','actions');
- const compare=node('button','primary','Inspect available evidence');compare.dataset.i18n='comparison.inspect';
- const conflict=node('button',null,'Demonstrate a synthetic conflict');conflict.dataset.i18n='comparison.conflict';
- compare.type=conflict.type='button';
- controls.append(compare,conflict);
+ const compare=node('button','primary','Inspect available evidence');compare.dataset.i18n='comparison.inspect';compare.type='button';
+ const developmentConflict=import.meta.env.DEV?syntheticComparison:null;
+ const conflict=developmentConflict?node('button',null,'Demonstrate development-only synthetic conflict'):null;
+ if(conflict){conflict.type='button';conflict.dataset.devFixture='synthetic-conflict';controls.append(compare,conflict);}
+ else controls.append(compare);
  const status=node('p','comparison-status');
  status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const cards=node('div','comparison-cards');
  const seekStatus=node('p','comparison-seek-status');
  seekStatus.setAttribute('role','status');
  const nextStep=node('p','comparison-next-step');nextStep.setAttribute('role','note');
- const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The separate conflict demonstration remains hypothetical.');note.dataset.i18n='comparison.note';
+ const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. Missing evidence remains missing; disagreement is not resolved by source consistency alone.');note.dataset.i18n='comparison.note';
  host.replaceChildren(controls,status,nextStep,cards,seekStatus,note);
  let activeMode='available',generation=0,operation=0,activeAction=null;
  const invalidateAction=()=>{activeAction?.controller.abort();activeAction=null;operation++;};
@@ -155,7 +156,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  }
  function render(){
   generation++;invalidateAction();
-  const comparison=compareClaimPair(activeMode==='available'?{video:local,guide:guideClaim}:syntheticComparison);
+  const comparison=compareClaimPair(activeMode==='conflict'&&developmentConflict?developmentConflict:{video:local,guide:guideClaim});
   const videoCard=card('Video-side source',comparison.video),guideCard=card('Written guide-side source',comparison.guide);
   videoCard.querySelector('h3').dataset.i18n='comparison.video';guideCard.querySelector('h3').dataset.i18n='comparison.guide';
   cards.replaceChildren(videoCard,guideCard);
@@ -175,11 +176,13 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
   return comparison.status;
  }
  compare.addEventListener('click',()=>{
-  activeMode='available';compare.classList.add('primary');conflict.classList.remove('primary');render();
+  activeMode='available';compare.classList.add('primary');conflict?.classList.remove('primary');render();
  });
- conflict.addEventListener('click',()=>{
+ if(conflict)conflict.addEventListener('click',()=>{
   activeMode='conflict';conflict.classList.add('primary');compare.classList.remove('primary');render();
  });
  render();
- return {showAvailable(){activeMode='available';render();},showConflict(){activeMode='conflict';render();},cancelPending(){if(activeAction){invalidateAction();seekStatus.textContent='Comparison action cancelled on navigation. No successful result is claimed.';}}};
+ const api={showAvailable(){activeMode='available';render();},cancelPending(){if(activeAction){invalidateAction();seekStatus.textContent='Comparison action cancelled on navigation. No successful result is claimed.';}}};
+ if(developmentConflict)api.showConflict=()=>{activeMode='conflict';render();};
+ return api;
 }
