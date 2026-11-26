@@ -118,10 +118,11 @@ test('judging availability runbook records official end conversion and avoids fa
   'Manual recovery sequence after an authorized public release',
   'No scheduled-monitoring claim',
   'P089-04/P089-05 remain open',
-  'does not authorize production mutation'
+  'production mutation'
  ])assert.ok(note.includes(marker),marker);
  assert.match(note,/no automated judging-period monitor, pager, scheduled health check or background recovery job is claimed/i);
  assert.match(note,/no authorized live funded provider sample\/economics yet/i);
  assert.match(note,/no public SUTRA production origins/i);
+ assert.match(note,/does \*\*not\*\* authorize production mutation/i);
  assert.doesNotMatch(note,/rollback (?:was|has been) successfully rehearsed/i);
 });
