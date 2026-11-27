@@ -4,7 +4,7 @@ import {createHistoryHostClient} from './history-host.js';
 import {openDraftCheckpoint,exportDraftCheckpoint} from '../../../packages/sutra-knowledge/draft-checkpoint.js';
 import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
-import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
+import {reviewedContractHandoff,investigationHandoff,researchSourceHandoff} from './workspace-handoff.js';
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
 import {makeEvidencePinCard,readEvidencePinCard} from '../../../packages/sutra-knowledge/evidence-checkpoint-pins.js';
 import {exportEvidenceRecovery,openEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
@@ -452,7 +452,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|BINDING_SUGGESTION|MAPPING_REVIEW)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|PROVENANCE|BINDING_SUGGESTION|MAPPING_REVIEW)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -468,11 +468,15 @@ async function loadGuidedCase(domain,corrected,ticket){
 for(const domain of ['finance','engineering','statistics','two-groups'])for(const corrected of [false,true])by('sample-'+domain+(corrected?'-corrected':'')).onclick=()=>work(ticket=>loadGuidedCase(domain,corrected,ticket));
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
 by('source-add').onclick=()=>work(async ticket=>{
- const next=[...sources,{id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value}];
- await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;
- invalidate('Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
+ const offer=researchSourceHandoff.read(),row={id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value};
+ if(offer&&(offer.id!==row.id||offer.text!==row.text))throw Error('PROVENANCE_STALE');
+ if(offer?.provenance)row.provenance=offer.provenance;
+ const next=[...sources,row];
+ await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;researchSourceHandoff.clear();
+ invalidate(row.provenance?'Exact research provenance retained in the source contract; no source truth established.':'Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
  for(const id of ['source-id','lineage','source-text'])by(id).value='';
 });
+for(const id of ['source-id','source-text'])by(id).addEventListener('input',()=>{if(researchSourceHandoff.read()){researchSourceHandoff.clear();status('draft','Edited research offer: acquisition provenance is not carried to manual text. Re-stage the original to retain it.');}});
 by('source-revise-pick').onchange=()=>{clearWithdrawalPreview();by('source-revise-text').value=sources.find(s=>s.id===by('source-revise-pick').value)?.text??'';control();};
 by('source-withdraw-preview').onclick=()=>work(async ticket=>{
  clearWithdrawalPreview();
@@ -849,7 +853,7 @@ by('run').onclick=()=>work(async ticket=>{
 function download(data,name,type){const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-reviewed-workspace.json','application/json');};
 by('export-pin').onclick=()=>{if(current&&!busy)download(current.pin+'\n','sutra-reviewed-workspace.sha256','text/plain');};
-by('reset').onclick=()=>{if(busy)return;sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
+by('reset').onclick=()=>{if(busy)return;researchSourceHandoff.clear();sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
 function nextCandidateId(){let i=1;while(stagedProposals.some(p=>p.id==='proposal_'+i))i++;return 'proposal_'+i;}
 function renderBatch(){
  by('candidate-id').value=nextCandidateId();by('correspondence').checked=false;

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Independent closed reviewed compiler replay; no model, network, or semantic truth authority."""
 import json,re,sys,unicodedata
+from datetime import datetime
 from pathlib import Path
 from fractions import Fraction
 from copy import deepcopy
@@ -35,6 +36,36 @@ def span(s,docs,numeric=False):
         def continuation(c):return bool(c) and (unicodedata.category(c)[0] in ('L','N') or c in '.,/%+-')
         require(not continuation(before) and not continuation(after))
     return dict(sourceId=s['sourceId'],start=s['start'],end=s['end'],quote=found,sourceDigest=digest,declaredLineage=lineage,origin=origin)
+def validate_provenance(p,t,digest):
+    names=('version','reportPin','documentId','sourceDigest','rawDigest','requestedUrl','finalUrl','retrievedAt','mediaType','parser','extractionTruncated','pages','passages')
+    require(keys(p,names) and type(p['version']) is int and p['version']==1 and pin(p['reportPin']) and pin(p['rawDigest']) and pin(p['sourceDigest']) and p['sourceDigest']==digest)
+    require(isinstance(p['documentId'],str) and re.fullmatch(r'source_[1-9][0-9]{0,3}',p['documentId']))
+    def url(u):
+        return isinstance(u,str) and len(u.encode('utf-16-le'))//2<=2048 and re.fullmatch(r'https://[A-Za-z0-9.-]+(?::[0-9]{1,5})?(?:[/?][^\x00-\x20\x7f#\\]*)?',u) is not None
+    require(url(p['requestedUrl']) and url(p['finalUrl']))
+    ts=p['retrievedAt'];require(isinstance(ts,str) and re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z',ts))
+    datetime.strptime(ts,'%Y-%m-%dT%H:%M:%S.%fZ')
+    require(p['mediaType'] in ('text/plain','text/html','text/csv','application/json','application/pdf') and isinstance(p['parser'],str) and re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._/-]{0,79}',p['parser']) and type(p['extractionTruncated']) is bool)
+    require(isinstance(p['pages'],list) and len(p['pages'])<=128 and isinstance(p['passages'],list) and len(p['passages'])<=64)
+    raw=t.encode('utf-16-le');n=len(raw)//2
+    def cut(start,end,empty=False):
+        require(bounded_int(start) and bounded_int(end) and 0<=start<=end<=n and (empty or start<end))
+        prefix=raw[:start*2].decode('utf-16-le');quote=raw[start*2:end*2].decode('utf-16-le');raw[end*2:].decode('utf-16-le')
+        return prefix,quote
+    prior=0;last_page=0
+    for row in p['pages']:
+        require(keys(row,('page','start','end')) and bounded_int(row['page']) and row['page']>last_page and row['start']>=prior)
+        cut(row['start'],row['end'],True);prior=row['end'];last_page=row['page']
+    require(bool(p['pages'])==(p['mediaType']=='application/pdf'))
+    seen=set()
+    for row in p['passages']:
+        require(keys(row,('start','end','byteStart','byteEnd','page','quote')))
+        prefix,quote=cut(row['start'],row['end'])
+        require(bounded_int(row['byteStart']) and bounded_int(row['byteEnd']) and row['byteStart']==len(prefix.encode('utf-8')) and row['byteEnd']==len((prefix+quote).encode('utf-8')) and row['quote']==quote and len(quote.encode('utf-16-le'))//2<=4000)
+        pair=(row['start'],row['end']);require(pair not in seen);seen.add(pair)
+        if p['mediaType']=='application/pdf':require(type(row['page']) is int and any(x['page']==row['page'] and x['start']<=row['start'] and x['end']>=row['end'] for x in p['pages']))
+        else:require(row['page'] is None)
+    return p
 def host(contract,p):
     require(pin(p) and rawhash(contract)==p and 1<=len(contract.encode('utf-8'))<=262144)
     c=bounded_load(contract,262144,9)
@@ -44,8 +75,9 @@ def host(contract,p):
         require(i not in docs and rawhash(t)==d);docs[i]=(t.encode('utf-8'),d,l,o)
     add('question',c['question']['text'],c['question']['digest'],'user_question','user_statement')
     for s in c['sources']:
-        require(keys(s,('id','text','digest','lineage')) and ident(s['id']) and s['id']!='question' and ident(s['lineage']) and text(s['text'],16384) and pin(s['digest']))
+        require((keys(s,('id','text','digest','lineage')) or keys(s,('id','text','digest','lineage','provenance'))) and ident(s['id']) and s['id']!='question' and ident(s['lineage']) and text(s['text'],16384) and pin(s['digest']))
         add(s['id'],s['text'],s['digest'],s['lineage'],'source_assertion')
+        if 'provenance' in s:validate_provenance(s['provenance'],s['text'],s['digest'])
     bindings={};locations=set()
     for b in c['bindings']:
         require(keys(b,('id','span','type')) and ident(b['id']) and b['id'] not in bindings)

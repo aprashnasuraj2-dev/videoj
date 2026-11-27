@@ -95,7 +95,7 @@ function impactFromReports(beforeText,beforePin,afterText,afterPin,before,after,
  const b1=parse(v1.batchText,5),b2=parse(v2.batchText,5),p1=mapBy(b1.proposals),p2=mapBy(b2.proposals);
  const a1=parse(v1.annotationText),a2=parse(v2.annotationText),ann1=mapBy(a1.candidates),ann2=mapBy(a2.candidates);
  const questionChanged=c1.question.digest!==c2.question.digest;
- const sourceChanges=changes(c1.sources,c2.sources,s=>({digest:s.digest,lineage:s.lineage}));
+ const sourceChanges=changes(c1.sources,c2.sources,s=>({digest:s.digest,lineage:s.lineage,provenance:s.provenance??null}));
  const bindingChanges=changes(c1.bindings,c2.bindings);
  const roots=[...sourceChanges.map(x=>sourceNode(x.id)),...bindingChanges.map(x=>bindingNode(x.id)),...(questionChanged?[sourceNode('question')]:[])];
  const affectedBefore=descendants(before.graph,roots),affectedAfter=descendants(after.graph,roots);

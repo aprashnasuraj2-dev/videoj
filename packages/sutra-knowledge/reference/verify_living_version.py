@@ -127,7 +127,7 @@ def compare(before_text,before_pin,after_text,after_pin):
     p1=indexed(check_wire(v1['batchText'],5)['proposals']);p2=indexed(check_wire(v2['batchText'],5)['proposals'])
     a1=indexed(check_wire(v1['annotationText'],12)['candidates']);a2=indexed(check_wire(v2['annotationText'],12)['candidates'])
     question=c1['question']['digest']!=c2['question']['digest']
-    source=diff(c1['sources'],c2['sources'],lambda s:(s['digest'],s['lineage']))
+    source=diff(c1['sources'],c2['sources'],lambda s:(s['digest'],s['lineage'],s.get('provenance')))
     binding=diff(c1['bindings'],c2['bindings'])
     roots=['source:'+s['id'] for s in source]+['binding:'+b['id'] for b in binding]+(['source:question'] if question else [])
     impacted=descendants(before['graph'],roots)|descendants(after['graph'],roots)

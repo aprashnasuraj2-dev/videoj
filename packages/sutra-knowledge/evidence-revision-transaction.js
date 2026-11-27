@@ -40,7 +40,7 @@ export async function prepareEvidenceRevision(versionText,versionPin,planText,pl
  const affected=new Map(contract.bindings.filter(b=>operations.has(b.span.sourceId)).map(b=>[b.id,b]));
  const lost=new Set([...affected.keys()].filter(id=>!reselected.has(id)));
  const nextContract={...contract,
-  sources:contract.sources.flatMap(s=>{const op=operations.get(s.id);return !op?[s]:op.kind==='withdraw'?[]:[{...s,text:op.replacementText,digest:op.replacementDigest}];}),
+  sources:contract.sources.flatMap(s=>{const op=operations.get(s.id);return !op?[s]:op.kind==='withdraw'?[]:[{id:s.id,text:op.replacementText,digest:op.replacementDigest,lineage:s.lineage}];}),
   bindings:contract.bindings.flatMap(b=>!affected.has(b.id)?[b]:reselected.has(b.id)?[reselected.get(b.id)]:[])};
  const contractText=JSON.stringify(nextContract),contractPin=await casePin(contractText);
  // The existing compiler is the sole span, token, duplicate span and type authority.

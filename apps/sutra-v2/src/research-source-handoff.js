@@ -1,5 +1,6 @@
 // Browser-only, no new network authority. A report digest is integrity evidence,
 // not publisher authentication. Only exact extracted source text enters the draft.
+import {validateSourceProvenance} from '../../../packages/sutra-knowledge/source-provenance.js';
 const pin=/^sha256:[a-f0-9]{64}$/;
 const fail=code=>{throw Error('RESEARCH_HANDOFF_'+code);};
 const encoder=new TextEncoder();
@@ -14,5 +15,8 @@ export async function prepareAutonomousSourceCandidate({report,reportPin,sourceI
  let parsed;try{parsed=new URL(url);}catch{fail('SOURCE_URL');}
  if(parsed.protocol!=='https:'||parsed.username||parsed.password)fail('SOURCE_URL');
  if(!pin.test(d.textDigest??'')||await digest(text)!==d.textDigest)fail('SOURCE_PIN');
- return Object.freeze({id:'research_'+d.textDigest.slice(7,39),lineage:'unverified_external',text,sourceId,sourceDigest:d.textDigest,reportPin,url,extractionTruncated:d.extractionTruncated===true,truthStatus:'UNVERIFIED',adoption:'NONE'});
+ const pages=(d.pageMap??[]).map(p=>({page:p.page,start:p.startOffset,end:p.endOffset}));
+ const passages=(report.passages??[]).filter(p=>p.sourceId===sourceId).map(p=>{const l=p.locator;if(p.sourceDigest!==d.textDigest||l?.coordinateSystem!=='utf16-extracted-text'||!Number.isSafeInteger(l.startOffset)||!Number.isSafeInteger(l.endOffset)||text.slice(l.startOffset,l.endOffset)!==p.supportingText)fail('PASSAGE');return {start:l.startOffset,end:l.endOffset,byteStart:encoder.encode(text.slice(0,l.startOffset)).length,byteEnd:encoder.encode(text.slice(0,l.endOffset)).length,page:l.page??null,quote:p.supportingText};});
+ const provenance=validateSourceProvenance({version:1,reportPin,documentId:sourceId,sourceDigest:d.textDigest,rawDigest:d.rawDigest,requestedUrl:d.url,finalUrl:url,retrievedAt:d.retrievedAt,mediaType:d.mediaType,parser:d.parser,extractionTruncated:d.extractionTruncated===true,pages,passages},text,d.textDigest);
+ return Object.freeze({provenance,id:'research_'+d.textDigest.slice(7,39),lineage:'unverified_external',text,sourceId,sourceDigest:d.textDigest,reportPin,url,extractionTruncated:d.extractionTruncated===true,truthStatus:'UNVERIFIED',adoption:'NONE'});
 }

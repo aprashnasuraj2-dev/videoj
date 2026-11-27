@@ -39,7 +39,7 @@ def reconstruct_transaction(bundle,parent_pin,plan_pin):
     for s in c1['sources']:
         op=operations.get(s['id'])
         if op is None:expected_sources.append(s)
-        elif op['kind']=='replace':expected_sources.append(dict(s,text=op['replacementText'],digest=op['replacementDigest']))
+        elif op['kind']=='replace':expected_sources.append(dict(id=s['id'],text=op['replacementText'],digest=op['replacementDigest'],lineage=s['lineage']))
     expected_bindings=[reselected.get(b['id'],b) for b in c1['bindings'] if b['id'] not in lost]
     require(canonical(c2)==canonical(dict(c1,sources=expected_sources,bindings=expected_bindings)))
     require(canonical(source_changes)==canonical(bundle['sourceChanges']) and bundle['invalidatedBindingIds']==sorted(affected) and bundle['reselectedBindingIds']==sorted(reselected) and bundle['missingBindingIds']==sorted(lost))

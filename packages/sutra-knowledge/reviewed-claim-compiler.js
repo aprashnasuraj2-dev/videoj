@@ -1,5 +1,6 @@
 // Data-only reviewed binding compiler. Models never supply executable code, numeric leaves or truth status.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+import {validateSourceProvenance} from './source-provenance.js';
 import {casePin} from './pinned-investigation.js';
 import {createVerifier,createProvenanceVerifier} from './index.js';
 export const VERSION='sutra-reviewed-claim-compiler/v1';
@@ -82,8 +83,9 @@ async function host(contractText,expectedPin){
  }
  await add('question',c.question.text,c.question.digest,'user_question','user_statement');
  for(const s of c.sources){
-  if(!keys(s,['id','text','digest','lineage'])||!id(s.id)||s.id==='question'||!id(s.lineage)||!text(s.text,16384)||!pin(s.digest))fail('COMPILER_SOURCE');
+  if(!(keys(s,['id','text','digest','lineage'])||keys(s,['id','text','digest','lineage','provenance']))||!id(s.id)||s.id==='question'||!id(s.lineage)||!text(s.text,16384)||!pin(s.digest))fail('COMPILER_SOURCE');
   await add(s.id,s.text,s.digest,s.lineage,'source_assertion');
+  if(Object.hasOwn(s,'provenance'))validateSourceProvenance(s.provenance,s.text,s.digest);
  }
  const bindings=new Map(),locations=new Set();
  for(const b of c.bindings){
