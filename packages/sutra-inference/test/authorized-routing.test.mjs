@@ -7,10 +7,10 @@ const pin='sha256:'+'a'.repeat(64);
 const limits={maxCalls:4,maxInputBytes:100000,maxOutputTokens:512,maxConcurrent:2};
 const one={maxCalls:1,maxInputBytes:100000,maxOutputTokens:256,maxConcurrent:1};
 const response={choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'proposal'}}],usage:{completion_tokens:1}};
-function fixture(exchange){
+function fixture(exchange,localLimits=one){
  let seed=1;const seen=[];
  const w=createProtocolWorkspace({connections:[{id:'local',label:'Local',protocol:'openai-compatible-json',endpoint:'http://127.0.0.1:11434/v1/chat/completions',transportClass:'local',models:['m']},{id:'remote',label:'Remote',protocol:'openai-compatible-json',endpoint:'https://api.example.com/v1/chat/completions',transportClass:'hosted',models:['m']}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async req=>{seen.push(req.connectionId);return exchange?exchange(req):{status:200,bodyText:JSON.stringify(response)}}});
- const a=w.addProfile({providerId:'local',label:'Local',credential:'synthetic-local-key',limits:one}),b=w.addProfile({providerId:'remote',label:'Remote',credential:'synthetic-remote-key'});
+ const a=w.addProfile({providerId:'local',label:'Local',credential:'synthetic-local-key',limits:localLimits}),b=w.addProfile({providerId:'remote',label:'Remote',credential:'synthetic-remote-key'});
  const routes=[{id:'remote_route',handle:b.handle,model:'m',capabilities:['expression'],priority:0},{id:'local_route',handle:a.handle,model:'m',capabilities:['expression'],priority:1}];
  const config={workspace:w,routes,capability:'expression',operation:{question:'bounded question'},disclosure:['question'],version:pin,localFirst:true,maxOutputTokens:128};
  return {w,a,b,seen,config};
@@ -55,4 +55,11 @@ test('parallel tasks share the same authoritative ledger; only one route dispatc
  const config={...f.config,routes:[f.config.routes[1]]},p=await prepareAuthorizedProviderTask(config),q=await prepareAuthorizedProviderTask(config),inspector=createDisclosureConsentInspector({decide:()=> 'allow'});
  const a=p.execute({approvedPlanPin:p.planPin,consentInspector:inspector});while(!f.seen.length)await new Promise(r=>setImmediate(r));
  const b=await q.execute({approvedPlanPin:q.planPin,consentInspector:inspector});assert.equal(b.status,'unavailable');release();await a;assert.deepEqual(f.seen,['local']);
+});
+
+test('encoded wire capacity rather than payload length determines pre-dispatch fallback',async()=>{
+ const f=fixture(undefined,{...one,maxInputBytes:64}),p=await prepareAuthorizedProviderTask(f.config),intents=[];
+ assert.ok(p.plan.routes[0].inputBytes>64);assert.equal(f.w.budgetSnapshot().global.used.calls,0);
+ const result=await p.execute({approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:i=>{intents.push(i);return 'allow'}})});
+ assert.equal(result.routeId,'remote_route');assert.deepEqual(f.seen,['remote']);assert.equal(intents.length,1);assert.match(intents[0].destination,/^remote\//);assert.equal(f.w.budgetSnapshot().global.used.inputBytes,p.plan.routes[1].inputBytes);
 });

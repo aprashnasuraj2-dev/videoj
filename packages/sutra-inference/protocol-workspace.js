@@ -97,25 +97,34 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
   return {actualInputBytes:bytes(operation.wireText),actualOutputTokens:decoded.outputTokens,value:{text:decoded.text}};
  }}));
  const workspace=createProviderWorkspace({catalog:[...map.values()].map(({id,label,models})=>({id,label,models})),transports,globalLimits,defaultProfileLimits,leaseTicks,randomBytes,clock});
+ // Trusted host preflight: encode exactly once without reserving or contacting a provider.
+ // The retained request is private, single-use and bound to the current credential generation.
+ function prepareRequest(input){
+  if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation'])||!size(input.maxOutputTokens,1,8192)||!size(input.inputBytes,1,1048576))stop('REQUEST');
+  const fence=workspace.capturePublicationFence(),profile=workspace.describeRoute(input.handle),c=map.get(profile.providerId);
+  const {handle,model,maxOutputTokens}=input;
+  if(!c||!c.models.includes(model))stop('MODEL');
+  workspace.admitOperation({endpoint:c.endpoint,model,protocol:c.protocol});
+  const operation=workspace.admitOperation(safeOperation(input.operation));
+  const wireText=registry.get(c.protocol).encode(Object.freeze({model,operation,maxOutputTokens}));
+  if(!str(wireText,131072)||bytes(wireText)>131072)stop('REQUEST_SIZE');
+  workspace.admitOperation(wireText);
+  const decodedWire=parseUniqueJson(wireText,{maxChars:131072,maxDepth:32});
+  workspace.admitOperation(decodedWire);
+  fence();const inputBytes=bytes(wireText);let consumed=false;
+  return Object.freeze({inputBytes,async execute({signal}={}){
+   if(signal?.aborted)stop('CANCELLED');
+   if(consumed)stop('CONSUMED');
+   fence();consumed=true;
+   return workspace.execute({handle,model,inputBytes,maxOutputTokens,operation:{wireText,outputCap:maxOutputTokens}},{signal});
+  }});
+ }
  return Object.freeze({...workspace,transportMode:'injected-protocol-laboratory',
   connections:Object.freeze([...map.values()].map(({id,label,protocol,transportClass,models})=>Object.freeze({id,label,protocol,transportClass,models}))),
+  prepareRequest,
   async execute(input,{signal}={}){
    if(signal?.aborted)stop('CANCELLED');
-   if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation'])||!size(input.maxOutputTokens,1,8192)||!size(input.inputBytes,1,1048576))stop('REQUEST');
-   const p=workspace.list().find(x=>x.profileId===input.handle?.profileId),c=p&&map.get(p.providerId);
-   if(!c||!c.models.includes(input.model))stop('MODEL');
-   // Route metadata is also a disclosure boundary; scan decoded fields before encoding or contact.
-   workspace.admitOperation({endpoint:c.endpoint,model:input.model,protocol:c.protocol});
-   const operation=workspace.admitOperation(safeOperation(input.operation));
-   const wireText=registry.get(c.protocol).encode(Object.freeze({model:input.model,operation,maxOutputTokens:input.maxOutputTokens}));
-   if(!str(wireText,131072)||bytes(wireText)>131072)stop('REQUEST_SIZE');
-   // A trusted encoder can still accidentally introduce an enrolled credential.
-   // Check the actual wire bytes and the decoded JSON boundary before reservation.
-   workspace.admitOperation(wireText);
-   const decodedWire=parseUniqueJson(wireText,{maxChars:131072,maxDepth:32});
-   workspace.admitOperation(decodedWire);
-   // Reserve actual serialized request bytes, not a caller-provided smaller estimate.
-   return workspace.execute({handle:input.handle,model:input.model,inputBytes:bytes(wireText),maxOutputTokens:input.maxOutputTokens,operation:{wireText,outputCap:input.maxOutputTokens}},{signal});
+   return prepareRequest(input).execute({signal});
   }
  });
 }

@@ -68,3 +68,11 @@ test('native Ollama chat has a finite generation limit and refuses nonterminal, 
   const q=setup(async()=>({status:200,bodyText:JSON.stringify(bad)}),{connections:[c]});const profile=q.addProfile({providerId:c.id,label:'Local',credential:A});await assert.rejects(call(q,profile,c.models[0]));assert.equal(q.budgetSnapshot().global.used.calls,1);
  }
 });
+
+test('prepared wire is single-use, exact-sized and fenced without spending capacity at preflight',async()=>{
+ let encoded=0,contacted=0,actual=0;const w=setup(async x=>{contacted++;actual=new TextEncoder().encode(x.bodyText).length;return {status:200,bodyText:JSON.stringify({answer:'ok',tokens:1})};},{adapters:[{...adapter,encode:x=>{encoded++;return adapter.encode(x)}}]});
+ const p=profile(w,2,C),input={handle:p.handle,model:'my-local',inputBytes:1,maxOutputTokens:32,operation:{kind:'chat',request:'hello'}};
+ const pre=w.prepareRequest(input);assert.equal(encoded,1);assert.equal(contacted,0);assert.equal(w.budgetSnapshot().global.used.calls,0);assert.deepEqual(Object.keys(pre).sort(),['execute','inputBytes']);
+ await pre.execute();assert.equal(encoded,1);assert.equal(contacted,1);assert.equal(actual,pre.inputBytes);await assert.rejects(pre.execute(),e=>e.code==='CONSUMED');
+ const next=w.prepareRequest(input);profile(w,0,A);await assert.rejects(next.execute(),e=>e.code==='PROFILE_SET_CHANGED');assert.equal(contacted,1);
+});

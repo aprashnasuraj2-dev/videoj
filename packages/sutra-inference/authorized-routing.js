@@ -19,7 +19,7 @@ export function rankProviderRoutes(routes,capability,localFirst=false){
 export async function prepareAuthorizedProviderTask({workspace,routes,capability,operation,disclosure,version,localFirst=false,maxOutputTokens=256,timeoutMs=15000,assertCurrent=()=>{}}={}){
  const label=x=>typeof x==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(x);
  const int=(x,a,b)=>Number.isSafeInteger(x)&&x>=a&&x<=b;
- if(workspace?.transportMode!=='injected-protocol-laboratory'||!['describeRoute','capturePublicationFence','admitOperation','dispatchCapacity','execute'].every(k=>typeof workspace[k]==='function')||!routeDense(routes,8)||!routes.length||!label(capability)||typeof version!=='string'||!/^sha256:[a-f0-9]{64}$/.test(version)||!routeDense(disclosure,12)||!disclosure.length||!disclosure.every(label)||new Set(disclosure).size!==disclosure.length||typeof localFirst!=='boolean'||!int(maxOutputTokens,1,8192)||!int(timeoutMs,1,30000)||typeof assertCurrent!=='function')routeFail('CONFIG');
+ if(workspace?.transportMode!=='injected-protocol-laboratory'||!['describeRoute','capturePublicationFence','admitOperation','dispatchCapacity','prepareRequest'].every(k=>typeof workspace[k]==='function')||!routeDense(routes,8)||!routes.length||!label(capability)||typeof version!=='string'||!/^sha256:[a-f0-9]{64}$/.test(version)||!routeDense(disclosure,12)||!disclosure.length||!disclosure.every(label)||new Set(disclosure).size!==disclosure.length||typeof localFirst!=='boolean'||!int(maxOutputTokens,1,8192)||!int(timeoutMs,1,30000)||typeof assertCurrent!=='function')routeFail('CONFIG');
  const fence=workspace.capturePublicationFence(),check=()=>{fence();assertCurrent();};
  check();const ids=new Set(),identities=new Set(),captured=[];
  for(const route of routes){
@@ -32,12 +32,14 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
  const eligible=rankProviderRoutes(captured,capability,localFirst);
  if(!eligible.length)routeFail('CAPABILITY');
  const payload=workspace.admitOperation(operation);
- const plan=workspace.admitOperation({schema:'sutra-provider-task/v1',version,capability,operation:payload,disclosure:[...disclosure],maxOutputTokens,timeoutMs,localFirst,routes:eligible.map(({handle,...meta})=>meta),qualification:'Host-declared capability; capacity is a hint. Each selected recipient needs separate consent. No retry after dispatch.'});
+ const estimate=Math.max(1,new TextEncoder().encode(JSON.stringify(payload)).length),prepared=new Map();
+ for(const route of eligible)prepared.set(route.id,workspace.prepareRequest({handle:route.handle,model:route.model,inputBytes:estimate,maxOutputTokens,operation:payload}));
+ const plan=workspace.admitOperation({schema:'sutra-provider-task/v1',version,capability,operation:payload,disclosure:[...disclosure],maxOutputTokens,timeoutMs,localFirst,routes:eligible.map(({handle,...meta})=>({...meta,inputBytes:prepared.get(meta.id).inputBytes})),qualification:'Host-declared capability; capacity is a hint. Each selected recipient needs separate consent. No retry after dispatch.'});
  const bytes=new TextEncoder().encode(JSON.stringify(plan)),digest=await crypto.subtle.digest('SHA-256',bytes);
  const planPin='sha256:'+Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('');
  check();let consumed=false;
- const inputBytes=Math.max(1,new TextEncoder().encode(JSON.stringify(payload)).length);
  const availability=route=>{
+  const inputBytes=prepared.get(route.id).inputBytes;
   const cap=workspace.dispatchCapacity(),profile=cap.profiles.find(p=>p.profileId===route.profileId);
   if(!profile?.enabled)return 'PROFILE_DISABLED';
   if(!capacitySlots(cap.global,maxOutputTokens,inputBytes)||!capacitySlots(profile,maxOutputTokens,inputBytes))return 'BUDGET';
@@ -60,7 +62,7 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
     const recheck=availability(route);
     if(recheck!=='CAPACITY_HINT')return {skipped:recheck};
     decisions.push(Object.freeze({routeId:route.id,decision:'DISPATCHED'}));
-    const result=await workspace.execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:payload},{signal:dispatchSignal});
+    const result=await prepared.get(route.id).execute({signal:dispatchSignal});
     if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
     if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)routeFail('RESULT');
     return {result};
