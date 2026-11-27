@@ -271,6 +271,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    check();
    if(!plain(message)||!plain(message.user_message)||typeof message.user_message.text!=='string')fail('PEER_REQUEST','Invalid delegated peer request.');
    const approvedContext=privatePolicy.downstream(url,loaded.name);
+   const grant=privatePolicy.describe(url,loaded.name);
+   if(new URL(loaded.artifacts.definition).origin!==loaded.origin&&(grant.toPeer.length||grant.toCaller.length))return stopRun(new RuntimeError('PRIVATE_CONTEXT_DESTINATION','Private context grants require a graph served by the exact peer publisher origin.'));
    trace.note('private_context_policy',{origin:loaded.origin,network:loaded.name,status:Object.keys(approvedContext).length?'shared':'none'});
    const contextText=privateContextPrompt(approvedContext);
    // Inject the caller security boundary at the peer's model boundary rather
@@ -289,7 +291,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    const result=await runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);check();
    // Private context uses a separate return allowlist. The peer cannot widen it:
    // only fields already present in the caller-owned side channel can return.
-   const returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);
+   let returning;
+   try{privatePolicy.assertOrdinaryText(result.text);returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);}catch(error){return stopRun(new RuntimeError(error.code??'PRIVATE_CONTEXT_RETURN','Private peer result refused.'));}
    // Project the peer result, not its arbitrary upstream parsed envelope.
    // Model-controlled protocol, presentation and rejected proposals are not
    // approved structured return channels. Plain text remains untrusted.
@@ -378,7 +381,7 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  if(!validId(entry.front_man)||['constructor','prototype','__proto__'].includes(entry.front_man))fail('NETWORK_ID','Invalid published front identity.');
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared graph URL.');}
- if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
+ if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.search)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
  // No executable site modules, coded bundles or inference metadata are acted on.
  if(Object.hasOwn(manifest,'schema')||Object.hasOwn(manifest,'version'))fail('UNSUPPORTED_FIELD','Explicit manifest schema/version is unsupported by this unversioned resolved-JSON profile.');
  if(Object.hasOwn(manifest,'coded_tools')||Object.hasOwn(manifest,'actions'))fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in this profile.');
@@ -503,7 +506,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
- if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
+ if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.search||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
  let definition;
  try{definition=await fetchJsonWithConsent({
   inspector,
