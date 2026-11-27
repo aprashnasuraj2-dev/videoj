@@ -9509,7 +9509,7 @@
     "activeRoadmap": "docs/sutra-v2/roadmap.json",
     "procedure": "docs/sutra-v2/CONTINUE.md",
     "inheritedV1Procedure": "docs/sutra/CONTINUE.md",
-    "semantics": "Resume the current exact remote revision using only the active V2 checklist; preserve applicable historical evidence and remaining V2 gate obligations. No retired V1 pending IDs or historical snapshot next fields select work.",
+    "semantics": "Resume exact canonical main using only the active SUTRA checklist; preserve applicable historical evidence and inherited implementation. Historical branch/task cursors do not select work.",
     "checkpointTransaction": [
       "resolve exact branch/PR HEAD and reconcile intervening commits",
       "reconcile exact-source CI before granting or withdrawing verification credit",
@@ -9532,7 +9532,7 @@
     "mandate": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
     "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
     "roadmapRole": "historical and broad dependency/gate register only",
-    "selectionRule": "Only the active V2 checklist; no V1 fallback. Reconcile exact remote HEAD and CI before acceptance."
+    "selectionRule": "Only the active SUTRA checklist; resolve exact main and CI before acceptance. Historical branches are provenance only."
   },
   "reconciledEntryParent": {
     "sourceRevision": "9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
@@ -9579,8 +9579,8 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "baseline": "d87414e463e396be3672e63f774de77b2ab6136d",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "baseline": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
     "branches": [
@@ -9804,7 +9804,7 @@
         }
       }
     ],
-    "qualification": "Current exact scoped child observation, pinned to observed central source. No broad gate promotion; historical snapshots preserved.",
+    "qualification": "Historical child/validation provenance retained after integration. Branch ahead/behind observations were measured against historicalComparisonBaseline, not current main; these branches are not active execution authorities.",
     "history": [
       {
         "session": "V2-180",
@@ -12692,7 +12692,8 @@
         "conclusion": "success",
         "scope": "real killed writer before immutable link, before HEAD rename, after HEAD rename; legacy manual lock recovery"
       }
-    ]
+    ],
+    "historicalComparisonBaseline": "d87414e463e396be3672e63f774de77b2ab6136d"
   },
   "reuseFirstReconciliation": {
     "session": "V2-183-reuse-first-reconciliation",
@@ -12930,25 +12931,25 @@
     "activatedAt": "2026-11-26T13:15:00+05:45",
     "semantics": "sole active execution queue",
     "continuationCommand": "continue with SUTRA",
-    "selectionRule": "reconcile exact remote V2 state, then execute first dependency-ready unchecked item",
+    "selectionRule": "resolve exact main and exact-head CI, then execute the single dependency-ready active item",
     "legacyV1PendingRetired": 379,
     "legacyV1ActiveQueue": false,
     "validationBranch": "sutra/v2-validation/v2-182",
     "validationPr": 61,
     "validationMergeAllowed": false,
-    "activeTask": "V2-HIST-010",
-    "remainingTasks": 144,
+    "activeTask": "V2-ORCH-002",
+    "remainingTasks": 141,
     "activeTasks": 1,
-    "completedSinceReset": 24,
-    "remainingIncludingActive": 145,
+    "completedSinceReset": 27,
+    "remainingIncludingActive": 142,
     "externalBlockers": 6,
     "optionalRemainingTasks": 4,
-    "foundationRemainingIncludingActive": 141,
+    "foundationRemainingIncludingActive": 138,
     "explicitPriorityCounts": {
       "P0": 11,
       "P1": 16,
       "P2": 3,
-      "unclassified": 115
+      "unclassified": 112
     },
     "priorityCountQualification": "Explicit roadmap/checklist priorities only; unclassified checklist tasks use dependency order, no inferred priority labels."
   },
@@ -12960,14 +12961,18 @@
     "activePath": "docs/sutra-v2/CHECKLIST.md"
   },
   "currentReconciliation": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "centralSource": "d87414e463e396be3672e63f774de77b2ab6136d",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "centralSource": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
     "centralRun": {
-      "id": 45794383708,
+      "id": 45921932719,
       "knowledge": "success",
       "browser": "success",
-      "knowledgeJob": 139821171644,
-      "browserJob": 139821171263
+      "knowledgeJob": 140254433698,
+      "browserJob": 140254433938,
+      "workspaceRun": 45921932730,
+      "workspaceJob": 140254433450,
+      "workspace": "success",
+      "qualification": "Canonical main reconciliation checkpoint; historical child branches are provenance only."
     },
     "validation": {
       "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
@@ -13136,9 +13141,12 @@
       "V2-N010",
       "V2-N011",
       "V2-N005",
-      "V2-UX-001"
+      "V2-UX-001",
+      "V2-HIST-010",
+      "V2-UX-002",
+      "V2-ORCH-001"
     ],
-    "next": "V2-HIST-010",
+    "next": "V2-ORCH-002",
     "children": [
       {
         "pr": 51,

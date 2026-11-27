@@ -3726,8 +3726,8 @@
     "allocationIsTarget": true
   },
   "parallelCandidateEvidence": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "qualification": "Historical child and validation-only evidence retained as provenance after canonical main integration. It grants no separate execution or merge authority.",
     "history": [
       {
         "session": "V2-182-batch1",
