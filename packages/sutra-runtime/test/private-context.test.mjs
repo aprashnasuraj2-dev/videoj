@@ -205,3 +205,12 @@ test('consented CDN graph cannot inherit private grant to a different publisher 
  await assert.rejects(runNetwork({definition:definition(),request:'Inspect',model,privateContext:{locale:'ne-NP'},peerContextGrants:[{peerUrl,network:'transit',toPeer:['locale']}],peerRuntime:{inspector:inspector(),fetchImpl:async(url,init)=>{contacts.push(url);assert.equal(init.credentials,'omit');return Response.json(url.endsWith('agent-manifest.json')?{networks:[{name:'transit',front_man:'learner',hocon:'https://cdn.example/graph.json'}]}:sourceGraph);}}}),e=>e.code==='PRIVATE_CONTEXT_DESTINATION');
  assert.deepEqual(contacts,['https://peer.example/agents/agent-manifest.json','https://cdn.example/graph.json']);assert.deepEqual(seen,['sutra-local']);
 });
+
+test('protected host string is refused in decoded model arguments before peer contact, even with escaped characters',async()=>{
+ const canary='PRIVATE_"QUOTED"\\CANARY',contacts=[],calls=[];
+ const model={mode:'scripted-test',async chat(args){calls.push(args.origin);return {content:'',toolCalls:[{id:'forged',type:'function',function:{name:'transit',arguments:JSON.stringify({request:canary})}}]};}};
+ const options={definition:definition(),request:'Inspect',model,privateContext:{secretCanary:canary},peerRuntime:{inspector:inspector(),fetchImpl:async url=>{contacts.push(url);return fetchImpl(url);}}};
+ await assert.rejects(runNetwork(options),e=>e.code==='PRIVATE_CONTEXT_RETURN'&&!e.message.includes(canary));
+ assert.deepEqual(calls,['sutra-local']);assert.deepEqual(contacts,[]);
+ calls.length=0;await assert.rejects(runNetwork({...options,request:canary}),e=>e.code==='PRIVATE_CONTEXT_RETURN');assert.equal(calls.length,0);
+});
