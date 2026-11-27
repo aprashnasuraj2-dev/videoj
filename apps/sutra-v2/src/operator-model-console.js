@@ -37,7 +37,7 @@ function controls(){
 }
 async function work(fn){
  if(busy)return;busy=true;controls();const ticket=epoch;
- try{await fn(ticket);}catch(error){if(ticket===epoch){preview=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;state('refused','Operation refused. No model authority is current.');by('operator-result').textContent=error?.code??error?.message??'REFUSED';}}
+ try{await fn(ticket);}catch(error){if(ticket===epoch){pendingApprovedPin=null;consentInspector.clearSession();preview=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;state('refused','Operation refused. No model authority is current.');by('operator-result').textContent=error?.code??error?.message??'REFUSED';}}
  finally{busy=false;controls();}
 }
 provider.addEventListener('change',()=>{syncModel();invalidate();controls();});
@@ -67,7 +67,7 @@ by('operator-preview').addEventListener('click',()=>work(async ticket=>{
  by('operator-approve').disabled=false;by('operator-approve').checked=false;state('previewed','Exact approval preview created. No request dispatched.');controls();
 }));
 by('operator-run').addEventListener('click',()=>work(async ticket=>{
- if(!preview||!enrolled||!by('operator-approve').checked||preview.profileId!==enrolled.profile.profileId)return;
+ if(!preview||!enrolled||preview.profileId!==enrolled.profile.profileId)return;
  const approval=preview.approval,pin=approval.planPin;pendingApprovedPin=pin;
  const result=await approval.execute({consentInspector,approvedPlanPin:pin});
  if(ticket!==epoch)return;preview=null;pendingApprovedPin=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;
