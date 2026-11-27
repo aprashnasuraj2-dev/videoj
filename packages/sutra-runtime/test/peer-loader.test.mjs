@@ -147,3 +147,43 @@ test('invalid selected manifest front and oversized artifact location refuse bef
   assert.deepEqual(decisions,['peer_manifest']);assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);
  }
 });
+
+test('explicit unsupported publication schema/version and executable descriptors refuse before graph contact',async()=>{
+ for(const [field,value,code] of [
+  ['version',99,'UNSUPPORTED_FIELD'],['schema','unknown/v99','UNSUPPORTED_FIELD'],
+  ['coded_tools',null,'UNSUPPORTED_CAPABILITY'],['actions',false,'UNSUPPORTED_CAPABILITY']
+ ]){
+  const body={...manifest(),[field]:value};
+  let localFetches=0;await assert.rejects(loadLocalNetwork({baseUrl:'https://local.example/agents/',expectedOrigin:'https://local.example',networkName:'transit',fetchImpl:async()=>{localFetches++;return response(body);}}),e=>e.code===code);
+  assert.equal(localFetches,1);
+  const decisions=[],calls=[],inspector=createConsentInspector({decide:async intent=>{decisions.push(intent.kind);return {decision:'allow',scope:'once'};}});
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{calls.push(url);return response(body);}}),e=>e.code===code);
+  assert.deepEqual(decisions,['peer_manifest']);assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);
+ }
+});
+
+test('resolved JSON publication refuses hostile graph bytes on both local and consented peer routes',async()=>{
+ const changed=mutate=>{const g=structuredClone(graph);mutate(g);return JSON.stringify(g);};
+ const cases=[
+  ['malformed JSON','{"tools":','ARTIFACT_JSON','GRAPH_UNAVAILABLE'],
+  ['unresolved HOCON','include "private.conf"','ARTIFACT_JSON','GRAPH_UNAVAILABLE'],
+  ['duplicate names',changed(g=>g.tools[1].name=g.tools[0].name),'AGENT_NAME','AGENT_NAME'],
+  ['absent front',changed(g=>g.tools[0].name='other'),'REFERENCE','REFERENCE'],
+  ['dangling reference',changed(g=>g.tools[0].tools=['not_published']),'REFERENCE','REFERENCE'],
+  ['explicit unknown graph version',changed(g=>g.version=99),'UNSUPPORTED_FIELD','UNSUPPORTED_FIELD'],
+  ['executable graph descriptor',changed(g=>g.tools[1].class='RunCode'),'UNSUPPORTED_FIELD','UNSUPPORTED_FIELD'],
+  ['oversize artifact',' '.repeat(65537),'ARTIFACT_SIZE','GRAPH_UNAVAILABLE']
+ ];
+ // The missing front graph must otherwise be valid, so it specifically reaches FRONT validation.
+ cases[3]=['absent front',changed(g=>{g.tools[0].name='other';g.tools[0].tools=[];g.tools[1].tools=[];}),'FRONT','FRONT'];
+ for(const [label,bytes,localCode,peerCode] of cases){
+  const localCalls=[],peerCalls=[],decisions=[];
+  const makeResponse=url=>url.endsWith('/agent-manifest.json')?response(manifest()):new Response(bytes,{headers:{'Content-Type':'application/json'}});
+  await assert.rejects(loadLocalNetwork({baseUrl:'https://local.example/agents/',expectedOrigin:'https://local.example',networkName:'transit',fetchImpl:async url=>{localCalls.push(url);return makeResponse(url);}}),e=>e.code===localCode,label);
+  const inspector=createConsentInspector({decide:async intent=>{decisions.push(intent.kind);return {decision:'allow',scope:'once'};}});
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{peerCalls.push(url);return makeResponse(url);}}),e=>e.code===peerCode,label);
+  assert.deepEqual(localCalls,['https://local.example/agents/agent-manifest.json','https://local.example/agents/transit.network.json']);
+  assert.deepEqual(peerCalls,['https://peer.example/agents/agent-manifest.json','https://peer.example/agents/transit.network.json']);
+  assert.deepEqual(decisions,['peer_manifest','peer_graph']);
+ }
+});
