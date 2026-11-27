@@ -5,8 +5,19 @@
   "type": "module",
   "description": "Dependency-free evidence receipt validation for SUTRA and other browser tools",
   "license": "Apache-2.0",
-  "exports": {".": "./index.js", "./schema": "./receipt.schema.json"},
-  "bin": {"sutra-evidence": "./cli.mjs"},
-  "scripts": {"test": "node --test", "validate:example": "node cli.mjs examples/receipt.json examples/sources.json"},
-  "engines": {"node": ">=22"}
+  "exports": {
+    ".": "./index.js",
+    "./schema": "./receipt.schema.json",
+    "./annotation": "./annotation.js"
+  },
+  "bin": {
+    "sutra-evidence": "./cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "validate:example": "node cli.mjs examples/receipt.json examples/sources.json"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

@@ -6,7 +6,7 @@ test('candidate builds twice with deterministic inventory and rejects tampering'
  const a=join(root,'a'),b=join(root,'b'),m=await build(a),n=await build(b);
  assert.equal(m.candidate,n.candidate);assert.deepEqual(m.files,n.files);assert.equal(m.artifacts.length,3);
  assert.deepEqual(await verify(a),m);
- for(const item of ['publisher-starter/packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt','publisher-starter/packages/sutra-runtime/vendor/nsdeploy/NOTICE.md','evidence-validator/LICENSE','consent-inspector/LICENSE'])assert.ok(m.files.some(f=>f.path===item),item);
+ for(const item of ['publisher-starter/packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt','publisher-starter/packages/sutra-runtime/vendor/nsdeploy/NOTICE.md','evidence-validator/LICENSE','evidence-validator/annotation.js','consent-inspector/LICENSE'])assert.ok(m.files.some(f=>f.path===item),item);
  await writeFile(join(a,'unexpected.txt'),'unexpected');await assert.rejects(verify(a),/inventory mismatch/);await rm(join(a,'unexpected.txt'));
  const file=join(a,'evidence-validator/index.js');await writeFile(file,Buffer.concat([await readFile(file),Buffer.from('\n// mutation\n')]));await assert.rejects(verify(a),/inventory mismatch/);
 });
