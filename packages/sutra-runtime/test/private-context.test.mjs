@@ -182,3 +182,26 @@ test('peer protocol metadata cannot bypass the independent structured return all
  assert.deepEqual(seen[0],{cruse:1,text:'Public peer result.',presentation:null,source:{origin:'https://peer.example',network:'transit',agent:'learner'},private_context:{preference:'concise'}});
  assert.ok(!JSON.stringify(seen).includes('ne-NP'));assert.ok(!JSON.stringify(seen).includes('PEER_PROTOCOL_CANARY'));
 });
+
+test('credential, session, raw evidence grants and credential-shaped alias values are rejected before any contact',async()=>{
+ for(const [field,value] of [['api_key','synthetic-value'],['sessionId','synthetic-session'],['rawSource','synthetic-source'],['secretCanary','synthetic-secret'],['privateEvidence','synthetic-evidence'],['label','sk-'+'x'.repeat(30)]]){
+  let calls=0,contacts=0;
+  await assert.rejects(runNetwork({definition:definition(),request:'Inspect source',model:{mode:'scripted-test',chat(){calls++;}},privateContext:{[field]:value},peerContextGrants:[{peerUrl,network:'transit',toPeer:[field]}],peerRuntime:{inspector:inspector(),fetchImpl:async()=>{contacts++;}}}),e=>e.code==='PRIVATE_CONTEXT_RESTRICTED');
+  assert.equal(calls,0);assert.equal(contacts,0);
+ }
+});
+test('peer cannot smuggle approved or unapproved private values in ordinary tool text',async()=>{
+ for(const canary of ['ne-NP','PRIVATE_CONTEXT_CANARY_123']){
+  const base=createScriptedModel(),seen=[];
+  const model={...base,async chat(args){seen.push({origin:args.origin,messages:JSON.stringify(args.messages)});return args.origin==='https://peer.example'?{content:'Malicious echo '+canary,toolCalls:[]}:base.chat(args);}};
+  await assert.rejects(runNetwork({definition:definition(),request:'Inspect',model,privateContext:{locale:'ne-NP',secretCanary:'PRIVATE_CONTEXT_CANARY_123'},peerContextGrants:[{peerUrl,network:'transit',toPeer:['locale'],toCaller:['locale']}],peerRuntime:{inspector:inspector(),fetchImpl}}),e=>e.code==='PRIVATE_CONTEXT_RETURN'&&!JSON.stringify(e).includes(canary));
+  assert.equal(seen.filter(x=>x.origin==='sutra-local').length,1);
+  assert.ok(seen.filter(x=>x.origin==='sutra-local').every(x=>!x.messages.includes(canary)));
+ }
+});
+test('consented CDN graph cannot inherit private grant to a different publisher origin',async()=>{
+ const base=createScriptedModel(),seen=[],contacts=[];
+ const model={...base,async chat(args){seen.push(args.origin);return base.chat(args);}};
+ await assert.rejects(runNetwork({definition:definition(),request:'Inspect',model,privateContext:{locale:'ne-NP'},peerContextGrants:[{peerUrl,network:'transit',toPeer:['locale']}],peerRuntime:{inspector:inspector(),fetchImpl:async(url,init)=>{contacts.push(url);assert.equal(init.credentials,'omit');return Response.json(url.endsWith('agent-manifest.json')?{networks:[{name:'transit',front_man:'learner',hocon:'https://cdn.example/graph.json'}]}:sourceGraph);}}}),e=>e.code==='PRIVATE_CONTEXT_DESTINATION');
+ assert.deepEqual(contacts,['https://peer.example/agents/agent-manifest.json','https://cdn.example/graph.json']);assert.deepEqual(seen,['sutra-local']);
+});
