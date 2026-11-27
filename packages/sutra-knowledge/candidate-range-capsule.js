@@ -1,7 +1,7 @@
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
 import {projectCandidateComputation, replayCandidateCone} from './candidate-capsule.js';
-import {evaluateAffineQuantityCone, evaluateQuantityConeIntervals, reviewedRangeContains} from './reviewed-interval.js';
+import {evaluateAffineQuantityCone, evaluateQuantityConeIntervals, reviewedRangeContains, partitionAffineCounterfactual} from './reviewed-interval.js';
 
 export const RANGE_CAPSULE_VERSION = 'sutra-candidate-range-capsule/v1';
 const PIN = /^sha256:[a-f0-9]{64}$/;
@@ -86,5 +86,24 @@ export async function openCandidateRangeCapsule(text, retainedPin) {
     boundedQuantities: wire.nodes.filter(node => node.kind === 'bounded_input').length,
     suppliedQuantities: wire.nodes.filter(node => node.kind === 'input').length,
     sourceCorrespondence: 'PUBLISHER_DECLARATION', decisionAuthority: 'NONE'
+  });
+}
+
+export async function analyzeCandidateRangeCounterfactual(text, retainedPin, nodeId) {
+  await openCandidateRangeCapsule(text, retainedPin);
+  const {nodes, target} = parse(text);
+  const {point, intervals} = boundsFor(nodes);
+  if (!intervals.has(nodeId)) fail('UNKNOWN_INPUT');
+  let regions;
+  try {
+    regions = partitionAffineCounterfactual(point, target, intervals, nodeId);
+  } catch (error) {
+    if (error.message !== 'INTERVAL_ARITHMETIC_LIMIT') throw error;
+    regions = null;
+  }
+  return Object.freeze({
+    capsulePin: retainedPin, variedNodeId: nodeId, regions: regions?.map(Object.freeze) ?? null,
+    analysis: regions ? 'EXACT_AFFINE_PARTITION' : 'UNSUPPORTED_AFFINE_PROFILE',
+    empiricalAuthority: 'NONE'
   });
 }

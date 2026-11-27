@@ -134,6 +134,14 @@
  <input id="review-capsule-retained-pin" maxlength="71" autocomplete="off" spellcheck="false">
  <button id="review-capsule-open" type="button">Replay capsule</button>
  <p id="review-capsule-replay" role="status"></p>
+ <section id="review-capsule-threshold-panel" hidden>
+  <h4>Find when the conclusion would change</h4>
+  <p>Vary one quantity while keeping the other declared bounds. The resulting thresholds describe hypothetical inputs.</p>
+  <label for="review-capsule-threshold-node">Which quantity to vary</label>
+  <select id="review-capsule-threshold-node"></select>
+  <button id="review-capsule-threshold" type="button">Find decision thresholds</button>
+  <pre id="review-capsule-threshold-result" aria-live="polite"></pre>
+ </section>
  <details id="review-private-panel">
   <summary>Prove a comparison with every input hidden</summary>
   <p>For supported linear calculations, the proof reveals the formula and verdict while keeping exact quantities local. The proof binds the publisher’s committed inputs. Source correspondence remains a publisher declaration.</p>

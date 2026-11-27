@@ -922,6 +922,11 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await rangeOnlyPage.locator('#review-capsule-retained-pin').fill(rangePin);
   await rangeOnlyPage.locator('#review-capsule-open').click();
   await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('1 bounded quantities'));
+
+  await rangeOnlyPage.locator('#review-capsule-threshold').click();
+  const result=rangeOnlyPage.locator('#review-capsule-threshold-result');
+  await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-capsule-threshold-result').textContent.includes('Holds across all other bounds'));
+  assert.match(await result.textContent(),/Refuted across all other bounds/);
   await rangeOnlyPage.close();
 
   await reviewPage.locator('#review-private-panel > summary').click();

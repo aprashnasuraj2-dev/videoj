@@ -6,7 +6,7 @@ import {sealInvestigationVersion} from '../investigation-revision.js';
 import {exportCandidateCapsule} from '../candidate-capsule.js';
 import {livingFixture} from '../examples/living-investigation.mjs';
 import {casePin} from '../pinned-investigation.js';
-import {exportCandidateRangeCapsule, openCandidateRangeCapsule} from '../candidate-range-capsule.js';
+import {analyzeCandidateRangeCounterfactual, exportCandidateRangeCapsule, openCandidateRangeCapsule} from '../candidate-range-capsule.js';
 
 test('a recipient replays a decisive comparison while the actual reviewed point stays local', async () => {
   const v = await livingFixture();
@@ -70,4 +70,35 @@ test('an affine cancellation cannot legitimize a potentially undefined nonlinear
   await assert.rejects(exportCandidateRangeCapsule(v.versionText, v.digest, 'primary_view', [
     {nodeId: input.id, lower: '-1000/1', upper: '1000/1'}
   ]), /OUTCOME_NOT_INVARIANT/);
+});
+
+test('a recipient can derive exact contingent and guaranteed decision thresholds across the other ranges', async () => {
+  const v = await expressionVersion('([second]+[first]) > ([baseline]+[other])');
+  const point = JSON.parse((await exportCandidateCapsule(v.versionText, v.digest, 'primary_view')).text);
+  const targetId = point.nodes.find(node => node.value === '40/1').id;
+  const otherId = point.nodes.find(node => node.value === '30/1').id;
+  const capsule = await exportCandidateRangeCapsule(v.versionText, v.digest, 'primary_view', [
+    {nodeId: targetId, lower: '30/1', upper: '50/1'}, {nodeId: otherId, lower: '20/1', upper: '35/1'}
+  ]);
+  const result = await analyzeCandidateRangeCounterfactual(capsule.text, capsule.pin, targetId);
+  assert.deepEqual(result.regions.map(row => [row.from, row.to, row.includeFrom, row.status]), [
+    [null,'0/1',false,'REFUTED_FOR_ALL_DECLARED_VALUES'],
+    ['0/1','0/1',true,'REFUTED_FOR_ALL_DECLARED_VALUES'],
+    ['0/1','15/1',false,'NOT_RESOLVED_BY_INTERVAL_ENCLOSURE'],
+    ['15/1','15/1',true,'NOT_RESOLVED_BY_INTERVAL_ENCLOSURE'],
+    ['15/1',null,false,'HOLDS_FOR_ALL_DECLARED_VALUES']
+  ]);
+  assert.ok(!JSON.stringify(result).includes('40/1'));
+  assert.equal(result.empiricalAuthority, 'NONE');
+});
+
+test('a variable with identical contributions on both sides has one universal affine region', async () => {
+  const v = await expressionVersion('([second]+[first]) >= ([second]+[baseline])');
+  const wire = JSON.parse((await exportCandidateCapsule(v.versionText, v.digest, 'primary_view')).text);
+  const id = wire.nodes.find(node => node.value === '40/1').id;
+  const capsule = await exportCandidateRangeCapsule(v.versionText, v.digest, 'primary_view', [{nodeId:id, lower:'0/1', upper:'100/1'}]);
+  const result = await analyzeCandidateRangeCounterfactual(capsule.text, capsule.pin, id);
+  assert.deepEqual(result.regions, [{from:null,to:null,includeFrom:false,includeTo:false,status:'HOLDS_FOR_ALL_DECLARED_VALUES'}]);
+  const publicId = wire.nodes.find(node => node.value === '120/1').id;
+  await assert.rejects(analyzeCandidateRangeCounterfactual(capsule.text, capsule.pin, publicId), /UNKNOWN_INPUT/);
 });

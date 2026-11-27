@@ -173,6 +173,34 @@ export function evaluateAffineQuantityCone(nodes,targetId,intervals){
  return difference?compare(difference.op,affineBounds(difference.form,intervals),[zero,zero],false):null;
 }
 
+// Vary one coordinate while holding the other declared ranges fixed. Because
+// the affine image of a box is an interval, its exact endpoints attain both
+// extremes and the two crossings partition all rational values of this input.
+export function partitionAffineCounterfactual(nodes,targetId,intervals,nodeId){
+ const difference=affineQuantityDifference(nodes,targetId,intervals);
+ if(!difference)return null;
+ const {op,form}=difference,coefficient=form.terms.get(nodeId);
+ const context={offset:form.offset,terms:new Map(form.terms)};
+ context.terms.delete(nodeId);
+ const [lo,hi]=affineBounds(context,intervals);
+ if(!coefficient)return [{from:null,to:null,includeFrom:false,includeTo:false,status:compare(op,[lo,hi],[zero,zero],false)}];
+ const crossings=[div(sub(zero,lo),coefficient),div(sub(zero,hi),coefficient)].sort(cmp);
+ if(cmp(crossings[0],crossings[1])===0)crossings.pop();
+ const region=(from,to,inclusive,sample)=>{
+  const delta=mul(coefficient,sample);
+  return {from:from?text(from):null,to:to?text(to):null,includeFrom:inclusive,includeTo:inclusive,
+   status:compare(op,[add(lo,delta),add(hi,delta)],[zero,zero],false)};
+ };
+ const regions=[region(null,crossings[0],false,sub(crossings[0],one))];
+ for(let i=0;i<crossings.length;i++){
+  const point=crossings[i],next=crossings[i+1];
+  regions.push(region(point,point,true,point));
+  if(next)regions.push(region(point,next,false,div(add(point,next),[2n,1n])));
+ }
+ regions.push(region(crossings.at(-1),null,false,add(crossings.at(-1),one)));
+ return regions;
+}
+
 export async function evaluateReviewedIntervals(versionText,versionPin,planText,planPin){
  if(typeof planPin!=='string'||await casePin(planText)!==planPin)fail('PIN');
  const replay=await replayInvestigationVersion(versionText,versionPin),raw=parse(versionText,6),contract=parse(raw.contractText),batch=parse(raw.batchText,5),p=parse(planText,6);
