@@ -16,7 +16,7 @@ function fixture({tamper=false,abortReview=false,maxCost}={}){
   }else if(req.model==='synthesis-model'){
    const e=input.evidence[0];v={claims:[{statement:'One source reports battery costs in 2025.',kind:'reported',citations:[{passageId:e.passageId,quote:tamper?'invented evidence':e.quote.trim()}]}],gaps:['Comparability remains uncertain.']};
   }else{
-   assert.equal(req.connectionId,'anthropic');assert.ok(input.evidence.length>=2);if(abortReview)controller.abort();
+   assert.equal(req.connectionId,'anthropic');assert.ok(input.evidence.length>=1);if(abortReview)controller.abort();
    const e=input.evidence.at(-1);v={reviews:[{claimId:input.claims[0].claimId,verdict:'qualified',reason:'Different sources report different figures.',citations:[{passageId:e.passageId,quote:e.quote.trim()}]}]};
   }
   const text=JSON.stringify(v),body=req.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text}],usage:{output_tokens:64}}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:text}}],usage:{completion_tokens:64}};

@@ -115,7 +115,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
    const count=domainAttempts.get(host)??0;if(count>=3)continue;
    domainAttempts.set(host,count+1);slots--;
    const doc=await operation('document','drone',{url:item.url,depth:item.depth},async(signal)=>{
-    const d=await readDocument(item.url,{signal:AbortSignal.any([a.signal,signal])});
+    const d=await readDocument(item.url,{signal:AbortSignal.any([a.signal,signal]),beforeDispatch:async detail=>{pending={...pending,subdispatch:detail};await checkpoint();}});
     if(!d||d.url!==item.url||typeof d.text!=='string'||d.textDigest!==digest(d.text)||!Array.isArray(d.links)||d.links.length>40)fail('DOCUMENT');
     const text=d.text.slice(0,100000);
     const pageMap=d.pageMap?.filter(p=>p.startOffset<text.length).map(p=>({...p,endOffset:Math.min(p.endOffset,text.length)}));

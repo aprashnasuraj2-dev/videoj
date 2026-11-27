@@ -48,13 +48,13 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
   let absolute;try{absolute=new URL(location,current).href;}catch{fail('REDIRECT_LOCATION');}
   return admitDocumentURL(absolute,routeOptions);
  }
- async function readRobots(origin,signal){
+ async function readRobots(origin,signal,beforeDispatch){
   activeCheck(signal);
   if(robots.has(origin))return robots.get(origin);
   let current=new URL('/robots.txt',origin).href;const seen=new Set();
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('ROBOTS_REDIRECT_LOOP');seen.add(current);
-   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin,signal);
+   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin,signal);await beforeDispatch({kind:'robots',url:current});activeCheck(signal);
    const r=await transport({url:new URL(current),signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects});
    activeCheck(signal);
    if([301,302,303,307,308].includes(r.status)){if(hop===3)fail('ROBOTS_REDIRECT_LIMIT');current=redirectTarget(current,r.location);continue;}
@@ -63,7 +63,8 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
   }
   fail('ROBOTS_REDIRECT_LIMIT');
  }
- return async function read(raw,{signal:callerSignal}={}){
+ return async function read(raw,{signal:callerSignal,beforeDispatch=async()=>{}}={}){
+  if(typeof beforeDispatch!=='function')fail('DISPATCH_FENCE');
   const signal=callerSignal?AbortSignal.any([authorization.signal,callerSignal]):authorization.signal;
   activeCheck(signal);const requested=admitDocumentURL(raw,routeOptions);let current=requested;
   const chain=[],seen=new Set(),allowPdf=scope.allowPdf===true,maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
@@ -72,9 +73,9 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
    if(seen.has(current))fail('REDIRECT_LOOP');seen.add(current);
    const target=new URL(current),origin=target.origin,host=target.hostname,count=documentRequests.get(host)??0;
    if(count>=3)fail('DOMAIN_LIMIT');
-   const rules=await readRobots(origin,signal);
+   const rules=await readRobots(origin,signal,beforeDispatch);
    if(!robotsAllows(rules,target.pathname+target.search))fail('ROBOTS');
-   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,count+1);await throttle(origin,signal);
+   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,count+1);await throttle(origin,signal);await beforeDispatch({kind:'document',url:current});activeCheck(signal);
    const r=await transport({url:target,signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects});
    authorization.assertActive();
    if([301,302,303,307,308].includes(r.status)){
