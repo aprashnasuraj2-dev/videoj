@@ -50,6 +50,12 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
+let historySaveUncertain=false;
+function markHistorySaveUnknown(attempted){
+ historySaveUncertain=true;
+ by('history-durable-pin').value=attempted;
+ durableHistoryStatus('unknown','Save outcome unknown: the host may have published the attempted digest. Verify this digest or a separately retained current digest using Read before another write. Local history was not replaced.');
+}
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -1359,8 +1365,8 @@ function durableHistoryStatus(state,message){by('history-durable-status').datase
 function durableHistoryControl(){
  const s=history?.snapshot(),retained=by('history-durable-pin').value.trim(),available=!!historyHost;
  by('history-durable-pin').disabled=busy||!available;
- by('history-durable-initialize').disabled=busy||!available||!s||!!retained;
- by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest;
+ by('history-durable-initialize').disabled=busy||!available||!s||!!retained||historySaveUncertain;
+ by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest||historySaveUncertain;
  by('history-durable-read').disabled=busy||!available||!retained;
  if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
 }
@@ -1391,20 +1397,21 @@ function renderHistory(){
 by('history-branch').onchange=historyControl;
 for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
 by('history-file').addEventListener('change',historyControl);
-by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus('idle','Retained durable digest edited. Host not contacted.');historyControl();});
+by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus(historySaveUncertain?'unknown':'idle',historySaveUncertain?'Save outcome remains unknown. Read the retained digest to verify it before another write.':'Retained durable digest edited. Host not contacted.');historyControl();});
 by('history-durable-initialize').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot();if(!historyHost||!h||!s)return;
- const committed=await historyHost.initialize(s);
+ const h=history,s=h?.snapshot();if(!historyHost||!h||!s||historySaveUncertain)return;
+ let committed;try{committed=await historyHost.initialize(s);}catch(e){if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN')markHistorySaveUnknown(s.digest);throw e;}
  if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest)return;
  by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host initialized at the exact replayed history digest. Retain this digest separately.');status('history_durable_ready','Durable host initialized explicitly; browser history unchanged.');historyControl();
 });
 by('history-durable-append').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected)return;
+ const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected||historySaveUncertain)return;
  try{
   const committed=await historyHost.append(expected,s);
   if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest||by('history-durable-pin').value.trim()!==expected)return;
   by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host advanced to the exact current history digest. Retain this new digest separately.');status('history_durable_ready','Durable history advanced with exact retained-head CAS.');historyControl();
  }catch(e){
+  if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN'){markHistorySaveUnknown(s.digest);throw e;}
   if(ticket===epoch&&h===history&&by('history-durable-pin').value.trim()===expected)durableHistoryStatus(/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused',/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'Durable head differs from the retained digest. No retry or local history change occurred. Verify a separately retained current digest before proceeding.':'Durable host refused the write. No automatic retry or local history change occurred.');
   throw e;
  }
@@ -1413,6 +1420,7 @@ by('history-durable-read').onclick=()=>work(async ticket=>{
  const h=history,expected=by('history-durable-pin').value.trim();if(!historyHost||!expected)return;
  const checked=await historyHost.read(expected);
  if(ticket!==epoch||h!==history||by('history-durable-pin').value.trim()!==expected)return;
+ historySaveUncertain=false;
  const local=history?.snapshot().digest??null,same=local===checked.digest;
  durableHistoryStatus('ready','Durable host exactly matches the retained digest. In-memory history '+(same?'matches it.':'is different and was not replaced.')+' No state was adopted automatically.');
  status('history_durable_ready','Retained durable head verified without changing browser history.');historyControl();
