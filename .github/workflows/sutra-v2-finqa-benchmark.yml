@@ -1,4 +1,5 @@
-name: Validate SUTRA independent held-out FinQA benchmark\n# Canonical SUTRA main-line verification.
+name: Validate SUTRA independent held-out FinQA benchmark
+# Canonical SUTRA main-line verification.
 on:
   push:
     branches: ['main', 'sutra/v2-knowledge-compiler']
