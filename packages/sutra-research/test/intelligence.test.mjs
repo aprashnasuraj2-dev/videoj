@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {digest} from '../research-session.js';
-import {plannerInput,admitModelQueries,makeEvidencePacket,admitSynthesis,admitReviews,assembleIntelligence} from '../research-intelligence.js';
+import {plannerInput,admitModelQueries,makeEvidencePacket,admitSynthesis,admitReviews,conflictCandidates,admitConflictReviews,assembleIntelligence} from '../research-intelligence.js';
 const docs=[{id:'s1',url:'https://primary.org/report',text:'Battery cost was USD 100 million in 2025.'},{id:'s2',url:'https://other.org/report',text:'Battery cost was USD 125 million in 2025.'}].map(d=>({...d,textDigest:digest(d.text)}));
 const ps=docs.map(d=>({sourceId:d.id,sourceDigest:d.textDigest,locator:{startOffset:0,endOffset:d.text.length,coordinateSystem:'utf16-extracted-text'},supportingText:d.text}));
 test('model planner receives counts only and admits bounded objective-prefix refinements',()=>{
@@ -18,4 +18,16 @@ test('exact source subspan must exist, reviewer must cover all claims, disagreem
  assert.throws(()=>admitReviews({reviews:[]},s,packet),/REVIEW_SCHEMA/);
  const r=admitReviews({reviews:[{claimId:s.claims[0].id,verdict:'contradicted',reason:'A second source gives a different value.',citations:[{passageId:b.passageId,quote:'USD 125 million'}]}]},s,packet);
  const result=assembleIntelligence(s,r,[],packet);assert.equal(result.claims[0].publicationStatus,'withheld_from_findings');assert.equal(result.claims[0].truthStatus,'UNVERIFIED');assert.equal(result.authority,'NONE');
+});
+
+test('numeric and semantic conflict assessments require exact evidence on both sides and never establish truth',()=>{
+ const packet=makeEvidencePacket(docs,ps),a=packet.excerpts[0],b=packet.excerpts[1],candidates=conflictCandidates(packet);
+ assert.equal(candidates.length,1);
+ const s=admitSynthesis({claims:[{statement:'Battery costs were exactly USD 100 million.',kind:'inference',citations:[{passageId:a.passageId,quote:'USD 100 million'}]}],gaps:[]},packet);
+ const reviews=admitReviews({reviews:[{claimId:s.claims[0].id,verdict:'supported',reason:'The first source gives this figure.',citations:[{passageId:a.passageId,quote:'USD 100 million'}]}]},s,packet);
+ const omitted=admitConflictReviews({},candidates,packet);assert.equal(omitted[0].status,'unresolved');assert.equal(assembleIntelligence(s,reviews,[],packet,omitted).claims[0].publicationStatus,'withheld_from_findings');
+ const entry={candidateId:candidates[0].id,relation:'different_scope',reason:'The model suggests different populations.',citations:[{passageId:a.passageId,quote:'USD 100 million'},{passageId:b.passageId,quote:'USD 125 million'}]};
+ const explained=admitConflictReviews({conflicts:[entry]},candidates,packet);assert.equal(explained[0].status,'model_explanation_unverified');assert.equal(explained[0].authority,'NONE');
+ assert.throws(()=>admitConflictReviews({conflicts:[{...entry,citations:[entry.citations[0]]}]},candidates,packet),/CITATION_COUNT/);
+ assert.throws(()=>admitConflictReviews({conflicts:[{...entry,candidateId:'invented'}]},candidates,packet),/CONFLICT_CANDIDATE/);
 });

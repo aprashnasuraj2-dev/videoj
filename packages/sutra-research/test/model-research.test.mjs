@@ -17,7 +17,7 @@ function fixture({tamper=false,abortReview=false,maxCost}={}){
    const e=input.evidence[0];v={claims:[{statement:'One source reports battery costs in 2025.',kind:'reported',citations:[{passageId:e.passageId,quote:tamper?'invented evidence':e.quote.trim()}]}],gaps:['Comparability remains uncertain.']};
   }else{
    assert.equal(req.connectionId,'anthropic');assert.ok(input.evidence.length>=1);if(abortReview)controller.abort();
-   const e=input.evidence.at(-1);v={reviews:[{claimId:input.claims[0].claimId,verdict:'qualified',reason:'Different sources report different figures.',citations:[{passageId:e.passageId,quote:e.quote.trim()}]}]};
+   const e=input.evidence.at(-1);v={reviews:[{claimId:input.claims[0].claimId,verdict:'qualified',reason:'Different sources report different figures.',citations:[{passageId:e.passageId,quote:e.quote.trim()}]}],conflicts:input.conflictCandidates.map(c=>({candidateId:c.id,relation:'conflicting',reason:'Both sources give different reported figures.',citations:[c.leftPassageId,c.rightPassageId].map(passageId=>({passageId,quote:input.evidence.find(x=>x.passageId===passageId).quote.trim()}))}))};
   }
   const text=JSON.stringify(v),body=req.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text}],usage:{output_tokens:64}}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:text}}],usage:{completion_tokens:64}};
   return {status:200,bodyText:JSON.stringify(body)};
@@ -31,7 +31,7 @@ function fixture({tamper=false,abortReview=false,maxCost}={}){
  return {a,broker,requests,queries,run,close(){broker.close();a.close();}};
 }
 test('full model-directed research executes three hosted roles, model query and reviewed citations',async()=>{
- const f=fixture();try{const r=await f.run();assert.deepEqual(f.requests.map(x=>x.model),['plan-model','synthesis-model','critic-model']);assert.match(f.queries[1],/levelized cost methodology/);assert.equal(r.intelligence.claims[0].publicationStatus,'candidate_qualified');assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');assert.equal(r.usage.modelCalls,3);assert.equal(r.usage.reservedCostMicros,8000);assert.ok(r.modelReceipts.every(x=>x.authority==='NONE'));}finally{f.close();}
+ const f=fixture();try{const r=await f.run();assert.deepEqual(f.requests.map(x=>x.model),['plan-model','synthesis-model','critic-model']);assert.match(f.queries[1],/levelized cost methodology/);assert.equal(r.intelligence.claims[0].publicationStatus,'candidate_qualified');assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');assert.ok(r.intelligence.conflicts.length>0);assert.ok(r.intelligence.conflicts.every(x=>x.status==='unresolved'));assert.equal(r.usage.modelCalls,3);assert.equal(r.usage.reservedCostMicros,8000);assert.ok(r.modelReceipts.every(x=>x.authority==='NONE'));}finally{f.close();}
 });
 test('invented evidence fails synthesis admission and reviewer never sees it',async()=>{
  const f=fixture({tamper:true});try{const r=await f.run();assert.equal(r.intelligence,null);assert.equal(f.requests.length,2);assert.ok(r.failures.some(x=>x.reason==='CITATION_QUOTE'));}finally{f.close();}

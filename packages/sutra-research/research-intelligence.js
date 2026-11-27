@@ -1,6 +1,6 @@
 // Host admission of model outputs. Citation integrity does NOT establish entailment.
 import {digest,secretLike} from './research-session.js';
-import {verifyEvidence} from './evidence-index.js';
+import {verifyEvidence,extractNumericObservations,compareNumericObservations} from './evidence-index.js';
 const fail=code=>{throw Object.assign(Error('Research intelligence refused: '+code),{code});};
 const exact=(o,k)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===k.length&&k.every(x=>Object.hasOwn(o,x));
 const text=(s,max)=>typeof s==='string'&&s.trim()===s&&s.length>0&&s.length<=max&&!/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(s)&&!secretLike(s);
@@ -39,7 +39,7 @@ function admitCitations(citations,packet,{minimum=1,maximum=3}={}){
  if(!Array.isArray(citations)||citations.length<minimum||citations.length>maximum)fail('CITATION_COUNT');
  const seen=new Set(),out=[];
  for(const c of citations){
-  if(!exact(c,['passageId','quote'])||!text(c.quote,600)||typeof c.passageId!=='string'||seen.has(c.passageId))fail('CITATION_SCHEMA');
+  if(!exact(c,['passageId','quote'])||!text(c.quote,600)||c.quote.length<8||typeof c.passageId!=='string'||seen.has(c.passageId))fail('CITATION_SCHEMA');
   const item=packet.map.get(c.passageId);if(!item)fail('CITATION_UNKNOWN');
   const offset=item.p.supportingText.indexOf(c.quote);
   if(offset<0)fail('CITATION_QUOTE');
@@ -62,7 +62,7 @@ export function admitSynthesis(value,packet){
  return {claims,gaps:[...new Set(value.gaps)]};
 }
 export function admitReviews(value,synthesis,packet){
- if(!exact(value,['reviews'])||!Array.isArray(value.reviews)||value.reviews.length!==synthesis.claims.length)fail('REVIEW_SCHEMA');
+ if(!(exact(value,['reviews'])||exact(value,['reviews','conflicts']))||!Array.isArray(value.reviews)||value.reviews.length!==synthesis.claims.length)fail('REVIEW_SCHEMA');
  const claims=new Map(synthesis.claims.map(c=>[c.id,c])),seen=new Set(),reviews=[];
  for(const r of value.reviews){
   if(!exact(r,['claimId','verdict','reason','citations'])||!claims.has(r.claimId)||seen.has(r.claimId)||!['supported','qualified','contradicted','insufficient'].includes(r.verdict)||!text(r.reason,700))fail('REVIEW_SCHEMA');
@@ -71,8 +71,42 @@ export function admitReviews(value,synthesis,packet){
  }
  return reviews;
 }
-export function assembleIntelligence(synthesis,reviews,receipts,packet){
+// Every candidate pair contains independently locatable evidence on both sides.
+// A different host or vendor is not proof of independent source origin.
+export function conflictCandidates(packet){
+ const passages=packet.excerpts.map(e=>packet.map.get(e.passageId).p),refs=packet.excerpts.map(e=>packet.map.get(e.passageId).ref);
+ const numbers=extractNumericObservations(passages,refs),byId=new Map(numbers.map(n=>[n.id,n])),pairs=[],seen=new Set();
+ for(const c of compareNumericObservations(numbers)){
+  const a=byId.get(c.left),b=byId.get(c.right);if(!a||!b||a.sourceId===b.sourceId)continue;
+  const key=[a.passageId,b.passageId].sort().join(':');if(seen.has(key)||pairs.length>=8)continue;seen.add(key);
+  pairs.push({id:id('conflict',[key]),leftPassageId:a.passageId,rightPassageId:b.passageId,kind:'numeric_discrepancy_candidate'});
+ }
+ return pairs;
+}
+export function admitConflictReviews(value,candidates,packet){
+ const candidateMap=new Map(candidates.map(c=>[c.id,c])),seen=new Set(),out=[];
+ const raw=value?.conflicts??[];
+ if(!Array.isArray(raw)||raw.length>12)fail('CONFLICT_SCHEMA');
+ for(const c of raw){
+  if(!exact(c,['candidateId','relation','reason','citations'])||typeof c.candidateId!=='string'||!['conflicting','different_scope','different_period','different_definition','different_unit','insufficient'].includes(c.relation)||!text(c.reason,700))fail('CONFLICT_SCHEMA');
+  const citations=admitCitations(c.citations,packet,{minimum:2,maximum:2});
+  const [a,b]=citations;if(a.sourceId===b.sourceId)fail('CONFLICT_SOURCES');
+  const pair=[a.passageId,b.passageId].sort(),key=pair.join(':');if(seen.has(key))fail('CONFLICT_DUPLICATE');seen.add(key);
+  const detected=candidateMap.get(c.candidateId);
+  if(c.candidateId!=='new'&&(!detected||[detected.leftPassageId,detected.rightPassageId].sort().join(':')!==key))fail('CONFLICT_CANDIDATE');
+  if(c.candidateId==='new'&&candidates.some(x=>[x.leftPassageId,x.rightPassageId].sort().join(':')===key))fail('CONFLICT_CANDIDATE');
+  out.push({id:detected?.id??id('conflict',[key]),kind:detected?.kind??'semantic_conflict_candidate',relation:c.relation,reason:c.reason,citations,status:['conflicting','insufficient'].includes(c.relation)?'unresolved':'model_explanation_unverified',authority:'NONE'});
+ }
+ for(const c of candidates)if(!out.some(x=>x.id===c.id))out.push({...c,relation:'not_reviewed',status:'unresolved',citations:[],reason:'The reviewer did not return a validated assessment.',authority:'NONE'});
+ return out;
+}
+export function assembleIntelligence(synthesis,reviews,receipts,packet,conflicts=[]){
  const byId=new Map(reviews.map(r=>[r.claimId,r]));
- const claims=synthesis.claims.map(c=>{const r=byId.get(c.id);return {...c,reviewStatus:r?.verdict??'not_reviewed',review:r??null,publicationStatus:r?.verdict==='supported'?'candidate_reviewed':r?.verdict==='qualified'?'candidate_qualified':'withheld_from_findings'};});
- return {schema:'sutra-research-intelligence/v1',claims,gaps:synthesis.gaps,receipts,packet:{disclosedPassages:packet.excerpts.length,availablePassages:packet.availablePassages,disclosedBytes:packet.disclosedBytes},authority:'NONE',qualification:'Exact quotations were validated against acquired extraction. Model review is a semantic opinion, not proof of truth, entailment, independence or completeness. Disputed, insufficient and unreviewed claims are excluded from findings.'};
+ const claims=synthesis.claims.map(c=>{
+  const r=byId.get(c.id),cited=new Set(c.citations.map(x=>x.passageId));
+  const affected=conflicts.filter(x=>x.status==='unresolved'&&(x.citations.some(k=>cited.has(k.passageId))||cited.has(x.leftPassageId)||cited.has(x.rightPassageId))).map(x=>x.id);
+  const publicationStatus=c.kind==='inference'&&affected.length?'withheld_from_findings':r?.verdict==='supported'?(affected.length?'candidate_qualified':'candidate_reviewed'):r?.verdict==='qualified'?'candidate_qualified':'withheld_from_findings';
+  return {...c,reviewStatus:r?.verdict??'not_reviewed',review:r??null,conflictIds:affected,publicationStatus};
+ });
+ return {schema:'sutra-research-intelligence/v1',claims,gaps:synthesis.gaps,conflicts,receipts,packet:{disclosedPassages:packet.excerpts.length,availablePassages:packet.availablePassages,disclosedBytes:packet.disclosedBytes},authority:'NONE',qualification:'Exact quotations were validated against acquired extraction. Model review is a semantic opinion, not proof of truth, entailment, independence or completeness. Disputed, insufficient and unreviewed claims are excluded from findings.'};
 }

@@ -8,11 +8,13 @@ export function formatMarkdownReport(report){
   for(const c of report.intelligence.claims.filter(c=>c.publicationStatus!=='withheld_from_findings')){
    lines.push('- **'+esc(c.kind)+' / '+esc(c.reviewStatus)+':** '+esc(c.statement));
    for(const cite of c.citations)lines.push('  - “'+esc(cite.quote)+'” — '+esc(cite.sourceId)+(cite.locator.page?', page '+cite.locator.page:'')+', offsets '+cite.locator.startOffset+'–'+cite.locator.endOffset+'.');
-   if(c.review)lines.push('  - Reviewer qualification: '+esc(c.review.reason));
+   if(c.review){lines.push('  - Model reviewer assessment: '+esc(c.review.reason));for(const cite of c.review.citations)lines.push('    - “'+esc(cite.quote)+'” — '+esc(cite.sourceId)+', offsets '+cite.locator.startOffset+'–'+cite.locator.endOffset+'.');}
   }
   lines.push('','## Withheld or disputed candidate findings','');
   for(const c of report.intelligence.claims.filter(c=>c.publicationStatus==='withheld_from_findings'))lines.push('- '+esc(c.id)+': '+esc(c.reviewStatus)+(c.review?' — '+esc(c.review.reason):'')+'.');
-  for(const g of report.intelligence.gaps)lines.push('- Gap: '+esc(g));
+  for(const g of report.intelligence.gaps)lines.push('- Model-proposed gap: '+esc(g));
+  lines.push('','## Competing evidence assessments','');
+  for(const c of report.intelligence.conflicts??[]){lines.push('- '+esc(c.id)+' — '+esc(c.relation)+' / '+esc(c.status)+': '+esc(c.reason));for(const x of c.citations)lines.push('  - “'+esc(x.quote)+'” — '+esc(x.sourceId)+', offsets '+x.locator.startOffset+'–'+x.locator.endOffset+'.');}
  }
  lines.push('','## Search history','');
  for(const q of report.queries)lines.push('- '+esc(q.query)+' — '+esc(q.provider)+'; '+esc(q.reason));
