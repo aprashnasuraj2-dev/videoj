@@ -9,6 +9,7 @@ async function testMaster(browser,origin,assert){
  await page.locator('#orb-play').click();await page.locator('#orb-play').click();await page.locator('#orb-step').click();assert.match(await page.locator('#orb-log').innerText(),/SIMULATED/);await page.locator('#orb-stop').click();
  await page.locator('#orb-era').click();assert.equal(await page.locator('#sutra-orbit').getAttribute('data-era'),'1997');await page.locator('#orb-era').click();
  await page.locator('#orb-nav').getByRole('button',{name:'API routes'}).click();assert.equal(await page.locator('.orb-route-grid .orb-route').count(),6);
+ await page.locator('#orb-nav').getByRole('button',{name:'Guestbook'}).click();assert.match(await page.locator('#orb-guestbook').innerText(),/No local storage accessed/);
  await page.locator('#orb-nav').getByRole('button',{name:'Investigation',exact:true}).click();await page.locator('#sutra-master').waitFor();
  assert.match(await page.locator('#sm-question').innerText(),/What are you trying to determine/);
  await page.locator('#sutra-master').getByRole('button',{name:'Network engineering',exact:true}).click();
