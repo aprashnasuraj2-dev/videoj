@@ -13,16 +13,16 @@ function patternMatch(pattern,path){
 }
 export function robotsAllows(text,path){
  if(text.length>ROBOTS_BYTES||/[^\x09\x0a\x0d\x20-\x7e]/.test(text))return false;
- const groups=[];let current={agents:[],rules:[],delay:false},seenRule=false;
+ const groups=[];let totalRules=0;let current={agents:[],rules:[],delay:false},seenRule=false;
  const flush=()=>{if(current.agents.length)groups.push(current);current={agents:[],rules:[],delay:false};seenRule=false;};
  for(const line of text.split(/\r?\n/)){
   const clean=line.split('#')[0].trim();if(!clean)continue;
   const i=clean.indexOf(':');if(i<0)return false;const key=clean.slice(0,i).trim().toLowerCase(),value=clean.slice(i+1).trim();
   if(key==='user-agent'){if(seenRule)flush();current.agents.push(value.toLowerCase());}
-  else if(['allow','disallow','crawl-delay'].includes(key)&&current.agents.length){seenRule=true;if(key==='crawl-delay'){current.delay=true;continue;}if(value){if(value.length>512||current.rules.length>=256||value.includes('%'))return false;current.rules.push({allow:key==='allow',value});}}
+  else if(['allow','disallow','crawl-delay'].includes(key)&&current.agents.length){seenRule=true;if(key==='crawl-delay'){current.delay=true;continue;}if(value){if(value.length>256||++totalRules>64||value.includes('%'))return false;current.rules.push({allow:key==='allow',value});}}
  }
  flush();const specific=groups.filter(g=>g.agents.some(a=>a!=='*'&&'sutraresearch'.includes(a)&&a.length));const matching=specific.length?specific:groups.filter(g=>g.agents.includes('*'));
- if(matching.some(g=>g.delay)||path.includes('%'))return false;
+ if(matching.some(g=>g.delay)||path.length>1024||path.includes('%'))return false;
  const rules=matching.flatMap(g=>g.rules).filter(r=>patternMatch(r.value,path)).sort((a,b)=>b.value.replace(/[*$]/g,'').length-a.value.replace(/[*$]/g,'').length||Number(b.allow)-Number(a.allow));
  return !rules.length||rules[0].allow;
 }

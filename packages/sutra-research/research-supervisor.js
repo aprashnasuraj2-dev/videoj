@@ -73,7 +73,9 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
    pending=null;await checkpoint();
    // Reserve opportunity for further searches: at most two docs per round.
    for(let acquired=0;acquired<2&&frontier.length&&a.usage().documents<b.maxDocuments;){
-    const item=frontier.shift(),host=new URL(item.url).hostname;
+    // Prioritize independent domains and shallow discovery over repeated same-site links.
+    const score=x=>((domainAttempts.get(new URL(x.url).hostname)??0)*100)+x.depth*10;
+    frontier.sort((x,y)=>score(x)-score(y));const item=frontier.shift(),host=new URL(item.url).hostname;
     const count=domainAttempts.get(host)??0;if(count>=3)continue;
     domainAttempts.set(host,count+1);acquired++;
     const doc=await operation('document','drone',{url:item.url,depth:item.depth},async()=>{

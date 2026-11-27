@@ -209,3 +209,5 @@ test('validation snapshot workflows map to their live canonical verification sui
  assert.deepEqual(benchmark.affectedSuites,['v2-knowledge-verification']);
  assert.deepEqual(benchmark.requiredWorkflows,['Validate SUTRA knowledge kernel']);
 });
+
+test('autonomous research is explicitly mapped to its dedicated verification workflow',()=>{const r=classifyChangedFiles(['packages/sutra-research/research-supervisor.js','apps/sutra-v2/autonomous-research.mjs','.github/workflows/sutra-autonomous-research.yml'],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('v2-autonomous-research'));assert.ok(r.requiredWorkflows.includes('SUTRA autonomous research'));});

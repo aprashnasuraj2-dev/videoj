@@ -373,6 +373,21 @@
       ],
       "invalidates": [],
       "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics. Includes the legacy hash-bound lesson profile, source registry, timing fixture and native seek policy. Explicit research register and evaluation protocol changes require the v2 verification workflow, but do not establish research validity."
+    },
+    {
+      "id": "v2-autonomous-research",
+      "prefixes": [
+        "packages/sutra-research/"
+      ],
+      "exact": [
+        "apps/sutra-v2/autonomous-research.mjs",
+        ".github/workflows/sutra-autonomous-research.yml"
+      ],
+      "requiredWorkflows": [
+        "SUTRA autonomous research"
+      ],
+      "invalidates": [],
+      "reason": "Standalone research authorization, acquisition, candidate citation and adaptive supervision require the dedicated adversarial regression suite; no live research metric is implied."
     }
   ]
 }

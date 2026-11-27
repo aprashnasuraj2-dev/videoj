@@ -1,0 +1,30 @@
+// Durable local snapshots. They carry no authority and cannot restart a remote operation.
+import {mkdir,open,rename,unlink} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {digest} from './research-session.js';
+export async function createCheckpointWriter(directory){
+ // Require a fresh operator-selected directory; no overwrite of a prior investigation.
+ if(typeof directory!=='string'||!directory.trim())throw Error('CHECKPOINT_DIRECTORY');
+ const dir=resolve(directory);await mkdir(dir,{mode:0o700});
+ let last=-1,sessionId,active=false;
+ return async snapshot=>{
+  if(active||snapshot?.authority!=='NONE'||typeof snapshot.sessionId!=='string'||!Number.isSafeInteger(snapshot.sequence)||snapshot.sequence<last||sessionId&&snapshot.sessionId!==sessionId)throw Error('CHECKPOINT_STATE');
+  active=true;sessionId=snapshot.sessionId;
+  const payload=JSON.stringify(snapshot),envelope=JSON.stringify({schema:'sutra-checkpoint-envelope/v1',digest:digest(payload),payload})+'\n';
+  const tmp=join(dir,'checkpoint.tmp'),target=join(dir,'checkpoint.json');let fd;
+  try{
+   fd=await open(tmp,'wx',0o600);await fd.writeFile(envelope,'utf8');await fd.sync();await fd.close();fd=undefined;
+   await rename(tmp,target);
+   // POSIX directory fsync makes the atomic rename durable on supporting filesystems.
+   const d=await open(dir,'r');try{await d.sync();}finally{await d.close();}
+   last=snapshot.sequence;
+  }finally{if(fd)await fd.close();await unlink(tmp).catch(()=>{});active=false;}
+ };
+}
+export function inspectCheckpoint(text,expectedDigest){
+ const e=JSON.parse(text);
+ if(e?.schema!=='sutra-checkpoint-envelope/v1'||typeof e.payload!=='string'||e.digest!==expectedDigest||digest(e.payload)!==expectedDigest)throw Error('CHECKPOINT_DIGEST');
+ const p=JSON.parse(e.payload);
+ if(p?.schema!=='sutra-autonomous-research-checkpoint/v1'||p.authority!=='NONE')throw Error('CHECKPOINT_STATE');
+ return Object.freeze({checkpoint:p,authority:'NONE',canAutomaticallyResume:false});
+}
