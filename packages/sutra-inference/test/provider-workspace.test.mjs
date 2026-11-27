@@ -270,3 +270,39 @@ test('capability declarations are bounded host metadata and reject malformed or 
  assert.throws(()=>createProviderWorkspace({catalog:[{id:'provider-a',label:'A',models:['alpha-small'],capabilities:caps}],globalLimits,defaultProfileLimits:limits,randomBytes,transports:[]}),e=>e.code==='CAPABILITY');
  assert.equal(ran,0);
 });
+
+
+test('capability metadata cannot be enrolled as a credential or exposed across providers',()=>{
+ const capabilityCatalog=[
+  {id:'provider-a',label:'Provider A',models:['alpha-small'],capabilities:{'alpha-small':['text.generate','structured.output']}},
+  {id:'provider-b',label:'Provider B',models:['beta-fast'],capabilities:{'beta-fast':['text.generate']}}
+ ];
+ let contacts=0;
+ const w=createProviderWorkspace({catalog:capabilityCatalog,globalLimits,defaultProfileLimits:limits,randomBytes,clock:()=>0,transports:[
+  {providerId:'provider-a',send:async()=>{contacts++;throw Error('unexpected transport');}}
+ ]});
+ for(const credential of ['text.generate','structured.output','ured.output']){
+  assert.throws(()=>w.addProfile({providerId:'provider-b',label:'B',credential}),e=>e.code==='PROFILE');
+ }
+ assert.equal(w.list().length,0);
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
+ const result=w.negotiateCapabilities({handle:a.handle,model:'alpha-small',required:['text.generate']});
+ assert.deepEqual(result.declared,['text.generate','structured.output']);
+ assert.equal(JSON.stringify(result).includes(alpha),false);
+ assert.equal(contacts,0);
+ assert.equal(w.budgetSnapshot().global.used.calls,0);
+});
+
+test('capability catalogs and requirement lists enforce size bounds before inspecting elements',()=>{
+ let reads=0;
+ const oversized=n=>{const a=new Array(n);Object.defineProperty(a,'0',{enumerable:true,get(){reads++;throw Error('must not read');}});return a;};
+ const create=catalog=>createProviderWorkspace({catalog,globalLimits,defaultProfileLimits:limits,randomBytes,clock:()=>0});
+ assert.throws(()=>create(oversized(9)),e=>e.code==='CONFIG');
+ assert.throws(()=>create([{id:'provider-a',label:'A',models:oversized(17)}]),e=>e.code==='CONFIG');
+ assert.throws(()=>create([{id:'provider-a',label:'A',models:['alpha-small'],capabilities:{'alpha-small':oversized(17)}}]),e=>e.code==='CAPABILITY');
+ const w=create([{id:'provider-a',label:'A',models:['alpha-small'],capabilities:{'alpha-small':['text.generate']}}]);
+ const p=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
+ assert.throws(()=>w.negotiateCapabilities({handle:p.handle,model:'alpha-small',required:oversized(9)}),e=>e.code==='CAPABILITY');
+ assert.equal(reads,0);
+ assert.equal(w.budgetSnapshot().global.used.calls,0);
+});
