@@ -1,9 +1,10 @@
-const {chromium}=require('../../apps/sutra/node_modules/playwright');
+const v2=process.argv.includes('--v2-dist');const {chromium}=require(v2?'../../apps/sutra-v2/node_modules/playwright':'../../apps/sutra/node_modules/playwright');
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'../..'),vendor=path.join(root,'packages/sutra-runtime/vendor/nsdeploy');
 const pin=JSON.parse(fs.readFileSync(path.join(vendor,'UPSTREAM.json')));
 const publicDir=path.join(root,'apps/sutra-peer/public/agents');
 const files=Object.fromEntries(['agent-manifest.json','checklist.network.json'].map(name=>[name,fs.readFileSync(path.join(publicDir,name))]));
+let publicationHeaders=null;
 const requests=[];let mode='normal',browser;
 const open=handler=>new Promise((resolve,reject)=>{const server=http.createServer(handler);server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve({server,origin:'http://127.0.0.1:'+server.address().port}));});
 const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
@@ -15,7 +16,7 @@ const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
   if(name==='agent-manifest.json'&&mode==='duplicate'){const m=JSON.parse(value);m.networks.push(m.networks[0]);value=JSON.stringify(m);}
   if(name==='checklist.network.json'&&mode==='hint'){const g=JSON.parse(value);g.llm_config={model_name:'publisher-unapproved-model'};value=JSON.stringify(g);}
   if(name==='checklist.network.json'&&mode==='external'){const g=JSON.parse(value);g.tools[0].tools.push('https://blocked.invalid/agents/other');value=JSON.stringify(g);}
-  res.writeHead(200,{'Content-Type':'application/json',...(mode==='no-cors'?{}:{'Access-Control-Allow-Origin':'*'}),'Cache-Control':'no-store'});res.end(value);
+  res.writeHead(200,{'Content-Type':'application/json',...(mode==='no-cors'?{}:publicationHeaders?publicationHeaders[name]:{'Access-Control-Allow-Origin':'*'}),'Cache-Control':'no-store'});res.end(value);
  });
  const consumer=await open((req,res)=>{
   let data,type='text/javascript';
@@ -43,6 +44,12 @@ const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
   mode='no-cors';requests.length=0;await run.click();await allow.click();await status('ARTIFACT_UNAVAILABLE');assert.equal(requests.length,1);assert.equal(await page.locator('#output').textContent(),'');
   mode='external';await run.click();await allow.click();await allow.click();await status('GRAPH_PROFILE');assert.equal(await page.locator('#output').textContent(),'');
   mode='hint';await run.click();await allow.click();await allow.click();await status('Completed');assert.deepEqual(JSON.parse(await page.locator('#output').textContent()).models,Array(3).fill('consumer-owned-fixture'));
+  if(v2){
+   const dist=path.join(root,'apps/sutra-v2/dist');for(const name of Object.keys(files))delete files[name];for(const name of ['agent-manifest.json','investigation.network.json'])files[name]=fs.readFileSync(path.join(dist,'agents',name));
+   const headers=fs.readFileSync(path.join(dist,'_headers'),'utf8');publicationHeaders={};for(const name of Object.keys(files)){const block=headers.split(/\r?\n\r?\n/).find(x=>x.startsWith('/agents/'+name+'\n'));assert.ok(block);assert.match(block,/^  Access-Control-Allow-Origin: \*$/m);publicationHeaders[name]={'Access-Control-Allow-Origin':'*'};}
+   mode='normal';requests.length=0;await page.locator('#network').fill('investigation');await run.click();await allow.click();await allow.click();await status('Completed');const actual=JSON.parse(await page.locator('#output').textContent());assert.equal(actual.name,'investigation');assert.equal(actual.front,'planner');assert.equal(actual.agentCalls,2);assert.equal(actual.modelCalls,3);assert.deepEqual(actual.models,Array(3).fill('consumer-owned-fixture'));assert.deepEqual(requests.map(r=>r.path),['/agents/agent-manifest.json','/agents/investigation.network.json']);assert.ok(requests.every(r=>r.method==='GET'&&!r.cookie&&!r.auth&&!r.referer));
+   mode='no-cors';requests.length=0;await run.click();await allow.click();await status('ARTIFACT_UNAVAILABLE');assert.equal(requests.length,1);assert.equal(await page.locator('#output').textContent(),'');console.log('PASS neutral consumer: canonical built V2 publication, scoped CORS policy, independent runner, local caller-owned model and no credential transmission. Fixture inference, loopback only.');
+  }
   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);
   console.log('PASS neutral consumer: direct pinned upstream kernel/runner, exact public JSON GETs, two independent loopback origins, 2 agents/3 local model calls, separate manifest/graph denial, wrong/duplicate names, missing graph, external-capability rejection and caller-owned model override. Synthetic, same-owner lab only.');
  }finally{await browser?.close();await Promise.all([close(publisher.server),close(consumer.server)]);}

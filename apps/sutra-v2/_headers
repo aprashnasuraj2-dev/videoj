@@ -12,6 +12,12 @@
 /agents/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/agents/agent-manifest.json
+  Access-Control-Allow-Origin: *
+
+/agents/investigation.network.json
+  Access-Control-Allow-Origin: *
+
 /agents/v/*
   Cache-Control: public, max-age=31536000, immutable
 

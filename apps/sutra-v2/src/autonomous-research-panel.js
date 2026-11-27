@@ -12,13 +12,14 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
  const prepare=button('orb-autonomous-prepare','Prepare investigation'),browserPrepare=button('orb-autonomous-browser-prepare','Prepare browser plan'),connect=button('orb-autonomous-connections','Model connections'),start=button('orb-autonomous-start','Launch investigation'),cancel=button('orb-autonomous-cancel','Cancel'),download=button('orb-autonomous-export','Export report');
  start.classList.add('orb-primary');
  const approve=E('input');approve.type='checkbox';approve.id='orb-autonomous-approve';
+ const approvalLabel=field('I approve the displayed model recipients, public web access when needed, and the estimated request limits.',approve);
  const preview=E('div',undefined,'orb-event');preview.id='orb-autonomous-preview';preview.hidden=true;
  const status=E('p','Ready to prepare. A local research host is needed for execution.','orb-muted');status.id='orb-autonomous-status';status.setAttribute('role','status');
  const result=E('div',undefined,'orb-list');result.id='orb-autonomous-result';
  const controls=E('div',undefined,'orb-controls');controls.append(prepare,browserPrepare,connect,start,cancel,download);
- root.append(E('p','OBJECTIVE-FIRST WORKSPACE','orb-kicker'),E('h2','Explore with SUTRA'),field('What would you like to investigate?',objective),controls,preview,field('I approve the displayed model recipients, public web access when needed, and the estimated request limits.',approve),status,result);
+ root.append(E('p','OBJECTIVE-FIRST WORKSPACE','orb-kicker'),E('h2','Explore with SUTRA'),field('What would you like to investigate?',objective),controls,preview,approvalLabel,status,result);
  function state(text,name){status.textContent=text;status.dataset.state=name;}
- function sync(){objective.disabled=busy||running;prepare.disabled=busy||running||!objective.value.trim();browserPrepare.disabled=prepare.disabled;approve.disabled=!plan||busy||running;start.disabled=!plan||!approve.checked||busy||running;cancel.disabled=!running||busy&& !browserController;download.disabled=!report||busy;}
+ function sync(){approvalLabel.firstChild.textContent=plan?.browser?'I approve disclosure of my objective and derived messages to the displayed publisher router, within the displayed call limits. No web or private evidence access.':'I approve the displayed model recipients, public web access when needed, and the estimated request limits.';objective.disabled=busy||running;prepare.disabled=busy||running||!objective.value.trim();browserPrepare.disabled=prepare.disabled;approve.disabled=!plan||busy||running;start.disabled=!plan||!approve.checked||busy||running;cancel.disabled=!running||busy&& !browserController;download.disabled=!report||busy;}
  function reset(){if(running)return;epoch++;plan=null;report=null;preview.hidden=true;preview.replaceChildren();approve.checked=false;result.replaceChildren();state('Prepare a fresh investigation using the shared model pool.','idle');sync();}
  function selectedModels(){return getModels().map(x=>({vendor:x.vendor,model:x.model}));}
  async function request(path,{method='GET',data,publicRequest=false}={}){
