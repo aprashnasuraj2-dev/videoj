@@ -1,5 +1,5 @@
 import {createStudioExecution} from './execution-channel.js';
-import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
+import {reviewedContractHandoff,investigationHandoff,hybridVersionHandoff} from './workspace-handoff.js';
 import {validateReviewedContract} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {createProtocolWorkspace} from '../../../packages/sutra-inference/protocol-workspace.js';
 import {admitProofCase} from '../../../packages/sutra-knowledge/agent-bridge.js';
@@ -23,7 +23,7 @@ let active=null,activeTelemetry=null,current=null,epoch=0,replayEpoch=0,transfer
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
 function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-offer-version').disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;if(value)exportButton.disabled=true;}
-function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;}
+function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;by('studio-hybrid-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
 function invalidate(){epoch++;active?.abort();activeTelemetry?.finish('cancelled');clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
 function showMode(){const expression=by('studio-mode').value==='expression';for(const id of ['studio-method-question','studio-method-case','studio-method-consent'])by(id).hidden=expression;by('studio-expression-fields').hidden=!expression;}
@@ -214,13 +214,16 @@ replayButton.addEventListener('click',async()=>{
  finally{if(ticket===replayEpoch)replayButton.disabled=false;}
 });
 const localPlanButton=by('studio-export-local-plan');
+const hybridPlanButton=by('studio-export-hybrid-plan');
 let exportingPlan=false;
-localPlanButton.addEventListener('click',async()=>{
+hybridVersionHandoff.subscribe(offer=>{by('studio-hybrid-version').textContent=offer?'Offered evaluated version '+offer.pin+' · load its exact contract before export.':'No evaluated investigation offered for hybrid execution.';by('studio-hybrid-export-approve').checked=false;hybridPlanButton.disabled=!!active||exportingPlan||!offer;});
+async function exportLocalPlan(hybrid=false){
  const el=by('studio-local-plan-status'),commands=by('studio-local-plan-commands');
  if(active||exportingPlan)return;
  commands.hidden=true;commands.textContent='';
- if(!by('studio-local-export-approve').checked){el.dataset.state='refused';el.textContent='Approve the full reviewed-contract export first.';return;}
- const ticket=epoch;by('studio-local-export-approve').checked=false;exportingPlan=true;localPlanButton.disabled=true;
+ const approval=by(hybrid?'studio-hybrid-export-approve':'studio-local-export-approve'),offer=hybrid?hybridVersionHandoff.read():null;
+ if(!approval.checked||hybrid&&!offer){el.dataset.state='refused';el.textContent=hybrid?'Offer an evaluated version and approve the full investigation export first.':'Approve the full reviewed-contract export first.';return;}
+ const ticket=epoch;approval.checked=false;exportingPlan=true;localPlanButton.disabled=hybridPlanButton.disabled=true;
  try{
   const c=readConfig();if(c.mode!=='expression')throw Error('EXPRESSION_REQUIRED');
   const used=new Set(c.agents.map(x=>x.connectionId));
@@ -230,15 +233,23 @@ localPlanButton.addEventListener('click',async()=>{
    return {id:x.id,label:x.id,protocol:x.protocol,endpoint:by('studio-local-endpoint-'+x.slot).value.trim(),models:[x.model],authMode,credentialEnv:authMode==='none'?null:env};
   });
   const config={version:LOCAL_COUNCIL_VERSION,contractText:c.contractText,contractPin:c.contractPin,disclosure:c.disclosure,connections,agents:c.agents,budget:{maxCalls:c.callCap,maxInputBytes:100000,maxOutputTokens:c.callCap*256,maxConcurrent:Math.min(2,c.callCap)},maxRounds:c.rounds,maxOutputTokens:256,roundPolicy:c.roundPolicy,timeoutMs:15000,transportDeadlineMs:10000};
-  const text=JSON.stringify(config,null,2),admitted=await admitLocalCouncilConfig(text);
-  if(ticket!==epoch||active)return;
-  const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-local-council-config.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  el.dataset.state='complete';el.textContent='Configuration export requested. No endpoint contact. Review CLI preview before executing. Retain plan pin: '+admitted.planPin;
-  commands.textContent='node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+admitted.planPin+' --export-version --portable-output < sutra-local-council-config.json > sutra-local-result.json';
+  let text=JSON.stringify(config,null,2);const admitted=await admitLocalCouncilConfig(text);
+  let planPin=admitted.planPin,name='sutra-local-council-config.json';
+  if(hybrid){
+   if(await casePin(offer.text)!==offer.pin)throw Error('HYBRID_VERSION_PIN');
+   const v=JSON.parse(offer.text);if(v.contractText!==c.contractText||v.contractPin!==c.contractPin)throw Error('HYBRID_CONTRACT');
+   const councilConfigText=JSON.stringify({...config,version:'sutra-mixed-expression-council/v1',connections:config.connections.map(x=>({...x,transportClass:'local'}))});
+   text=JSON.stringify({version:'sutra-mixed-hybrid-operator/v1',versionText:offer.text,versionPin:offer.pin,councilConfigText});planPin=await casePin(text);name='sutra-local-hybrid-config.json';
+  }
+  if(ticket!==epoch||active||hybrid&&hybridVersionHandoff.read()!==offer)return;
+  const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download=name;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  el.dataset.state='complete';el.textContent='Configuration export requested. No endpoint contact. Review CLI preview before executing. Retain plan pin: '+planPin;
+  commands.textContent=hybrid?'node apps/sutra-v2/local-hybrid.mjs --plan < '+name+'\n\nnode apps/sutra-v2/local-hybrid.mjs --execute-local --approve-local-disclosure --approve-plan '+planPin+' < '+name+' > sutra-local-hybrid-result.json':'node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+planPin+' --export-version --portable-output < sutra-local-council-config.json > sutra-local-result.json';
   commands.hidden=false;
  }catch{if(ticket===epoch){el.dataset.state='refused';el.textContent='Local configuration refused. Check reviewed contract/pin, scopes, literal loopback endpoints, protocols and environment names.';}}
- finally{exportingPlan=false;localPlanButton.disabled=false;}
-});
+ finally{exportingPlan=false;localPlanButton.disabled=false;hybridPlanButton.disabled=!!active||!hybridVersionHandoff.read();}
+}
+localPlanButton.addEventListener('click',()=>exportLocalPlan(false));hybridPlanButton.addEventListener('click',()=>exportLocalPlan(true));
 function resetTransfer(){
  transferEpoch++;verifiedTransfer=null;by('studio-transfer-download').disabled=true;by('studio-transfer-help').hidden=true;by('studio-transfer-verify').disabled=false;
  const el=by('studio-transfer-status');el.dataset.state='idle';el.textContent='Inputs changed. Verify the portable result again.';

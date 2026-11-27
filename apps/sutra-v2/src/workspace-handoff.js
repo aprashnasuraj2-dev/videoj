@@ -15,3 +15,6 @@ function channel(){
 }
 export const reviewedContractHandoff=channel();
 export const investigationHandoff=channel();
+
+// Explicitly offered evaluated version for local hybrid operator export; not a grant.
+export const hybridVersionHandoff=channel();
