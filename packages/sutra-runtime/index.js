@@ -147,10 +147,15 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowWorkspaceEvidence:!!evidence,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
- const assertPublicText=text=>{try{privatePolicy.assertOrdinaryText(text);}catch(error){fail(error.code??'PRIVATE_CONTEXT_RETURN','Ordinary request or result contains protected private context.');}};
+ const assertPublicText=data=>{try{
+  // These are already bounded, host-owned JSON snapshots. Inspect decoded
+  // string leaves, not JSON escape sequences that can conceal literal values.
+  const scan=value=>{if(typeof value==='string')privatePolicy.assertOrdinaryText(value);else if(value&&typeof value==='object')for(const [key,child] of Object.entries(value)){privatePolicy.assertOrdinaryText(key);scan(child);}};
+  scan(data);
+ }catch(error){fail(error.code??'PRIVATE_CONTEXT_RETURN','Ordinary request or result contains protected private context.');}};
  // Host grants only flow through the explicit structured channel, not through
  // user/model-generated ordinary text, executable metadata or tool arguments.
- assertPublicText(request);assertPublicText(JSON.stringify(compiled.network.config));
+ assertPublicText(request);assertPublicText(compiled.network.config);
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  // The caller, not an untrusted graph (including a fetched peer), owns
@@ -230,7 +235,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     if(!schema)fail('TOOL_UNAVAILABLE','Model requested an unavailable tool.');
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
     let parsedArgs;try{parsedArgs=parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16});validateData(schema,parsedArgs);}catch{fail('ARGUMENTS','Tool arguments failed the declared unambiguous invocation schema.');}
-    assertPublicText(JSON.stringify(parsedArgs));
+    assertPublicText(parsedArgs);
    }
    if(response.toolCalls.length>bounds.maxToolCalls-toolCalls)fail('TOOL_LIMIT','Run-wide tool invocation budget exceeded.');
    toolCalls+=response.toolCalls.length;
@@ -268,7 +273,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   let loaded,peer;
   try{
    loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
-   check();assertPublicText(JSON.stringify(loaded.definition));peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:{...bounds,maxDepth:remainingDepth}});
+   check();assertPublicText(loaded.definition);peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:{...bounds,maxDepth:remainingDepth}});
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
@@ -290,7 +295,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    const peerLlm={...ctx.llm,chat:args=>{
     // Check the runner's ordinary history before adding the sole approved
     // host-context block. A child cannot smuggle private values back via text.
-    for(const message of args.messages)assertPublicText(JSON.stringify(message));
+    try{assertPublicText(args.messages);}catch(error){return stopRun(error);}
     const messages=args.messages.map((message,index)=>index===0&&message.role==='system'?
      {...message,content:String(message.content??'')+hostPrompt}:message);
     return ctx.llm.chat({...args,messages});
