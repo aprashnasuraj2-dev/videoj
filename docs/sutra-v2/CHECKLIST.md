@@ -1,6 +1,6 @@
-# SUTRA V2 — active remaining-work checklist
+# SUTRA — active remaining-work checklist
 
-> **SOLE ACTIVE EXECUTION CHECKLIST — 2026-11-26.** By user direction, the 379 remaining SUTRA1 pending tasks are retired and removed from the active legacy checklist. Git history and verified V1 evidence remain available for reuse, but **V1 pending IDs must never be selected as work**. “Continue with SUTRA” means reconcile the current remote V2 state and then execute the next dependency-ready unchecked item in this file.
+> **SOLE ACTIVE EXECUTION CHECKLIST.** SUTRA is one product and `main` is canonical. Earlier SUTRA task queues are historical only; their implementation and verified evidence remain reusable when current SUTRA depends on them. “Continue with SUTRA” means resolve exact `main`, inspect exact-head CI, and execute the single dependency-ready `[~]` item here.
 
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
 
@@ -15,24 +15,14 @@
 - Older green revisions do not transfer to newer heads.
 - No percentage-complete metric. Close broad gates only on their stated acceptance.
 
-## Current live branch baseline to reconcile
+## Canonical repository baseline
 
-| PR | Workstream | Observed exact head at V2-197 reconciliation | Current evidence boundary |
-| --- | --- | --- | --- |
-| #50 | central V2 | `d87414e463e396be3672e63f774de77b2ab6136d` | [exact V2-202 knowledge/browser/accessibility passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708) |
-| #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
-| #52 | persistent knowledge | `61714c3c095ad254486b250c80cc84b0481dfdd2` | [423/423 scoped JS passed; atomic correction/withdrawal, prior-state refusal and restored replay](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662) |
-| #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
-| #54 | evidence acquisition | `2336566c64c4ce461042bec8b34c01c22356aba3` | [407+5+2 tests passed, authenticated separate-process receipt and acquisition path](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957/job/139770463685) |
-| #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
-| #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
-| #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
-| #58 | unified workspace | `ba24ce6fbda97b76a85bce929659fb0f278d1f13` | [exact accessibility and browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416592/job/139794191354); parallel passed; publisher setup failure retained; exact retry passed |
-| #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
-| #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
-| #61 | validation-only combined tree | `8d12e8e15ff54c42910948a6a691eb41d631be15` | [all 11 exact workflows passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350009); [workspace](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350020), [compatibility](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350132); source integration changes central separately; **DO NOT MERGE** |
+- `main` is the only active integration authority. Historical PRs #50–#61 and their child/validation branches are provenance, not execution queues.
+- Canonical SUTRA reconciliation checkpoint: `ad182e801d969e9209009de54df1c8a9cfb1a6de`.
+- That checkpoint passed canonical knowledge/browser run 45921932719 and workspace run 45921932730; these runs include the durable-host stale-CAS/recovery browser path used to reconcile `V2-HIST-010` and `V2-UX-002`.
+- `V2-ORCH-001` implementation checkpoint `bef87881387adb9a02a225a49b993a9b4389ec64` passed all 11 workflows triggered by PR #64, including operator-browser run 45927484259 and full knowledge/browser run 45927484224.
+- Older green revisions remain historical evidence only; any implementation change requires its own exact-head verification.
 
-If any head changes, reconcile the affected delta before claiming work against it. V2-197 comparison at observed central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70`: all ten children 39 commits behind (ahead counts #51–#60: 5, 11, 7, 6, 4, 6, 5, 13, 6, 5). The current validation-only tree pins that source, not this later bookkeeping checkpoint. Subsequent changes require exact reconciliation; see session evidence.
 
 ---
 
@@ -63,8 +53,8 @@ These items are first in the execution queue because later integrated claims dep
 
 Existing base: provider substitution, opposite-output preservation, one-shot route approval, pre-dispatch revalidation, browser operator console and ephemeral synthetic credential lifecycle.
 
-- [ ] `V2-ORCH-001` Integrate operator approval with the common V2 consent/disclosure boundary rather than maintaining an isolated approval path.
-- [ ] `V2-ORCH-002` Define and verify capability negotiation for heterogeneous OpenAI-compatible, local/BYOM and future adapter profiles without vendor-specific agent roles.
+- [x] `V2-ORCH-001` Integrate operator approval with the common V2 consent/disclosure boundary rather than maintaining an isolated approval path. Exact one-shot consent is bound to destination, disclosure and plan pin; forced DOM bypass is denied before dispatch; exact PR #64 implementation head passed operator and full kernel/browser regressions.
+- [~] `V2-ORCH-002` Define and verify capability negotiation for heterogeneous OpenAI-compatible, local/BYOM and future adapter profiles without vendor-specific agent roles.
 - [ ] `V2-ORCH-003` Implement global, per-provider, per-investigation and per-call concurrency/budget accounting with conservative unknown-charge handling.
 - [ ] `V2-ORCH-004` Implement bounded cancellation semantics and distinguish local cancellation, provider completion and possible billing.
 - [ ] `V2-ORCH-005` Verify route replacement ceremony invalidates stale approvals/disclosures while preserving prior pinned investigation evidence.
@@ -87,7 +77,7 @@ Existing base: immutable snapshots, local CAS, fsync/atomic publication, subproc
 - [x] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
 - [x] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
 - [ ] `V2-HIST-009` Perform physical/hardware power-loss durability evidence when available; do not substitute SIGKILL for power loss.
-- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
+- [x] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX. Reconciled on canonical `main`: real host-backed durable store, retained-head CAS, explicit stale refusal, no automatic retry/adoption, and browser recovery/read path passed exact main browser/kernel evidence.
 
 ## B3. PR #53 — semantic compilation and intent
 
@@ -166,7 +156,7 @@ Existing base: decoded exact-credential scanning, credential-set generation fenc
 Existing base: portable draft/history/baseline checkpoint, stale-safe restore, independent replay of actual browser export and automated keyboard/reflow/reduced-motion candidate.
 
 - [x] `V2-UX-001` Finish newest exact browser/accessibility CI.
-- [ ] `V2-UX-002` Integrate #52 durable history into the workspace using its real APIs.
+- [x] `V2-UX-002` Integrate #52 durable history into the workspace using its real APIs. Canonical-main browser evidence exercises the injected host API and real durable history contract, including stale-CAS recovery.
 - [x] `V2-UX-003` Integrate #53 mapping/semantic review into the workspace using its real APIs.
 - [ ] `V2-UX-004` Integrate #56 counterfactual challenge and coverage state.
 - [ ] `V2-UX-005` Integrate #54 acquisition planning/receipt admission under explicit consent.
