@@ -3,7 +3,7 @@ import runtimeIdentity from '../../../packages/sutra-runtime/vendor/nsdeploy/UPS
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {admitReviewedAnswer} from '../../../packages/sutra-runtime/reviewed-answer.js';
 import {prepareWorkspaceEvidence} from '../../../packages/sutra-runtime/workspace-evidence.js';
-import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
+import {loadLocalNetwork,runNetwork,RuntimeError} from '../../../packages/sutra-runtime/index.js';
 import {readBoundedResponse,isFullJson} from '../../../packages/sutra-runtime/bounded-response.js';
 import {parseUniqueJson} from '../../../packages/sutra-runtime/strict-json.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
@@ -38,13 +38,29 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   const assertCurrent=()=>{if(signal?.aborted)fail('CANCELLED');if(!current())fail('EVIDENCE_STALE');};
   assertCurrent();
   const provider=createProviderAdapter({origin,model,fetchImpl:(url,init)=>{assertCurrent();if(url!==origin+'/api/v1/chat/completions')fail('BROWSER_ROUTER');return fetchImpl(url,{...init,headers:{...init.headers,'X-Sutra-Inference-Contract':contract}});}});
-  const adapter=Object.freeze({...provider,async chat(input){assertCurrent();try{const response=await provider.chat(input);assertCurrent();return response;}catch(error){assertCurrent();throw error;}}});
+  let groundedRead=false;
+  const observe=event=>{if(evidence&&event.kind==='tool'&&event.phase==='end'&&event.tool==='mcp_inspect_evidence'&&event.status==='ok')groundedRead=true;onEvent?.(event);};
+  const adapter=Object.freeze({...provider,async chat(input){assertCurrent();try{
+   const response=await provider.chat(input);assertCurrent();
+   if(evidence)for(const call of response.toolCalls??[]){
+    if(call.function?.name!=='critic')continue;
+    // Grounded critique must follow the actual read, not a model assertion
+    // that evidence was read. The critic must see the exact selected quote.
+    let args;try{args=parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16});}catch{throw new RuntimeError('EVIDENCE_CRITIC_ARGUMENTS','Critique arguments invalid.');}
+    if(!groundedRead||typeof args?.request!=='string'||!args.request.includes(evidence.quote))throw new RuntimeError('EVIDENCE_CRITIC_UNGROUNDED','Critique requires a completed approved span read and its exact quote.');
+   }
+   return response;
+  }catch(error){assertCurrent();throw error;}}});
   const request=evidence?objective+'\nApproved evidence coordinates: '+JSON.stringify({sourceId:evidence.sourceId,start:evidence.start,end:evidence.end}):objective;
   let inspector;
   if(peerUrl){if(typeof decidePeer!=='function')fail('BROWSER_PEER_CONSENT');const peerOrigin=new URL(peerUrl).origin;inspector=createConsentInspector({decide(contact,options){const expected=contact.kind==='peer_manifest'?'/agents/agent-manifest.json':contact.kind==='peer_graph'?'/agents/checklist.network.json':null;if(!expected||contact.origin!==peerOrigin||contact.resource!==peerOrigin+expected||contact.network!=='checklist')return 'deny';return decidePeer(contact,options);},onEvent:e=>onEvent?.({kind:'peer_consent',phase:e.type,status:e.decision??e.status,origin:e.origin})});}
-  const result=await runNetwork({definition,name:network.name,frontMan:network.frontMan,request,model:adapter,limits,signal,onEvent,...(evidence?{workspaceEvidence:{selection:selected,assertCurrent:current}}:{}),...(inspector?{peerRuntime:{inspector,fetchImpl}}:{})});
+  const result=await runNetwork({definition,name:network.name,frontMan:network.frontMan,request,model:adapter,limits,signal,onEvent:observe,...(evidence?{workspaceEvidence:{selection:selected,assertCurrent:current}}:{}),...(inspector?{peerRuntime:{inspector,fetchImpl}}:{})});
   assertCurrent();
-  if(evidence&&!result.events.some(e=>e.kind==='tool'&&e.phase==='end'&&e.tool==='mcp_inspect_evidence'&&e.status==='ok'))fail('BROWSER_EVIDENCE_MISSING');
+  if(evidence){
+   const reads=result.events.filter(e=>e.kind==='tool'&&e.phase==='end'&&e.tool==='mcp_inspect_evidence'&&e.status==='ok');
+   const readIndex=result.events.indexOf(reads[0]),criticIndex=result.events.findIndex(e=>e.kind==='agent'&&e.phase==='start'&&e.agent==='critic');
+   if(reads.length!==1||criticIndex<=readIndex)fail('BROWSER_EVIDENCE_MISSING');
+  }
   if(peerUrl){const origin=new URL(peerUrl).origin;if(!['checklist','source_select'].every(agent=>result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent===agent&&e.origin===origin&&e.status==='ok')))fail('BROWSER_PEER_DELEGATION_MISSING');}
   else if(!result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent==='critic'&&e.status==='ok'))fail('BROWSER_DELEGATION_MISSING');
   const reviewed=evidence?admitReviewedAnswer(result.text,evidence):null;
