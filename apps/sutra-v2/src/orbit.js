@@ -437,6 +437,7 @@ function initialize(){
  openConnections(){setMode('routes',true);},
  canStart(){return !activeReview&&!activeChallenge&&!$('studio-run').disabled;},
  saveFile:saveReviewFile,
+ stageSource(c){if(!latest||latest.busy||activeReview||activeChallenge||checkpointBusy||recoveryBusy||autonomousActive||latest.sources.length>=8||latest.sources.some(s=>s.id===c.id))return false;const fields=[$('review-source-id'),$('review-lineage'),$('review-source-text')];if(fields.some(e=>!e||e.disabled||e.value.trim()))return false;[fields[0].value,fields[1].value,fields[2].value]=[c.id,c.lineage,c.text];go('review-source-text');return true;},
  onState(active){autonomousActive=active;if(active&&simulation){playing=false;simulation=false;renderControls();}for(const a of agents){a.status='idle';a.station=null;}renderInspector();frameDriver.wake();},
  onEvent(e,transportMode){
   const roles={bot:0,drone:1,gear:2,orb:3,node:4,spark:5},role=roles[e.role]??(e.kind==='evidence.admitted'?1:e.kind.startsWith('session.')?4:null);

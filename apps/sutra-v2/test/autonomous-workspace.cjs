@@ -23,6 +23,15 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   assert.equal(requests.length,0);assert.match(await page.locator('#orb-autonomous-preview').innerText(),/groq \/ chosen-model/);assert.equal(await page.locator('#orb-autonomous-start').isDisabled(),true);
   await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='closed');
   assert.match(await page.locator('#orb-autonomous-status').innerText(),/TEST FIXTURE/);assert.match(await page.locator('#orb-autonomous-result').innerText(),/A source reports battery costs/);assert.match(await page.locator('#orb-autonomous-result').innerText(),/https:\/\/public.org\/report/);
-  assert.deepEqual(reads,['https://public.org/report']);assert.ok(requests.length>=3&&requests.every(m=>m==='chosen-model'));assert.equal(await page.locator('#orb-autonomous-export').isDisabled(),false);assert.match(await page.locator('#orb-log').innerText(),/RESEARCH FIXTURE/);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
+  assert.deepEqual(reads,['https://public.org/report']);assert.ok(requests.length>=3&&requests.every(m=>m==='chosen-model'));assert.equal(await page.locator('#orb-autonomous-export').isDisabled(),false);assert.match(await page.locator('#orb-log').innerText(),/RESEARCH FIXTURE/);
+  const sourceText='Battery storage costs were USD 100 million in 2025.',sourceId='research_'+digest(sourceText).slice(7,39),stage=page.locator('#orb-autonomous-stage-source_1');
+  await stage.click();await page.waitForFunction(()=>document.querySelector('#review-source-text').value.length>0);
+  assert.equal(await page.locator('#review-source-text').inputValue(),sourceText);assert.equal(await page.locator('#review-source-id').inputValue(),sourceId);assert.equal(await page.locator('#review-lineage').inputValue(),'unverified_external');
+  assert.equal(await page.locator('#review-source-pick option[value="'+sourceId+'"]').count(),0);
+  await page.locator('#review-question').fill('Explain battery storage costs');await page.locator('#review-source-add').click();await page.waitForFunction(id=>Array.from(document.querySelector('#review-source-pick').options).some(o=>o.value===id),sourceId);
+  assert.equal(await page.locator('#review-select-text').inputValue(),sourceText);
+  await stage.click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-stage-source_1').parentElement.textContent.includes('Not staged'));
+  assert.equal(await page.locator('#review-source-pick option[value="'+sourceId+'"]').count(),1);
+  assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  }finally{await browser.close();await app.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
