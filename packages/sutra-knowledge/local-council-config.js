@@ -13,12 +13,12 @@ const fail=code=>{const e=new Error('Local council refused ('+code+').');e.code=
 const text=(x,n)=>typeof x==='string'&&x.length<=n&&x.trim().length>0&&!/[\ud800-\udfff]/u.test(x);
 const VERSION=LOCAL_COUNCIL_VERSION;
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
-export async function admitCouncilOperatorConfig(configText,{version=VERSION,connectionKeys=['id','label','protocol','endpoint','models','authMode','credentialEnv'],credentialPattern=ENV,admitRoutes=admitLoopbackRoutes}={}){
+export async function admitCouncilOperatorConfig(configText,{version=VERSION,connectionKeys=['id','label','protocol','endpoint','models','authMode','credentialEnv'],credentialPattern=ENV,admitRoutes=admitLoopbackRoutes,maxParticipants=4}={}){
  if(typeof configText!=='string'||!configText.length||new TextEncoder().encode(configText).length>MAX)fail('INPUT_SIZE');
  const c=parseUniqueJson(configText,{maxChars:MAX,maxDepth:12});
  if(!keys(c,['version','contractText','contractPin','disclosure','connections','agents','budget','maxRounds','maxOutputTokens','roundPolicy','timeoutMs','transportDeadlineMs'])||c.version!==version||!int(c.maxRounds,1,3)||!int(c.maxOutputTokens,1,1024)||!int(c.timeoutMs,100,30000)||!int(c.transportDeadlineMs,100,c.timeoutMs)||!['fixed','stop-on-stagnation'].includes(c.roundPolicy))fail('CONFIG');
  if(!keys(c.budget,['maxCalls','maxInputBytes','maxOutputTokens','maxConcurrent'])||!int(c.budget.maxCalls,1,12)||!int(c.budget.maxInputBytes,1,1048576)||!int(c.budget.maxOutputTokens,1,8192)||!int(c.budget.maxConcurrent,1,Math.min(4,c.budget.maxCalls)))fail('BUDGET');
- if(!Array.isArray(c.connections)||c.connections.length<1||c.connections.length>4||!Array.isArray(c.agents)||c.agents.length<1||c.agents.length>4||c.agents.length*c.maxRounds>8)fail('TEAM');
+ if(!Array.isArray(c.connections)||c.connections.length<1||c.connections.length>maxParticipants||!Array.isArray(c.agents)||c.agents.length<1||c.agents.length>maxParticipants||c.agents.length*c.maxRounds>8)fail('TEAM');
  const connections=new Map();
  for(const x of c.connections){
   if(!keys(x,connectionKeys)||connections.has(x.id)||!text(x.label,64)||!['none','bearer','anthropic-key'].includes(x.authMode)||(x.authMode==='none'?x.credentialEnv!==null:typeof x.credentialEnv!=='string'||!credentialPattern.test(x.credentialEnv)))fail('CONNECTION');

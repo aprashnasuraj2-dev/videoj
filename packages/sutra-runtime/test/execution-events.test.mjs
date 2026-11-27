@@ -62,8 +62,8 @@ test('hybrid consultation slots require running owner, exact plan, ordered round
  assert.equal(note('transport-response',{planPin:'sha256:'+'b'.repeat(64)}),false);
  assert.equal(note('transport-response'),true);assert.equal(note('proposal-admitted'),true);assert.equal(note('rejected'),false);
  assert.equal(note('dispatch-attempt',{round:2}),true);assert.equal(note('rejected',{round:2}),true);assert.equal(note('dispatch-attempt',{round:3}),false);
- for(const slotId of ['two','three','four'])assert.equal(note('rejected',{slotId}),true);
- assert.equal(note('rejected',{slotId:'five'}),false);
+ for(const slotId of ['two','three','four','five','six'])assert.equal(note('rejected',{slotId}),true);
+ assert.equal(note('rejected',{slotId:'seven'}),false);
  state('validating');assert.equal(note('dispatch-attempt',{slotId:'two',round:2}),false);state('completed');e.emit('run.close',{status:'completed'});
- assert.equal(j.snapshot('hybrid').tasks[0].consultationSlots.length,5);assert.equal(j.snapshot('hybrid').status,'completed');assert.equal(note('rejected',{slotId:'five'}),false);
+ assert.equal(j.snapshot('hybrid').tasks[0].consultationSlots.length,7);assert.equal(j.snapshot('hybrid').status,'completed');assert.equal(note('rejected',{slotId:'seven'}),false);
 });

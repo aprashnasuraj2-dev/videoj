@@ -12,7 +12,7 @@ const fail=c=>{throw TypeError('COUNCIL_APPROVAL_'+c);};
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
 export async function prepareApprovedExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed'}={}){
  if(!['fixed','stop-on-stagnation'].includes(roundPolicy))fail('POLICY');
- const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
+ const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8,maxParticipants:6});
  const admitted=admitCouncilDisclosure(disclosure,config.team.map(x=>x.id));
  const captured=config.team.map(x=>Object.freeze({id:x.id,role:x.role,handle:x.handle,model:x.model,shareScope:SCOPE}));
  const grant=freeze({bindingIds:admitted.bindingIds,includeValues:admitted.includeValues,agentScopes:admitted.scopes});
@@ -26,7 +26,7 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
  // and immediately before consuming the dispatch capability. The combined
  // security workstream additionally supplies an opaque generation fence.
  const revalidate=()=>{
-  const current=prepareCouncil({routes:captured,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
+  const current=prepareCouncil({routes:captured,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8,maxParticipants:6});
   if(current.team.some((r,i)=>r.providerId!==config.team[i].providerId||r.profileId!==config.team[i].profileId))fail('ROUTE_CHANGED');
   config.assertPublication?.();
   workspace.admitOperation(plan);

@@ -66,7 +66,7 @@ function consultationStep(run,p){
  const t=run.tasks.get(p.taskId);if(!t||t.kind!==p.kind||t.agentId!==p.agentId||t.status!=='executing')return false;
  const slots=t.consultation??new Map(),key=p.slotId+':'+p.round,prev=slots.get(key)?.phase;
  if(t.consultationPin&&t.consultationPin!==p.planPin)return false;
- if(!prev&&(slots.size>=8||!Array.from(slots.values()).some(x=>x.slotId===p.slotId)&&new Set(Array.from(slots.values(),x=>x.slotId)).size>=4))return false;
+ if(!prev&&(slots.size>=8||!Array.from(slots.values()).some(x=>x.slotId===p.slotId)&&new Set(Array.from(slots.values(),x=>x.slotId)).size>=6))return false;
  if(!prev&&p.round>1&&slots.get(p.slotId+':'+(p.round-1))?.phase!=='proposal-admitted')return false;
  const legal=p.phase==='dispatch-attempt'?prev===undefined:p.phase==='transport-response'?prev==='dispatch-attempt':['proposal-admitted','abstained'].includes(p.phase)?prev==='transport-response':p.phase==='rejected'&&(prev===undefined||['dispatch-attempt','transport-response'].includes(prev));
  if(!legal)return false;

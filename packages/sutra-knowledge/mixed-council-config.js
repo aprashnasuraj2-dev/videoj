@@ -11,7 +11,7 @@ export const MIXED_COUNCIL_VERSION='sutra-mixed-expression-council/v1';
 const fail=code=>{const e=new Error('Mixed council refused ('+code+').');e.code=code;throw e;};
 export async function admitMixedCouncilConfig(text){
  const admitted=await admitCouncilOperatorConfig(text,{
-  version:MIXED_COUNCIL_VERSION,
+  version:MIXED_COUNCIL_VERSION,maxParticipants:6,
   connectionKeys:['id','label','protocol','endpoint','models','authMode','credentialEnv','transportClass'],
   credentialPattern:/^SUTRA_(?:LOCAL|HOSTED)_[A-Z0-9_]{1,64}$/,
   admitRoutes(routes,deadline,connections){
