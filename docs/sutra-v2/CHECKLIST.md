@@ -1,6 +1,5 @@
 # SUTRA V2 — active remaining-work checklist
 
-> **SOLE ACTIVE EXECUTION CHECKLIST — 2026-11-26.** By user direction, the 379 remaining SUTRA1 pending tasks are retired and removed from the active legacy checklist. Git history and verified V1 evidence remain available for reuse, but **V1 pending IDs must never be selected as work**. “Continue with SUTRA” means reconcile the current remote V2 state and then execute the next dependency-ready unchecked item in this file.
 
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
 
@@ -47,13 +46,12 @@ These items are first in the execution queue because later integrated claims dep
 - [x] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
 - [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
 - [x] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
-- [x] `V2-N008` Make all machine/readable queues reference this remaining-work checklist and remove any automatic fallback to SUTRA1 pending IDs.
 - [x] `V2-N009` Reconcile broad Living Knowledge gate wording against scoped machine statuses so unit/scoped evidence cannot be mistaken for full gate closure.
 - [x] `V2-N010` Preserve #61 as validation-only and explicitly prevent it from becoming the integration merge vehicle.
 - [x] `V2-N011` Produce a reviewed integration plan for moving compatible child work into the central V2 line without losing branch-specific evidence or known failures.
 - [x] `V2-N012` Run the applicable central exact CI after register/checklist reconciliation and record the new immutable checkpoint separately from the tested child SHAs.
 
-**Exit:** scoped coordination complete at the pinned V2-196 candidate; the new central integration tranche must pass its own exact CI. No stale V1 or old V2 queue can become active.
+**Exit:** scoped coordination complete at the pinned V2-196 candidate; the new central integration tranche must pass its own exact CI. No stale queue can become active.
 
 ---
 
@@ -238,7 +236,7 @@ These are **exit gates**, not substitutes for the detailed tasks above. Mark the
 - [ ] `V2-LK17-BENCHMARK` Full staged 200-case comparative evaluation reports coverage and accuracy plus cost/effort/revision/replay/security/ablations/intervals.
 - [ ] `V2-LK18-PRIOR-ART` Evidence-based prior-art register clearly separates known algorithms, SUTRA implementation/integration and any defensible novelty.
 - [ ] `V2-LK19-TRUST-BOUNDARY` Integrated injection, poison, Unicode, overflow, exhaustion, stale/replay/credential, disclosure and cross-user adversaries pass without automatic external action.
-- [ ] `V2-LK20-REPOSITORY-ISOLATION` Active repository/contributor entry points are SUTRA-only with clean SUTRA builds, legacy compatibility evidence and no unintended live-route cutover.
+- [ ] `V2-LK20-REPOSITORY-ISOLATION` Active repository/contributor entry points are SUTRA-only with clean SUTRA builds and no unintended live-route cutover.
 - [ ] `V2-LK21-FOUNDATION-QUEUE` All still-applicable V2 foundation obligations below are completed, explicitly deferred with rationale, or externally blocked.
 
 ---
@@ -324,7 +322,6 @@ Unless exact remote reconciliation shows a dependency change, execute in this or
 12. Close the 21 Living Knowledge gates and remaining foundations only when their acceptance is genuinely satisfied.
 13. Develop WEB-001–004 independently when higher-priority foundation work permits; never make web access a foundation gate.
 
-Do not choose a former SUTRA1 pending task merely because it once had a lower numeric phase or appeared in an old `next_task` queue.
 
 ---
 
