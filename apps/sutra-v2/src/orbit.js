@@ -146,7 +146,7 @@ function renderInspector(){const a=agents[selected],box=$('orb-inspect');box.rep
   }
  }
  const artifact=reviewResult?.version===latest?.current?.digest?reviewResult?.artifacts.find(x=>x.agentId===info[0]):null;
- if(artifact){const d=E('details',undefined,'orb-event');d.append(E('summary','Admitted local '+artifact.kind+' artifact'),E('pre',JSON.stringify(artifact.value,null,2)));box.append(d);}
+ if(artifact){const d=E('details',undefined,'orb-event');d.append(E('summary','Admitted local '+artifact.kind+' artifact'),E('pre',JSON.stringify(artifact.value,null,2)));if(artifact.provenance){const p=E('details');p.append(E('summary','Artifact integrity and predecessor pins'),E('pre',JSON.stringify(artifact.provenance,null,2)));d.append(p);}box.append(d);}
  box.append(E('h3','Recent activity (up to 10)'));if(!a.notes.length)box.append(E('p','No recorded activity.','orb-muted'));for(const e of a.notes.slice().reverse())box.append(E('p',e.kind+' · '+e.text,'orb-event-note'));
 }
 function selectAgent(i){selected=i;selectedStation=null;for(const [k,a] of agents.entries())a.g.setAttribute('aria-pressed',String(k===i));for(const [k,n] of stationGroups.entries())n.setAttribute('aria-pressed','false');renderInspector();beep();}
@@ -271,7 +271,7 @@ function renderRoleReview(){
  const out=$('orb-review-results');out.replaceChildren();
  if(reviewResult&&reviewResult.version===latest?.current?.digest){
   out.append(E('p','Version '+reviewResult.version+' · '+reviewResult.artifacts.length+' admitted local task artifacts · no model calls','orb-muted'));
-  for(const artifact of reviewResult.artifacts){const role=ROLE.find(x=>x[0]===artifact.agentId),details=E('details',undefined,'orb-event');details.append(E('summary',(role?.[1]??artifact.agentId)+' / '+artifact.kind),E('pre',JSON.stringify(artifact.value,null,2)));out.append(details);}
+  for(const artifact of reviewResult.artifacts){const role=ROLE.find(x=>x[0]===artifact.agentId),details=E('details',undefined,'orb-event');details.append(E('summary',(role?.[1]??artifact.agentId)+' / '+artifact.kind),E('pre',JSON.stringify(artifact.value,null,2)));if(artifact.provenance)details.append(E('p','Artifact pin: '+artifact.provenance.artifactDigest,'orb-muted'));out.append(details);}
  }
 }
 function stopRoleReview(reason='cancelled'){

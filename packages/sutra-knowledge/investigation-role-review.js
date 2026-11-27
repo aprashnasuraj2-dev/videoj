@@ -1,3 +1,4 @@
+import {sealRoleArtifact} from './role-artifact-provenance.js';
 // Six host-owned deterministic roles over an exact pinned investigation. No model,
 // retrieval, evidence adoption, decision authority, or credential access.
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
@@ -53,5 +54,5 @@ export async function runInvestigationReview({versionText,versionPin,runId,signa
    return out('coordinate',{triage:replay.triage,completedArtifactIds:inputs.map(a=>a.taskId),opposingPairCount:contrast.opposingPairs.length,unresolvedCandidateIds:contrast.unresolved,minimumDeclaredCohorts:exposure.cut.minimumCohorts,verification:replay.verification,semanticReview:'REQUIRED',qualification:'A coordinated review of supplied evidence and interpretations; neither agent agreement nor replay establishes empirical truth.'});
   },v=>v.completedArtifactIds.length===5&&v.semanticReview==='REQUIRED')
  };
- return runTaskGraph({tasks:ids,handlers,runId,version:versionPin,signal,onEvent,onExecutionEvent,executionOrigin:'deterministic',assertCurrent,timeoutMs,concurrency:2,maxPerAgent:1});
+ return runTaskGraph({tasks:ids,handlers,runId,version:versionPin,signal,onEvent,onExecutionEvent,executionOrigin:'deterministic',assertCurrent,timeoutMs,concurrency:2,maxPerAgent:1,sealArtifact:sealRoleArtifact});
 }

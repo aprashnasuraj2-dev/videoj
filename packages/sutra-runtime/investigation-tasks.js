@@ -46,8 +46,8 @@ function copyTaskArtifact(value){
  return copy(value,0);
 }
 
-export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,maxPerAgent=concurrency,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',assertCurrent=()=>{}}={}){
- if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(maxPerAgent)||maxPerAgent<1||maxPerAgent>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin))taskFail('CONFIG');
+export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,maxPerAgent=concurrency,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',sealArtifact,assertCurrent=()=>{}}={}){
+ if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(maxPerAgent)||maxPerAgent<1||maxPerAgent>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin)||sealArtifact!==undefined&&typeof sealArtifact!=='function')taskFail('CONFIG');
  const {order,registry}=compileTaskGraph(tasks,handlers),controller=new AbortController(),states=new Map(order.map(t=>[t.id,'queued'])),artifacts=new Map(),running=new Map(),agentActive=new Map();
  let sequence=0,stopReason=null;
  const emitter=onExecutionEvent?createExecutionEmitter({runId,version,origin:executionOrigin,publish:onExecutionEvent}):null;
@@ -70,7 +70,11 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,m
    emit(task,'validating');if(!fence())return;
    const value=copyTaskArtifact(handler.admit(raw,Object.freeze({task,inputs})));
    if(!fence())return;
-   artifacts.set(task.id,Object.freeze({taskId:task.id,kind:task.kind,agentId:task.agentId,value}));
+   // Sealing is an optional host-owned admission stage, never a model action.
+   // A cancellation, timeout or version change during asynchronous hashing fences publication.
+   const provenance=sealArtifact?copyTaskArtifact(await sealArtifact(Object.freeze({task,inputs,value,version,signal:controller.signal}))):undefined;
+   if(!fence())return;
+   artifacts.set(task.id,Object.freeze({taskId:task.id,kind:task.kind,agentId:task.agentId,value,...(sealArtifact?{provenance}:{})}));
    emit(task,'completed');
   }catch{if(fence())emit(task,'failed');}
  }

@@ -44,3 +44,16 @@ test('per-agent execution cap reserves ownership before invoking handlers while 
  assert.ok(events.find(e=>e.taskId==='a'&&e.status==='completed').sequence<events.find(e=>e.taskId==='b'&&e.status==='executing').sequence);
  await assert.rejects(runTaskGraph(cfg(tasks,{local:handler(()=>1)},{maxPerAgent:0})),e=>e.code==='CONFIG');
 });
+
+test('asynchronous sealing is fenced; an aborted seal never publishes an artifact or releases its dependent',async()=>{
+ let enter,release,ran=0;const ready=new Promise(r=>enter=r),controller=new AbortController(),events=[];
+ const p=runTaskGraph(cfg([t('a'),t('b',['a'])],{local:handler(()=>{ran++;return 1})},{signal:controller.signal,onEvent:e=>events.push(e),sealArtifact:()=>{enter();return new Promise(r=>release=r);}}));
+ await ready;controller.abort();const r=await p;assert.equal(r.status,'cancelled');assert.deepEqual(r.artifacts,[]);assert.equal(ran,1);
+ const n=events.length;release({digest:'late'});await new Promise(r=>setImmediate(r));assert.equal(events.length,n);
+});
+test('host provenance is copied and immutable; failed sealing blocks descendants',async()=>{
+ const original={parents:['a']};
+ const r=await runTaskGraph(cfg([t('a'),t('b',['a']),t('c',['b'])],{local:handler(({inputs})=>inputs.length?inputs[0].provenance.parents.length:1)},{sealArtifact:({task})=>{if(task.id==='b')throw Error('seal failed');return original;}}));
+ assert.equal(r.status,'partial');assert.deepEqual(r.tasks.map(t=>t.status),['completed','failed','blocked']);original.parents.push('mutated');
+ assert.deepEqual(r.artifacts[0].provenance.parents,['a']);assert.ok(Object.isFrozen(r.artifacts[0].provenance.parents));
+});

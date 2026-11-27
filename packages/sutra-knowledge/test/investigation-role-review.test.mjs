@@ -1,3 +1,4 @@
+import {casePin} from '../pinned-investigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {livingFixture} from '../examples/living-investigation.mjs';
@@ -27,4 +28,19 @@ test('pre-cancelled review cannot start a local role',async()=>{
  const v=await livingFixture(),c=new AbortController();c.abort();const events=[];
  const r=await runInvestigationReview({versionText:v.versionText,versionPin:v.digest,runId:'review',signal:c.signal,onEvent:e=>events.push(e)});
  assert.equal(r.status,'cancelled');assert.deepEqual(r.artifacts,[]);assert.ok(events.every(e=>e.status==='cancelled'));
+});
+
+test('every admitted role artifact binds exact version, value bytes, role and predecessor artifact pins',async()=>{
+ const version=await livingFixture('finance');
+ const r=await runInvestigationReview({versionText:version.versionText,versionPin:version.digest,runId:'review'});
+ const byId=new Map(r.artifacts.map(a=>[a.taskId,a]));
+ for(const a of r.artifacts){
+  const {artifactDigest,...p}=a.provenance;
+  assert.equal(p.versionDigest,version.digest);assert.equal(p.taskId,a.taskId);assert.equal(p.agentId,a.agentId);assert.equal(p.kind,a.kind);assert.equal(p.authority,'NONE');
+  assert.equal(p.valueDigest,await casePin(JSON.stringify(a.value)));assert.equal(artifactDigest,await casePin(JSON.stringify(p)));
+  assert.deepEqual(p.parents,ROLE_REVIEW_TASKS.find(t=>t.id===a.taskId).dependsOn.map(id=>({taskId:id,artifactDigest:byId.get(id).provenance.artifactDigest,valueDigest:byId.get(id).provenance.valueDigest})));
+  assert.ok(Object.isFrozen(a.provenance));assert.ok(Object.isFrozen(a.provenance.parents));
+ }
+ const fresh=await runInvestigationReview({versionText:version.versionText,versionPin:version.digest,runId:'different_run'});
+ assert.deepEqual(fresh.artifacts.map(a=>a.provenance),r.artifacts.map(a=>a.provenance));
 });
