@@ -11,7 +11,14 @@ function sameAddress(actual,expected,family){
  list.addAddress(expected,kind);return list.check(actual,kind);
 }
 
-export function startPinnedHttps(pin,input,authMode,{dialTls,requestHttps}){
+export function startPinnedHttps(pin,input,authMode,io){
+ return startPinnedRequest(pin,{method:'POST',input,authMode,mediaType:'application/json',maxBytes:MAX_RESPONSE},io);
+}
+export function startPinnedSourceRead(pin,{mediaType,maxBytes},io){
+ if(!['text/plain','text/csv','application/json'].includes(mediaType)||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>16384)fail('SOURCE_CONFIG');
+ return startPinnedRequest(pin,{method:'GET',input:null,authMode:'none',mediaType,maxBytes},io);
+}
+function startPinnedRequest(pin,{method,input,authMode,mediaType,maxBytes},{dialTls,requestHttps}){
  let socket,req,res,done=false,started=false,settle;
  const promise=new Promise((resolve,reject)=>{settle={resolve,reject};});
  const finish=(ok,value)=>{
@@ -29,17 +36,40 @@ export function startPinnedHttps(pin,input,authMode,{dialTls,requestHttps}){
       if(socket.encrypted!==true||socket.authorized!==true||socket.remotePort!==pin.port||!sameAddress(socket.remoteAddress,pin.address,pin.family)||!['TLSv1.2','TLSv1.3'].includes(socket.getProtocol())||socket.alpnProtocol!==false&&socket.alpnProtocol!=='http/1.1'||checkServerIdentity(pin.hostname,socket.getPeerCertificate())){finish(false,'TLS_IDENTITY');return;}
       // No credential-bearing request is constructed until the exact peer and
       // hostname have been authenticated. No second dial, agent or redirect.
-      const headers={'Host':pin.hostname,'Content-Type':'application/json; charset=utf-8','Accept':'application/json','Accept-Encoding':'identity','Content-Length':Buffer.byteLength(input.bodyText,'utf8'),'Connection':'close'};
-      if(pin.protocol==='anthropic-messages-json')headers['anthropic-version']='2023-06-01';
-      if(authMode==='bearer')headers.Authorization='Bearer '+input.credential;
-      else if(authMode==='anthropic-key')headers['x-api-key']=input.credential;
+      const headers={'Host':pin.hostname,'Accept':mediaType,'Accept-Encoding':'identity','Connection':'close'};
+      if(method==='POST'){
+       headers['Content-Type']='application/json; charset=utf-8';headers['Content-Length']=Buffer.byteLength(input.bodyText,'utf8');
+       if(pin.protocol==='anthropic-messages-json')headers['anthropic-version']='2023-06-01';
+       if(authMode==='bearer')headers.Authorization='Bearer '+input.credential;
+       else if(authMode==='anthropic-key')headers['x-api-key']=input.credential;
+      }
       let handed=false;
-      req=requestHttps({hostname:pin.hostname,port:pin.port,path:pin.path,method:'POST',headers,agent:null,maxHeaderSize:8192,createConnection:()=>{if(handed||done)fail('SOCKET');handed=true;return socket;}},incoming=>{
+      req=requestHttps({hostname:pin.hostname,port:pin.port,path:pin.path,method,headers,agent:null,maxHeaderSize:8192,createConnection:()=>{if(handed||done)fail('SOCKET');handed=true;return socket;}},incoming=>{
        res=incoming;if(done){res.destroy();return;}
        const type=res.headers['content-type'],encoding=res.headers['content-encoding'],length=res.headers['content-length'];
-       if(res.statusCode!==200||typeof type!=='string'||!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(type)||encoding!==undefined&&encoding!=='identity'||res.headers['content-range']!==undefined||length!==undefined&&(typeof length!=='string'||!/^\d+$/.test(length)||Number(length)>MAX_RESPONSE)){finish(false,'RESPONSE');return;}
+       if(res.statusCode!==200||typeof type!=='string'||!new RegExp('^'+mediaType+'(?:\\s*;\\s*charset=utf-8)?||encoding!==undefined&&encoding!=='identity'||res.headers['content-range']!==undefined||length!==undefined&&(typeof length!=='string'||!/^\d+$/.test(length)||Number(length)>maxBytes)){finish(false,'RESPONSE');return;}
        let received=0;const chunks=[];
-       res.on('data',chunk=>{if(done)return;received+=chunk.length;if(received>MAX_RESPONSE){finish(false,'RESPONSE_SIZE');return;}chunks.push(chunk);});
+       res.on('data',chunk=>{if(done)return;received+=chunk.length;if(received>maxBytes){finish(false,'RESPONSE_SIZE');return;}chunks.push(chunk);});
+       res.on('aborted',()=>finish(false,'TRUNCATED'));res.on('error',()=>finish(false,'RESPONSE'));
+       res.on('end',()=>{
+        if(done)return;if(!res.complete||received===0||length!==undefined&&Number(length)!==received){finish(false,'TRUNCATED');return;}
+        let bodyText;try{bodyText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(Buffer.concat(chunks,received));}catch{finish(false,'RESPONSE_ENCODING');return;}
+        finish(true,Object.freeze({status:200,bodyText,...(method==='GET'?{mediaType,bytes:received}:{})}));
+       });
+      });
+      req.on('error',()=>finish(false,'TRANSPORT'));
+      req.on('socket',s=>{if(s!==socket)finish(false,'SOCKET');});
+      req.on('upgrade',(_response,s)=>{s.destroy();finish(false,'RESPONSE');});
+      if(!done){if(method==='GET')req.end();else req.end(input.bodyText);}
+     }catch{finish(false,'TRANSPORT');}
+    });
+
+ }catch{finish(false,'TRANSPORT');}
+ return Object.freeze({promise,cancel:()=>finish(false,'CANCELLED')});
+}
+,'i').test(type)||encoding!==undefined&&encoding!=='identity'||res.headers['content-range']!==undefined||length!==undefined&&(typeof length!=='string'||!/^\d+$/.test(length)||Number(length)>maxBytes)){finish(false,'RESPONSE');return;}
+       let received=0;const chunks=[];
+       res.on('data',chunk=>{if(done)return;received+=chunk.length;if(received>maxBytes){finish(false,'RESPONSE_SIZE');return;}chunks.push(chunk);});
        res.on('aborted',()=>finish(false,'TRUNCATED'));res.on('error',()=>finish(false,'RESPONSE'));
        res.on('end',()=>{
         if(done)return;if(!res.complete||received===0||length!==undefined&&Number(length)!==received){finish(false,'TRUNCATED');return;}
