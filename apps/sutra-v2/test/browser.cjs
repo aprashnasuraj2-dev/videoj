@@ -856,6 +856,24 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await reviewPage.locator('#review-meaning-link-proposal_1').selectOption('a');
   await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
   assert.match(await reviewPage.locator('#review-semantic-result').innerText(),/DIVERGENT CONDITIONAL OUTCOMES/);
+  await reviewPage.locator('#review-capsule-panel > summary').click();
+  await reviewPage.locator('#review-capsule-candidate').selectOption('proposal_1');
+  await reviewPage.locator('#review-capsule-prepare').click();
+  const capsulePath=reviewPage.waitForEvent('download');
+  await reviewPage.locator('#review-capsule-export').click();
+  const capsuleBytes=fs.readFileSync(await (await capsulePath).path());
+  const capsulePin=await reviewPage.locator('#review-capsule-pin').innerText();
+  const capsuleBody=JSON.parse(capsuleBytes);
+  assert.equal(capsuleBody.versionPin,await reviewPage.locator('#review-semantic-pin').innerText());
+  assert.equal(capsuleBody.nodes.filter(n=>n.kind==='input').length,2);
+  for(const text of ['Is site A higher','report_a','Declared interpretation','proposal_2'])assert.ok(!capsuleBytes.includes(text));
+  await reviewPage.locator('#review-capsule-file').setInputFiles({name:'capsule.json',mimeType:'application/json',buffer:capsuleBytes});
+  await reviewPage.locator('#review-capsule-retained-pin').fill(capsulePin);
+  await reviewPage.locator('#review-capsule-open').click();
+  await reviewPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('CONDITIONALLY SATISFIED'));
+  await reviewPage.locator('#review-capsule-candidate').selectOption('proposal_2');
+  assert.equal(await reviewPage.locator('#review-capsule-export').isDisabled(),true);
+
   await reviewPage.locator('#review-roundtrip-run').locator('..').locator('summary').click();
   await reviewPage.locator('#review-roundtrip-run').click();await reviewState('roundtrip_ready');
   const roundtripText=await reviewPage.locator('#review-roundtrip-result').innerText();
