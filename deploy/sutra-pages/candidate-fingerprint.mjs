@@ -11,11 +11,11 @@ const forbidden=/(^|\/)(\.env(?:\.|$)|node_modules|\.git|\.wrangler)(\/|$)|\.(pe
 const maxBytes=128*1024*1024,maxFiles=1024;
 const secretRules=[
  ['private-key',/-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/],
- ['provider-token',/(?:sk-(?:proj-|or-v1-|svcacct-)?[A-Za-z0-9_-]{24,}|gsk_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{35})/],
+ ['provider-token',/(?:^|[^A-Za-z0-9_-])(?:sk-(?:proj-|or-v1-|svcacct-)?[A-Za-z0-9_-]{24,}|gsk_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{35})/],
  ['github-token',/(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})/],
  ['aws-access-id',/\b(?:AKIA|ASIA)[A-Z0-9]{16}\b/],
  ['literal-bearer',/\bBearer [A-Za-z0-9._~-]{24,}\b/],
- ['literal-secret-assignment',/\b(?:SUTRA_PROVIDER_KEY|GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|OPENAI_API_KEY|CLOUDFLARE_API_TOKEN)\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{20,}/i],
+ ['literal-secret-assignment',/\b(?:SUTRA_PROVIDER_KEY|GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|OPENAI_API_KEY|CLOUDFLARE_API_TOKEN)["']?\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{20,}/i],
  ['build-canary',/SUTRA_BUILD_SECRET_CANARY_[A-Z0-9]{24,}/]
 ];
 export function assertNoSecret(bytes,path){
