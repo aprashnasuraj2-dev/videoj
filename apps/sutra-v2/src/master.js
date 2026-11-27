@@ -1,3 +1,4 @@
+import {updateOrbit} from './orbit.js';
 // Master investigation view. The reviewed workspace owns every mutation and result.
 import './master.css';
 const el=id=>document.getElementById(id);
@@ -165,4 +166,4 @@ function render(force=false){
  el('sm-status').textContent=s.status||'No operation performed.';
  if(activeNode){const b=Array.from(shell.querySelectorAll('[data-sm-node]')).find(x=>x.dataset.smNode===activeNode);b?.focus({preventScroll:true});}else if(activeId&&!active.isConnected&&el(activeId)){el(activeId).focus({preventScroll:true});}else if(activeText&&!active.isConnected){const b=Array.from(shell.querySelectorAll('button:not(:disabled)')).find(x=>x.textContent===activeText);if(b)b.focus({preventScroll:true});else{const navButton=shell.querySelector('[data-sm-view][aria-pressed=true]');navButton?.focus({preventScroll:true});}}
 }
-export function updateMaster(state){latest=state;if(!shell)initialize();render();}
+export function updateMaster(state){latest=state;if(!shell)initialize();render();updateOrbit(state);}

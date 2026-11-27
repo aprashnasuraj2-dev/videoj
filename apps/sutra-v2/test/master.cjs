@@ -3,7 +3,12 @@ async function testMaster(browser,origin,assert){
  const page=await browser.newPage({viewport:{width:320,height:800},reducedMotion:'reduce'});const errors=[],external=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.origin!==origin&&u.protocol!=='blob:')external.push(r.url());});
  try{
- await page.goto(origin);await page.locator('#sutra-master').waitFor();
+ await page.goto(origin);await page.locator('#sutra-orbit').waitFor();
+ assert.equal(await page.locator('#orb-map .orb-agent').count(),6);assert.equal(await page.locator('#orb-map .orb-station').count(),12);
+ await page.locator('#orb-play').click();await page.locator('#orb-play').click();await page.locator('#orb-step').click();assert.match(await page.locator('#orb-log').innerText(),/SIMULATED/);await page.locator('#orb-stop').click();
+ await page.locator('#orb-era').click();assert.equal(await page.locator('#sutra-orbit').getAttribute('data-era'),'1997');await page.locator('#orb-era').click();
+ await page.locator('#orb-nav').getByRole('button',{name:'API routes'}).click();assert.equal(await page.locator('.orb-route-grid .orb-route').count(),6);
+ await page.locator('#orb-nav').getByRole('button',{name:'Investigation',exact:true}).click();await page.locator('#sutra-master').waitFor();
  assert.match(await page.locator('#sm-question').innerText(),/What are you trying to determine/);
  await page.locator('#sutra-master').getByRole('button',{name:'Network engineering',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='sample_ready'&&!document.querySelector('#review-semantic-run').disabled);

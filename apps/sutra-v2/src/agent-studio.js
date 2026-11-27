@@ -113,8 +113,10 @@ function setup(config){
   const expected=connections.find(c=>c.id===request.connectionId);
   if(!expected||expected.models[0]!==request.model||expected.endpoint!==request.endpoint||expected.protocol!==request.protocol)throw Error('MOCK_REFUSED');
   const wire=JSON.parse(request.bodyText),operation=JSON.parse(wire.messages.at(-1).content);
+  const signal=phase=>document.dispatchEvent(new CustomEvent('sutra-council-event',{detail:{phase,agent:operation.agentId,round:operation.round}}));
+  signal('request');
   await new Promise(resolve=>setTimeout(resolve,45));
-  const result=JSON.stringify(syntheticPayload(config.strategy,operation));
+  let result;try{result=JSON.stringify(syntheticPayload(config.strategy,operation));signal('response');}catch(error){signal('refused');throw error;}
   const body=request.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:result}],usage:{output_tokens:1}}:request.protocol==='ollama-chat-json'?{done:true,done_reason:'stop',message:{role:'assistant',content:result},eval_count:1}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:result}}],usage:{completion_tokens:1}};
   return {status:200,bodyText:JSON.stringify(body)};
  }});
