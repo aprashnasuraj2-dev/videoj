@@ -180,7 +180,7 @@ function stationDetail(box,i){
 }
 function renderInspector(){const a=agents[selected],box=$('orb-inspect');box.replaceChildren();if(selectedStation!==null){const [name,desc,id]=STATIONS[selectedStation];box.append(E('p','INVESTIGATION STATION','orb-kicker'),E('h2',name),E('p',desc),btn('Open '+name,()=>go(id),'orb-primary'));stationDetail(box,selectedStation);return;}
  const info=ROLE[selected];box.append(E('p','AGENT / '+info[0].toUpperCase(),'orb-kicker'),E('h2',info[1]+' / '+info[2]),E('p',info[3]+' personality · '+a.status,'orb-muted'));
- const metrics=E('div',undefined,'orb-meters');for(const [name,value] of [['Rehearsal energy',Math.round(a.energy)+'%'],['Rehearsal completions',String(a.done)]]){const row=E('div');row.append(E('small',name),E('strong',value));metrics.append(row);}box.append(metrics,E('p','Presentation role; models belong to the shared connection pool, not this avatar.','orb-muted'),E('p','Simulated reservation: '+a.reserved+' / '+a.cap+' units · '+(a.activeRoute??'no hypothetical model route'),'orb-muted'),btn('Open model connections',()=>setMode('routes',true)));
+ const metrics=E('div',undefined,'orb-meters');for(const [name,value] of (autonomousActive?[['Host operation state',a.status],['Host events',String(a.notes.filter(n=>n.kind==='HOST RESEARCH'||n.kind==='RESEARCH FIXTURE').length)]]:[['Rehearsal energy',Math.round(a.energy)+'%'],['Rehearsal completions',String(a.done)]])){const row=E('div');row.append(E('small',name),E('strong',value));metrics.append(row);}box.append(metrics,E('p','Presentation role; models belong to the shared connection pool, not this avatar.','orb-muted'),E('p',autonomousActive?'Current state reflects recorded host operation events; provider identity is reported per operation.':'Simulated reservation: '+a.reserved+' / '+a.cap+' units · '+(a.activeRoute??'no hypothetical model route'),'orb-muted'),btn('Open model connections',()=>setMode('routes',true)));
  const run=reviewRunId?executionFeed.snapshot(reviewRunId):null;
  if(run&&run.version===latest?.current?.digest){
   const role=run.agents.find(x=>x.id===info[0]);if(role){
@@ -437,7 +437,7 @@ function initialize(){
  openConnections(){setMode('routes',true);},
  canStart(){return !activeReview&&!activeChallenge&&!$('studio-run').disabled;},
  saveFile:saveReviewFile,
- onState(active){autonomousActive=active;if(active&&simulation){playing=false;simulation=false;renderControls();}if(!active){for(const a of agents){a.status='idle';a.station=null;}renderInspector();frameDriver.wake();}},
+ onState(active){autonomousActive=active;if(active&&simulation){playing=false;simulation=false;renderControls();}for(const a of agents){a.status='idle';a.station=null;}renderInspector();frameDriver.wake();},
  onEvent(e,transportMode){
   const roles={bot:0,drone:1,gear:2,orb:3,node:4,spark:5},role=roles[e.role]??(e.kind==='evidence.admitted'?1:e.kind.startsWith('session.')?4:null);
   const stations=[0,1,2,3,8,5],kind=transportMode==='injected_fixture'?'RESEARCH FIXTURE':'HOST RESEARCH';

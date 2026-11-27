@@ -33,7 +33,8 @@ function parseResponse(raw,protocol,max){
  }
  if(!Number.isSafeInteger(tokens)||tokens<0||tokens>max||!text||text.length>16000)fail('MODEL_USAGE');
  let value;try{value=parseUniqueJson(text,{maxChars:16000,maxDepth:10});}catch{fail('MODEL_JSON');}
- return {value,outputTokens:tokens};
+ const reportedModel=typeof data.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(data.model)&&!secretLike(data.model)?data.model:null;
+ return {value,outputTokens:tokens,reportedModel};
 }
 const exact=(o,k)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===k.length&&k.every(x=>Object.hasOwn(o,x));
 function admitDisclosure(role,input,objective,scope){
@@ -83,8 +84,8 @@ export function createResearchModelBroker({authorization,credentials={},exchange
    const raw=await exchange.exchange({connectionId:r.vendor,protocol:profile.protocol,transportClass:'hosted',endpoint:profile.endpoint,model:r.model,credential:keys[r.vendor],bodyText,maxOutputTokens:r.maxOutputTokens},{signal:active});
    assertModelAuthorization(authorization);if(closed||active.aborted)fail('MODEL_CANCELLED');
    const decoded=parseResponse(raw,profile.protocol,r.maxOutputTokens);
-   if(secretLike(JSON.stringify(decoded.value))||Object.values(keys).some(key=>JSON.stringify(decoded.value).includes(key)))fail('MODEL_SENSITIVE');
-   return {value:decoded.value,receipt:{role,vendor:r.vendor,model:r.model,inputDigest:digest(bodyText),responseDigest:digest(raw.bodyText),inputBytes:bytes,reportedOutputTokens:decoded.outputTokens,authority:'NONE'}};
+   if(secretLike(JSON.stringify(decoded.value))||Object.values(keys).some(key=>JSON.stringify(decoded.value).includes(key)||decoded.reportedModel?.includes(key)))fail('MODEL_SENSITIVE');
+   return {value:decoded.value,receipt:{role,vendor:r.vendor,model:r.model,inputDigest:digest(bodyText),responseDigest:digest(raw.bodyText),inputBytes:bytes,reportedOutputTokens:decoded.outputTokens,...(decoded.reportedModel?{reportedModel:decoded.reportedModel}:{}),authority:'NONE'}};
   },
   close(){closed=true;exchange.close();}
  });

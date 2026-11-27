@@ -34,7 +34,7 @@ export function admitManifest(text){
   const webAccess=m.webAccess??(pool||compact?'on_demand':'always');
   if(!['on_demand','always'].includes(webAccess))fail('MODEL_WEB_ACCESS');
   const fields=['vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'];
-  const valid=r=>['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)&&typeof r.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)&&bounded(r.maxInputBytes,4096,65536)&&bounded(r.maxOutputTokens,128,4096)&&bounded(r.estimatedMaxCostMicros,1,1000000);
+  const valid=r=>['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)&&typeof r.model==='string'&&!secretLike(r.model)&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)&&bounded(r.maxInputBytes,4096,65536)&&bounded(r.maxOutputTokens,128,4096)&&bounded(r.estimatedMaxCostMicros,1,1000000);
   let resolved,models;
   if(pool){
    if(!Array.isArray(m.models)||m.models.length<1||m.models.length>3||m.models.some(r=>!exact(r,fields)||!valid(r))||new Set(m.models.map(r=>r.vendor+'\0'+r.model)).size!==m.models.length)fail('MODEL_POOL');
@@ -57,7 +57,7 @@ export function admitManifest(text){
    models=[...new Map(resolved.map(({role,...r})=>[r.vendor+'\0'+r.model,Object.freeze(r)])).values()];
   }
   const orb=resolved.find(r=>r.role==='orb'),spark=resolved.find(r=>r.role==='spark');
-  const reviewMode=orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':'different_configured_models_independence_unproven';
+  const reviewMode=orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':'different_configured_models_independence_unproven';
   modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,webAccess,models:Object.freeze(models),roles:Object.freeze(resolved),reviewMode});
  }
  const plan=Object.freeze({...p,...(modelPolicy?{modelPolicy}:{}),scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});

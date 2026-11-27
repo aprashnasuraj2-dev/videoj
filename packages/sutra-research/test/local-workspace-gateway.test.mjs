@@ -45,3 +45,11 @@ test('loopback HTTP bridge rejects cross-origin, missing token and unapproved ex
   assert.equal((await fetch(origin+'/')).status,200);
  }finally{await app.close();await rm(dir,{recursive:true,force:true});}
 });
+
+test('credential-shaped inputs refuse before preview; multiline objectives normalize visibly',()=>{
+ const {gateway:g,calls}=fixture();try{
+  assert.throws(()=>g.preview({objective:'Use fixture-groq-key',models:input.models}),/SENSITIVE_INPUT/);
+  assert.throws(()=>g.preview({objective:'Test',models:[{vendor:'groq',model:'gsk_abcdefghijklmnop'}]}),/SENSITIVE_INPUT/);
+  const p=g.preview({...input,objective:'Explain\n battery storage'});assert.equal(p.objective,'Explain battery storage');assert.equal(calls.length,0);
+ }finally{g.close();}
+});

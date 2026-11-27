@@ -5,7 +5,7 @@ const button=(id,text)=>{const e=E('button',text,'orb-button');e.id=id;e.type='b
 const field=(name,input)=>{const e=E('label',undefined,'orb-field');e.append(E('span',name),input);return e;};
 const reason=e=>typeof e?.message==='string'&&/^[A-Z_]{1,60}$/.test(e.message)?e.message:'HOST_UNAVAILABLE';
 export function createAutonomousResearchPanel(root,{getModels,openConnections,onEvent=()=>{},onState=()=>{},canStart=()=>true,saveFile}){
- let token=null,plan=null,session=null,cursor=0,epoch=0,timer=null,busy=false,running=false,report=null,mode=null;
+ let token=null,plan=null,session=null,cursor=0,epoch=0,timer=null,busy=false,running=false,report=null,mode=null,reconnects=0;
  const objective=E('textarea');objective.id='orb-autonomous-objective';objective.maxLength=1000;objective.rows=3;objective.placeholder='Ask a question, investigate a claim, or explore an idea…';
  const prepare=button('orb-autonomous-prepare','Prepare investigation'),connect=button('orb-autonomous-connections','Model connections'),start=button('orb-autonomous-start','Launch investigation'),cancel=button('orb-autonomous-cancel','Cancel'),download=button('orb-autonomous-export','Export report');
  start.classList.add('orb-primary');
@@ -45,11 +45,11 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
    if(ticket!==epoch||r.sessionId!==session.sessionId||r.planPin!==session.planPin)return;
    if(!Array.isArray(r.events)||!Number.isSafeInteger(r.nextCursor)||r.nextCursor!==cursor+r.events.length)throw Error('EVENT_SEQUENCE');
    for(const [i,e] of r.events.entries()){if(e.sessionId!==session.sessionId||e.sequence!==cursor+i+1)throw Error('EVENT_SEQUENCE');onEvent(e,r.mode);}
-   cursor=r.nextCursor;
+   cursor=r.nextCursor;reconnects=0;
    state((r.mode==='injected_fixture'?'TEST FIXTURE':'LOCAL HOST')+' · '+r.state+' · '+cursor+' recorded operation events',r.state);
    if(['running','cancelling'].includes(r.state)){timer=setTimeout(()=>void poll(ticket),600);return;}
    running=false;onState(false);if(r.state==='closed'&&r.report)render(r.report,r.reportPin);else if(r.reason)state(r.state+' · '+r.reason,r.state);sync();
-  }catch(e){if(ticket!==epoch)return;state('Connection interrupted: '+reason(e)+'. Host status unknown; no completion claimed.','disconnected');timer=setTimeout(()=>void poll(ticket),1600);}
+  }catch(e){if(ticket!==epoch)return;state('Connection interrupted: '+reason(e)+'. Host status unknown; no completion claimed.','disconnected');if(++reconnects<=8)timer=setTimeout(()=>void poll(ticket),Math.min(8000,1600*reconnects));else{running=false;onState(false);sync();state('Host disconnected. Execution status is unknown; no result or successful cancellation is claimed.','disconnected');}}
  }
  objective.addEventListener('input',reset);approve.addEventListener('change',sync);connect.onclick=openConnections;
  prepare.onclick=async()=>{
@@ -59,7 +59,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
    const caps=await request('capabilities',{publicRequest:true});if(caps?.schema!=='sutra-local-research-capabilities/v1'||typeof caps.sessionToken!=='string')throw Error('HOST_UNAVAILABLE');
    token=caps.sessionToken;mode=caps.mode;
    if(models.some(m=>!caps.configuredModelVendors.includes(m.vendor)))throw Error('MODEL_CREDENTIAL');
-   const p=await request('preview',{method:'POST',data:{objective:objective.value.trim(),models}});
+   const p=await request('preview',{method:'POST',data:{objective:objective.value.trim().replace(/\s+/gu,' '),models}});
    if(ticket!==epoch)return;plan=p;showPlan(p);state('Review the shared model pool and scope. No provider request sent.','previewed');
   }catch(e){if(ticket===epoch)state(reason(e)==='MODEL_SELECTION'?'Select one to three model connections first. No avatar assignment is needed.':reason(e)==='MODEL_CREDENTIAL'?'One or more selected model providers are not configured in the local host.':'Local host unavailable or plan refused: '+reason(e)+'. No provider request made.','refused');}
   finally{if(ticket===epoch){busy=false;sync();}}
@@ -69,10 +69,10 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
   const ticket=epoch,p=plan;busy=true;approve.checked=false;sync();
   try{
    // A changed pool or question invalidates the prepared request before dispatch.
-   const current=selectedModels();if(JSON.stringify(current)!==JSON.stringify(p.models.map(({vendor,model})=>({vendor,model})))||objective.value.trim()!==p.objective)throw Error('PLAN_CHANGED');
+   const current=selectedModels();if(JSON.stringify(current)!==JSON.stringify(p.models.map(({vendor,model})=>({vendor,model})))||objective.value.trim().replace(/\s+/gu,' ')!==p.objective)throw Error('PLAN_CHANGED');
    if(Date.now()>=p.expiresAt)throw Error('APPROVAL_EXPIRED');
    const s=await request('start',{method:'POST',data:{approvedPlanPin:p.planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true}});
-   if(ticket!==epoch)return;session=s;cursor=0;plan=null;running=true;onState(true);state((mode==='injected_fixture'?'TEST FIXTURE':'LOCAL HOST')+' · investigation started','running');void poll(ticket);
+   if(ticket!==epoch)return;session=s;cursor=0;reconnects=0;plan=null;running=true;onState(true);state((mode==='injected_fixture'?'TEST FIXTURE':'LOCAL HOST')+' · investigation started','running');void poll(ticket);
   }catch(e){if(ticket===epoch){plan=null;state('Launch refused or status unknown: '+reason(e),'refused');}}
   finally{if(ticket===epoch){busy=false;sync();}}
  };

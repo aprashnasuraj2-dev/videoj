@@ -4,12 +4,12 @@ import {randomBytes} from 'node:crypto';
 import {createHostedModelExchange} from '../sutra-inference/hosted-model-exchange.js';
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {MODEL_PROFILES} from './model-broker.js';
-import {digest} from './research-session.js';
+import {digest,secretLike} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Model smoke refused: '+code),{code});};
 export const SMOKE_MODELS=Object.freeze({gemini:'gemini-3.5-flash-lite',groq:'openai/gpt-oss-20b',openrouter:'openrouter/free'});
 const maxTokens=1024;
 export function previewModelSmoke(selection=SMOKE_MODELS){
- if(!selection||Object.getPrototypeOf(selection)!==Object.prototype||Object.keys(selection).length<1||Object.keys(selection).length>3||Object.entries(selection).some(([v,m])=>!Object.hasOwn(SMOKE_MODELS,v)||typeof m!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m)))fail('MODEL_SELECTION');
+ if(!selection||Object.getPrototypeOf(selection)!==Object.prototype||Object.keys(selection).length<1||Object.keys(selection).length>3||Object.entries(selection).some(([v,m])=>!Object.hasOwn(SMOKE_MODELS,v)||typeof m!=='string'||secretLike(m)||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m)))fail('MODEL_SELECTION');
  const ids=Object.keys(selection);
  const plan={schema:'sutra-live-model-smoke/v1',providers:ids.map(vendor=>({vendor,endpoint:MODEL_PROFILES[vendor].endpoint,model:selection[vendor],maxOutputTokens:maxTokens})),maxRequests:ids.length,deadlineSeconds:75,promptPolicy:'synthetic random challenge only; no user data',costPolicy:'up to one bounded inference per provider; provider billing may apply'};
  return {...plan,planPin:digest(JSON.stringify(plan))};
@@ -35,7 +35,7 @@ export async function runModelSmoke({approvedPlanPin,approveProviderContact,appr
     if(data?.error!==undefined||!Array.isArray(data?.choices)||data.choices.length!==1||c.index!==0||c.finish_reason!=='stop'||m?.role!=='assistant'||typeof m.content!=='string'||m.content.length>4096||m.function_call!=null||m.tool_calls!=null&&(!Array.isArray(m.tool_calls)||m.tool_calls.length!==0)||!Number.isSafeInteger(tokens)||tokens<0||tokens>maxTokens)fail('MODEL_RESPONSE');
     let result;try{result=parseUniqueJson(m.content,{maxChars:4096,maxDepth:4});}catch{fail('MODEL_JSON');}
     if(!result||Object.keys(result).length!==2||result.challenge!==challenge||result.answer!==42)fail('CHALLENGE_MISMATCH');
-    checks.push({vendor,model,status:'passed',durationMs:Math.round(performance.now()-start),reportedOutputTokens:tokens,...(typeof data.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(data.model)?{reportedModel:data.model}:{}),responseDigest:digest(raw.bodyText)});
+    checks.push({vendor,model,status:'passed',durationMs:Math.round(performance.now()-start),reportedOutputTokens:tokens,...(typeof data.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(data.model)&&!secretLike(data.model)&&!Object.values(credentials).some(key=>typeof key==='string'&&key&&data.model.includes(key))?{reportedModel:data.model}:{}),responseDigest:digest(raw.bodyText)});
    }catch(e){checks.push({vendor,model,status:'failed',reason:typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'PROVIDER_FAILURE'});}
   }
   return {schema:plan.schema,mode:exchangeFactory?'injected_fixture':'credentialed_live_transport',planPin:plan.planPin,checkedAt:new Date().toISOString(),status:checks.length===ids.length&&checks.every(c=>c.status==='passed')?'passed':'failed',checks,qualification:'Successful inference challenges only; not live web search, research synthesis quality, source independence, or a billing guarantee. OpenRouter free routing does not pin an underlying model.'};

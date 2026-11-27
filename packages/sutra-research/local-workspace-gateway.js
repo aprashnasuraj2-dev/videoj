@@ -1,6 +1,6 @@
 // Single-user loopback host. Not a public deployment or distributed worker.
 import {randomUUID} from 'node:crypto';
-import {admitManifest,authorizeResearch,digest} from './research-session.js';
+import {admitManifest,authorizeResearch,digest,secretLike} from './research-session.js';
 import {MODEL_PROFILES,createResearchModelBroker} from './model-broker.js';
 import {createSearchProviders} from './providers.js';
 import {createDocumentReader} from './document-reader.js';
@@ -21,7 +21,8 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  function preview(input){
   check();if(active(current))fail('RUN_ACTIVE');
   if(!exact(input,['objective','models'])||typeof input.objective!=='string'||!Array.isArray(input.models)||input.models.length<1||input.models.length>3||input.models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model)))fail('MODEL_SELECTION');
-  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim(),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
+  if(secretLike(JSON.stringify(input))||[...Object.values(modelKeys),...Object.values(searchKeys)].some(key=>JSON.stringify(input).includes(key)))fail('SENSITIVE_INPUT');
+  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
   const p=admitManifest(raw),expiresAt=clock()+120000;
   previewed={raw,pin:p.planPin,expiresAt};
   return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,authority:'NONE'};
