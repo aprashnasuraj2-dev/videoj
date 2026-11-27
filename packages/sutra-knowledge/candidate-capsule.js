@@ -46,7 +46,9 @@ export async function projectCandidateComputation(versionText, versionPin, candi
   const nodes = relevant.map(node => node.kind === 'input'
     ? {id: labels.get(node.id), kind: node.kind, value: node.value, dimension: node.dimension, basis: BASIS}
     : {id: labels.get(node.id), kind: node.kind, op: node.op, args: node.args.map(id => labels.get(id))});
-  return {nodes, target: labels.get(compiled.target.id), outcome: compiled.target.status, bindings};
+  const hostBindings = new Map(compiled.bindings.map(binding => [binding.id, binding]));
+  const provenance = new Map([...bindings].map(([node, binding]) => [node, hostBindings.get(binding)]));
+  return {nodes, target: labels.get(compiled.target.id), outcome: compiled.target.status, bindings, provenance};
 }
 
 export async function replayCandidateCone(nodes, target) {
@@ -59,11 +61,14 @@ export async function replayCandidateCone(nodes, target) {
   return state;
 }
 
-export async function exportCandidateCapsule(versionText, versionPin, candidateId) {
-  const {nodes, target, outcome} = await projectCandidateComputation(versionText, versionPin, candidateId);
+export async function sealCandidateProjection(versionPin, candidateId, {nodes, target, outcome}) {
   if (await replayCandidateCone(nodes, target) !== outcome) fail('REPLAY_MISMATCH');
   const text = JSON.stringify({version: CANDIDATE_CAPSULE_VERSION, versionPin, candidateId, nodes, target, outcome});
   return Object.freeze({text, pin: await casePin(text)});
+}
+
+export async function exportCandidateCapsule(versionText, versionPin, candidateId) {
+  return sealCandidateProjection(versionPin, candidateId, await projectCandidateComputation(versionText, versionPin, candidateId));
 }
 
 export async function openCandidateCapsule(text, retainedPin) {

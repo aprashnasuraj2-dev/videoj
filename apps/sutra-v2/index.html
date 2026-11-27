@@ -133,6 +133,25 @@
  <input id="review-capsule-retained-pin" maxlength="71" autocomplete="off" spellcheck="false">
  <button id="review-capsule-open" type="button">Replay capsule</button>
  <p id="review-capsule-replay" role="status"></p>
+ <details id="review-source-witness-panel">
+  <summary>Open one committed source span</summary>
+  <p>A source witness reveals one exact numeric token, its byte coordinates and its document digest. It is paired with the exact calculation capsule.</p>
+  <button id="review-witness-prepare" type="button" disabled>Commit selected candidate’s source spans</button>
+  <p id="review-witness-root" class="mono" aria-label="Source commitment root"></p>
+  <label for="review-witness-node">Quantity to open</label>
+  <select id="review-witness-node" disabled><option value="">Choose a committed quantity</option></select>
+  <pre id="review-witness-bytes" aria-label="Source witness bytes"></pre>
+  <button id="review-witness-download" type="button" disabled>Download source witness</button>
+  <p id="review-witness-status" role="status"></p>
+  <h4>Check a received source witness</h4>
+  <p>Use the exact capsule and its digest from the replay fields above.</p>
+  <label for="review-witness-file">Received source witness</label>
+  <input id="review-witness-file" type="file" accept=".json,application/json">
+  <label for="review-witness-retained-root">Separately retained source commitment root</label>
+  <input id="review-witness-retained-root" maxlength="71" autocomplete="off" spellcheck="false">
+  <button id="review-witness-open" type="button">Verify source witness</button>
+  <p id="review-witness-result" role="status"></p>
+ </details>
 </details>
 <details id="review-notice-panel" class="capsule-panel">
  <summary>Tell a capsule holder about a revision</summary>

@@ -42,14 +42,14 @@ function opType(kind,op,a,b){
  if(op==='div')return same(a,b)?ratioOf(a):ratio(b)?a:null;
  return null;
 }
-function exactNumber(lexeme,t){
+export function readReviewedNumericToken(lexeme,percentAllowed){
  // No locale guessing, implicit scales, scientific notation, NaN or arbitrary expression.
  let n,d;
  if(/^-?(?:0|[1-9]\d{0,23})\/[1-9]\d{0,23}$/.test(lexeme)){[n,d]=lexeme.split('/').map(BigInt);}
  else{
   const m=/^(-?)(0|[1-9]\d{0,23})(?:\.(\d{1,12}))?(%)?$/.exec(lexeme);
   if(!m)fail('COMPILER_NUMBER');
-  if(m[4]&&!ratio(t))fail('COMPILER_PERCENT_UNIT');
+  if(m[4]&&!percentAllowed)fail('COMPILER_PERCENT_UNIT');
   const frac=m[3]??'';n=BigInt(m[2]+frac)*(m[1]?-1n:1n);d=10n**BigInt(frac.length)*(m[4]?100n:1n);
  }
  if(n===0n&&lexeme.startsWith('-'))fail('COMPILER_NEGATIVE_ZERO');
@@ -90,7 +90,7 @@ async function host(contractText,expectedPin){
   if(!keys(b,['id','span','type'])||!id(b.id)||bindings.has(b.id))fail('COMPILER_BINDING');
   const t=type(b.type),s=span(b.span,docs,true),loc=s.sourceId+'|'+s.start+'|'+s.end;
   if(locations.has(loc))fail('COMPILER_DUPLICATE_BINDING_SPAN');
-  locations.add(loc);bindings.set(b.id,{id:b.id,span:s,type:t,value:exactNumber(s.quote,t)});
+  locations.add(loc);bindings.set(b.id,{id:b.id,span:s,type:t,value:readReviewedNumericToken(s.quote,ratio(t))});
  }
  const digests=new Map();
  for(const [i,d] of docs)if(i!=='question'){

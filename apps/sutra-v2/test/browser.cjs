@@ -871,6 +871,21 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await reviewPage.locator('#review-capsule-retained-pin').fill(capsulePin);
   await reviewPage.locator('#review-capsule-open').click();
   await reviewPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('CONDITIONALLY SATISFIED'));
+  await reviewPage.locator('#review-source-witness-panel > summary').click();
+  await reviewPage.locator('#review-witness-prepare').click();
+  const witnessNode=capsuleBody.nodes.find(n=>n.value==='25/2').id;
+  await reviewPage.locator('#review-witness-node').selectOption(witnessNode);
+  const witnessDl=reviewPage.waitForEvent('download');
+  await reviewPage.locator('#review-witness-download').click();
+  const witnessBytes=fs.readFileSync(await (await witnessDl).path());
+  const witnessRoot=await reviewPage.locator('#review-witness-root').innerText();
+  assert.equal(JSON.parse(witnessBytes).row.quote,'12.50');
+  assert.ok(!witnessBytes.includes('repeat'));
+  await reviewPage.locator('#review-witness-file').setInputFiles({name:'witness.json',mimeType:'application/json',buffer:witnessBytes});
+  await reviewFill('witness-retained-root',witnessRoot);
+  await reviewPage.locator('#review-witness-open').click();
+  await reviewPage.waitForFunction(()=>document.querySelector('#review-witness-result').textContent.includes('match the retained root'));
+
   await reviewPage.locator('#review-capsule-range').locator('..').locator('summary').click();
   const maskedNode=capsuleBody.nodes.find(n=>n.value==='25/2');
   await reviewPage.locator('#review-capsule-mask').selectOption(maskedNode.id);
