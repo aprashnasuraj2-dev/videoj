@@ -81,6 +81,13 @@ function visitIntervalCone(nodes,targetId,inputRange){
  return {target:visit(targetId),rows};
 }
 
+export function intersectReviewedRanges(left,right){
+ const alo=read(left.lower),ahi=read(left.upper),blo=read(right.lower),bhi=read(right.upper);
+ const low=cmp(alo,blo)>=0?alo:blo,high=cmp(ahi,bhi)<=0?ahi:bhi;
+ const order=cmp(low,high);
+ return order>0?null:{lower:text(low),upper:text(high),singleton:order===0};
+}
+
 export function reviewedRangeContains(lower,upper,point,{requireWidth=false}={}){
  const lo=read(lower),hi=read(upper),value=read(point);
  return (!requireWidth||cmp(lo,hi)<0)&&cmp(lo,value)<=0&&cmp(value,hi)<=0;

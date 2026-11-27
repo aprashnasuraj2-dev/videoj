@@ -1,5 +1,6 @@
-import {exportCandidateRangeCapsule, openCandidateRangeCapsule, RANGE_CAPSULE_VERSION} from '../../../packages/sutra-knowledge/candidate-range-capsule.js';
-import {exportCandidateCapsule, openCandidateCapsule} from '../../../packages/sutra-knowledge/candidate-capsule.js';
+import {createCandidateDisclosureJournal} from '../../../packages/sutra-knowledge/candidate-disclosure-journal.js';
+import {openCandidateRangeCapsule, RANGE_CAPSULE_VERSION} from '../../../packages/sutra-knowledge/candidate-range-capsule.js';
+import {openCandidateCapsule} from '../../../packages/sutra-knowledge/candidate-capsule.js';
 
 export function connectCandidateCapsule({by, download}) {
   const candidate = by('capsule-candidate');
@@ -12,7 +13,8 @@ export function connectCandidateCapsule({by, download}) {
   const lower = by('capsule-lower');
   const upper = by('capsule-upper');
   const range = by('capsule-range');
-  let current, capsule, pointCapsule, versionEpoch = 0, generating = false, busy = false;
+  const journal = createCandidateDisclosureJournal();
+  let current, capsule, pending, pointCapsule, versionEpoch = 0, generating = false, busy = false;
 
   function updateControls() {
     candidate.disabled = busy || !current;
@@ -23,7 +25,7 @@ export function connectCandidateCapsule({by, download}) {
   }
   function clearPreview() {
     versionEpoch++;
-    capsule = pointCapsule = null;
+    capsule = pending = pointCapsule = null;
     mask.length = 1;
     lower.value = upper.value = '';
     preview.textContent = '';
@@ -39,9 +41,10 @@ export function connectCandidateCapsule({by, download}) {
     generating = true;
     updateControls();
     try {
-      const result = await exportCandidateCapsule(current.versionText, current.digest, candidate.value);
+      const staged = await journal.prepare(current, candidate.value);
       if (epoch !== versionEpoch) return;
-      capsule = pointCapsule = result;
+      pending = staged;
+      const result = capsule = pointCapsule = staged.capsule;
       for (const node of JSON.parse(result.text).nodes) {
         if (node.kind === 'input') mask.add(new Option(node.id + ' · ' + node.value, node.id));
       }
@@ -57,7 +60,7 @@ export function connectCandidateCapsule({by, download}) {
   });
   for (const input of [mask, lower, upper]) input.addEventListener('input', () => {
     versionEpoch++;
-    capsule = null;
+    capsule = pending = null;
     preview.textContent = '';
     pin.textContent = '';
     status.textContent = 'Range changed. Preview the bytes before downloading.';
@@ -67,16 +70,21 @@ export function connectCandidateCapsule({by, download}) {
     if (range.disabled) return;
     const epoch = ++versionEpoch;
     generating = true;
-    capsule = null;
+    capsule = pending = null;
     preview.textContent = '';
     pin.textContent = '';
     updateControls();
     try {
-      const result = await exportCandidateRangeCapsule(current.versionText, current.digest, candidate.value, [
+      const staged = await journal.prepare(current, candidate.value, [
         {nodeId: mask.value, lower: lower.value.trim(), upper: upper.value.trim()}
       ]);
       if (epoch !== versionEpoch) return;
-      capsule = result;
+      if (!staged.capsule) {
+        status.textContent = 'Earlier downloads from this tab, combined with this range, expose an exact hidden quantity.';
+        return;
+      }
+      pending = staged;
+      const result = capsule = staged.capsule;
       preview.textContent = result.text;
       pin.textContent = result.pin;
       status.textContent = 'Ready to download the range capsule. Share the digest separately.';
@@ -88,7 +96,18 @@ export function connectCandidateCapsule({by, download}) {
     }
   });
   save.addEventListener('click', () => {
-    if (!save.disabled) download(capsule.text, 'sutra-calculation-capsule.json', 'application/json');
+    if (save.disabled) return;
+    try {
+      journal.recordDownload(pending);
+      download(capsule.text, 'sutra-calculation-capsule.json', 'application/json');
+      save.disabled = true;
+      capsule = pending = null;
+      status.textContent = 'Download requested and recorded in this tab.';
+    } catch {
+      capsule = pending = null;
+      status.textContent = 'Could not record this disclosure. Preview again before downloading.';
+      updateControls();
+    }
   });
 
   const fileInput = by('capsule-file');
