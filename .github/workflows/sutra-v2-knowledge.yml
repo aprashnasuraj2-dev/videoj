@@ -25,6 +25,8 @@ jobs:
           node-version: 24
       - name: Validate executable SUTRA v2 threat model coverage
         run: node docs/sutra/tools/threat-model-check.mjs
+      - name: Verify typed investigation task runtime
+        run: node --test packages/sutra-runtime/test/investigation-tasks.test.mjs
       - name: Run bounded inference and opaque credential boundary tests
         run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Verify council orchestration and operator integration before external formal tool download

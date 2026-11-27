@@ -1,3 +1,4 @@
+import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
 // Shared host-owned scheduler for bounded investigation councils.
 // No model can choose a route, authorize disclosure, execute a tool or supply a verdict.
 const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
@@ -41,6 +42,7 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      const op=operation(publicRoute,round,feedback.map(x=>({...x})));
      const inputBytes=new TextEncoder().encode(JSON.stringify(op)).length;
      const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:op});
+     if(controller.signal.aborted)councilFail('CANCELLED');
      if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)councilFail('PROPOSAL_REFUSED');
      assertPublication();
      const value=result.value;if(!councilClosed(value,['text'])||typeof value.text!=='string')councilFail('PROPOSAL_REFUSED');
@@ -93,7 +95,7 @@ function slots(bucket,tokens){
 }
 const refuse=(route,reason)=>({agentId:route.id,providerId:route.providerId,model:route.model,status:'REFUSED',reason});
 async function dispatchWaves(active,invoke,capacity,tokens,signal,cancelledPromise){
- if(!capacity)return Promise.race([Promise.all(active.map(invoke)),cancelledPromise]);
+ if(!capacity)return dispatchTaskWave(active,invoke,signal);
  let queue=active.slice();const results=new Map();
  while(queue.length){
   if(signal.aborted)return null;
@@ -109,11 +111,21 @@ async function dispatchWaves(active,invoke,capacity,tokens,signal,cancelledPromi
    for(const r of rest){const p=snapshot.profiles.find(x=>x.profileId===r.profileId);results.set(r.id,refuse(r,!p||!p.enabled?'PROFILE_DISABLED':'BUDGET'));}
    break;
   }
-  const rows=await Promise.race([Promise.all(wave.map(invoke)),cancelledPromise]);
+  const rows=await dispatchTaskWave(wave,invoke,signal);
   if(rows===null||signal.aborted)return null;
   for(const row of rows)results.set(row.agentId,row);
   queue=rest;
  }
  // Stable original route order independent of wave or completion order.
  return active.map(r=>results.get(r.id));
+}
+
+// Host-owned task admission is distinct from the downstream conditional verifier.
+async function dispatchTaskWave(routes,invoke,signal){
+ const tasks=routes.map((route,i)=>({id:'slot_'+i,kind:'council_transport',agentId:route.id,dependsOn:[]}));
+ const lookup=new Map(tasks.map((t,i)=>[t.id,routes[i]]));
+ const result=await runTaskGraph({tasks,runId:'council_wave',version:'scoped_round',concurrency:routes.length,signal,handlers:{council_transport:{execute:({task})=>invoke(lookup.get(task.id)),admit:(row,{task})=>{if(row?.agentId!==task.agentId||!['PROPOSED','ABSTAINED','REFUSED'].includes(row.status))councilFail('PROPOSAL_REFUSED');return row;}}}});
+ if(signal.aborted||result.status==='cancelled'||result.status==='timeout'||result.status==='stale')return null;
+ const rows=new Map(result.artifacts.map(x=>[x.taskId,x.value]));
+ return tasks.map(t=>rows.has(t.id)?{...rows.get(t.id)}:refuse(lookup.get(t.id),'PROPOSAL_REFUSED'));
 }
