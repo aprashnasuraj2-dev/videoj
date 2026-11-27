@@ -23,3 +23,5 @@
 /* Decorative sub-animations run only when an agent has active rehearsal work. */
 .orb-agent:not([data-status=working]):not([data-status=thinking]):not([data-status=communicating]) .orb-spin,.orb-agent:not([data-status=working]):not([data-status=thinking]):not([data-status=communicating]) .orb-pulse,.orb-agent:not([data-status=working]):not([data-status=thinking]):not([data-status=communicating]) .orb-eyes{animation-play-state:paused}
 #orb-inspect .orb-event,#orb-council-activity .orb-event{overflow-wrap:anywhere}#orb-graph-node{max-width:100%;width:100%;min-width:0}
+
+#orb-review-results pre,#orb-inspect pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.75rem}#orb-review-results details{margin-top:6px}.orb-agent[data-status=completed] .orb-agent-halo{stroke-width:3}.orb-agent[data-status=validating] .orb-agent-halo{stroke-dasharray:2 2}.orb-agent[data-status=failed] .orb-agent-halo,.orb-agent[data-status=cancelled] .orb-agent-halo{opacity:.55}
