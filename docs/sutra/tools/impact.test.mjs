@@ -199,4 +199,13 @@ test('common consent changes require the dedicated operator approval browser as 
  assert.match(workflow,/packages\/sutra-consent\/\*\*/);
 });
 
-test('validation snapshot new workflows require canonical knowledge verification',()=>{const paths=['.github/workflows/sutra-v2-operator-browser.yml','.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'];const r=classifyChangedFiles(paths,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);});
+test('validation snapshot workflows map to their live canonical verification suites',()=>{
+ const operator=classifyChangedFiles(['.github/workflows/sutra-v2-operator-browser.yml'],map);
+ assert.deepEqual(operator.unmapped,[]);
+ assert.deepEqual(operator.affectedSuites,['v2-knowledge-verification','v2-operator-consent']);
+ assert.deepEqual(operator.requiredWorkflows,['Validate SUTRA knowledge kernel','Validate SUTRA operator model approval browser']);
+ const benchmark=classifyChangedFiles(['.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'],map);
+ assert.deepEqual(benchmark.unmapped,[]);
+ assert.deepEqual(benchmark.affectedSuites,['v2-knowledge-verification']);
+ assert.deepEqual(benchmark.requiredWorkflows,['Validate SUTRA knowledge kernel']);
+});
