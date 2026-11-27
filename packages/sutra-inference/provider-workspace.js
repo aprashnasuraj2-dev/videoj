@@ -21,22 +21,23 @@ const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 const capabilityPattern=/^[a-z][a-z0-9-]{0,31}(?:\.[a-z][a-z0-9-]{0,31}){1,3}$/;
 const dense=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
 const capabilityList=(value,{allowEmpty=false}={})=>{
- if(!dense(value)||value.length>(allowEmpty?16:8)||(!allowEmpty&&value.length<1)||value.some(x=>typeof x!=='string'||!capabilityPattern.test(x))||new Set(value).size!==value.length)stop('CAPABILITY');
+ if(!Array.isArray(value)||value.length>(allowEmpty?16:8)||(!allowEmpty&&value.length<1)||!dense(value)||value.some(x=>typeof x!=='string'||!capabilityPattern.test(x))||new Set(value).size!==value.length)stop('CAPABILITY');
  return Object.freeze([...value]);
 };
 function normalizeCapabilityCatalog(catalog){
- if(!dense(catalog)||catalog.length<1||catalog.length>8)stop('CONFIG');
+ if(!Array.isArray(catalog)||catalog.length<1||catalog.length>8||!dense(catalog))stop('CONFIG');
  return catalog.map(entry=>{
   if(!plain(entry))stop('CONFIG');
   const descriptors=Object.getOwnPropertyDescriptors(entry),keys=Reflect.ownKeys(entry);
   if(keys.some(k=>typeof k!=='string')||!(keys.length===3||keys.length===4)||!['id','label','models'].every(k=>keys.includes(k))||keys.some(k=>!['id','label','models','capabilities'].includes(k))||Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'||!d.enumerable||!Object.hasOwn(d,'value')))stop('CONFIG');
   const id=descriptors.id.value,label=descriptors.label.value,models=descriptors.models.value;
-  if(!dense(models))stop('CONFIG');
+  if(!Array.isArray(models)||models.length<1||models.length>16||!dense(models))stop('CONFIG');
   const declared=Object.create(null);
   if(keys.includes('capabilities')){
    const raw=descriptors.capabilities.value;
    if(!plain(raw))stop('CAPABILITY');
-   const d=Object.getOwnPropertyDescriptors(raw),names=Reflect.ownKeys(raw);
+   const names=Reflect.ownKeys(raw);if(names.length>models.length)stop('CAPABILITY');
+   const d=Object.getOwnPropertyDescriptors(raw);
    if(names.some(k=>typeof k!=='string'||!d[k]?.enumerable||!Object.hasOwn(d[k],'value'))||Object.values(d).some(x=>typeof x.get==='function'||typeof x.set==='function')||!Array.isArray(models)||names.some(model=>!models.includes(model)))stop('CAPABILITY');
    for(const model of names)declared[model]=capabilityList(d[model].value,{allowEmpty:true});
   }
@@ -99,6 +100,8 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
   if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
   const declared=capabilitiesByProvider.get(profile.providerId)?.[model]??Object.freeze([]);
   if(required.some(x=>!declared.includes(x)))stop('CAPABILITY_MISSING');
+  // Negotiation is an exported record, subject to the same live canary boundary.
+  admitOperation({model,required,declared});
   return Object.freeze({version:'sutra-model-capabilities/v1',profileId:profile.profileId,providerId:profile.providerId,model,required,declared,authority:'HOST_DECLARED_UNVERIFIED'});
  };
  // All live credentials participate in the canary check. A credential-set
@@ -118,6 +121,9 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'))stop('PROFILE');
    const providerId=descriptors.providerId.value,label=descriptors.label.value,credential=descriptors.credential.value;
    const profileLimits=keys.includes('limits')?descriptors.limits.value:defaultProfileLimits;
+   // Capability declarations are also public metadata. Reject credentials that
+   // would be exposed by any provider's capability negotiation record.
+   if(typeof credential==='string'&&credential.length>=8&&normalizedCatalog.some(entry=>Object.values(entry.declared).some(tokens=>tokens.some(token=>token.includes(credential)))))stop('PROFILE');
    let added;
    try{
     added=vault.addProfile({providerId,label,credential});
