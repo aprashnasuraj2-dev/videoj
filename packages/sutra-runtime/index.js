@@ -314,7 +314,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
 
 // Same-origin publication loader for the restricted local profile. Cross-origin
 // loading is deliberately refused until the consent-aware peer loader is shipped.
-async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,allowWorkspaceEvidence=false,resolvePublishedLinks=false,retryUnavailableReads=false,attemptLog}={}){
+async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,allowWorkspaceEvidence=false,resolvePublishedLinks=false,callerLinkOverrides,retryUnavailableReads=false,attemptLog}={}){
  let base;
  try{base=new URL(baseUrl);}catch{fail('ARTIFACT_URL','Use a complete agent site-base URL.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
@@ -322,6 +322,9 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  if(!validId(networkName))fail('NETWORK_ID','Invalid exact network name.');
  if(!base.pathname.endsWith('/'))base.pathname+='/';
  let remainingRetries=retryUnavailableReads===true?1:0;
+ const artifactDigests=Object.create(null);
+ if(callerLinkOverrides!==undefined&&resolvePublishedLinks!==true)fail('LINKS_SCHEMA','Caller bindings require explicit link resolution.');
+ const overrides=callerLinkOverrides===undefined?undefined:snapshotJsonData(callerLinkOverrides,16384,'LINKS_SIZE');
  async function read(kind,url,maxBytes){
   for(let attempt=1;;attempt++){
    if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');
@@ -350,6 +353,8 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
      fail('ARTIFACT_UNAVAILABLE','Public artifact service is unavailable.');
     }
     let parsed;try{parsed=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:maxBytes,maxDepth:32});}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
+    artifactDigests[kind]=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
+    if(signal?.aborted)throw signal.reason;
     event.status='completed';return parsed;
    }catch(error){
     if(event.status==='started')event.status=signal?.aborted?'cancelled':'failed';
@@ -374,11 +379,11 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  const artifacts={manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href};
  if(resolvePublishedLinks===true){
   const linksUrl=new URL('links.json',base);
-  definition=resolveSymbolicPeerLinks(definition,await read('links',linksUrl,16384),entry.name);
+  definition=resolveSymbolicPeerLinks(definition,await read('links',linksUrl,16384),entry.name,overrides);
   artifacts.links=linksUrl.href;
  }
  compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools,allowWorkspaceEvidence,allowPeers:resolvePublishedLinks===true});
- return {definition,name:entry.name,frontMan:entry.front_man,artifacts};
+ return {definition,name:entry.name,frontMan:entry.front_man,artifacts,artifactDigests:Object.freeze({...artifactDigests})};
 }
 
 export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
@@ -426,7 +431,7 @@ function parsePeerNetworkReference(peerUrl){
 // Only the caller's same-origin publication can resolve symbols. Resolution is
 // not contact approval; the resulting absolute URL still requires peerRuntime
 // and a distinct consent decision for every external artifact contact.
-export function resolveSymbolicPeerLinks(definition,document,networkName){
+export function resolveSymbolicPeerLinks(definition,document,networkName,callerOverrides){
  definition=snapshotJsonData(definition,65536,'LINKS_SIZE');document=snapshotJsonData(document,16384,'LINKS_SIZE');
  if(!plain(document)||document.version!==1||!plain(document.networks)||Object.keys(document).some(k=>!['version','networks'].includes(k))||Object.keys(document.networks).length>32)fail('LINKS_SCHEMA','Expected a version-one named link map.');
  if(!validId(networkName)||!plain(definition)||!Array.isArray(definition.tools))fail('LINKS_SCHEMA','Invalid symbolic network.');
@@ -438,7 +443,23 @@ export function resolveSymbolicPeerLinks(definition,document,networkName){
    if(parsed.target.href!==target||parsed.target.hostname.split('.').includes('mcp')||parsed.target.pathname.split('/').includes('mcp'))fail('LINKS_TARGET','Only canonical exact peer URLs may be bound.');
   }
  }
- const map=Object.hasOwn(document.networks,networkName)?document.networks[networkName]:{};
+ // The publisher map remains immutable. The caller may supply a separate
+ // per-network map for this invocation only. It confers no contact authority.
+ const published=Object.hasOwn(document.networks,networkName)?document.networks[networkName]:{};
+ let map=published;
+ if(callerOverrides!==undefined){
+  const own=snapshotJsonData(callerOverrides,16384,'LINKS_SIZE');
+  if(!plain(own)||own.version!==1||!plain(own.networks)||Object.keys(own).some(k=>!['version','networks'].includes(k))||Object.keys(own.networks).length!==1||!Object.hasOwn(own.networks,networkName))fail('LINKS_SCHEMA','Caller bindings must be separately scoped to exactly this network.');
+  const bindings=own.networks[networkName];
+  if(!plain(bindings)||Object.keys(bindings).length<1||Object.keys(bindings).length>16)fail('LINKS_SCHEMA','Invalid caller binding map.');
+  for(const [alias,target] of Object.entries(bindings)){
+   if(!validId(alias)||typeof target!=='string'||target.length>2048)fail('LINKS_SCHEMA','Invalid caller peer binding.');
+   const parsed=parsePeerNetworkReference(target);
+   if(parsed.target.href!==target||parsed.target.hostname.split('.').includes('mcp')||parsed.target.pathname.split('/').includes('mcp'))fail('LINKS_TARGET','Only canonical exact peer URLs may be bound.');
+   if(Object.hasOwn(published,alias)&&parsePeerNetworkReference(published[alias]).networkName!==parsed.networkName)fail('LINKS_TARGET','Override cannot change the published target network identity.');
+  }
+  map={...published,...bindings};
+ }
  const result=structuredClone(definition),local=new Set(result.tools.map(a=>a?.name)),used=new Set();
  for(const alias of Object.keys(map))if(local.has(alias))fail('LINKS_COLLISION','A peer binding cannot shadow a local agent.');
  for(const agent of result.tools){
