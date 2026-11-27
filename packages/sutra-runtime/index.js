@@ -368,7 +368,8 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared graph URL.');}
  if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
  // No executable site modules, coded bundles or inference metadata are acted on.
- if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in the local profile.');
+ if(Object.hasOwn(manifest,'schema')||Object.hasOwn(manifest,'version'))fail('UNSUPPORTED_FIELD','Explicit manifest schema/version is unsupported by this unversioned resolved-JSON profile.');
+ if(Object.hasOwn(manifest,'coded_tools')||Object.hasOwn(manifest,'actions'))fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in this profile.');
  let definition=await read('definition',graphUrl,65536);
  const artifacts={manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href};
  if(resolvePublishedLinks===true){
@@ -464,7 +465,8 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  });}
  catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
- if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable peer publication metadata is disabled in this profile.');
+ if(Object.hasOwn(manifest,'schema')||Object.hasOwn(manifest,'version'))fail('UNSUPPORTED_FIELD','Explicit manifest schema/version is unsupported by this unversioned resolved-JSON profile.');
+ if(Object.hasOwn(manifest,'coded_tools')||Object.hasOwn(manifest,'actions'))fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in this profile.');
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
  if(matching.length!==1)fail('NETWORK_MATCH','Exactly one matching published peer network is required.');
  const entry=matching[0];
