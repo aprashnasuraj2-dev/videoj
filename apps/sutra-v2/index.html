@@ -134,6 +134,27 @@
  <input id="review-capsule-retained-pin" maxlength="71" autocomplete="off" spellcheck="false">
  <button id="review-capsule-open" type="button">Replay capsule</button>
  <p id="review-capsule-replay" role="status"></p>
+ <details id="review-peer-calculation-panel">
+  <summary>Replay a calculation from a peer publisher</summary>
+  <label for="review-peer-calculation-origin">Authorized peer origin</label>
+  <input id="review-peer-calculation-origin" type="url" maxlength="256" autocomplete="off" spellcheck="false">
+  <label for="review-peer-calculation-pin">Separately retained peer catalog digest</label>
+  <input id="review-peer-calculation-pin" maxlength="71" autocomplete="off" spellcheck="false">
+  <button id="review-peer-calculation-discover" type="button">Discover peer calculations</button>
+  <label for="review-peer-calculation-item">Peer calculation</label>
+  <select id="review-peer-calculation-item" disabled><option value="">Choose from a verified catalog</option></select>
+  <button id="review-peer-calculation-fetch" type="button" disabled>Retrieve and replay selected calculation</button>
+  <button id="review-peer-calculation-cancel" type="button" disabled>Cancel peer request</button>
+  <p id="review-peer-calculation-state" role="status"></p>
+  <dialog id="review-peer-calculation-consent" aria-labelledby="review-peer-calculation-purpose">
+   <h4 id="review-peer-calculation-purpose"></h4>
+   <p id="review-peer-calculation-resource" class="mono"></p>
+   <div class="controls">
+    <button id="review-peer-calculation-deny" type="button" class="secondary" autofocus>Deny contact</button>
+    <button id="review-peer-calculation-allow" type="button">Allow this request once</button>
+   </div>
+  </dialog>
+ </details>
  <section id="review-capsule-threshold-panel" hidden>
   <h4>Find when the conclusion would change</h4>
   <p>Vary one quantity while keeping the other declared bounds. The resulting thresholds describe hypothetical inputs.</p>

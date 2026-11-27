@@ -1,3 +1,4 @@
+import {externalConsentDialog} from './external-consent-dialog.js';
 import {planQuiz,readQuizObservation,discoverQuizCapability,quizTransfer} from '../../../packages/sutra-knowledge/quiz-frontier.js';
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 const by=id=>document.getElementById(id),txt=(id,value)=>{by(id).textContent=value;};
@@ -20,16 +21,9 @@ async function work(fn,failId='quiz-status'){
 }
 pred.addEventListener('change',()=>{reset();txt('quiz-status','Prediction changed; plan a new investigation.');});
 plan.addEventListener('click',()=>work(async()=>{reset();state=await planQuiz();render();}));
-function decide(contact,{signal}){
- return new Promise(resolve=>{
-  let done=false;
-  const finish=decision=>{if(done)return;done=true;signal?.removeEventListener('abort',deny);dialog.removeEventListener('cancel',cancel);by('quiz-allow').removeEventListener('click',allow);by('quiz-deny').removeEventListener('click',deny);if(dialog.open)dialog.close();resolve({decision,scope:'once'});};
-  const allow=()=>finish('allow'),deny=()=>finish('deny'),cancel=e=>{e.preventDefault();deny();};
-  if(signal?.aborted){deny();return;}
-  txt('quiz-consent-purpose',contact.purpose);txt('quiz-consent-url',contact.resource??contact.origin);
-  dialog.addEventListener('cancel',cancel);signal?.addEventListener('abort',deny,{once:true});by('quiz-allow').addEventListener('click',allow);by('quiz-deny').addEventListener('click',deny,{once:true});dialog.showModal();
- });
-}
+const decide=externalConsentDialog({
+ dialog,purpose:by('quiz-consent-purpose'),url:by('quiz-consent-url'),approve:by('quiz-allow'),deny:by('quiz-deny')
+});
 discover.addEventListener('click',()=>work(async()=>{
  const inspector=createConsentInspector({decide}),candidate=await discoverQuizCapability({peerUrl:url.value,inspector});
  const next=await planQuiz([...extra,candidate.offer]);const old=state.plan.plan.worstCost,newCost=next.plan.plan.worstCost;

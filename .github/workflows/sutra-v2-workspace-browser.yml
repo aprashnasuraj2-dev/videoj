@@ -2,10 +2,10 @@ name: Validate SUTRA workspace browser
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**','apps/sutra-peer/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**','apps/sutra-peer/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,7 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
+          node apps/sutra-peer/scripts/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
           node --test apps/sutra-v2/test/private-proof.test.cjs
       - run: node packages/sutra-runtime/verify-vendor.mjs

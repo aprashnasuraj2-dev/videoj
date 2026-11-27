@@ -27,3 +27,16 @@ test('Pages guide candidate has scoped public JSON CORS and no functions',()=>{
  const cfg=read('wrangler.jsonc');assert.equal(cfg.name,'sutra-guide');assert.equal(cfg.pages_build_output_dir,'./dist');assert.equal(cfg.services,undefined);assert.equal(cfg.routes,undefined);
  assert.equal(fs.existsSync(path.join(root,'functions')),false);
 });
+
+test('built peer serves a pinned static calculation catalog and reproducible capsule bytes',async()=>{
+ const {casePin}=await import('../../../packages/sutra-knowledge/pinned-investigation.js');
+ const {openCandidateCapsule}=await import('../../../packages/sutra-knowledge/candidate-capsule.js');
+ const dir='dist/agents/calculations/';
+ const pin=fs.readFileSync(path.join(root,dir,'catalog.sha256'),'utf8').trim();
+ const wrapper=read(dir+'index.json');
+ assert.equal(await casePin(wrapper.catalogText),pin);
+ const [entry]=JSON.parse(wrapper.catalogText).entries;
+ const {capsuleText}=read(dir+entry.pin.slice(7)+'.json');
+ assert.equal(Buffer.byteLength(capsuleText),entry.bytes);
+ assert.equal((await openCandidateCapsule(capsuleText,entry.pin)).outcome,'CONDITIONALLY_SATISFIED');
+});

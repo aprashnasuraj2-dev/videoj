@@ -2,10 +2,10 @@ name: Validate SUTRA knowledge kernel
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**','apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**','apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
@@ -233,6 +233,7 @@ jobs:
           rustc --version
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
+          node apps/sutra-peer/scripts/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
           node --test apps/sutra-v2/test/private-proof.test.cjs
       - run: node packages/sutra-runtime/verify-vendor.mjs

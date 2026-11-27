@@ -1,3 +1,4 @@
+import {connectCandidatePeer} from './candidate-peer-ui.js';
 import {createCandidateDisclosureJournal} from '../../../packages/sutra-knowledge/candidate-disclosure-journal.js';
 import {analyzeCandidateRangeCounterfactual, openCandidateRangeCapsule, RANGE_CAPSULE_VERSION} from '../../../packages/sutra-knowledge/candidate-range-capsule.js';
 import {openCandidateCapsule} from '../../../packages/sutra-knowledge/candidate-capsule.js';
@@ -149,6 +150,25 @@ export function connectCandidateCapsule({by, download}) {
     clearThreshold();
     replay.textContent = '';
   });
+  function publishReplay(text, expected, result) {
+    const wire = JSON.parse(text);
+    if (wire.version === RANGE_CAPSULE_VERSION) {
+      admittedRange = {text, pin: expected};
+      for (const node of wire.nodes.filter(node => node.kind === 'bounded_input')) {
+        thresholdNode.add(new Option(node.id + ' · ' + node.lower + ' to ' + node.upper, node.id));
+      }
+      thresholdPanel.hidden = false;
+    }
+    replay.textContent = result.candidateId + ' · ' + result.outcome.replaceAll('_', ' ') +
+      ' across ' + result.suppliedQuantities + ' supplied and ' + (result.boundedQuantities ?? 0) + ' bounded quantities.' +
+      (result.analysis === 'EXACT_AFFINE_DIFFERENCE' ? ' Shared-input cancellation was checked using exact affine arithmetic.' : '') +
+      ' Source correspondence is a publisher declaration.';
+  }
+  connectCandidatePeer({by, receive: result => {
+    importEpoch++;
+    clearThreshold();
+    publishReplay(result.capsuleText, result.pin, result.replay);
+  }});
   by('capsule-open').addEventListener('click', async () => {
     const epoch = ++importEpoch;
     clearThreshold();
@@ -162,19 +182,7 @@ export function connectCandidateCapsule({by, download}) {
       const result = wire?.version === RANGE_CAPSULE_VERSION
         ? await openCandidateRangeCapsule(text, expected)
         : await openCandidateCapsule(text, expected);
-      if (epoch === importEpoch) {
-        if (wire.version === RANGE_CAPSULE_VERSION) {
-          admittedRange = {text, pin: expected};
-          for (const node of wire.nodes.filter(node => node.kind === 'bounded_input')) {
-            thresholdNode.add(new Option(node.id + ' · ' + node.lower + ' to ' + node.upper, node.id));
-          }
-          thresholdPanel.hidden = false;
-        }
-        replay.textContent = result.candidateId + ' · ' + result.outcome.replaceAll('_', ' ') +
-          ' across ' + result.suppliedQuantities + ' supplied and ' + (result.boundedQuantities ?? 0) + ' bounded quantities.' +
-          (result.analysis === 'EXACT_AFFINE_DIFFERENCE' ? ' Shared-input cancellation was checked using exact affine arithmetic.' : '') +
-          ' Source correspondence is a publisher declaration.';
-      }
+      if (epoch === importEpoch) publishReplay(text, expected, result);
     } catch {
       if (epoch === importEpoch) replay.textContent = 'Capsule refused. Check the file and separately received digest.';
     }

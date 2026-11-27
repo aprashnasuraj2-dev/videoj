@@ -7,8 +7,19 @@ const dist=path.resolve(__dirname,'../dist');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
 (async()=>{
  const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
+ const calculationRoot=path.resolve(__dirname,'../../sutra-peer/dist/agents/calculations');
+ let privatePeerCalculation=null;
  const peer=http.createServer((req,res)=>{
   const pathname=new URL(req.url,'http://localhost').pathname;peerRequests.push({path:pathname,method:req.method,headers:req.headers});
+  if(privatePeerCalculation?.has(pathname)){
+   res.writeHead(200,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*','Cache-Control':'no-store'});
+   res.end(privatePeerCalculation.get(pathname));return;
+  }
+  if(/^\/agents\/calculations\/(?:index|[a-f0-9]{64})\.json$/.test(pathname)){
+   const file=path.join(calculationRoot,path.basename(pathname));
+   if(!fs.existsSync(file)){res.writeHead(404);res.end();return;}
+   res.writeHead(200,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*','Cache-Control':'no-store'});res.end(fs.readFileSync(file));return;
+  }
   const file=path.resolve(peerRoot,'.'+pathname);
   if(!file.startsWith(peerRoot+path.sep)||!fs.existsSync(file)||!file.endsWith('.json')){res.writeHead(404);res.end();return;}
   res.writeHead(200,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*','Cache-Control':'no-store'});res.end(fs.readFileSync(file));
@@ -927,6 +938,28 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const result=rangeOnlyPage.locator('#review-capsule-threshold-result');
   await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-capsule-threshold-result').textContent.includes('Holds across all other bounds'));
   assert.match(await result.textContent(),/Refuted across all other bounds/);
+  await rangeOnlyPage.locator('#review-peer-calculation-panel > summary').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-origin').fill(peerOrigin);
+  await rangeOnlyPage.locator('#review-peer-calculation-pin').fill(fs.readFileSync(path.join(calculationRoot,'catalog.sha256'),'utf8').trim());
+  const catalogRequests=()=>peerRequests.filter(request=>request.path.startsWith('/agents/calculations/'));
+  assert.equal(catalogRequests().length,0);
+  await rangeOnlyPage.locator('#review-peer-calculation-discover').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-deny').click();
+  await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-peer-calculation-state').textContent==='Contact denied.');
+  assert.equal(catalogRequests().length,0);
+  await rangeOnlyPage.locator('#review-peer-calculation-discover').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-allow').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-item').selectOption('synthetic_finance_example');
+  assert.deepEqual(catalogRequests().map(request=>request.path),['/agents/calculations/index.json']);
+  await rangeOnlyPage.locator('#review-peer-calculation-fetch').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-deny').click();
+  await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-peer-calculation-state').textContent==='Contact denied.');
+  assert.equal(catalogRequests().length,1);
+  await rangeOnlyPage.locator('#review-peer-calculation-fetch').click();
+  await rangeOnlyPage.locator('#review-peer-calculation-allow').click();
+  await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-peer-calculation-state').textContent.includes('Replayed in this browser'));
+  assert.equal(catalogRequests().length,2);
+  assert.ok(catalogRequests().every(request=>request.method==='GET'&&!request.headers.cookie&&!request.headers.referer));
   await rangeOnlyPage.close();
 
   await reviewPage.locator('#review-private-panel > summary').click();
@@ -945,6 +978,26 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await verification.locator('#review-private-retained-pin').fill(privatePin);
   await verification.locator('#review-private-open').click();
   await verification.waitForFunction(()=>document.querySelector('#review-private-result').textContent.includes('proof verified for 2'));
+
+  const {packagePeerCalculations}=await import('../../../packages/sutra-knowledge/candidate-peer-catalog.js');
+  const {instantiatePrivateEngine}=await import('../src/private-wasm.js');
+  const {verifyPrivateCandidate}=await import('../src/candidate-private-proof.js');
+  const peerEngine=await instantiatePrivateEngine(fs.readFileSync(path.join(dist,'private-affine.wasm')));
+  const peerPackage=await packagePeerCalculations([{id:'reviewed_private',text:privateBytes.toString('utf8'),pin:privatePin}],{
+   verifyPrivate:(wire,pin)=>verifyPrivateCandidate(wire,pin,peerEngine)
+  });
+  privatePeerCalculation=new Map(peerPackage.files.map(file=>['/agents/calculations/'+file.name,file.text]));
+  await verification.locator('#review-peer-calculation-panel > summary').click();
+  await verification.locator('#review-peer-calculation-origin').fill(peerOrigin);
+  await verification.locator('#review-peer-calculation-pin').fill(peerPackage.pin);
+  await verification.locator('#review-peer-calculation-discover').click();
+  await verification.locator('#review-peer-calculation-allow').click();
+  await verification.locator('#review-peer-calculation-item').selectOption('reviewed_private');
+  await verification.locator('#review-peer-calculation-fetch').click();
+  await verification.locator('#review-peer-calculation-allow').click();
+  await verification.waitForFunction(()=>document.querySelector('#review-peer-calculation-state').textContent.includes('Verified private proof'));
+  assert.equal(catalogRequests().length,4);
+  console.log('PASS: two independently served calculation catalogs, denial before discovery and retrieval, exact pinned replay and private WASM verification across browser origins.');
   const altered=JSON.parse(privateBytes);
   altered.proof=(altered.proof[0]==='0'?'f':'0')+altered.proof.slice(1);
   const alteredBytes=Buffer.from(JSON.stringify(altered));
@@ -1771,7 +1824,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   console.log('PASS: 12-action guided challenge from fresh state, all real computations/downloads, keyboard start, first-viewport primary action and zero external requests; automated elapsed '+guideElapsed+' ms.');
   console.log('PASS: conclusion debugger critical and irrelevant withdrawal, ten declared-copy artifacts, conflict, repair and decisive observation; actual state exports.');
   console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked or digest-mismatched module fails closed.');
-  assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
+  assert.deepEqual(errors,[]);assert.equal(peerRequests.length,10);
   console.log('PASS: browser conflict, minimum witness, declared lineage withdrawal and restoration, resolved after new observation.');
   await page.screenshot({path:path.join(output,'subgroup-investigation.png'),fullPage:true});
   console.log('PASS: consent-denied zero traffic, actual two-origin data-only scripted adviser, cheaper local policy 6→2, redundant and forged peers, exact standardized reversal, transfer, actual export.');
