@@ -98,13 +98,36 @@ function result(box){
  if(!i)card.append(make('p',s.baseline?'A baseline is retained, but the editable draft has no evaluated current version. Do not use the historical conclusion as current.':'Review source quantities and evaluate competing interpretations to establish a conditional result.'));
  else{for(const c of i.candidates){const row=make('div',undefined,'sm-candidate');row.append(make('strong',c.meaning),make('span',human(c.computation?.status??c.reason??'REFUSED')),make('small','Proposed meaning · '+human(c.questionCoverage)));card.append(row);}
  card.append(make('p',i.qualification,'sm-note'));}
+ if(!i&&s.singleResult){card.append(make('h3','Single proposed computation'),make('pre',s.singleResult,'sm-preview'),make('p','This is not an evaluated comparison of competing meanings.','sm-note'));}
  box.append(card);
  const controls=make('div',undefined,'sm-actions');const next=button('Continue: '+el('review-studio-next').textContent,()=>run('review-studio-next'));next.disabled=s.busy;controls.append(next);
  const evaluate=button('Evaluate current candidates',()=>run('review-semantic-run'),'sm-primary');evaluate.disabled=el('review-semantic-run').disabled;controls.append(evaluate);box.append(controls);
  actions(box,'meanings','evaluate');
 }
+function withdrawal(box){
+ const s=latest,area=make('section',undefined,'sm-withdraw');
+ area.append(make('h3','Preview an evidence withdrawal'),make('p','Inspect the exact consequence before choosing whether to apply it. Historical versions are retained.','sm-note'));
+ if(!s.sources.length){area.append(make('p','Stage a source first.'));box.append(area);return;}
+ const label=make('label','Source to challenge');label.htmlFor='sm-withdraw-source';
+ const picker=make('select');picker.id='sm-withdraw-source';picker.disabled=s.busy;
+ const original=el('review-source-revise-pick');
+ for(const source of s.sources){const o=make('option',source.id+' · lineage '+source.lineage);o.value=source.id;picker.append(o);}
+ if(s.sources.some(x=>x.id===original.value))picker.value=original.value;
+ const selectSource=()=>{if(original.value!==picker.value){original.value=picker.value;original.dispatchEvent(new Event('change',{bubbles:true}));}};
+ picker.addEventListener('change',selectSource);area.append(label,picker);
+ const draftButton=button('Preview draft withdrawal',()=>{selectSource();run('review-source-withdraw-preview');});draftButton.disabled=s.busy;
+ const versionButton=button('Preview versioned withdrawal',()=>{selectSource();run('review-source-withdraw-version-preview');});versionButton.disabled=s.busy||!s.baseline;
+ const row=make('div',undefined,'sm-actions');row.append(draftButton,versionButton);area.append(row);
+ if(!s.baseline)area.append(make('p','Retain an evaluated baseline to preview candidate-level revision consequences.','sm-note'));
+ if(s.withdrawal&&s.withdrawal.sourceId===picker.value){
+  const versioned=s.withdrawal.versioned;area.append(make('h4','Read-only preview · '+picker.value),make('pre',el(versioned?'review-source-withdraw-version-result':'review-source-withdraw-summary').textContent,'sm-preview'));
+  const apply=button(versioned?'Confirm withdrawal and replay child':'Confirm draft withdrawal',()=>run(versioned?'review-source-withdraw-version-apply':'review-source-withdraw-apply'),'sm-primary');apply.disabled=s.busy;area.append(apply);
+ }
+ box.append(area);
+}
 function challenge(box){
  box.append(make('h2','What would change this conclusion?'),make('p','Each action opens the existing controlled operation. Hypothetical results do not change admitted evidence; revisions require explicit confirmation.'));
+ withdrawal(box);
  const items=[['withdraw','Withdraw a source','Preview missing inputs and consequences before applying.'],['revision','Correct or replace evidence','Queue exact source revisions against a retained baseline.'],['uncertainty','Change numerical assumptions','Enclose admitted computations over declared ranges.'],['worlds','Test joint assumptions','Evaluate finite hypothetical combinations.'],['clarification','Challenge meaning','Identify distinctions that separate competing interpretations.'],['exposure','Trace dependency overlap','Inspect shared evidence cohorts, not a claim of independence.']];
  for(const [key,title,desc] of items){const row=make('div',undefined,'sm-task');row.append(make('h3',title),make('p',desc),action(key));box.append(row);}
  const impact=el('review-impact-result').textContent.trim();box.append(make('h3','Revision impact'),make('pre',impact||'No current revision comparison. Retain an evaluated baseline, then evaluate a child.','sm-note'));actions(box,'baseline','reuse','recovery');
@@ -126,9 +149,9 @@ function verify(box){
 }
 function render(force=false){
  if(!latest)return;const s=latest;
- const key=JSON.stringify([view,s.question,s.sources,s.bindings,s.proposalCount,s.busy,s.current?.digest,s.baseline?.digest,s.history?.digest,s.status,s.next,el('review-semantic-run').disabled,el('review-impact-result').textContent]);
+ const key=JSON.stringify([view,s.question,s.sources,s.bindings,s.proposalCount,s.busy,s.current?.digest,s.baseline?.digest,s.history?.digest,s.status,s.next,s.singleResult,s.withdrawal,el('review-source-revise-pick').value,el('review-source-withdraw-summary').textContent,el('review-source-withdraw-version-result').textContent,el('review-semantic-run').disabled,el('review-impact-result').textContent]);
  if(!force&&key===lastKey)return;lastKey=key;
- const active=document.activeElement,activeNode=active?.dataset.smNode,activeText=shell.contains(active)&&active?.tagName==='BUTTON'?active.textContent:null;
+ const active=document.activeElement,activeNode=active?.dataset.smNode,activeId=shell.contains(active)?active?.id:null,activeText=shell.contains(active)&&active?.tagName==='BUTTON'?active.textContent:null;
  const q=el('sm-question');q.replaceChildren(make('p','INVESTIGATION QUESTION','sm-kicker'),make('h2',s.question||'What are you trying to determine?'),action('question'));
  const outline=el('sm-outline');outline.replaceChildren();for(const [name,count] of [['Evidence',s.sources.length],['Reviewed quantities',s.bindings.length],['Candidate proposals',s.proposalCount]]){const r=make('div',undefined,'sm-count');r.append(make('span',name),make('strong',String(count)));outline.append(r);}
  outline.append(make('p',s.baseline?'Baseline retained':'No baseline retained','sm-note'));
@@ -140,6 +163,6 @@ function render(force=false){
  else verify(work);
  if(view!=='evidence'&&view!=='investigation')inspect();
  el('sm-status').textContent=s.status||'No operation performed.';
- if(activeNode){const b=Array.from(shell.querySelectorAll('[data-sm-node]')).find(x=>x.dataset.smNode===activeNode);b?.focus({preventScroll:true});}else if(activeText&&!active.isConnected){const b=Array.from(shell.querySelectorAll('button:not(:disabled)')).find(x=>x.textContent===activeText);if(b)b.focus({preventScroll:true});else{const navButton=shell.querySelector('[data-sm-view][aria-pressed=true]');navButton?.focus({preventScroll:true});}}
+ if(activeNode){const b=Array.from(shell.querySelectorAll('[data-sm-node]')).find(x=>x.dataset.smNode===activeNode);b?.focus({preventScroll:true});}else if(activeId&&!active.isConnected&&el(activeId)){el(activeId).focus({preventScroll:true});}else if(activeText&&!active.isConnected){const b=Array.from(shell.querySelectorAll('button:not(:disabled)')).find(x=>x.textContent===activeText);if(b)b.focus({preventScroll:true});else{const navButton=shell.querySelector('[data-sm-view][aria-pressed=true]');navButton?.focus({preventScroll:true});}}
 }
 export function updateMaster(state){latest=state;if(!shell)initialize();render();}

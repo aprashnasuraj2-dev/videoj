@@ -954,7 +954,7 @@ function renderStudio(){
  else if(baseline&&!by('correspondence').checked){target='correspondence';label='Review correspondence';help='Confirm candidate identifiers correspond across versions before computing revision impact.';}
  else{target='semantic-run';label='Inspect evaluation controls';help='Evaluate all staged meanings under the sealed contract.';}
  const next=by('studio-next');next.dataset.target=target;next.textContent=label;next.disabled=busy;by('studio-help').textContent=help;
- updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target});
+ updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target,singleResult:by('result').textContent,withdrawal:withdrawalPreview?{sourceId:withdrawalPreview.sourceId,versioned:!!withdrawalPreview.revision}:null});
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();

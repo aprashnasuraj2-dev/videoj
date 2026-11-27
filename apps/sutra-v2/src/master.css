@@ -7,3 +7,5 @@
 @media(prefers-reduced-motion:reduce){.sm-shell *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 .sm-shell .sm-primary{background:#145b4b;color:#fff;border:1px solid #145b4b;max-width:100%;overflow-wrap:anywhere}.sm-shell .sm-primary:disabled{opacity:.55}.sm-shell .sm-actions>*{max-width:100%;overflow-wrap:anywhere}.sm-shell #sm-commands select{min-width:0}.sm-shell button{white-space:normal;overflow-wrap:anywhere}.sm-shell .sm-node{overflow-wrap:anywhere}
+
+.sm-withdraw{border:1px solid var(--sm-line);padding:12px;margin:14px 0;border-radius:8px;background:#f6f7f0}.sm-withdraw label{display:block;font-size:.84rem;margin:10px 0 5px;font-weight:650}.sm-withdraw select{width:100%;max-width:100%;min-width:0}.sm-preview{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8f2;padding:10px;border:1px solid var(--sm-line);max-height:420px;overflow:auto;font-size:.81rem}

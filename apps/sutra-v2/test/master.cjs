@@ -18,6 +18,10 @@ async function testMaster(browser,origin,assert){
  assert.match(await page.locator('#sm-inspect').innerText(),/Declared lineage/);
  await page.locator('#sutra-master').getByRole('button',{name:'Challenge',exact:true}).click();
  assert.match(await page.locator('#sm-work').innerText(),/What would change this conclusion/);
+ const before=await page.locator('#review-studio-sources').innerText();
+ await page.locator('#sutra-master').getByRole('button',{name:'Preview draft withdrawal',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='withdrawal_preview'&&!document.querySelector('#review-reset').disabled);
+ assert.match(await page.locator('.sm-preview').innerText(),/No change applied yet/);assert.equal(await page.locator('#review-studio-sources').innerText(),before);
  await page.locator('#sutra-master').getByRole('button',{name:'Preview withdrawal',exact:true}).click();
  assert.equal(await page.locator('#review-source-revise-panel').getAttribute('open'),'');
  await page.locator('#sutra-master').getByRole('button',{name:'Verify',exact:true}).click();
