@@ -26,7 +26,10 @@ jobs:
       - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs deploy/sutra-pages/candidate-fingerprint.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
         run: node services/sutra-api/test-local/quota-runtime.mjs
-      - name: Build independent static candidates
+      - name: Build independent static candidates with synthetic credential-leak canaries
+        env:
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_PROVIDER00000000000000000001
+          VITE_SUTRA_BUILD_SECRET_CANARY: SUTRA_BUILD_SECRET_CANARY_VITE0000000000000000000001
         run: |
           npm --prefix apps/sutra ci
           npm ci --prefix apps/sutra-v2
@@ -37,6 +40,8 @@ jobs:
           node deploy/sutra-pages/prepare.mjs
           node deploy/sutra-pages/verify-build.mjs
       - name: Compile private Worker and Pages Functions without deployment
+        env:
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_WORKER000000000000000000001
         shell: bash
         run: |
           set -euo pipefail
