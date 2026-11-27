@@ -31,6 +31,13 @@ jobs:
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - name: Preserve orbital viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-orbital-viewport-screenshots
+          path: apps/sutra-v2/test-output/orbit-*.png
+          if-no-files-found: ignore
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
       - name: Scope boundary
