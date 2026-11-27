@@ -1,4 +1,5 @@
 import {createBrowserRunReceipt} from './browser-run-receipt.js';
+import runtimeIdentity from '../../../packages/sutra-runtime/vendor/nsdeploy/UPSTREAM.json' with {type:'json'};
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {admitReviewedAnswer} from '../../../packages/sutra-runtime/reviewed-answer.js';
 import {prepareWorkspaceEvidence} from '../../../packages/sutra-runtime/workspace-evidence.js';
@@ -12,16 +13,16 @@ const defaultLimits=Object.freeze({maxDepth:2,maxAgents:2,maxModelCalls:4,maxSte
 const fail=code=>{throw Error(code);};
 const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
 const digest=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(value)))),b=>b.toString(16).padStart(2,'0')).join('');
-export async function prepareBrowserInvestigation({origin,objective,selection,getSelection,peer=false,fetchImpl=fetch,signal}={}){
+export async function prepareBrowserInvestigation({origin,objective,selection,getSelection,peer=false,callerPeerUrl,fetchImpl=fetch,signal}={}){
  if(!validOrigin(origin)||typeof objective!=='string'||!objective.trim()||objective.length>1000)fail('BROWSER_PLAN_INPUT');
  const selected=selection===undefined?null:structuredClone(selection),evidence=selected?await prepareWorkspaceEvidence(selected):null;
  const current=()=>!selected||typeof getSelection==='function'&&JSON.stringify(getSelection())===JSON.stringify(selected);
  if(!current())fail('EVIDENCE_STALE');
- if(peer&&evidence)fail('BROWSER_PLAN_INPUT');const limits=peer?peerLimits:defaultLimits;
+ if(peer&&evidence||callerPeerUrl!==undefined&&!peer)fail('BROWSER_PLAN_INPUT');const limits=peer?peerLimits:defaultLimits;
  const controller=new AbortController(),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();const timer=setTimeout(abort,5000);
  let network,route,peerUrl=null;
  try{
-  network=await loadLocalNetwork({baseUrl:origin+'/agents/',networkName:peer?'peer_investigation':evidence?'reviewed_investigation':'investigation',resolvePublishedLinks:peer,allowWorkspaceEvidence:!!evidence,expectedOrigin:origin,fetchImpl,signal:controller.signal});
+  network=await loadLocalNetwork({baseUrl:origin+'/agents/',networkName:peer?'peer_investigation':evidence?'reviewed_investigation':'investigation',resolvePublishedLinks:peer,...(callerPeerUrl===undefined?{}:{callerLinkOverrides:{version:1,networks:{peer_investigation:{guide_peer:callerPeerUrl}}}}),allowWorkspaceEvidence:!!evidence,expectedOrigin:origin,fetchImpl,signal:controller.signal});
   if(network.frontMan!=='planner')fail('BROWSER_GRAPH');
   if(peer){const tools=network.definition.tools;if(tools.length!==1||tools[0].tools.length!==1||typeof tools[0].tools[0]!=='string')fail('BROWSER_GRAPH');const dest=new URL(tools[0].tools[0]);const local=u=>u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname);if(dest.pathname!=='/agents/checklist'||dest.search||dest.hash||dest.username||dest.password||dest.origin===origin||dest.origin!==GUIDE_ORIGIN&&!(local(new URL(origin))&&local(dest)))fail('BROWSER_PEER_DESTINATION');peerUrl=dest.href;}
   else if(network.definition.tools.length!==2||!network.definition.tools.some(a=>a.name==='critic'))fail('BROWSER_GRAPH');
@@ -30,7 +31,7 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   if(route?.inference!=='configured'||route.routerBase!=='/api/v1'||route.publisherFunded!==true||route.byok!==false||!['hosted','self_hosted'].includes(route.backend)||route.provider!==undefined&&!(route.backend==='hosted'?['openai','gemini','groq','openrouter']:['self_hosted']).includes(route.provider)||typeof route.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(route.model)||route.model==='mock-1'||typeof route.inferenceContractId!=='string'||!/^[a-f0-9]{64}$/.test(route.inferenceContractId))fail('BROWSER_ROUTER_UNAVAILABLE');
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
  const definition=structuredClone(network.definition),graphPin=await digest(definition),model=route.model,contract=route.inferenceContractId;
- const preview=Object.freeze({objective,model,router:origin+'/api/v1',provider:route.provider??'publisher_unspecified',backend:route.backend,inferenceContractId:contract,graphPin,network:network.name,front:network.frontMan,limits,...(evidence?{evidence}:{}),...(peerUrl?{peerUrl}:{})});
+ const preview=Object.freeze({objective,model,router:origin+'/api/v1',provider:route.provider??'publisher_unspecified',backend:route.backend,inferenceContractId:contract,graphPin,artifactDigests:network.artifactDigests,runtimeCommit:runtimeIdentity.commit,network:network.name,front:network.frontMan,limits,...(evidence?{evidence}:{}),...(peerUrl?{peerUrl,peerBinding:callerPeerUrl===undefined?'publisher':'caller'}:{})});
  let consumed=false;
  return Object.freeze({preview,async run({signal,onEvent,decidePeer}={}){
   if(consumed)fail('BROWSER_PLAN_CONSUMED');consumed=true;
