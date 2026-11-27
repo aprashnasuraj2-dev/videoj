@@ -5,18 +5,13 @@ import {connect} from 'node:tls';
 import {request} from 'node:https';
 import {createPublicRoutePolicy,admitPublicRoutes} from './public-route-policy.js';
 import {startPinnedSourceRead} from './pinned-https-socket.js';
+import {admitPublicSourcePlan} from './public-source-plan.js';
 const fail=code=>{const e=Error('Public source read refused ('+code+').');e.code=code;throw e;};
 const keys=(v,ks)=>v&&typeof v==='object'&&[Object.prototype,null].includes(Object.getPrototypeOf(v))&&Reflect.ownKeys(v).length===ks.length&&ks.every(k=>{const d=Object.getOwnPropertyDescriptor(v,k);return d?.enumerable&&Object.hasOwn(d,'value');});
 export function admitSourceRoutes(sources){
- if(!Array.isArray(sources)||sources.length<1||sources.length>4||Reflect.ownKeys(sources).length!==sources.length+1)fail('SOURCE_CONFIG');
- const routes=[],ids=new Set(),urls=new Set();
- for(let i=0;i<sources.length;i++){
-  const d=Object.getOwnPropertyDescriptor(sources,String(i)),s=d?.value;
-  if(!d?.enumerable||!keys(s,['id','url','mediaType','maxBytes'])||typeof s.id!=='string'||!/^[a-z][a-z0-9-]{0,31}$/.test(s.id)||ids.has(s.id)||typeof s.url!=='string'||s.url.length>1024||urls.has(s.url)||!['text/plain','text/csv','application/json'].includes(s.mediaType)||!Number.isSafeInteger(s.maxBytes)||s.maxBytes<1||s.maxBytes>16384)fail('SOURCE_CONFIG');
-  ids.add(s.id);urls.add(s.url);routes.push(Object.freeze({...s}));
- }
+ const routes=admitPublicSourcePlan(sources);
  admitPublicRoutes(routes.map(s=>({connectionId:s.id,endpoint:s.url,protocol:'public-source-get',models:['document']})));
- return Object.freeze(routes);
+ return routes;
 }
 export function createPublicSourceReader({sources,deadlineMs=10000,resolveAll=async host=>(await lookup(host,{all:true,verbatim:true})).map(({address,family})=>({address,family})),io={dialTls:connect,requestHttps:request}}={}){
  const admitted=admitSourceRoutes(sources);

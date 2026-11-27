@@ -1,3 +1,5 @@
+import {exportResearchResult,openResearchResult} from '../research-result.js';
+import {buildResearchPlan} from '../research-plan.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
@@ -34,4 +36,15 @@ test('revoking source consent during DNS prevents socket dial and late publicati
  await ready;inspector.clearSession();
  release([{address:'8.8.8.8',family:4}]);
  const result=await pending;assert.equal(result.status,'partial');assert.equal(f.requests.length,0);
+});
+
+test('portable research result binds exact current version, source requests and artifact pins; no automatic adoption',async()=>{
+ const f=await fixture(),plan=await buildResearchPlan({versionText:f.v.versionText,versionPin:f.v.digest,sources:f.sources,timeoutMs:5000});
+ assert.equal(plan.planText,f.planText);const p=await prepareResearchInvestigation({...f,planText:plan.planText}),events=[];
+ const result=await p.execute({approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:()=> 'allow'}),runId:'recorded_research',onExecutionEvent:e=>events.push(e)});
+ const out=await exportResearchResult({preview:p.preview,result,events}),opened=await openResearchResult({text:out.text,expectedPin:out.pin,expectedVersion:f.v.digest});
+ assert.equal(opened.candidates.length,2);assert.equal(opened.candidates[0].sourceCandidate.text,'Public assertion: 42.');assert.equal(opened.candidates[0].truthStatus,'UNVERIFIED');
+ await assert.rejects(openResearchResult({text:out.text+' ',expectedPin:out.pin,expectedVersion:f.v.digest}),e=>e.code==='PIN');
+ const x=JSON.parse(out.text);x.sources[0].url='https://data.example.com/substitute.txt';const text=JSON.stringify(x);
+ await assert.rejects(openResearchResult({text,expectedPin:await casePin(text),expectedVersion:f.v.digest}),e=>e.code==='CANDIDATE');
 });

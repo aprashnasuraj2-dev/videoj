@@ -1,24 +1,15 @@
 // A separately approved, version-scoped research run. Collected documents are
 // quarantined source candidates; neither the existing contract nor conclusions change.
 import {casePin} from './pinned-investigation.js';
-import {replayInvestigationVersion} from './investigation-revision.js';
-import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+import {admitResearchPlan} from './research-plan.js';
 import {pinConsentInspector} from '../sutra-consent/index.js';
 import {admitSourceRoutes,createPublicSourceReader} from '../sutra-inference/public-source-reader.js';
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
 import {sealRoleArtifact} from './role-artifact-provenance.js';
 const fail=code=>{const e=Error('Research plan refused ('+code+').');e.code=code;throw e;};
-const keys=(x,ks)=>x&&typeof x==='object'&&!Array.isArray(x)&&Object.keys(x).length===ks.length&&ks.every(k=>Object.hasOwn(x,k));
-const task=(id,kind,agentId,dependsOn)=>Object.freeze({id,kind,agentId,dependsOn:Object.freeze(dependsOn)});
 export async function prepareResearchInvestigation({planText,resolveAll,io,now=()=>new Date().toISOString()}={}){
- const planPin=await casePin(planText),p=parseUniqueJson(planText,{maxChars:262144,maxDepth:12});
- if(!keys(p,['version','versionText','versionPin','sources','timeoutMs'])||p.version!=='sutra-public-research/v1'||!Number.isSafeInteger(p.timeoutMs)||p.timeoutMs<100||p.timeoutMs>30000||typeof now!=='function')fail('CONFIG');
- await replayInvestigationVersion(p.versionText,p.versionPin);
- const wire=parseUniqueJson(p.versionText,{maxChars:262144,maxDepth:12}),contract=parseUniqueJson(wire.contractText,{maxChars:262144,maxDepth:9});
- const sources=admitSourceRoutes(p.sources);
- if(sources.some(s=>s.id==='question'||contract.sources.some(old=>old.id===s.id)))fail('SOURCE_COLLISION');
- const tasks=Object.freeze([task('frame','research_frame','planner',[]),...sources.map((s,i)=>task('source_'+i,'research_fetch','researcher',['frame'])),task('coordinate','research_coordinate','coordinator',sources.map((s,i)=>'source_'+i))]);
- const preview=Object.freeze({schema:'sutra-public-research/v1',planPin,versionDigest:p.versionPin,sources,maxTotalBytes:sources.reduce((n,s)=>n+s.maxBytes,0),timeoutMs:p.timeoutMs,tasks,qualification:'Exact public document GET only; host network address and requested path are visible to the source. No question, evidence, cookies, credential or model output sent. Retrieved bytes are not accepted evidence or factual truth.'});
+ if(typeof now!=='function')fail('CONFIG');
+ const p=await admitResearchPlan(planText),{planPin,tasks,preview}=p,sources=admitSourceRoutes(p.sources);
  let consumed=false;
  return Object.freeze({preview,planPin,async execute({approvedPlanPin,consentInspector,runId,signal,onExecutionEvent,assertCurrent=()=>{}}={}){
   if(consumed)fail('CONSUMED');if(approvedPlanPin!==planPin)fail('PLAN_PIN');if(typeof assertCurrent!=='function')fail('CONFIG');
