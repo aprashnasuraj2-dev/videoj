@@ -1127,7 +1127,40 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      const archive=samplePage.waitForEvent('download');await samplePage.locator('#review-history-export').click();const historyBytes=fs.readFileSync(await (await archive).path());
      fs.writeFileSync(path.join(output,'living-history.json'),historyBytes);fs.writeFileSync(path.join(output,'living-history.sha256'),historyPin+'\n');
      const savedHistory=JSON.parse(historyBytes);assert.equal(savedHistory.versions.length,3);assert.equal(savedHistory.branches.length,2);
-     await durableHistory.appendSnapshot({expectedHistoryPin:rootHistoryPin,historyText:historyBytes.toString('utf8'),historyPin});
+     // A second, independent browser context and filesystem host publish the
+     // exact same proposed history from the retained root. Its append ack is lost.
+     const secondContext=await browser.newContext({viewport:{width:360,height:800}});
+     try{
+      const secondPage=await secondContext.newPage(),secondHost=await openDurableInvestigationHistory(durableDir);
+      let secondWrites=0,secondReads=0;
+      secondPage.on('pageerror',e=>errors.push(e.message));secondPage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+      await secondPage.exposeFunction('__sutraHistoryHostCall',async ({operation,payload})=>{
+       try{
+        if(operation==='read_snapshot'){secondReads++;return {ok:true,snapshot:await secondHost.read(payload.expectedHistoryPin)};}
+        if(operation==='append_snapshot'){secondWrites++;await secondHost.appendSnapshot(payload);return null;}
+        throw Error('UNEXPECTED_SECOND_SESSION_OPERATION');
+       }catch(e){return {ok:false,error:String(e?.message??'HISTORY_HOST_FAILURE')};}
+      });
+      await secondPage.addInitScript(()=>{Object.defineProperty(globalThis,'sutraHistoryHost',{value:Object.freeze({version:1,call:(operation,payload)=>globalThis.__sutraHistoryHostCall({operation,payload})}),configurable:false,writable:false});});
+      await secondPage.goto(origin);await secondPage.locator('#review-open').click();
+      await secondPage.locator('#review-history-panel > summary').click();
+      await secondPage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
+      await secondPage.locator('#review-history-pin').fill(historyPin);await secondPage.locator('#review-history-import').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='history_ready'&&!document.querySelector('#review-reset').disabled);
+      await secondPage.locator('#review-history-durable-panel > summary').click();
+      await secondPage.locator('#review-history-durable-pin').fill(rootHistoryPin);await secondPage.locator('#review-history-durable-read').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready'&&!document.querySelector('#review-reset').disabled);
+      assert.match(await secondPage.locator('#review-history-durable-status').innerText(),/is different and was not replaced/);
+      assert.equal(await secondPage.locator('#review-history-digest').innerText(),historyPin);
+      await secondPage.locator('#review-history-durable-append').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='unknown'&&!document.querySelector('#review-reset').disabled);
+      assert.equal(await secondPage.locator('#review-history-durable-pin').inputValue(),historyPin);
+      assert.equal(await secondPage.locator('#review-history-durable-append').isDisabled(),true);
+      await secondPage.locator('#review-history-durable-read').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready'&&!document.querySelector('#review-reset').disabled);
+      assert.match(await secondPage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);
+      assert.equal(secondWrites,1);assert.equal(secondReads,2);
+     }finally{await secondContext.close();}
      const localBeforeStale=await samplePage.locator('#review-history-digest').innerText();assert.equal(localBeforeStale,historyPin);
      await samplePage.locator('#review-history-durable-append').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='stale');
      assert.equal(await samplePage.locator('#review-history-digest').innerText(),localBeforeStale);assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/No retry/);
