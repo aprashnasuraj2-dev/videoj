@@ -108,6 +108,8 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     ...profile,budget:snapshot.profiles.find(row=>row.profileId===profile.profileId)
    })));
   },
+  // Host-only proof of opaque handle identity; no credential is exposed.
+  describeRoute(handle){return profileMeta(handle);},
   budgetSnapshot(){return ledger.snapshot();},
   // Trusted scheduler hint only. Actual reservations remain authoritative.
   dispatchCapacity(){ledger.prune(readClock());return ledger.snapshot();},

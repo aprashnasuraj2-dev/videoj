@@ -1,3 +1,4 @@
+import {capacitySlots} from '../sutra-inference/authorized-routing.js';
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
 // Shared host-owned scheduler for bounded investigation councils.
 // No model can choose a route, authorize disclosure, execute a tool or supply a verdict.
@@ -89,10 +90,6 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
 // Capacity is only a conservative scheduling hint: the ledger still reserves
 // exact request bytes and enforces every cap on actual dispatch. A third-party
 // concurrent operation can consume a hinted slot; do not retry that refusal.
-function slots(bucket,tokens){
- const {limits,used}=bucket;
- return Math.max(0,Math.min(limits.maxConcurrent-used.active,limits.maxCalls-used.calls,Math.floor((limits.maxOutputTokens-used.outputTokens)/tokens)));
-}
 const refuse=(route,reason)=>({agentId:route.id,providerId:route.providerId,model:route.model,status:'REFUSED',reason});
 async function dispatchWaves(active,invoke,capacity,tokens,signal){
  if(!capacity)return dispatchTaskWave(active,invoke,signal);
@@ -101,7 +98,7 @@ async function dispatchWaves(active,invoke,capacity,tokens,signal){
   if(signal.aborted)return null;
   let snapshot;
   try{snapshot=capacity();}catch(e){for(const r of queue)results.set(r.id,refuse(r,publicFailure(e)));break;}
-  let global=slots(snapshot.global,tokens);const available=new Map(snapshot.profiles.map(p=>[p.profileId,p.enabled?slots(p,tokens):0]));
+  let global=capacitySlots(snapshot.global,tokens);const available=new Map(snapshot.profiles.map(p=>[p.profileId,p.enabled?capacitySlots(p,tokens):0]));
   const wave=[],rest=[];
   for(const r of queue){
    if(global>0&&(available.get(r.profileId)??0)>0){wave.push(r);global--;available.set(r.profileId,available.get(r.profileId)-1);}
