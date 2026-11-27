@@ -40,3 +40,14 @@ test('real abort closes stream with no late admission even if handler ignores si
  const p=runTaskGraph({tasks:[t('a')],handlers:{local:{execute:()=>{enter();return new Promise(r=>release=r)},admit:x=>x}},runId:'run',version:'draft:1',signal:ac.signal,onExecutionEvent:e=>assert.equal(j.accept(e),true)});
  await ready;ac.abort();const result=await p;assert.equal(result.status,'cancelled');assert.equal(j.snapshot('run').status,'cancelled');const n=j.events('run').length;release(1);await Promise.resolve();await Promise.resolve();assert.equal(j.events('run').length,n);
 });
+
+test('provider phase admission rejects simultaneous recipients, consent denial bypass and post-attempt fallback without a sequence gap',()=>{
+ const j=createExecutionJournal(),e=setup(j,'provider','authorized-provider');e.emit('run.open',{tasks:[t('a')]});state(e,'a','executing');
+ const planPin='sha256:'+'a'.repeat(64),phase=(routeId,phase)=>e.emit('provider.phase',{taskId:'a',agentId:'planner',kind:'local',routeId,planPin,phase});
+ assert.equal(phase('local','consent-requested'),true);assert.equal(phase('remote','consent-requested'),false);assert.equal(phase('local','consent-denied'),true);assert.equal(phase('remote','consent-requested'),false);
+ state(e,'a','failed');e.emit('run.close',{status:'partial'});assert.equal(j.snapshot('provider').status,'partial');assert.deepEqual(j.events('provider').map(e=>e.sequence),[1,2,3,4,5,6]);
+ const f=setup(j,'other','authorized-provider');f.emit('run.open',{tasks:[t('a')]});state(f,'a','executing');
+ const note=(routeId,phase)=>f.emit('provider.phase',{taskId:'a',agentId:'planner',kind:'local',routeId,planPin,phase});
+ note('local','consent-requested');note('local','consent-granted');note('local','dispatch-attempt');assert.equal(note('remote','consent-requested'),false);note('local','refused');state(f,'a','failed');f.emit('run.close',{status:'partial'});
+ assert.equal(j.snapshot('other').status,'partial');
+});

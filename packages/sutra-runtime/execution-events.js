@@ -13,7 +13,7 @@ const taskEnds=new Set(['completed','partial','cancelled','timeout','stale','ref
 const councilEnds=new Set(['completed','refused','cancelled']);
 const taskManifest=t=>closed(t,['id','kind','agentId','dependsOn'])&&id(t.id)&&id(t.kind)&&id(t.agentId)&&dense(t.dependsOn,64)&&t.dependsOn.every(id)&&new Set(t.dependsOn).size===t.dependsOn.length;
 const taskPayload=p=>closed(p,['taskId','agentId','kind','status'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&['executing','validating','completed','failed','blocked','cancelled'].includes(p.status);
-const providerPhases=new Set(['skip-budget','skip-profile','consent-requested','consent-granted','consent-denied','dispatched','response','refused','cancelled']);
+const providerPhases=new Set(['skip-budget','skip-profile','consent-requested','consent-granted','consent-denied','dispatch-attempt','response','refused','cancelled']);
 const providerPayload=p=>closed(p,['taskId','agentId','kind','routeId','planPin','phase'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&id(p.routeId)&&typeof p.planPin==='string'&&/^sha256:[0-9a-f]{64}$/.test(p.planPin)&&providerPhases.has(p.phase);
 const councilPayload=p=>closed(p,['agentId','round','phase'])&&id(p.agentId)&&int(p.round,1,100)&&['request','response','transport-refused','proposal','abstained','rejected'].includes(p.phase);
 function manifest(p,origin){
@@ -50,14 +50,15 @@ function providerStep(run,p){
  const prev=previous?.phase;
  // A different recipient may be tried only before dispatch. Once any route
  // dispatched (even with unknown outcome), the task cannot choose another.
- if(t.dispatchedRoute&&t.dispatchedRoute!==p.routeId)return false;
+ if(t.dispatchedRoute&&t.dispatchedRoute!==p.routeId||t.routeClosed&&t.routeClosed!==p.routeId)return false;
+ if([...routes.values()].some(r=>r.routeId!==p.routeId&&['consent-requested','consent-granted','dispatch-attempt'].includes(r.phase)))return false;
  const legal=s==='consent-requested'?prev===undefined:s==='consent-granted'||s==='consent-denied'?prev==='consent-requested':
  s==='skip-budget'||s==='skip-profile'?prev===undefined||prev==='consent-granted':
- s==='dispatched'?prev==='consent-granted':
- s==='response'?prev==='dispatched':
- ['refused','cancelled'].includes(s)?['consent-requested','consent-granted','dispatched'].includes(prev):false;
+ s==='dispatch-attempt'?prev==='consent-granted':
+ s==='response'?prev==='dispatch-attempt':
+ ['refused','cancelled'].includes(s)?['consent-requested','consent-granted','dispatch-attempt'].includes(prev):false;
  if(!legal)return false;
- t.planPin=p.planPin;t.routes=routes;routes.set(p.routeId,{routeId:p.routeId,planPin:p.planPin,phase:s});if(s==='dispatched')t.dispatchedRoute=p.routeId;return true;
+ t.planPin=p.planPin;t.routes=routes;routes.set(p.routeId,{routeId:p.routeId,planPin:p.planPin,phase:s});if(s==='dispatch-attempt')t.dispatchedRoute=p.routeId;if(['consent-denied','refused','cancelled','response'].includes(s))t.routeClosed=p.routeId;return true;
 }
 function close(run,p){
  if(!closed(p,['status']))return false;const s=p.status;
@@ -72,7 +73,7 @@ function close(run,p){
  run.status=s;return true;
 }
 function snapshot(r){
- const tasks=[...r.tasks.values()].map(({routes,dispatchedRoute,planPin,...t})=>({...t,dependsOn:[...t.dependsOn],...(routes?{routeAttempts:[...routes.values()].map(x=>({...x}))}:{}),waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
+ const tasks=[...r.tasks.values()].map(({routes,dispatchedRoute,routeClosed,planPin,...t})=>({...t,dependsOn:[...t.dependsOn],...(routes?{routeAttempts:[...routes.values()].map(x=>({...x}))}:{}),waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
  const agents=r.origin==='local-scripted'?[...r.agents.values()].map(({rounds,...a})=>({...a})):Array.from(new Set(tasks.map(t=>t.agentId)),id=>{
   const assigned=tasks.filter(t=>t.agentId===id),states=assigned.map(t=>t.status);
   const status=['executing','validating','queued','failed','blocked','cancelled','completed'].find(s=>states.includes(s));
@@ -90,7 +91,7 @@ export function createExecutionEmitter({runId,version,origin,publish}){
   if(ended||sequence===0&&type!=='run.open'||sequence>0&&type==='run.open')return false;
   const raw={schema:'sutra-execution-event/v1',runId,version,origin,sequence:sequence+1,type,payload};
   if(!local.accept(raw))return false;
-  const e=local.events(runId).at(-1);sequence=e.sequence;
+  const e=local.lastEvent(runId);sequence=e.sequence;
   if(type==='run.close')ended=true;
   try{publish(e);}catch{/* Observation cannot grant or deny execution. */}return true;
  }});
@@ -115,7 +116,7 @@ export function createExecutionJournal({maxRuns=8,maxEvents=2048}={}){
    else return false;
   }
   // Only copy after validation; strict schemas prohibit getters, unknown keys and secrets.
-  const e=freeze(JSON.parse(JSON.stringify(raw)));r.sequence=e.sequence;r.events.push(e);notify(e,snapshot(r));return true;
+  const e=freeze(JSON.parse(JSON.stringify(raw)));r.sequence=e.sequence;r.events.push(e);if(listeners.size)notify(e,snapshot(r));return true;
  }
- return Object.freeze({accept,subscribe(fn){if(typeof fn!=='function')throw TypeError('EXECUTION_LISTENER');listeners.add(fn);return ()=>listeners.delete(fn);},snapshot(runId){const r=runs.get(runId);return r?snapshot(r):null;},events(runId){return Object.freeze([...(runs.get(runId)?.events??[])]);},runs(){return Object.freeze([...runs.values()].map(snapshot));}});
+ return Object.freeze({accept,subscribe(fn){if(typeof fn!=='function')throw TypeError('EXECUTION_LISTENER');listeners.add(fn);return ()=>listeners.delete(fn);},snapshot(runId){const r=runs.get(runId);return r?snapshot(r):null;},events(runId){return Object.freeze([...(runs.get(runId)?.events??[])]);},lastEvent(runId){return runs.get(runId)?.events.at(-1)??null;},runs(){return Object.freeze([...runs.values()].map(snapshot));}});
 }

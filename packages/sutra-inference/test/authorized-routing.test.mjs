@@ -84,12 +84,12 @@ test('authorized provider graph emits exact-plan capacity, consent and transport
  const f=fixture();await f.w.execute({handle:f.a.handle,model:'m',inputBytes:1,maxOutputTokens:128,operation:{question:'prior'}});
  const p=await prepareAuthorizedProviderTask(f.config),journal=createExecutionJournal(),events=[];
  const r=await runAuthorizedProviderGraph({tasks:[{id:'research',agentId:'researcher',kind:'provider_task',dependsOn:[]}],approvals:[{taskId:'research',prepared:p,approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:()=> 'allow'}),admit:raw=>({kind:'proposal',text:raw.text})}],runId:'route_graph',version:pin,onExecutionEvent:e=>{assert.equal(journal.accept(e),true);events.push(e);}});
- assert.equal(r.status,'completed');assert.deepEqual(events.filter(e=>e.type==='provider.phase').map(e=>[e.payload.routeId,e.payload.phase]),[['local_route','skip-budget'],['remote_route','consent-requested'],['remote_route','consent-granted'],['remote_route','dispatched'],['remote_route','response']]);
+ assert.equal(r.status,'completed');assert.deepEqual(events.filter(e=>e.type==='provider.phase').map(e=>[e.payload.routeId,e.payload.phase]),[['local_route','skip-budget'],['remote_route','consent-requested'],['remote_route','consent-granted'],['remote_route','dispatch-attempt'],['remote_route','response']]);
  assert.ok(events.filter(e=>e.type==='provider.phase').every(e=>e.payload.planPin===p.planPin));assert.equal(journal.snapshot('route_graph').tasks[0].routeAttempts[1].phase,'response');
  assert.doesNotMatch(JSON.stringify(events),/bounded question|synthetic-local-key|synthetic-remote-key|privateLocal/);
 });
 test('route telemetry cannot request another recipient after a dispatch with unknown outcome',async()=>{
  const f=fixture(()=>{throw Error('unknown provider result')}),p=await prepareAuthorizedProviderTask(f.config),phases=[];
  await assert.rejects(p.execute({approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:()=> 'allow'}),onRouteEvent:e=>phases.push(e)}));
- assert.deepEqual(f.seen,['local']);assert.deepEqual(phases.map(e=>e.phase),['consent-requested','consent-granted','dispatched','refused']);
+ assert.deepEqual(f.seen,['local']);assert.deepEqual(phases.map(e=>e.phase),['consent-requested','consent-granted','dispatch-attempt','refused']);
 });

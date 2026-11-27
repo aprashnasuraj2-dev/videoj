@@ -1,7 +1,7 @@
 export type ExecutionOrigin = 'host-task' | 'deterministic' | 'authorized-provider' | 'local-scripted';
 export type TaskStatus = 'queued' | 'executing' | 'validating' | 'completed' | 'failed' | 'blocked' | 'cancelled';
 export type RunStatus = 'running' | 'completed' | 'partial' | 'cancelled' | 'timeout' | 'stale' | 'refused';
-export type ProviderPhase = 'skip-budget' | 'skip-profile' | 'consent-requested' | 'consent-granted' | 'consent-denied' | 'dispatched' | 'response' | 'refused' | 'cancelled';
+export type ProviderPhase = 'skip-budget' | 'skip-profile' | 'consent-requested' | 'consent-granted' | 'consent-denied' | 'dispatch-attempt' | 'response' | 'refused' | 'cancelled';
 export interface ProviderAttempt {readonly routeId:string;readonly planPin:string;readonly phase:ProviderPhase}
 export interface TaskDescriptor { readonly id:string; readonly kind:string; readonly agentId:string; readonly dependsOn:readonly string[] }
 type Base = { readonly schema:'sutra-execution-event/v1'; readonly runId:string; readonly version:string; readonly origin:ExecutionOrigin; readonly sequence:number };
@@ -14,4 +14,4 @@ export type ExecutionEvent = Base & (
 );
 export interface ExecutionSnapshot { readonly schema:'sutra-execution-event/v1';readonly runId:string;readonly version:string;readonly origin:ExecutionOrigin;readonly sequence:number;readonly status:RunStatus;readonly tasks:readonly (TaskDescriptor & {readonly status:TaskStatus;readonly waitingFor:readonly string[];readonly routeAttempts?:readonly ProviderAttempt[]})[];readonly agents:readonly ({readonly id:string;readonly status:string;readonly taskIds:readonly string[];readonly activeTaskIds:readonly string[];readonly waitingTaskIds:readonly string[];readonly completed:number}|{readonly id:string;readonly status:string;readonly round:number;readonly requests:number;readonly responses:number;readonly proposals:number})[] }
 export function createExecutionEmitter(config:{runId:string;version:string;origin:ExecutionOrigin;publish:(e:ExecutionEvent)=>void}):{emit<T extends ExecutionEvent['type']>(type:T,payload:Extract<ExecutionEvent,{type:T}>['payload']):boolean};
-export function createExecutionJournal(config?:{maxRuns?:number;maxEvents?:number}):{accept(e:unknown):boolean;subscribe(fn:(e:ExecutionEvent,s:ExecutionSnapshot)=>void):()=>void;snapshot(runId:string):ExecutionSnapshot|null;events(runId:string):readonly ExecutionEvent[];runs():readonly ExecutionSnapshot[]};
+export function createExecutionJournal(config?:{maxRuns?:number;maxEvents?:number}):{accept(e:unknown):boolean;subscribe(fn:(e:ExecutionEvent,s:ExecutionSnapshot)=>void):()=>void;snapshot(runId:string):ExecutionSnapshot|null;events(runId:string):readonly ExecutionEvent[];lastEvent(runId:string):ExecutionEvent|null;runs():readonly ExecutionSnapshot[]};

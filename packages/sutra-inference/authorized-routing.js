@@ -71,7 +71,7 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
      if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
      const recheck=availability(route);
      if(recheck!=='CAPACITY_HINT')return {skipped:recheck};
-     decisions.push(Object.freeze({routeId:route.id,decision:'DISPATCHED'}));note(route,'dispatched');stage='dispatched';
+     decisions.push(Object.freeze({routeId:route.id,decision:'DISPATCHED'}));note(route,'dispatch-attempt');stage='dispatch-attempt';
      if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
      const result=await prepared.get(route.id).execute({signal:dispatchSignal});
      if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
