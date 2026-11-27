@@ -51,11 +51,16 @@ function dataArray(value,max,label){
  for(let index=0;index<value.length;index++)out.push(ownData(value,String(index)));
  return out;
 }
+// Secrets and raw private evidence are never grantable, even by mistaken
+// host configuration. The caller may grant only bounded non-secret fields.
+const restrictedField=field=>/^(?:.*(?:credential|password|secret|apikey|accesstoken|refreshtoken|session|authorization|cookie|privateevidence|privatesource|sourcetext|rawsource|privatekey|bearer|token).*)$/i.test(field.replace(/_/g,''));
+const credentialValue=value=>typeof value==='string'&&/(?:-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----|\b(?:Bearer\s+\S+|sk-[A-Za-z0-9_-]{20,}|gsk_[A-Za-z0-9]{20,}|AIza[A-Za-z0-9_-]{35}|gh[pousr]_[A-Za-z0-9]{30,}))/i.test(value);
 function normalizeFieldList(value,label){
  if(value===undefined)return Object.freeze([]);
  const out=[];
  for(const field of dataArray(value,12,label)){
   if(typeof field!=='string'||!fieldPattern.test(field)||['__proto__','constructor','prototype'].includes(field))fail('PRIVATE_CONTEXT_POLICY','Private context wildcard or invalid field is not allowed.');
+  if(restrictedField(field))fail('PRIVATE_CONTEXT_RESTRICTED','Credentials, session data and raw private evidence cannot be granted.');
   if(out.includes(field))fail('PRIVATE_CONTEXT_POLICY','Duplicate private context field grant.');
   out.push(field);
  }
@@ -78,6 +83,7 @@ export function createPrivateContextPolicy({values={},grants=[]}={}){
   const toPeer=normalizeFieldList(fields.toPeer,'toPeer');
   const toCaller=normalizeFieldList(fields.toCaller,'toCaller');
   for(const field of [...toPeer,...toCaller])if(!Object.hasOwn(hostValues,field)&&toPeer.includes(field))fail('PRIVATE_CONTEXT_POLICY','Outbound private context grant references an unavailable host field.');
+  for(const field of toPeer)if(credentialValue(hostValues[field]))fail('PRIVATE_CONTEXT_RESTRICTED','Credential-shaped values cannot be granted.');
   table.set(key,Object.freeze({identity,toPeer,toCaller}));
  }
  const lookup=(peerUrl,network)=>{
@@ -89,7 +95,11 @@ export function createPrivateContextPolicy({values={},grants=[]}={}){
   const out={};for(const field of fields)if(Object.hasOwn(source,field))out[field]=source[field];
   return Object.freeze(out);
  };
+ const protectedStrings=Object.values(hostValues).filter(v=>typeof v==='string'&&v.length>=4);
  return Object.freeze({
+  assertOrdinaryText(text){
+   if(typeof text!=='string'||protectedStrings.some(value=>text.includes(value)))fail('PRIVATE_CONTEXT_RETURN','Private context cannot be returned in ordinary peer text.');
+  },
   downstream(peerUrl,network){
    const grant=lookup(peerUrl,network);
    return grant?project(hostValues,grant.toPeer):Object.freeze({});
