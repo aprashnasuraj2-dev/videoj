@@ -3,35 +3,68 @@ on:
   workflow_dispatch:
     inputs:
       approve:
-        description: 'Approve one bounded inference per configured provider; billing may apply'
+        description: 'Approve one bounded inference per selected provider; billing may apply'
         required: true
         type: boolean
         default: false
+      models:
+        description: 'Optional JSON object of provider to exact model ID; empty uses smoke examples'
+        required: false
+        type: string
+  pull_request:
+    types: [synchronize, opened, reopened]
+    branches: [main]
 permissions:
   contents: read
 jobs:
   live-model:
-    if: github.ref == 'refs/heads/main' && inputs.approve == true
+    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.approve == true) || (github.event_name == 'pull_request' && github.event.pull_request.number == 66 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'sutra/master-investigation-ui')
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     environment: sutra-live-research
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - id: gate
+        name: Check explicit one-time live smoke authorization
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || git log -1 --format=%B | grep -Fxq 'SUTRA_AUTHORIZED_LIVE_SMOKE_20261127_ONCE'; then
+            echo 'approved=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.approved == 'true' && github.event_name == 'pull_request'
+        with:
+          ref: aadbdf7c86365e8d92fb0a97ee8504407748e357
+          persist-credentials: false
       - uses: actions/setup-node@v4
+        if: steps.gate.outputs.approved == 'true'
         with:
           node-version: '22'
-      - name: Preview fixed model challenge
+      - name: Preview selected model challenge
+        if: steps.gate.outputs.approved == 'true'
+        env:
+          SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
         run: node apps/sutra-v2/live-model-smoke.mjs --plan > /tmp/sutra-model-plan.json
       - name: Credentialed inference challenges
+        if: steps.gate.outputs.approved == 'true'
         env:
+          SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
           SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI }}
           SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ }}
           SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER }}
         run: |
           PIN="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/sutra-model-plan.json")).planPin')"
+          set +e
           node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-provider-contact --approve-estimated-cost --approve-plan "$PIN" > /tmp/sutra-model-smoke.json
+          STATUS=$?
+          cat /tmp/sutra-model-smoke.json
+          exit "$STATUS"
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.gate.outputs.approved == 'true'
         with:
           name: sutra-live-model-smoke
           path: /tmp/sutra-model-smoke.json
