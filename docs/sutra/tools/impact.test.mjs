@@ -186,4 +186,17 @@ test('historical combined validation paths stay classified while live verificati
  assert.match(knowledge,/name: Validate SUTRA knowledge kernel/);
 });
 
+
+test('common consent changes require the dedicated operator approval browser as well as kernel security verification',()=>{
+ const r=classifyChangedFiles(['packages/sutra-consent/index.js'],map);
+ assert.deepEqual(r.unmapped,[]);
+ assert.ok(r.affectedSuites.includes('v2-knowledge-verification'));
+ assert.ok(r.affectedSuites.includes('v2-operator-consent'));
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'));
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA operator model approval browser'));
+ assert.ok(r.invalidatedMetrics.includes('security_boundary'));
+ const workflow=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-operator-browser.yml',import.meta.url),'utf8');
+ assert.match(workflow,/packages\/sutra-consent\/\*\*/);
+});
+
 test('validation snapshot new workflows require canonical knowledge verification',()=>{const paths=['.github/workflows/sutra-v2-operator-browser.yml','.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'];const r=classifyChangedFiles(paths,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);});
