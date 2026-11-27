@@ -1,5 +1,6 @@
 import {createRoleReviewCheckpoint,openRoleReviewCheckpoint,projectRoleReviewEvents,verifyRoleReviewCheckpoint} from '../../../packages/sutra-knowledge/role-review-checkpoint.js';
 import {impactProjection} from './impact-projection.js';
+import {runInvestigationChallenge} from '../../../packages/sutra-knowledge/investigation-challenge-review.js';
 import {runInvestigationReview,ROLE_REVIEW_TASKS} from '../../../packages/sutra-knowledge/investigation-role-review.js';
 import {createFrameDriver} from './frame-driver.js';
 import {investigationGraph,traceDependencies} from './investigation-graph.js';
@@ -22,6 +23,7 @@ let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStati
 let councilRunId=null;
 let graphSelection=null,lastWorkspaceStatus='';
 let activeReview=null,reviewResult=null,reviewState='idle',impactView=null,reviewRunId=null;const reviewEvents=[];
+let activeChallenge=null,challengeResult=null,challengeState='idle',challengeKey=null;
 let checkpointExport=null,checkpointOpened=null,checkpointBusy=false,checkpointEpoch=0,checkpointVersion=undefined,checkpointController=null,checkpointStatus='No imported checkpoint.';
 const reviewStations={frame:0,evidence:1,compute:4,analysis:3,challenge:5,coordinate:8};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -73,6 +75,37 @@ function updateImpactView(state){
  const stationKinds={0:['question'],1:['evidence','declared_lineage'],2:['reviewed_quantity'],3:['candidate_interpretation'],4:['candidate_interpretation']};
  for(const [i,group] of stationGroups.entries())group.dataset.affected=String((stationKinds[i]??[]).some(k=>affectedKinds.has(k)));
 }
+const counterfactualKey=s=>s?.counterfactual?JSON.stringify([s.counterfactual.kind,s.counterfactual.before.digest,s.counterfactual.after.digest]):null;
+function invalidateChallenge(s){
+ const next=counterfactualKey(s);if(next===challengeKey)return;
+ if(activeChallenge){activeChallenge.controller.abort();activeChallenge=null;for(const a of agents){a.status='idle';a.station=null;}frameDriver.wake();}
+ challengeKey=next;challengeResult=null;challengeState='idle';
+}
+async function startChallenge(){
+ const c=latest?.counterfactual,key=counterfactualKey(latest);
+ if(!c||!key||!c.before.versionText||!c.after.versionText||activeChallenge||activeReview||checkpointBusy||latest.busy||$('studio-run').disabled)return;
+ if(simulation)cancel();
+ challengeKey=key;challengeResult=null;challengeState='running';
+ const controller=new AbortController(),run={controller,runId:'challenge_'+crypto.randomUUID(),version:c.after.digest,key};activeChallenge=run;
+ for(const a of agents){a.status='queued';a.station=null;}
+ updateCouncil();renderInspector();frameDriver.wake();
+ const current=()=>{if(activeChallenge!==run||counterfactualKey(latest)!==key)throw Error('STALE_CHALLENGE');};
+ try{
+  const result=await runInvestigationChallenge({beforeText:c.before.versionText,beforePin:c.before.digest,afterText:c.after.versionText,afterPin:c.after.digest,runId:run.runId,signal:controller.signal,assertCurrent:current,onExecutionEvent:publishTaskExecution});
+  current();challengeResult=result;challengeState=result.status;
+ }catch{if(activeChallenge===run&&counterfactualKey(latest)===key)challengeState='refused';}
+ finally{if(activeChallenge===run){activeChallenge=null;for(const a of agents)if(['queued','waiting','working','validating'].includes(a.status)){a.status='cancelled';a.station=null;}updateCouncil();renderInspector();frameDriver.wake();}}
+}
+function challengeControls(box,c){
+ const status=E('p','Challenge agent run: '+challengeState,'orb-muted');status.id='orb-challenge-run-status';box.append(status);
+ const start=btn('Run six-role challenge review',startChallenge,'orb-primary');start.id='orb-challenge-run';start.disabled=!!activeChallenge||!!activeReview||checkpointBusy||!!latest.busy||$('studio-run').disabled||!c.before.versionText||!c.after.versionText;
+ const stop=btn('Cancel challenge review',()=>activeChallenge?.controller.abort());stop.id='orb-challenge-cancel';stop.disabled=!activeChallenge;
+ box.append(start,stop,E('p','Replays exact parent and child in a private session. Does not apply the preview.','orb-muted'));
+ if(challengeResult?.status==='completed'&&challengeResult.version===c.after.digest){
+  const a=challengeResult.artifacts.find(x=>x.taskId==='coordinate'),v=a?.value;if(!v)return;
+  const result=E('div');result.id='orb-challenge-result';result.append(E('h3','Admitted challenge review'),E('p','Child arithmetic executed: '+v.work.child.executed+' · reused outcomes: '+v.work.child.reusedOutcomes),E('p',v.affectedNodeCount+' affected nodes · '+v.affectedEdgeCount+' recorded path edges'),E('p','Review required: '+(v.reviewRequired.join(', ')||'none in recorded scope')),E('p','Artifact pin: '+a.provenance.artifactDigest,'orb-muted'),E('p',v.qualification,'orb-muted'));box.append(result);
+ }
+}
 function counterfactualDetail(box,s,i){
  const p=impactView,kind=s.counterfactual?.kind;
  if(i===5&&s.sources.length){
@@ -103,7 +136,7 @@ function counterfactualDetail(box,s,i){
  box.append(list);
  const rows=E('div');rows.id='orb-impact-candidates';
  for(const c of p.candidates){const item=E('article',undefined,'orb-event');item.dataset.affected=String(c.dependencyAffected);item.append(E('strong',c.id),E('p',c.before+' → '+c.after),E('small',(c.dependencyAffected?'Affected recorded dependency':'No affected recorded dependency')+' · '+(c.reviewRequired?'Review required':'No new scoped review issue')));rows.append(item);}
- box.append(rows,E('p',p.qualification,'orb-muted'));
+ box.append(rows,E('p',p.qualification,'orb-muted'));challengeControls(box,s.counterfactual);
  if(kind==='withdrawal-preview')box.append(existingAction('Confirm withdrawal and replay child','review-source-withdraw-version-apply','orb-primary'));
  if(kind==='transaction-preview')box.append(btn('Review and confirm atomic revision',()=>go('review-transaction-panel'),'orb-primary'));
 }
@@ -193,7 +226,7 @@ function rehearsalRoute(a){
 }
 function step(){if(!simulation||rehearsalFinished)return;if(index>=steps.length){playing=false;rehearsalFinished=true;for(const a of agents){if(a.status==='working')a.done++;a.status='idle';a.station=null;}record('SIMULATED',null,null,'Rehearsal complete. No source, model or investigation was changed.');renderControls();beep('done');return;}
  for(const a of agents)if(a.status!=='idle'){if(a.status==='working')a.done++;a.status='idle';a.station=null;}const [from,status,text,station,to]=steps[index];const a=agents[from],route=rehearsalRoute(a),units=status==='working'?256:status==='thinking'?128:64;const reservation=route?Math.min(units,Math.max(1,Math.min(4096,Number(route.tokens)||1024))):0;if(a.reserved+reservation>a.cap){playing=false;a.status='waiting';a.station=station;record('SIMULATED',from,null,'Rehearsal reservation cap reached. Increase this role’s simulated budget in API routes, then resume.');renderControls();return;}index++;a.reserved+=reservation;a.activeRoute=route?.id??null;a.status=status;a.station=station;if(status==='working')a.energy=Math.max(0,a.energy-6);record('SIMULATED',from,to,text+(route?' · hypothetical route '+route.name+' / '+route.model+' · '+reservation+' simulated token units':' · deterministic local step, no model selected'));renderControls();}
-function start(){if(activeReview){announce('Finish or cancel the deterministic review before rehearsal.');return;}if($('studio-run').disabled){announce('Wait for the current actual council to finish before starting a rehearsal.');return;}if(policy==='deny'){record('SIMULATED',null,null,'Rehearsal denied by local rehearsal policy.');return;}if(!simulation||rehearsalFinished){index=0;elapsed=0;rehearsalFinished=false;for(const a of agents){a.done=0;a.energy=100;a.reserved=0;a.activeRoute=null;a.station=null;a.status='idle';}simulation=true;record('SIMULATED',null,null,'Explicit deterministic rehearsal started. No external calls or hidden model thoughts.');}playing=true;renderControls();}
+function start(){if(activeReview||activeChallenge){announce('Finish or cancel the deterministic review before rehearsal.');return;}if($('studio-run').disabled){announce('Wait for the current actual council to finish before starting a rehearsal.');return;}if(policy==='deny'){record('SIMULATED',null,null,'Rehearsal denied by local rehearsal policy.');return;}if(!simulation||rehearsalFinished){index=0;elapsed=0;rehearsalFinished=false;for(const a of agents){a.done=0;a.energy=100;a.reserved=0;a.activeRoute=null;a.station=null;a.status='idle';}simulation=true;record('SIMULATED',null,null,'Explicit deterministic rehearsal started. No external calls or hidden model thoughts.');}playing=true;renderControls();}
 function cancel(){playing=false;simulation=false;index=0;rehearsalFinished=false;for(const a of agents){a.status='idle';a.station=null;}record('SIMULATED',null,null,'Rehearsal stopped; no investigation mutation.');renderControls();}
 function renderControls(){$('orb-play').textContent=playing?'Pause rehearsal':index>0&&!rehearsalFinished?'Resume rehearsal':'Start simulated rehearsal';$('orb-step').disabled=playing||!simulation||rehearsalFinished;$('orb-stop').disabled=!simulation;$('orb-progress').textContent=(simulation?'SIMULATED · '+index+'/'+steps.length:'Rehearsal idle')+' · no external model contact';frameDriver.wake();}
 function setMode(next,write=false){mode=next;if(write&&location.hash!=='#'+next)history.pushState(null,'','#'+next);root.dataset.mode=next;$('orb-play').hidden=next!=='map'&&next!=='swarm';$('orb-map-title').textContent=next==='swarm'?'Agent swarm / role activity':'Six roles. Twelve stations.';for(const b of root.querySelectorAll('[data-orb-mode]'))b.setAttribute('aria-pressed',String(b.dataset.orbMode===next));for(const p of root.querySelectorAll('[data-orb-panel]'))p.hidden=p.dataset.orbPanel!==next&&!(p.dataset.orbPanel==='map'&&next==='swarm');if(next==='swarm')selectAgent(selected);if(next==='routes')renderRoutes();if(next==='policy')renderPolicy();if(next==='audit')renderAudit();if(next==='guestbook')renderGuestbook($('orb-guestbook'));if(next==='investigation'){$('orb-investigation').append($('sutra-master'));$('sutra-master').hidden=false;}else if($('sutra-master'))$('sutra-master').hidden=true;frameDriver.wake();}
@@ -210,11 +243,11 @@ function saveReviewFile(text,name,mime='application/json'){
 function renderCheckpointControls(){
  if(!$('orb-checkpoint-status'))return;
  const current=latest?.current?.digest;
- $('orb-review-start').disabled=checkpointBusy||!!activeReview||!current||!!latest.busy||$('studio-run').disabled;
- $('orb-checkpoint-export').disabled=checkpointBusy||!!activeReview||!reviewResult||reviewResult.version!==current;
+ $('orb-review-start').disabled=checkpointBusy||!!activeReview||!!activeChallenge||!current||!!latest.busy||$('studio-run').disabled;
+ $('orb-checkpoint-export').disabled=checkpointBusy||!!activeReview||!!activeChallenge||!reviewResult||reviewResult.version!==current;
  $('orb-checkpoint-export-pin-button').disabled=!checkpointExport||checkpointExport.checkpoint.versionDigest!==current;
- $('orb-checkpoint-inspect').disabled=checkpointBusy||!!activeReview||!current||!$('orb-checkpoint-file').files?.length||!$('orb-checkpoint-pin').value.trim();
- $('orb-checkpoint-verify').disabled=checkpointBusy||!!activeReview||!checkpointOpened||checkpointOpened.checkpoint.versionDigest!==current||checkpointOpened.checkpoint.status!=='completed';
+ $('orb-checkpoint-inspect').disabled=checkpointBusy||!!activeReview||!!activeChallenge||!current||!$('orb-checkpoint-file').files?.length||!$('orb-checkpoint-pin').value.trim();
+ $('orb-checkpoint-verify').disabled=checkpointBusy||!!activeReview||!!activeChallenge||!checkpointOpened||checkpointOpened.checkpoint.versionDigest!==current||checkpointOpened.checkpoint.status!=='completed';
  $('orb-checkpoint-cancel').disabled=!checkpointController;
  $('orb-checkpoint-status').textContent=checkpointStatus;
  $('orb-checkpoint-export-pin').textContent=checkpointExport?'Retain separately: '+checkpointExport.pin:'';
@@ -278,7 +311,7 @@ function stopRoleReview(reason='cancelled'){
  if(!activeReview)return;activeReview.controller.abort();reviewState=reason;renderRoleReview();
 }
 async function startRoleReview(){
- if(checkpointBusy||activeReview||!latest?.current||latest.busy||$('studio-run').disabled)return;
+ if(checkpointBusy||activeReview||activeChallenge||!latest?.current||latest.busy||$('studio-run').disabled)return;
  if(simulation)cancel();
  const current=latest.current,controller=new AbortController(),runId='review_'+crypto.randomUUID(),run={controller,runId,version:current.digest};
  activeReview=run;reviewRunId=runId;reviewResult=null;reviewEvents.length=0;reviewState='running';
@@ -307,7 +340,7 @@ function updateCouncil(){
  const expression=$('studio-mode').value==='expression',approved=$('studio-'+(expression?'expression-share':'share')).checked,running=$('studio-run').disabled;
  $('orb-council-status').textContent=$('studio-status').textContent;
  $('orb-council-approval').textContent=approved?'Current scoped rehearsal approval is selected.':'No current approval. Review the exact disclosure in the council controls.';
- $('orb-council-execute').disabled=!approved||running||!!activeReview;
+ $('orb-council-execute').disabled=!approved||running||!!activeReview||!!activeChallenge;
  $('orb-council-cancel').disabled=$('studio-cancel').disabled;
  const result=$('orb-council-results');result.replaceChildren();
  for(const item of $('studio-methods').children){const r=E('article',undefined,'orb-event');r.append(E('strong',item.querySelector('strong')?.textContent??'Conditional result'),E('p',item.querySelector('p')?.textContent??''));result.append(r);}
@@ -341,12 +374,15 @@ function initialize(){
   if(event.origin==='local-scripted'){
    councilRunId=event.runId;
    if(event.type==='run.open'&&activeReview)stopRoleReview('cancelled by council');
+   if(event.type==='run.open'&&activeChallenge)activeChallenge.controller.abort();
    if(event.type==='run.open'&&simulation){playing=false;simulation=false;for(const x of agents){x.status='idle';x.station=null;}renderControls();}
    const detail=event.payload,phase=event.type==='run.open'?'started':event.type==='run.close'?detail.status:detail.phase;
    record('LOCAL SCRIPTED COUNCIL',null,null,'Run '+event.runId+' · '+phase+(detail.agentId?' · '+detail.agentId+' · round '+detail.round:''));
    renderCouncilActivity();return;
   }
-  if(event.origin!=='deterministic'||!activeReview||event.runId!==activeReview.runId||event.version!==activeReview.version||latest?.current?.digest!==event.version)return;
+  const isChallenge=!!activeChallenge&&event.runId===activeChallenge.runId&&event.version===activeChallenge.version&&counterfactualKey(latest)===activeChallenge.key;
+  const isReview=!!activeReview&&event.runId===activeReview.runId&&event.version===activeReview.version&&latest?.current?.digest===event.version;
+  if(event.origin!=='deterministic'||(!isChallenge&&!isReview))return;
   if(event.type==='run.open'){for(const role of snapshot.agents){const a=agents.find(a=>a.id===role.id);if(a)a.status=role.waitingTaskIds.length?'waiting':'queued';}renderInspector();frameDriver.wake();return;}
   if(event.type!=='task.state')return;
   const e=event.payload,i=ROLE.findIndex(a=>a[0]===e.agentId);if(i<0)return;
@@ -358,8 +394,8 @@ function initialize(){
    const task=snapshot.tasks.find(t=>t.id===e.taskId);
    for(const id of task.dependsOn){const source=snapshot.tasks.find(t=>t.id===id),from=ROLE.findIndex(x=>x[0]===source.agentId);if(from>=0&&from!==i)edges.push({from,to:i,born:performance.now(),kind:'LOCAL DETERMINISTIC REVIEW'});}
   }
-  record('LOCAL DETERMINISTIC REVIEW',i,null,e.taskId+' · '+e.status);renderRoleReview();
+  record(isChallenge?'LOCAL CHALLENGE REVIEW':'LOCAL DETERMINISTIC REVIEW',i,null,e.taskId+' · '+e.status);if(isReview)renderRoleReview();
  });
  setMode('map');renderInspector();renderLog();if(new URLSearchParams(location.search).get('surface')==='debugger'){root.hidden=true;master.hidden=true;const workspace=$('reviewed-workspace'),economics=$('economics-lab');economics.before(workspace);document.querySelector('.sm-lab-heading')?.remove();const old=document.querySelector('.intro h2');if(old)old.replaceWith(E('h1',old.textContent));return;}const requested=location.hash.slice(1);if(['swarm','investigation','routes','policy','audit','guestbook'].includes(requested))setMode(requested);window.addEventListener('popstate',()=>{const next=location.hash.slice(1);if(['map','swarm','investigation','routes','policy','audit','guestbook'].includes(next))setMode(next);else if(!next)setMode('map');});document.addEventListener('visibilitychange',()=>{if(document.hidden)frameDriver.stop();else frameDriver.wake();});reduced.addEventListener('change',()=>frameDriver.wake());frameDriver.wake();
 }
-export function updateOrbit(state){latest=state;if(!root)initialize();invalidateRoleReview(state.current?.digest);invalidateCheckpointVersion(state.current?.digest);renderRoleReview();updateImpactView(state);$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=JSON.stringify([state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.question,state.sources,state.bindings,state.history?.digest,state.counterfactual?.kind,state.counterfactual?.after?.digest,state.withdrawal]);if(key!==lastState){lastState=key;const focused=document.activeElement?.id==='orb-graph-node';if(state.status&&state.status!==lastWorkspaceStatus)record('WORKSPACE',null,null,state.status);else renderInspector();lastWorkspaceStatus=state.status;if(focused)$('orb-graph-node')?.focus({preventScroll:true});}}
+export function updateOrbit(state){latest=state;if(!root)initialize();invalidateRoleReview(state.current?.digest);invalidateCheckpointVersion(state.current?.digest);invalidateChallenge(state);renderRoleReview();updateImpactView(state);$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=JSON.stringify([state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.question,state.sources,state.bindings,state.history?.digest,state.counterfactual?.kind,state.counterfactual?.after?.digest,state.withdrawal]);if(key!==lastState){lastState=key;const focused=document.activeElement?.id==='orb-graph-node';if(state.status&&state.status!==lastWorkspaceStatus)record('WORKSPACE',null,null,state.status);else renderInspector();lastWorkspaceStatus=state.status;if(focused)$('orb-graph-node')?.focus({preventScroll:true});}}

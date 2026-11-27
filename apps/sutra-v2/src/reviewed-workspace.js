@@ -957,7 +957,7 @@ function renderStudio(){
  updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target,singleResult:by('result').textContent,withdrawal:withdrawalPreview?{sourceId:withdrawalPreview.sourceId,versioned:!!withdrawalPreview.revision}:null,counterfactual:orbitalCounterfactual()});
 }
 function orbitalCounterfactual(){
- const view=v=>({digest:v.digest,graph:v.report.graph});
+ const view=v=>({digest:v.digest,graph:v.report.graph,versionText:v.versionText});
  const withdrawal=withdrawalPreview?.revision,transaction=transactionPreview?.exported?.revision;
  if(withdrawal&&withdrawalPreview.parent===baseline)return {kind:'withdrawal-preview',before:view(baseline),after:view(withdrawal.child),impact:withdrawal.impact};
  if(transaction&&transactionPreview.parent===baseline)return {kind:'transaction-preview',before:view(baseline),after:view(transaction.child),impact:transaction.impact};
