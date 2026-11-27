@@ -1567,6 +1567,15 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
+  // Serve only immutable built assets; no API, inference, search, or host bridge can respond.
+  // The actual Chromium journey must not even attempt a non-static request.
+  const guideBlocked=[];
+  await guidePage.route('**/*',route=>{
+   const request=route.request(),url=new URL(request.url());
+   const file=url.pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+url.pathname);
+   if(request.method()==='GET'&&url.origin===origin&&file.startsWith(dist+path.sep)&&fs.existsSync(file)&&fs.statSync(file).isFile())return route.continue();
+   guideBlocked.push({method:request.method(),origin:url.origin,pathname:url.pathname});return route.abort();
+  });
   const guideStarted=Date.now();await guidePage.goto(origin+'/?surface=debugger');
   const primary=guidePage.locator('#debug-guide-next');
   const checkFirstScreen=async name=>{
@@ -1624,7 +1633,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await guideStep('withdraw','plan-observe','UNDERDETERMINED');
   await guideStep('plan-observe','capsule-export','REFUTED');
   assert.equal(await guidePage.locator('#debug-guide-proof').getAttribute('hidden'),'');
-  assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);await guidePage.close();
+  assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);assert.deepEqual(guideBlocked,[],'no model, search or host request attempted');await guidePage.close();
+  console.log('PASS: complete deterministic worked example with static-only transport, zero attempted dynamic or third-party requests.');
   const worldPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),worldErrors=[],worldExternal=[];
   worldPage.on('pageerror',e=>worldErrors.push(e.message));worldPage.on('request',r=>{if(new URL(r.url()).origin!==origin)worldExternal.push(r.url());});
   await worldPage.goto(origin);await worldPage.locator('#debug-manual > summary').click();
