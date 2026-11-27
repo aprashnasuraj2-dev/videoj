@@ -954,7 +954,15 @@ function renderStudio(){
  else if(baseline&&!by('correspondence').checked){target='correspondence';label='Review correspondence';help='Confirm candidate identifiers correspond across versions before computing revision impact.';}
  else{target='semantic-run';label='Inspect evaluation controls';help='Evaluate all staged meanings under the sealed contract.';}
  const next=by('studio-next');next.dataset.target=target;next.textContent=label;next.disabled=busy;by('studio-help').textContent=help;
- updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target,singleResult:by('result').textContent,withdrawal:withdrawalPreview?{sourceId:withdrawalPreview.sourceId,versioned:!!withdrawalPreview.revision}:null});
+ updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target,singleResult:by('result').textContent,withdrawal:withdrawalPreview?{sourceId:withdrawalPreview.sourceId,versioned:!!withdrawalPreview.revision}:null,counterfactual:orbitalCounterfactual()});
+}
+function orbitalCounterfactual(){
+ const view=v=>({digest:v.digest,graph:v.report.graph});
+ const withdrawal=withdrawalPreview?.revision,transaction=transactionPreview?.exported?.revision;
+ if(withdrawal&&withdrawalPreview.parent===baseline)return {kind:'withdrawal-preview',before:view(baseline),after:view(withdrawal.child),impact:withdrawal.impact};
+ if(transaction&&transactionPreview.parent===baseline)return {kind:'transaction-preview',before:view(baseline),after:view(transaction.child),impact:transaction.impact};
+ if(impactCurrent&&baseline&&semanticCurrent&&impactCurrent.beforeDigest===baseline.digest&&impactCurrent.afterDigest===semanticCurrent.digest)return {kind:'applied-revision',before:view(baseline),after:view(semanticCurrent),impact:impactCurrent};
+ return null;
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();

@@ -1,3 +1,4 @@
+import {impactProjection} from './impact-projection.js';
 import {runInvestigationReview,ROLE_REVIEW_TASKS} from '../../../packages/sutra-knowledge/investigation-role-review.js';
 import {createFrameDriver} from './frame-driver.js';
 import {investigationGraph,traceDependencies} from './investigation-graph.js';
@@ -19,7 +20,7 @@ const steps=[
 let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStation=null,simulation=false,playing=false,index=0,elapsed=0,lastTick=0,rotation=0,targetRotation=0,zoom=1,drag=null,latest=null,events=[],configs=[],policy='ask',era=false,lastState='',rehearsalFinished=false,konami=0,sound=false,audio=null;
 const councilActivity=createCouncilActivity();
 let graphSelection=null,lastWorkspaceStatus='';
-let activeReview=null,reviewResult=null,reviewState='idle';const reviewEvents=[];
+let activeReview=null,reviewResult=null,reviewState='idle',impactView=null;const reviewEvents=[];
 const reviewStations={frame:0,evidence:1,compute:4,analysis:3,challenge:5,coordinate:8};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const frameDriver=createFrameDriver({request:fn=>requestAnimationFrame(fn),cancel:id=>cancelAnimationFrame(id),visible:()=>!document.hidden,onFrame:frame});
@@ -64,6 +65,46 @@ function graphDetail(box,station){
  select.addEventListener('change',inspect);box.append(label,select,details);inspect();
  box.append(btn('Open full investigation graph',()=>{setMode('investigation',true);$('sutra-master').querySelector('[data-sm-view="evidence"]')?.click();go('sm-work');}));
 }
+function updateImpactView(state){
+ try{impactView=state.counterfactual?impactProjection(state.counterfactual):null;}catch{impactView=null;}
+ const affectedKinds=new Set(impactView?.nodes.map(n=>n.kind)??[]);
+ const stationKinds={0:['question'],1:['evidence','declared_lineage'],2:['reviewed_quantity'],3:['candidate_interpretation'],4:['candidate_interpretation']};
+ for(const [i,group] of stationGroups.entries())group.dataset.affected=String((stationKinds[i]??[]).some(k=>affectedKinds.has(k)));
+}
+function counterfactualDetail(box,s,i){
+ const p=impactView,kind=s.counterfactual?.kind;
+ if(i===5&&s.sources.length){
+  const label=E('label','Source to challenge');label.htmlFor='orb-withdraw-source';const pick=E('select');pick.id='orb-withdraw-source';pick.disabled=s.busy;
+  const original=$('review-source-revise-pick');
+  for(const source of s.sources){const o=E('option',source.id);o.value=source.id;pick.append(o);}
+  if(s.sources.some(x=>x.id===original.value))pick.value=original.value;
+  pick.addEventListener('change',()=>{original.value=pick.value;original.dispatchEvent(new Event('change',{bubbles:true}));});
+  box.append(label,pick,existingAction('Preview versioned source withdrawal','review-source-withdraw-version-preview','orb-primary'));
+  if(!s.baseline)box.append(E('p','Retain the evaluated version as baseline first.','orb-muted'));
+ }
+ if(!p){box.append(E('p','No canonical versioned impact to display. Preview a withdrawal or revision first.','orb-muted'));return;}
+ box.append(E('h3',kind==='applied-revision'?'Applied revision impact':'Proposed child — no change applied'),E('p',p.beforeDigest+' → '+p.afterDigest,'orb-muted'));
+ const counts=E('p',p.nodes.length+' affected recorded nodes · '+p.edges.length+' recorded path edges');counts.id='orb-impact-counts';box.append(counts);
+ const groupOrder=[['question','declared_lineage','evidence'],['reviewed_quantity'],['candidate_interpretation']];
+ const groups=groupOrder.map(kinds=>p.nodes.filter(n=>kinds.includes(n.kind)));
+ const maxRows=Math.max(1,...groups.map(g=>g.length)),height=44+maxRows*38;
+ const svg=S('svg',{viewBox:'0 0 420 '+height,width:'100%',role:'img','aria-label':'Affected recorded dependency paths. Text alternative follows.'}),positions=new Map();
+ for(const [col,group] of groups.entries())for(const [row,n] of group.entries())positions.set(n.id,{x:8+col*139,y:28+row*38,w:126,h:28,n});
+ const headers=['Evidence / question','Quantities','Interpretations'];
+ for(const [col,label] of headers.entries()){const t=S('text',{x:71+col*139,y:16,'text-anchor':'middle',class:'orb-impact-label'});t.textContent=label;svg.append(t);}
+ for(const e of p.edges){const a=positions.get(e.dependency),b=positions.get(e.dependent);if(!a||!b)continue;const path=S('path',{d:'M'+(a.x+a.w)+' '+(a.y+a.h/2)+' C'+(a.x+a.w+12)+' '+(a.y+a.h/2)+' '+(b.x-12)+' '+(b.y+b.h/2)+' '+b.x+' '+(b.y+b.h/2),class:'orb-impact-edge','data-version-state':e.state});svg.append(path);}
+ for(const {x,y,w,h,n} of positions.values()){const g=S('g',{'data-node-state':n.state,'data-root':String(n.root)});g.append(S('rect',{x,y,width:w,height:h,rx:4,class:'orb-impact-node'}));const t=S('text',{x:x+w/2,y:y+17,'text-anchor':'middle',class:'orb-impact-label'});const name=n.id.slice(n.id.indexOf(':')+1);t.textContent=name.length>18?name.slice(0,16)+'…':name;g.append(t);svg.append(g);}
+ box.append(svg,E('p','Solid lines: both versions. Dashed lines: one version only. Root outlines: directly changed inputs.','orb-muted'));
+ const list=E('details',undefined,'orb-event');list.append(E('summary','Exact affected nodes and edges'));
+ for(const n of p.nodes)list.append(E('p',n.id+' · '+n.state+(n.root?' · changed input':'')));
+ for(const e of p.edges)list.append(E('p',e.dependency+' → '+e.dependent+' · '+e.relation+' · '+e.authority+' · '+e.state));
+ box.append(list);
+ const rows=E('div');rows.id='orb-impact-candidates';
+ for(const c of p.candidates){const item=E('article',undefined,'orb-event');item.dataset.affected=String(c.dependencyAffected);item.append(E('strong',c.id),E('p',c.before+' → '+c.after),E('small',(c.dependencyAffected?'Affected recorded dependency':'No affected recorded dependency')+' · '+(c.reviewRequired?'Review required':'No new scoped review issue')));rows.append(item);}
+ box.append(rows,E('p',p.qualification,'orb-muted'));
+ if(kind==='withdrawal-preview')box.append(existingAction('Confirm withdrawal and replay child','review-source-withdraw-version-apply','orb-primary'));
+ if(kind==='transaction-preview')box.append(btn('Review and confirm atomic revision',()=>go('review-transaction-panel'),'orb-primary'));
+}
 function stationDetail(box,i){
  const s=latest;if(!s)return;
  if(i===0){
@@ -81,6 +122,7 @@ function stationDetail(box,i){
  }else if(i===5||i===6){
   box.append(E('p',s.baseline?'Baseline retained. Review a versioned challenge.':'No retained baseline. Evaluate a version first.','orb-muted'));
   box.append(existingAction('Retain current baseline','review-semantic-retain'),btn('Open challenge and impact view',()=>{setMode('investigation',true);const b=$('sutra-master').querySelector('[data-sm-view="challenge"]');b?.click();},'orb-primary'));
+  counterfactualDetail(box,s,i);
  }else if(i===7){
   box.append(E('p',s.history?s.history.view.versions.length+' exact versions retained':'No retained history'),existingAction('Start history from root','review-history-create'),existingAction('Append current child','review-history-append'));
  }else if(i===8){
@@ -243,4 +285,4 @@ function initialize(){
  });
  setMode('map');renderInspector();renderLog();if(new URLSearchParams(location.search).get('surface')==='debugger'){root.hidden=true;master.hidden=true;const workspace=$('reviewed-workspace'),economics=$('economics-lab');economics.before(workspace);document.querySelector('.sm-lab-heading')?.remove();const old=document.querySelector('.intro h2');if(old)old.replaceWith(E('h1',old.textContent));return;}const requested=location.hash.slice(1);if(['swarm','investigation','routes','policy','audit','guestbook'].includes(requested))setMode(requested);window.addEventListener('popstate',()=>{const next=location.hash.slice(1);if(['map','swarm','investigation','routes','policy','audit','guestbook'].includes(next))setMode(next);else if(!next)setMode('map');});document.addEventListener('visibilitychange',()=>{if(document.hidden)frameDriver.stop();else frameDriver.wake();});reduced.addEventListener('change',()=>frameDriver.wake());frameDriver.wake();
 }
-export function updateOrbit(state){latest=state;if(!root)initialize();invalidateRoleReview(state.current?.digest);renderRoleReview();$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=JSON.stringify([state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.question,state.sources,state.bindings,state.history?.digest]);if(key!==lastState){lastState=key;const focused=document.activeElement?.id==='orb-graph-node';if(state.status&&state.status!==lastWorkspaceStatus)record('WORKSPACE',null,null,state.status);else renderInspector();lastWorkspaceStatus=state.status;if(focused)$('orb-graph-node')?.focus({preventScroll:true});}}
+export function updateOrbit(state){latest=state;if(!root)initialize();invalidateRoleReview(state.current?.digest);renderRoleReview();updateImpactView(state);$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=JSON.stringify([state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.question,state.sources,state.bindings,state.history?.digest,state.counterfactual?.kind,state.counterfactual?.after?.digest,state.withdrawal]);if(key!==lastState){lastState=key;const focused=document.activeElement?.id==='orb-graph-node';if(state.status&&state.status!==lastWorkspaceStatus)record('WORKSPACE',null,null,state.status);else renderInspector();lastWorkspaceStatus=state.status;if(focused)$('orb-graph-node')?.focus({preventScroll:true});}}
