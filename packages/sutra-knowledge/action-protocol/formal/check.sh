@@ -4,19 +4,19 @@ cd "$(dirname "$0")"
 JAR="$(mktemp /tmp/sutra-tlc.XXXXXX)"
 WORK="$(mktemp -d)"
 trap 'rm -f "$JAR"; rm -rf "$WORK"' EXIT
-curl --fail --silent --show-error --location --max-time 60 https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -o "$JAR"
-# Explicitly reviewed V2-175 development dependency migration. The upstream
-# v1.8.0 prerelease was republished on 2026-11-26; the older exact pin is
-# retained in docs/sutra-v2/TLC-PROVENANCE.md. Never trust a dynamic digest,
-# retry with another version, accept either hash, or execute a mismatched JAR.
+curl --fail --silent --show-error --location --max-time 60 --max-filesize 2274532 https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar -o "$JAR"
+# Stable release selected after repeated mutation of the rolling v1.8.0
+# prerelease. Independently corroborated upstream identity, SHA-256 and
+# SHA-1: docs/sutra-v2/TLC-PROVENANCE.md. No fallback or dynamic pin.
 actual_size="$(wc -c < "$JAR" | tr -d '[:space:]')"
-if [ "$actual_size" != 4511244 ]; then
- printf 'TLC artifact size mismatch: expected 4511244 bytes, received %s bytes; refusing execution\n' "$actual_size" >&2
+if [ "$actual_size" != 2274532 ]; then
+ printf 'TLC artifact size mismatch: expected 2274532 bytes, received %s bytes; refusing execution\n' "$actual_size" >&2
  sha256sum "$JAR" >&2
  exit 1
 fi
-printf '%s  %s\n' 67f9575c3b9ef7a0787b1bded34812862ffe79d711298e5a75b1a77720b19928 "$JAR" | sha256sum -c -
-printf '%s  %s\n' fc4b766626acf025b4661242f58e246d946b9d6b "$JAR" | sha1sum -c -
+printf '%s  %s\n' 936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88 "$JAR" | sha256sum -c -
+printf '%s  %s\n' bee4a54f3ee3d4afc347c3240ec2d9e93b075104 "$JAR" | sha1sum -c -
+printf 'Verified stable TLC v1.7.4, %s bytes\n' "$actual_size"
 java -version
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/safe" -config Safe.cfg Recovery.tla > "$WORK/safe.log" 2>&1 || { cat "$WORK/safe.log"; exit 1; }
 cat "$WORK/safe.log"
