@@ -1,5 +1,6 @@
 // Standalone public-research consent; never restores authority from a report.
 import {createHash} from 'node:crypto';
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});};
 export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -11,7 +12,7 @@ export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHO
 export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
 export function admitManifest(text){
  if(typeof text!=='string'||Buffer.byteLength(text)>16384)fail('MANIFEST');
- let p;try{p=JSON.parse(text);}catch{fail('MANIFEST');}
+ let p;try{p=parseUniqueJson(text,{maxChars:16384,maxDepth:8});}catch{fail('MANIFEST');}
  if(!exact(p,['schema','objective','scope','budget','providers'])||p.schema!=='sutra-autonomous-research/v1'||typeof p.objective!=='string'||p.objective.trim()!==p.objective||!p.objective||p.objective.length>1000||secretLike(p.objective)||/[\u0000-\u001f\u007f]/.test(p.objective))fail('OBJECTIVE');
  const scopeKeys=['publicWeb','queryDisclosureAllowed','allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'];
  if(Object.hasOwn(p.scope??{},'allowCrossOriginLinks'))scopeKeys.push('allowCrossOriginLinks');
