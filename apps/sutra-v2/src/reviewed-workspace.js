@@ -1,3 +1,4 @@
+import {connectCandidateRevision} from './candidate-revision-ui.js';
 import {connectCandidateCapsule} from './candidate-capsule-ui.js';
 import {openWorkspaceCheckpoint,exportWorkspaceCheckpoint} from '../../../packages/sutra-knowledge/workspace-checkpoint.js';
 import {createHistoryHostClient} from './history-host.js';
@@ -38,6 +39,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 const capsuleControl=connectCandidateCapsule({by,download});
+const noticeControl=connectCandidateRevision({by,download});
 let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null,sessionSaved=null,sessionPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
@@ -887,6 +889,7 @@ function invalidateSemantic(){
 }
 function semanticControl(){
  capsuleControl(semanticCurrent,busy);
+ noticeControl(baseline,semanticCurrent,busy);
  transactionControl();recoveryControl();
  for(const id of ['source-withdraw-export','source-withdraw-export-pin','source-withdraw-plan-pin-export'])by(id).disabled=busy||!withdrawalExport;
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;

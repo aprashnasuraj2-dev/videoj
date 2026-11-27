@@ -981,6 +981,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(await reviewPage.locator('#review-semantic-run').isDisabled(),true);await reviewPage.locator('#review-correspondence').check();
   await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
   assert.match(await reviewPage.locator('#review-impact-result').innerText(),/report_b CHANGED/);assert.match(await reviewPage.locator('#review-impact-result').innerText(),/CONDITIONAL RESULT REVERSED/);
+  await reviewPage.locator('#review-notice-panel > summary').click();
+  await reviewPage.locator('#review-notice-candidate').selectOption('proposal_1');
+  await reviewPage.locator('#review-notice-prepare').click();
+  const noticeDl=reviewPage.waitForEvent('download');
+  await reviewPage.locator('#review-notice-download').click();
+  const noticeBytes=fs.readFileSync(await (await noticeDl).path());
+  const noticePin=await reviewPage.locator('#review-notice-preview-pin').innerText();
+  assert.equal(JSON.parse(noticeBytes).change,'REVERSED');
+  assert.equal(JSON.parse(noticeBytes).previousCapsulePin,capsulePin);
+  assert.ok(!noticeBytes.includes('Site B'));
+  await reviewPage.locator('#review-notice-file').setInputFiles({name:'notice.json',mimeType:'application/json',buffer:noticeBytes});
+  await reviewPage.locator('#review-notice-previous').setInputFiles({name:'capsule.json',mimeType:'application/json',buffer:capsuleBytes});
+  await reviewFill('notice-previous-pin',capsulePin);
+  await reviewFill('notice-pin',noticePin);
+  await reviewPage.locator('#review-notice-check').click();
+  await reviewPage.waitForFunction(()=>document.querySelector('#review-notice-verdict').textContent.includes('Conditional result reversed'));
+
   assert.match(await reviewPage.locator('#review-session-reuse-result').innerText(),/8 arithmetic operations executed · 4 outcomes reused/);
   assert.match(await reviewPage.locator('#review-session-reuse-result').innerText(),/12 receipts rebuilt/);
   assert.match(await reviewPage.locator('#review-impact-result').innerText(),/provenance-bound replay/);
