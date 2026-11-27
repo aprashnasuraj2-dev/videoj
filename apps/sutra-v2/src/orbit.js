@@ -263,7 +263,11 @@ function renderCheckpointControls(){
 function renderCheckpointTimeline(){
  if(!checkpointOpened)return;
  const sequence=Number($('orb-checkpoint-sequence').value),p=unifiedCheckpoint(checkpointOpened)?projectExecutionCheckpoint(checkpointOpened,sequence):projectRoleReviewEvents(checkpointOpened,sequence),box=$('orb-checkpoint-timeline');box.replaceChildren(E('p','Recorded event '+p.sequence+' / '+checkpointOpened.checkpoint.events.length+' · not live activity','orb-muted'));
- for(const t of p.taskStates??p.snapshot?.tasks??[])box.append(E('p',t.agentId+' · '+t.status));
+ for(const t of p.taskStates??p.snapshot?.tasks??[]){
+  box.append(E('p',t.agentId+' · '+t.status));
+  for(const slot of t.consultationSlots??[])box.append(E('p','Recorded model slot '+slot.slotId+' · round '+slot.round+' · '+slot.phase,'orb-muted'));
+  for(const route of t.routeAttempts??[])box.append(E('p','Recorded provider route '+route.routeId+' · '+route.phase,'orb-muted'));
+ }
  if(unifiedCheckpoint(checkpointOpened)&&p.snapshot)box.append(E('p','Recorded run: '+p.snapshot.status+' · '+p.snapshot.origin,'orb-muted'));
 }
 function clearCheckpointImport(){
