@@ -3,7 +3,7 @@ import {createReadStream} from 'node:fs';
 import {admitManifest,authorizeResearch} from '../../packages/sutra-research/research-session.js';
 import {createSearchProviders} from '../../packages/sutra-research/providers.js';
 import {createDocumentReader} from '../../packages/sutra-research/document-reader.js';
-import {createCheckpointWriter} from '../../packages/sutra-research/research-checkpoint.js';
+import {createCheckpointWriter,consumeCheckpointFile} from '../../packages/sutra-research/research-checkpoint.js';
 import {runAutonomousResearch} from '../../packages/sutra-research/research-supervisor.js';
 const fail=code=>{throw Object.assign(Error('Research operator refused'),{code});};
 async function boundedText(stream,max){
@@ -30,6 +30,7 @@ async function main(){
   const writer=opts.has('--checkpoint-dir')?await createCheckpointWriter(opts.get('--checkpoint-dir')):undefined;
   let checkpointDigest;
   const onCheckpoint=writer?async s=>{checkpointDigest=await writer(s);}:undefined;
+  if(opts.has('--resume-checkpoint'))await consumeCheckpointFile(opts.get('--resume-checkpoint'),opts.get('--resume-pin'));
   const report=await runAutonomousResearch({authorization,providers,onCheckpoint,pauseAfterOperations:pauseAfter,readDocument:createDocumentReader({authorization}),onEvent:e=>process.stderr.write(JSON.stringify(e)+'\n')});
   if(checkpointDigest)process.stderr.write('Research checkpoint SHA-256: '+checkpointDigest+'\n');
   if(cancel.signal.aborted){process.exitCode=130;return;}

@@ -1,6 +1,6 @@
 // Durable local snapshots. They carry no authority and cannot restart a remote operation.
 import {mkdir,open,rename,unlink} from 'node:fs/promises';
-import {resolve,join} from 'node:path';
+import {resolve,join,dirname,basename} from 'node:path';
 import {digest} from './research-session.js';
 export async function createCheckpointWriter(directory){
  // Require a fresh operator-selected directory; no overwrite of a prior investigation.
@@ -27,4 +27,15 @@ export function inspectCheckpoint(text,expectedDigest){
  const p=JSON.parse(e.payload);
  if(p?.schema!=='sutra-autonomous-research-checkpoint/v1'||p.authority!=='NONE')throw Error('CHECKPOINT_STATE');
  return Object.freeze({checkpoint:p,authority:'NONE',canAutomaticallyResume:false,eligibleForFreshApproval:p.state==='paused'&&p.pending===null});
+}
+
+// Local operator lease: prevent two processes continuing the same retained file.
+// Copies in other directories are not globally fenced; hosted deployments need a durable DB CAS.
+export async function consumeCheckpointFile(file,expectedDigest){
+ if(typeof file!=='string'||!file.trim()||typeof expectedDigest!=='string'||!/^sha256:[0-9a-f]{64}$/.test(expectedDigest))throw Error('RESUME_PIN');
+ const source=resolve(file),dir=dirname(source),marker=join(dir,'.'+basename(source)+'.'+expectedDigest.slice(7)+'.consumed');
+ const fd=await open(marker,'wx',0o600);
+ try{await fd.writeFile(expectedDigest+'\n','utf8');await fd.sync();}finally{await fd.close();}
+ const d=await open(dir,'r');try{await d.sync();}finally{await d.close();}
+ return Object.freeze({kind:'sutra-local-checkpoint-consumed/v1'});
 }

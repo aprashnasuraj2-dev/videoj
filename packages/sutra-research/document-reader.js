@@ -1,4 +1,5 @@
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
+import {scanHtml} from './html-parser.js';
 import {pinnedPublicHttp} from './pinned-public-http.js';
 import {secretLike,digest,assertResearchAuthorization} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Research document refused: '+code),{code});};
@@ -26,18 +27,12 @@ export function robotsAllows(text,path){
  const rules=matching.flatMap(g=>g.rules).filter(r=>patternMatch(r.value,path)).sort((a,b)=>b.value.replace(/[*$]/g,'').length-a.value.replace(/[*$]/g,'').length||Number(b.allow)-Number(a.allow));
  return !rules.length||rules[0].allow;
 }
-export function extractDocument(body,mediaType,url){
- const original=utf8(body);let text=original,links=[];
- // Deliberately conservative non-executing extraction, not a full HTML parser.
- if(mediaType==='text/html'){
-  const visible=original.replace(/<!--[\s\S]*?-->/g,' ').replace(/<(script|style|template|noscript|svg|iframe|object)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,' ');
-  for(const m of visible.matchAll(/<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')[^>]*>/gi)){
-   if(links.length>=40)break;try{const next=admitDocumentURL(new URL(m[1]??m[2],url).href);if(!secretLike(next)&&new URL(next).origin===new URL(url).origin&&!links.includes(next))links.push(next);}catch{}
-  }
-  text=visible.replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,x=>({'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"})[x]).replace(/\s+/g,' ').trim();
- }else if(mediaType==='application/json'){JSON.parse(original);}
+export function extractDocument(body,mediaType,url,{allowCrossOriginLinks=false}={}){
+ const original=utf8(body);let text=original,links=[],metadata={};
+ if(mediaType==='text/html'){({text,links,metadata}=scanHtml(original,url,{allowCrossOriginLinks}));}
+ else if(mediaType==='application/json'){JSON.parse(original);}
  if(!text.trim())fail('EMPTY');
- return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),parser:'bounded-text/v1',retrievedAt:new Date().toISOString()});
+ return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),metadata:Object.freeze(metadata),parser:mediaType==='text/html'?'bounded-html/v2':'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }
 export function createDocumentReader({authorization,transport=pinnedPublicHttp}){
  assertResearchAuthorization(authorization);const robots=new Map();
@@ -52,6 +47,6 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp})
   if(!robotsAllows(robots.get(origin),target.pathname))fail('ROBOTS');
   authorization.reserve('document',{bytes:DOCUMENT_BYTES});
   const r=await transport({url:target,signal:authorization.signal,maxBytes:DOCUMENT_BYTES,acceptedTypes:['text/html','text/plain','application/json','text/csv']});
-  authorization.assertActive();return extractDocument(r.body,r.mediaType,url);
+  authorization.assertActive();return extractDocument(r.body,r.mediaType,url,{allowCrossOriginLinks:authorization.plan.scope.allowCrossOriginLinks===true});
  };
 }

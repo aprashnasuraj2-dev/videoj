@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,readFile,rm,stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {createCheckpointWriter,inspectCheckpoint} from '../research-checkpoint.js';
+import {createCheckpointWriter,inspectCheckpoint,consumeCheckpointFile} from '../research-checkpoint.js';
 test('atomic checkpoint binds digest and carries no restart authorization',async()=>{
  const parent=await mkdtemp(join(tmpdir(),'sutra-research-')),dir=join(parent,'session');
  try{
@@ -13,5 +13,15 @@ test('atomic checkpoint binds digest and carries no restart authorization',async
   assert.throws(()=>inspectCheckpoint(raw,'wrong'),/DIGEST/);assert.throws(()=>inspectCheckpoint(JSON.stringify({...e,payload:e.payload+' '}),e.digest),/DIGEST/);
   await assert.rejects(write({...s,sequence:1}),/STATE/);assert.equal((await stat(path)).mode&0o777,0o600);
   await assert.rejects(createCheckpointWriter(dir));
+ }finally{await rm(parent,{recursive:true,force:true});}
+});
+
+test('same checkpoint file and digest can be consumed by at most one local operator',async()=>{
+ const parent=await mkdtemp(join(tmpdir(),'sutra-research-')),dir=join(parent,'session');
+ try{
+  const write=await createCheckpointWriter(dir),pin=await write({schema:'sutra-autonomous-research-checkpoint/v1',authority:'NONE',sessionId:'s1',sequence:1,pending:null,state:'paused'});
+  const path=join(dir,'checkpoint.json'),results=await Promise.allSettled([consumeCheckpointFile(path,pin),consumeCheckpointFile(path,pin)]);
+  assert.equal(results.filter(x=>x.status==='fulfilled').length,1);
+  await assert.rejects(consumeCheckpointFile(path,pin));
  }finally{await rm(parent,{recursive:true,force:true});}
 });
