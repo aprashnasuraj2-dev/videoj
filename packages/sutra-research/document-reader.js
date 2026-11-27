@@ -1,3 +1,4 @@
+import {setTimeout as delay} from 'node:timers/promises';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {extractPdfDocument,PDF_INPUT_BYTES} from './pdf-parser.js';
 import {scanHtml} from './html-parser.js';
@@ -36,19 +37,20 @@ export function extractDocument(body,mediaType,url,{allowCrossOriginLinks=false}
  return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),metadata:Object.freeze(metadata),parser:mediaType==='text/html'?'bounded-html/v2':'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }
 export function createDocumentReader({authorization,transport=pinnedPublicHttp,parsePdf}){
- assertResearchAuthorization(authorization);const robots=new Map();
+ assertResearchAuthorization(authorization);const robots=new Map(),lastRequest=new Map();
+ async function throttle(origin){const wait=750-(performance.now()-(lastRequest.get(origin)??-Infinity));if(wait>0)await delay(wait,undefined,{signal:authorization.signal});authorization.assertActive();lastRequest.set(origin,performance.now());}
  return async function read(raw){
   authorization.assertActive();const url=admitDocumentURL(raw);if(secretLike(url)||secretLike(decodeURIComponent(new URL(url).pathname)))fail('SENSITIVE_URL');
   const target=new URL(url),origin=target.origin;
   if(!robots.has(origin)){
-   authorization.reserve('robots',{bytes:ROBOTS_BYTES});
+   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(origin);
    const r=await transport({url:new URL('/robots.txt',origin),signal:authorization.signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true});
    authorization.assertActive();robots.set(origin,r.status===200?utf8(r.body):'');
   }
   if(!robotsAllows(robots.get(origin),target.pathname))fail('ROBOTS');
   const allowPdf=authorization.plan.scope.allowPdf===true,maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
   if(allowPdf)acceptedTypes.push('application/pdf');
-  authorization.reserve('document',{bytes:maxBytes});
+  authorization.reserve('document',{bytes:maxBytes});await throttle(origin);
   const r=await transport({url:target,signal:authorization.signal,maxBytes,acceptedTypes});
   authorization.assertActive();if(r.mediaType==='application/pdf'){if(!allowPdf)fail('PDF_SCOPE');const pdf=await extractPdfDocument(r.body,url,{signal:authorization.signal,parse:parsePdf});authorization.assertActive();return pdf;}
   return extractDocument(r.body,r.mediaType,url,{allowCrossOriginLinks:authorization.plan.scope.allowCrossOriginLinks===true});

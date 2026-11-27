@@ -4,6 +4,7 @@ import {admitManifest,authorizeResearch} from '../../packages/sutra-research/res
 import {createSearchProviders} from '../../packages/sutra-research/providers.js';
 import {createDocumentReader} from '../../packages/sutra-research/document-reader.js';
 import {createCheckpointWriter,consumeCheckpointFile} from '../../packages/sutra-research/research-checkpoint.js';
+import {formatMarkdownReport} from '../../packages/sutra-research/research-report.js';
 import {runAutonomousResearch} from '../../packages/sutra-research/research-supervisor.js';
 const fail=code=>{throw Object.assign(Error('Research operator refused'),{code});};
 async function boundedText(stream,max){
@@ -14,9 +15,10 @@ async function main(){
  const args=process.argv.slice(2),preview=args.length===1&&args[0]==='--plan';
  const execute=args.length>=5&&args[0]==='--execute-research'&&args[1]==='--approve-public-contact'&&args[2]==='--approve-estimated-cost'&&args[3]==='--approve-plan'&&/^sha256:[0-9a-f]{64}$/.test(args[4]);
  if(!preview&&!execute)fail('APPROVAL');
- const opts=new Map(),allowed=new Set(['--checkpoint-dir','--pause-after','--resume-checkpoint','--resume-pin']);
+ const opts=new Map(),allowed=new Set(['--checkpoint-dir','--pause-after','--resume-checkpoint','--resume-pin','--format']);
  if(execute)for(let i=5;i<args.length;i+=2){if(!allowed.has(args[i])||opts.has(args[i])||!args[i+1]||args[i+1].startsWith('--'))fail('OPTIONS');opts.set(args[i],args[i+1]);}
  if(opts.has('--resume-checkpoint')!==opts.has('--resume-pin')||opts.has('--pause-after')&&!opts.has('--checkpoint-dir')||opts.has('--resume-checkpoint')&&!opts.has('--checkpoint-dir'))fail('OPTIONS');
+ if(opts.has('--format')&&!['json','markdown'].includes(opts.get('--format')))fail('OPTIONS');
  const pauseAfter=opts.has('--pause-after')?Number(opts.get('--pause-after')):Infinity;
  if(pauseAfter!==Infinity&&(!Number.isSafeInteger(pauseAfter)||pauseAfter<1||pauseAfter>200))fail('OPTIONS');
  const raw=await boundedText(process.stdin,16384),p=admitManifest(raw);
@@ -34,7 +36,7 @@ async function main(){
   const report=await runAutonomousResearch({authorization,providers,onCheckpoint,pauseAfterOperations:pauseAfter,readDocument:createDocumentReader({authorization}),onEvent:e=>process.stderr.write(JSON.stringify(e)+'\n')});
   if(checkpointDigest)process.stderr.write('Research checkpoint SHA-256: '+checkpointDigest+'\n');
   if(cancel.signal.aborted){process.exitCode=130;return;}
-  process.stdout.write(JSON.stringify({...report,...(checkpointDigest?{checkpointDigest}:{})},null,2)+'\n');
+  process.stdout.write(opts.get('--format')==='markdown'?formatMarkdownReport(report):JSON.stringify({...report,...(checkpointDigest?{checkpointDigest}:{})},null,2)+'\n');
  }finally{authorization.close();process.removeListener('SIGINT',abort);process.removeListener('SIGTERM',abort);}
 }
 main().catch(e=>{process.stderr.write(JSON.stringify({status:'REFUSED',reason:typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'RESEARCH_REFUSED'})+'\n');process.exitCode=1;});

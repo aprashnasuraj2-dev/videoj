@@ -8,8 +8,8 @@ import {SEARCH_BYTES} from './providers.js';
 import {verifyPassage,verifyEvidence,extractNumericObservations,compareNumericObservations,compareSourceLineage,createEvidenceGraph} from './evidence-index.js';
 export {verifyPassage} from './evidence-index.js';
 const fail=code=>{throw Object.assign(Error('Research supervisor refused: '+code),{code});};
-const stopWords=new Set('the and for from that this with what which are was were how why does into about have has their than can could would should between compare investigate analysis'.split(' '));
-const terms=s=>[...new Set((s.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu)??[]).filter(x=>!stopWords.has(x)))].slice(0,16);
+import {objectiveTerms as terms,createResearchPlan,chooseResearchQuery,questionProgress} from './research-planner.js';
+import {rankFrontier} from './source-ranker.js';
 const safeCode=e=>typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'OPERATION_FAILED';
 export function extractPassages(doc,objective){
  if(typeof doc.text!=='string'||doc.textDigest!==digest(doc.text))fail('DOCUMENT_DIGEST');
@@ -25,14 +25,9 @@ export function extractPassages(doc,objective){
  return out.sort((a,b)=>b.matched.length-a.matched.length||a.locator.startOffset-b.locator.startOffset).slice(0,8);
 }
 export function nextQuery(objective,history,docs,passages){
- if(!history.length)return {query:objective,role:'drone',reason:'initial discovery'};
- const covered=new Set(passages.flatMap(p=>p.matched)),missing=terms(objective).filter(w=>!covered.has(w));
- const hosts=new Set(docs.map(d=>new URL(d.url).hostname));
- const variants=[];
- if(history.length===1)variants.push({query:objective+' '+(missing.length?'primary evidence '+missing.slice(0,4).join(' '):' limitations contradictory evidence'),role:missing.length?'drone':'spark',reason:missing.length?'uncovered objective terms':'independent counterevidence pass'});
- if(hosts.size<2)variants.push({query:objective+' independent primary sources',role:'spark',reason:'insufficient domain diversity'});
- variants.push({query:objective+' counterarguments limitations',role:'spark',reason:'challenge first interpretation'},{query:objective+' official data methodology',role:'drone',reason:'seek primary data'},{query:objective+' systematic review evidence gaps',role:'spark',reason:'investigate unresolved questions'});
- return variants.find(v=>!history.some(h=>h.query===v.query))??null;
+ const covered=new Set(passages.flatMap(p=>p.matched)),missing=terms(objective).filter(w=>!covered.has(w)),domainCount=new Set(docs.map(d=>new URL(d.url).hostname)).size;
+ const v=verifyEvidence(docs,passages),potentialDiscrepancies=compareNumericObservations(extractNumericObservations(passages,v.refs)).length;
+ return chooseResearchQuery(objective,history,{missing,domainCount,potentialDiscrepancies});
 }
 function validateRestored(s,b){
  const ids=new Set(),urls=new Set(),digests=new Set();
@@ -51,7 +46,7 @@ function validateRestored(s,b){
 export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity}){
  assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
  if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
- const restored=prior?validateRestored(prior,b):null;claimResearchRun(a);
+ const restored=prior?validateRestored(prior,b):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
  const sessionId=prior?.sessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
  let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};
@@ -66,9 +61,9 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
   if(result.status!=='completed'){const e=error??'WAVE_'+result.status.toUpperCase();pending={...pending,state:error?'failed':'dispatch_unknown'};await checkpoint();if(!error||e==='BUDGET_EXHAUSTED')fail(e);failures.push({operation:kind,detail,reason:e});emit('operation.failed',{operation:kind,role,reason:e});return null;}
   emit('operation.completed',{operation:kind,role});return result.artifacts[0].value;
  }
- function enqueue(raw,depth,provider){
+ function enqueue(raw,depth,provider,meta={}){
   let url;try{url=admitDocumentURL(raw);}catch{return;}if(secretLike(url)||seen.has(url)||depth>b.maxLinkDepth||frontier.length>=240)return;
-  seen.add(url);frontier.push({url,depth,provider});
+  seen.add(url);frontier.push({url,depth,provider,title:typeof meta.title==='string'?meta.title.slice(0,300):'',rank:Number.isSafeInteger(meta.rank)&&meta.rank>=1&&meta.rank<=10?meta.rank:10});
  }
  try{
   emit(prior?'session.resume':'session.open',{planPin:a.planPin});await checkpoint();
@@ -78,21 +73,21 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
    if(phase==='search'){
     if(a.usage().documents>=b.maxDocuments&&queries.length>=2){reason='document_budget_exhausted';break;}
     if(a.usage().searches>=b.maxSearches){reason='search_budget_exhausted';break;}
+    if(queries.length>=3&&queries.some(q=>q.role==='spark')&&queries.slice(-2).every(q=>q.waveOutcome?.newDocuments===0&&q.waveOutcome?.newPassages===0)){reason='diminishing_returns_unverified';break;}
     const next=nextQuery(plan.objective,queries,documents,passages);if(!next)break;
     const provider=plan.providers[queries.length%plan.providers.length];
     if(secretLike(next.query))fail('SENSITIVE_QUERY');
     a.reserve('search',{bytes:SEARCH_BYTES,costMicros:provider.estimatedMaxCostMicros});
-    const query={...next,provider:provider.id};queries.push(query);
+    const query={...next,provider:provider.id,documentsBefore:documents.length,passagesBefore:passages.length};queries.push(query);
     const results=await operation('search',next.role,{query:next.query,provider:provider.id},()=>providers[provider.id].search(next.query,{signal:a.signal}));
     if(results!==null){
      if(!Array.isArray(results)||results.length>10)fail('SEARCH_RESULT');
-     for(const r of results)if(typeof r?.url==='string')enqueue(r.url,0,provider.id);
+     for(const r of results)if(typeof r?.url==='string')enqueue(r.url,0,provider.id,r);
     }
     phase='documents';slots=2;pending=null;operations++;await checkpoint();continue;
    }
-   if(slots===0||!frontier.length||a.usage().documents>=b.maxDocuments){phase='search';slots=0;continue;}
-   const score=x=>((domainAttempts.get(new URL(x.url).hostname)??0)*100)+x.depth*10;
-   frontier.sort((x,y)=>score(x)-score(y));const item=frontier.shift(),host=new URL(item.url).hostname;
+   if(slots===0||!frontier.length||a.usage().documents>=b.maxDocuments){const q=queries.at(-1);if(q&&Number.isSafeInteger(q.documentsBefore)&&Number.isSafeInteger(q.passagesBefore))q.waveOutcome={newDocuments:documents.length-q.documentsBefore,newPassages:passages.length-q.passagesBefore};phase='search';slots=0;await checkpoint();continue;}
+   const ranked=rankFrontier(frontier,plan.objective,domainAttempts);frontier.splice(0,frontier.length,...ranked);const item=frontier.shift(),host=new URL(item.url).hostname;
    const count=domainAttempts.get(host)??0;if(count>=3)continue;
    domainAttempts.set(host,count+1);slots--;
    const doc=await operation('document','drone',{url:item.url,depth:item.depth},async()=>{
@@ -119,6 +114,6 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  const covered=new Set(passages.flatMap(p=>p.matched)),all=terms(plan.objective);
  const verified=verifyEvidence(documents,passages),numericObservations=extractNumericObservations(passages,verified.refs),numericComparisons=compareNumericObservations(numericObservations),lineage=compareSourceLineage(documents),evidenceGraph=createEvidenceGraph(documents,verified.refs,numericObservations,numericComparisons,lineage);
  const evidenceIndex={...verified,numericObservations,numericComparisons,lineage,evidenceGraph,analysisKind:'deterministic_candidate_index'};
- const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,queries,documents,passages,evidenceIndex,failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
+ const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,researchPlan:{...researchPlan,questions:questionProgress(researchPlan,queries)},queries,documents,passages,evidenceIndex,failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
  emit(state==='paused'?'session.pause':'session.close',{reason});await checkpoint();return report;
 }

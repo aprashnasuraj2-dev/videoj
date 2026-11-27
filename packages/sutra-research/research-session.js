@@ -30,7 +30,7 @@ function admitResume(text,expected,p){
  const b=p.plan.budget,u=s.usage;
  if(!exact(u,['searches','documents','reservedBytes','reservedCostMicros'])||!bounded(u.searches,0,b.maxSearches)||!bounded(u.documents,0,b.maxDocuments)||!bounded(u.reservedBytes,0,b.maxDownloadBytes)||!bounded(u.reservedCostMicros,0,b.maxCostMicros)||!Array.isArray(s.queries)||s.queries.length!==u.searches||!Array.isArray(s.documents)||s.documents.length>u.documents||!Array.isArray(s.passages)||s.passages.length>s.documents.length*8||!Array.isArray(s.frontier)||s.frontier.length>240||!Array.isArray(s.seen)||s.seen.length>5000||!Array.isArray(s.domainAttempts)||s.domainAttempts.length>500||!Array.isArray(s.failures)||s.failures.length>500)fail('RESUME_STATE');
  let cost=0;for(const q of s.queries){const provider=p.plan.providers.find(x=>x.id===q?.provider);if(!provider||typeof q.query!=='string'||!q.query.startsWith(p.plan.objective)||q.query.length>1200||secretLike(q.query))fail('RESUME_STATE');cost+=provider.estimatedMaxCostMicros;}
- if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144)fail('RESUME_USAGE');
+ if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144+u.documents*(p.plan.scope.allowPdf===true?1048576:262144))fail('RESUME_USAGE');
  return s;
 }
 export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,signal,clock=()=>Date.now(),resumeText,resumePin}={}){
