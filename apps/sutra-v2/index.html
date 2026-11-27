@@ -134,6 +134,22 @@
  <input id="review-capsule-retained-pin" maxlength="71" autocomplete="off" spellcheck="false">
  <button id="review-capsule-open" type="button">Replay capsule</button>
  <p id="review-capsule-replay" role="status"></p>
+ <details id="review-private-panel">
+  <summary>Prove a comparison with every input hidden</summary>
+  <p>For supported linear calculations, the proof reveals the formula and verdict while keeping exact quantities local. The proof binds the publisher’s committed inputs. Source correspondence remains a publisher declaration.</p>
+  <button id="review-private-prepare" type="button" disabled>Build private calculation proof</button>
+  <button id="review-private-download" type="button" disabled>Download private proof</button>
+  <p id="review-private-pin" class="mono" aria-label="Private proof digest"></p>
+  <pre id="review-private-preview" aria-label="Private proof bytes"></pre>
+  <p id="review-private-status" role="status"></p>
+  <h4>Verify a received private proof</h4>
+  <label for="review-private-file">Private proof file</label>
+  <input id="review-private-file" type="file" accept=".json,application/json">
+  <label for="review-private-retained-pin">Separately retained private proof digest</label>
+  <input id="review-private-retained-pin" maxlength="71" autocomplete="off" spellcheck="false">
+  <button id="review-private-open" type="button">Verify private proof</button>
+  <p id="review-private-result" role="status"></p>
+ </details>
  <details id="review-source-witness-panel">
   <summary>Open one committed source span</summary>
   <p>A source witness reveals one exact numeric token, its byte coordinates and its document digest. It is paired with the exact calculation capsule.</p>

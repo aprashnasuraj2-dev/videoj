@@ -923,6 +923,33 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await rangeOnlyPage.locator('#review-capsule-open').click();
   await rangeOnlyPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('1 bounded quantities'));
   await rangeOnlyPage.close();
+
+  await reviewPage.locator('#review-private-panel > summary').click();
+  await reviewPage.locator('#review-private-prepare').click();
+  const privateDownload=reviewPage.waitForEvent('download');
+  await reviewPage.locator('#review-private-download').click();
+  const privateBytes=fs.readFileSync(await (await privateDownload).path());
+  const privatePin=await reviewPage.locator('#review-private-pin').innerText();
+  assert.ok(!privateBytes.includes('25/2')&&!privateBytes.includes('41/4')&&!privateBytes.includes('Site B'));
+  const verification=await browser.newPage();
+  await verification.goto(origin);
+  await verification.locator('#reviewed-workspace > summary').click();
+  await verification.locator('#review-capsule-panel > summary').click();
+  await verification.locator('#review-private-panel > summary').click();
+  await verification.locator('#review-private-file').setInputFiles({name:'private.json',mimeType:'application/json',buffer:privateBytes});
+  await verification.locator('#review-private-retained-pin').fill(privatePin);
+  await verification.locator('#review-private-open').click();
+  await verification.waitForFunction(()=>document.querySelector('#review-private-result').textContent.includes('proof verified for 2'));
+  const altered=JSON.parse(privateBytes);
+  altered.proof=(altered.proof[0]==='0'?'f':'0')+altered.proof.slice(1);
+  const alteredBytes=Buffer.from(JSON.stringify(altered));
+  await verification.locator('#review-private-file').setInputFiles({name:'tampered.json',mimeType:'application/json',buffer:alteredBytes});
+  await verification.locator('#review-private-retained-pin').fill('sha256:'+require('node:crypto').createHash('sha256').update(alteredBytes).digest('hex'));
+  await verification.locator('#review-private-open').click();
+  await verification.waitForFunction(()=>document.querySelector('#review-private-result').textContent.includes('proof refused'));
+  fs.writeFileSync(path.join(output,'private-calculation-proof.json'),privateBytes);
+  fs.writeFileSync(path.join(output,'private-calculation-proof.sha256'),privatePin+'\n');
+  await verification.close();
   await reviewPage.locator('#review-capsule-candidate').selectOption('proposal_2');
   assert.equal(await reviewPage.locator('#review-capsule-export').isDisabled(),true);
 

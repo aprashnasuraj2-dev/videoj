@@ -105,7 +105,7 @@ export function evaluateQuantityConeIntervals(nodes,targetId,intervals){
 // Exact extrema of the affine difference preserve shared-input cancellation.
 // A nonlinear subexpression is unsupported even if another branch would
 // multiply its result by zero, because it could be undefined in the domain.
-export function evaluateAffineQuantityCone(nodes,targetId,intervals){
+function affineQuantityDifference(nodes,targetId,intervals){
  const forms=new Map();
  const scale=(form,factor)=>({
   offset:mul(form.offset,factor),
@@ -144,7 +144,9 @@ export function evaluateAffineQuantityCone(nodes,targetId,intervals){
  }
  const target=byId.get(targetId),[left,right]=target.args.map(visit);
  if(!left||!right)return null;
- const {offset,terms}=combine(left,right,true);
+ return {op:target.op,form:combine(left,right,true)};
+}
+function affineBounds({offset,terms},intervals){
  let lo=offset,hi=offset;
  for(const [id,coefficient] of terms){
   const {lower,upper}=intervals.get(id);
@@ -152,7 +154,23 @@ export function evaluateAffineQuantityCone(nodes,targetId,intervals){
   if(cmp(a,b)<=0){lo=add(lo,a);hi=add(hi,b);}
   else{lo=add(lo,b);hi=add(hi,a);}
  }
- return compare(target.op,[lo,hi],[zero,zero],false);
+ return [lo,hi];
+}
+
+// Preserve every input as a variable; only value-independent arithmetic may
+// contribute a public coefficient or offset to a private proof.
+export function projectPrivateAffineStatement(nodes,targetId){
+ const ids=new Map(nodes.filter(node=>node.kind==='input').map(node=>[node.id,null]));
+ const difference=affineQuantityDifference(nodes,targetId,ids);
+ if(!difference)return null;
+ const {op,form}=difference;
+ return {operator:op,offset:text(form.offset),terms:nodes.filter(node=>form.terms.has(node.id))
+  .map(node=>({id:node.id,weight:text(form.terms.get(node.id))}))};
+}
+
+export function evaluateAffineQuantityCone(nodes,targetId,intervals){
+ const difference=affineQuantityDifference(nodes,targetId,intervals);
+ return difference?compare(difference.op,affineBounds(difference.form,intervals),[zero,zero],false):null;
 }
 
 export async function evaluateReviewedIntervals(versionText,versionPin,planText,planPin){

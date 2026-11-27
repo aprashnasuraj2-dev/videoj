@@ -78,6 +78,8 @@ jobs:
           /tmp/sutra-support-tests
           rustc --edition=2021 -O --test packages/sutra-knowledge/support-lattice/wasm.rs -o /tmp/sutra-support-abi-tests
           /tmp/sutra-support-abi-tests
+      - name: Verify native private comparison proof
+        run: cargo test --release --locked --manifest-path packages/sutra-knowledge/private-affine/Cargo.toml
       - name: Run matched semantic execution-signature development pilot
         run: node packages/sutra-knowledge/evaluation/semantic-signature-pilot.mjs
       - name: Independently compare two-group conditional arithmetic
@@ -232,6 +234,7 @@ jobs:
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
+          node --test apps/sutra-v2/test/private-proof.test.cjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
       - name: Check guided route against actual replayed investigation states

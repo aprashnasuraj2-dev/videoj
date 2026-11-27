@@ -26,6 +26,7 @@ jobs:
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
+          node --test apps/sutra-v2/test/private-proof.test.cjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs

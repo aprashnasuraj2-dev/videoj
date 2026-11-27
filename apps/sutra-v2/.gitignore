@@ -2,3 +2,5 @@ dist/
 test-output/
 public/support-lattice.wasm
 src/generated-support-pin.js
+public/private-affine.wasm
+src/generated-private-pin.js
