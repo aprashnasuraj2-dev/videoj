@@ -32,7 +32,7 @@ function nav(next){view=next;for(const b of shell.querySelectorAll('[data-sm-vie
 function initialize(){
  shell=make('section',undefined,'sm-shell');shell.id='sutra-master';shell.setAttribute('aria-labelledby','sm-title');
  shell.innerHTML='<div class="sm-top"><div><p class="sm-kicker">SUTRA / INVESTIGATION SYSTEM</p><h1 id="sm-title">Investigate what survives.</h1><p>Trace a conclusion to its evidence. Challenge its assumptions. Preserve what changes.</p></div><span class="sm-local">Local computation · explicit disclosure</span></div><nav class="sm-nav" aria-label="Investigation views"></nav><div class="sm-grid"><aside class="sm-rail" aria-label="Investigation outline"><h2>Investigation</h2><div id="sm-outline"></div><div id="sm-rail-actions"></div></aside><div class="sm-main"><div id="sm-question"></div><div id="sm-work" aria-label="Selected investigation view"></div></div><aside class="sm-inspector" aria-labelledby="sm-inspect-title"><h2 id="sm-inspect-title">Inspector</h2><div id="sm-inspect"></div></aside></div><p id="sm-status" class="sm-status" role="status" aria-live="polite"></p>';
- const main=document.querySelector('main');main.prepend(shell);
+ const main=document.querySelector('main');main.prepend(shell); const legacyTitle=main.querySelector('.intro h1');if(legacyTitle){const heading=make('h2',legacyTitle.textContent);legacyTitle.replaceWith(heading);}
  const workspace=el('reviewed-workspace');shell.after(workspace);
  const legacy=make('h2','Worked laboratories & advanced tools','sm-lab-heading');workspace.after(legacy);
  for(const [id,label] of [['investigation','Investigation'],['evidence','Evidence'],['challenge','Challenge'],['history','History'],['verify','Verify']]){
@@ -76,7 +76,7 @@ function inspect(){
  const direct=g.edges.filter(e=>e.dependent===n.id||e.dependency===n.id);
  box.append(make('h4','Direct relationships'));
  if(!direct.length)box.append(make('p','No recorded direct relationship.'));
- for(const e of direct){const other=e.dependent===n.id?e.dependency:e.dependent;const item=button((e.dependent===n.id?'Depends on ':'Affects ')+shortId(other),()=>{highlight(other);},'sm-edge');box.append(item,make('small',human(e.relation)+' · '+human(e.authority),'sm-note'));}
+ for(const e of direct){const other=e.dependent===n.id?e.dependency:e.dependent;const item=button((e.dependent===n.id?'Depends on ':'Affects ')+shortId(other),()=>{highlight(other);const match=Array.from(shell.querySelectorAll('[data-sm-node]')).find(b=>b.dataset.smNode===other);if(match)match.focus({preventScroll:true});else{const heading=el('sm-inspect-title');heading.tabIndex=-1;heading.focus({preventScroll:true});}},'sm-edge');box.append(item,make('small',human(e.relation)+' · '+human(e.authority),'sm-note'));}
  box.append(make('p',g.qualification,'sm-note'),button('Clear selection',()=>highlight(null)));
 }
 function graphView(box){
@@ -98,7 +98,10 @@ function result(box){
  if(!i)card.append(make('p',s.baseline?'A baseline is retained, but the editable draft has no evaluated current version. Do not use the historical conclusion as current.':'Review source quantities and evaluate competing interpretations to establish a conditional result.'));
  else{for(const c of i.candidates){const row=make('div',undefined,'sm-candidate');row.append(make('strong',c.meaning),make('span',human(c.computation?.status??c.reason??'REFUSED')),make('small','Proposed meaning · '+human(c.questionCoverage)));card.append(row);}
  card.append(make('p',i.qualification,'sm-note'));}
- box.append(card);actions(box,'meanings','evaluate');
+ box.append(card);
+ const controls=make('div',undefined,'sm-actions');const next=button('Continue: '+el('review-studio-next').textContent,()=>run('review-studio-next'));next.disabled=s.busy;controls.append(next);
+ const evaluate=button('Evaluate current candidates',()=>run('review-semantic-run'),'sm-primary');evaluate.disabled=el('review-semantic-run').disabled;controls.append(evaluate);box.append(controls);
+ actions(box,'meanings','evaluate');
 }
 function challenge(box){
  box.append(make('h2','What would change this conclusion?'),make('p','Each action opens the existing controlled operation. Hypothetical results do not change admitted evidence; revisions require explicit confirmation.'));
@@ -123,9 +126,9 @@ function verify(box){
 }
 function render(force=false){
  if(!latest)return;const s=latest;
- const key=JSON.stringify([view,s.question,s.sources,s.bindings,s.proposalCount,s.busy,s.current?.digest,s.baseline?.digest,s.history?.digest,s.status,s.next,el('review-impact-result').textContent]);
+ const key=JSON.stringify([view,s.question,s.sources,s.bindings,s.proposalCount,s.busy,s.current?.digest,s.baseline?.digest,s.history?.digest,s.status,s.next,el('review-semantic-run').disabled,el('review-impact-result').textContent]);
  if(!force&&key===lastKey)return;lastKey=key;
- const active=document.activeElement,activeNode=active?.dataset.smNode;
+ const active=document.activeElement,activeNode=active?.dataset.smNode,activeText=shell.contains(active)&&active?.tagName==='BUTTON'?active.textContent:null;
  const q=el('sm-question');q.replaceChildren(make('p','INVESTIGATION QUESTION','sm-kicker'),make('h2',s.question||'What are you trying to determine?'),action('question'));
  const outline=el('sm-outline');outline.replaceChildren();for(const [name,count] of [['Evidence',s.sources.length],['Reviewed quantities',s.bindings.length],['Candidate proposals',s.proposalCount]]){const r=make('div',undefined,'sm-count');r.append(make('span',name),make('strong',String(count)));outline.append(r);}
  outline.append(make('p',s.baseline?'Baseline retained':'No baseline retained','sm-note'));
@@ -137,6 +140,6 @@ function render(force=false){
  else verify(work);
  if(view!=='evidence'&&view!=='investigation')inspect();
  el('sm-status').textContent=s.status||'No operation performed.';
- if(activeNode){const b=Array.from(shell.querySelectorAll('[data-sm-node]')).find(x=>x.dataset.smNode===activeNode);b?.focus({preventScroll:true});}
+ if(activeNode){const b=Array.from(shell.querySelectorAll('[data-sm-node]')).find(x=>x.dataset.smNode===activeNode);b?.focus({preventScroll:true});}else if(activeText&&!active.isConnected){const b=Array.from(shell.querySelectorAll('button:not(:disabled)')).find(x=>x.textContent===activeText);if(b)b.focus({preventScroll:true});else{const navButton=shell.querySelector('[data-sm-view][aria-pressed=true]');navButton?.focus({preventScroll:true});}}
 }
 export function updateMaster(state){latest=state;if(!shell)initialize();render();}

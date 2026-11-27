@@ -10,7 +10,7 @@ async function testMaster(browser,origin,assert){
  await page.locator('#sutra-master').getByRole('button',{name:'Evaluate meanings',exact:true}).click();
  assert.equal(await page.locator('#reviewed-workspace').getAttribute('open'),'');
  await page.locator('#review-semantic-run').click();
- await page.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='semantic_ready');
+ await page.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='semantic_ready'&&!document.querySelector('#review-reset').disabled);
  await page.locator('#sutra-master').getByRole('button',{name:'Evidence',exact:true}).click();
  const source=page.locator('[data-sm-node^="source:"]:not([data-sm-node="source:question"])').first();await source.focus();await page.keyboard.press('Enter');
  assert.equal(await source.getAttribute('aria-pressed'),'true');
@@ -27,6 +27,7 @@ async function testMaster(browser,origin,assert){
  await page.locator('#review-question').fill('Changed question; old result must not be current.');
  await page.locator('#sutra-master').getByRole('button',{name:'Investigation',exact:true}).click();
  assert.match(await page.locator('.sm-result').innerText(),/Not evaluated/);
+ assert.equal(await page.locator('h1').count(),1);
  for(const width of [320,768,1440]){await page.setViewportSize({width,height:900});assert.ok(await page.locator('#sutra-master').evaluate(n=>n.scrollWidth<=n.clientWidth+2));}
  assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  }finally{await page.close();}
