@@ -1,3 +1,4 @@
+import {createBrowserRunReceipt} from './browser-run-receipt.js';
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {admitReviewedAnswer} from '../../../packages/sutra-runtime/reviewed-answer.js';
 import {prepareWorkspaceEvidence} from '../../../packages/sutra-runtime/workspace-evidence.js';
@@ -43,6 +44,7 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   if(peerUrl){const origin=new URL(peerUrl).origin;if(!['checklist','source_select'].every(agent=>result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent===agent&&e.origin===origin&&e.status==='ok')))fail('BROWSER_PEER_DELEGATION_MISSING');}
   else if(!result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent==='critic'&&e.status==='ok'))fail('BROWSER_DELEGATION_MISSING');
   const reviewed=evidence?admitReviewedAnswer(result.text,evidence):null;
-  return Object.freeze({text:reviewed?.text??result.text,...(reviewed?{claims:reviewed.claims}:{}),modelCalls:result.modelCalls,agentCalls:result.agentCalls,graphPin,qualification:peerUrl?'Candidate peer critique; peer graph executed in this browser using caller router; no verified external evidence.':evidence?'Candidate interpretation of one approved span; no empirical verification or new evidence acquisition.':'Candidate investigation plan only; no external evidence acquired or verified.'});
+  const receipt=createBrowserRunReceipt({preview,result,consentEvents:inspector?.exportEvents()??[]});
+  return Object.freeze({receipt,text:reviewed?.text??result.text,...(reviewed?{claims:reviewed.claims}:{}),modelCalls:result.modelCalls,agentCalls:result.agentCalls,graphPin,qualification:peerUrl?'Candidate peer critique; peer graph executed in this browser using caller router; no verified external evidence.':evidence?'Candidate interpretation of one approved span; no empirical verification or new evidence acquisition.':'Candidate investigation plan only; no external evidence acquired or verified.'});
  }});
 }
