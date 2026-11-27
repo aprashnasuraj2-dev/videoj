@@ -1,8 +1,8 @@
 // Built app, real Chromium, local loopback HTTP. Not deployment or physical device evidence.
 const {createRequire}=require('node:module');
 const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),assert=require('node:assert/strict');
-const requireLegacy=createRequire(path.resolve(__dirname,'../../sutra/package.json'));
-const {chromium}=requireLegacy('playwright');
+const requireToolchain=createRequire(path.resolve(__dirname,'../package.json'));
+const {chromium}=requireToolchain('playwright');
 const dist=path.resolve(__dirname,'../dist');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
 (async()=>{
@@ -316,26 +316,9 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.getByRole('button',{name:'Remove decisive observations'}).click();
   await page.waitForFunction(()=>document.querySelector('#frontier-status').dataset.state==='insufficient_observations');
   assert.match(await page.locator('#frontier-status').innerText(),/high_heavy from high_light/);
-  await page.getByLabel('Your prediction').selectOption('not_before');
-  await page.getByRole('button',{name:'Plan investigation'}).click();
-  await page.waitForFunction(()=>document.querySelector('#learn-status').dataset.state==='planned');
-  assert.equal(await page.locator('#learn-worlds article').count(),2);
-  await page.getByRole('button',{name:'Read decisive cue'}).click();
-  await page.waitForFunction(()=>document.querySelector('#learn-status').dataset.state==='catalog_question_resolved');
-  assert.match(await page.locator('#learn-status').innerText(),/prediction revised/);
-  assert.equal(await page.locator('#learn-worlds article').count(),1);
-  assert.match(await page.locator('#learn-evidence').innerText(),/2–4 s/);
-  await page.getByRole('button',{name:'Inspect source video at cue'}).click();
-  await page.waitForFunction(()=>document.querySelector('#learn-media-status').dataset.state==='cue_reached',{},{timeout:20000});
-  assert.ok(await page.locator('#learn-video').evaluate(v=>v.currentSrc.startsWith('blob:')&&v.currentTime>=2&&v.currentTime<4));
-  const learnerDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Export learning evidence'}).click();
-  const ld=await learnerDownload;const learning=JSON.parse(fs.readFileSync(await ld.path(),'utf8'));
-  assert.equal(learning.result.evidence.level,'catalog_matched');assert.equal(learning.result.truthStatus,'unverified');
-  assert.equal(learning.result.feedback,'prediction_revised');
+  assert.equal(await page.locator('video, #learn-title, #learn-plan').count(),0);
   const output=path.resolve(__dirname,'../test-output');fs.mkdirSync(output,{recursive:true});
   await page.screenshot({path:path.join(output,'investigation.png'),fullPage:true});
-  await page.getByLabel('Your prediction').selectOption('before');assert.equal(await page.locator('#learn-export').isDisabled(),true);
-  assert.equal(await page.locator('#learn-video').isHidden(),true);
   const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download graph + report'}).click();
   const download=await downloadPromise;assert.equal(download.suggestedFilename(),'sutra-proof.json');const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
   assert.equal(JSON.parse(exported.reportText).graphDigest,await page.locator('#identity').innerText());
@@ -1674,7 +1657,6 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   console.log('PASS: consent-denied zero traffic, actual two-origin data-only scripted adviser, cheaper local policy 6→2, redundant and forged peers, exact standardized reversal, transfer, actual export.');
   await page.screenshot({path:path.join(output,'workspace.png'),fullPage:true});
   fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(exported,null,2));
-  fs.writeFileSync(path.join(output,'learning-evidence.json'),JSON.stringify(learning,null,2));
-  console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests; frontier policy and impossibility witness, source-bound learning revision, hash-checked native video seek, export and reset.');
+  console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests; frontier policy and impossibility witness; no retired media interface.');
  }finally{await browser?.close();for(const dir of cleanupDirs)fs.rmSync(dir,{recursive:true,force:true});await Promise.all([new Promise(resolve=>server.close(resolve)),new Promise(resolve=>peer.close(resolve))]);}
 })().catch(e=>{console.error(e);process.exitCode=1;});

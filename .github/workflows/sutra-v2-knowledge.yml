@@ -222,10 +222,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: apps/sutra/package-lock.json
+          cache-dependency-path: apps/sutra-v2/package-lock.json
       - name: Preflight browser journey syntax before dependencies and build
         run: node --check apps/sutra-v2/test/browser.cjs
-      - run: npm ci --prefix apps/sutra
+      - run: npm ci --prefix apps/sutra-v2
       - name: Build isolated Rust WebAssembly support engine and canonical SUTRA v2 browser artifact
         run: |
           rustc --version
@@ -233,16 +233,12 @@ jobs:
           node apps/sutra-v2/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
-      - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
       - name: Check guided route against actual replayed investigation states
         run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - run: node apps/sutra-v2/test/browser.cjs
       - name: Execute integrated keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
-      - name: Independently replay actual learner browser export and challenge tampering
-        run: |
-          python3 packages/sutra-knowledge/reference/verify_learner.py apps/sutra-v2/test-output/learning-evidence.json apps/sutra/public > apps/sutra-v2/test-output/learning-reference.txt
-          cat apps/sutra-v2/test-output/learning-reference.txt
       - name: Independently replay subgroup investigation and withdrawal
         run: |
           python3 packages/sutra-knowledge/reference/verify_quiz.py apps/sutra-v2/test-output/quiz-evidence.json apps/sutra-v2/test-output/quiz-withdrawal.json > apps/sutra-v2/test-output/quiz-reference.txt

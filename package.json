@@ -4,13 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "setup:learner": "npm ci --prefix apps/sutra",
     "test:knowledge": "node --test packages/sutra-knowledge/test/*.test.mjs",
-    "test:legacy": "npm test --prefix apps/sutra",
-    "build:learner": "npm run build --prefix apps/sutra",
     "build:investigation": "node apps/sutra-v2/build.mjs",
     "test:investigation-browser": "node apps/sutra-v2/test/browser.cjs",
-    "benchmark:pilot": "node packages/sutra-knowledge/evaluation/living-pilot.mjs"
+    "benchmark:pilot": "node packages/sutra-knowledge/evaluation/living-pilot.mjs",
+    "setup:investigation": "npm ci --prefix apps/sutra-v2"
   },
   "engines": {
     "node": ">=22.12"

@@ -1,5 +1,5 @@
 const {createRequire}=require('node:module'),path=require('node:path'),fs=require('node:fs'),http=require('node:http'),assert=require('node:assert/strict');
-const requireLegacy=createRequire(path.resolve(__dirname,'../../sutra/package.json')), {chromium}=requireLegacy('playwright'),dist=path.resolve(__dirname,'../dist');let browser,server;
+const requireToolchain=createRequire(path.resolve(__dirname,'../package.json')), {chromium}=requireToolchain('playwright'),dist=path.resolve(__dirname,'../dist');let browser,server;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
 (async()=>{
  server=http.createServer((req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,file=pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+decodeURIComponent(pathname));if(!file.startsWith(dist+path.sep)||!fs.statSync(file).isFile()||!mime[path.extname(file)])throw Error();res.writeHead(200,{'content-type':mime[path.extname(file)],'cache-control':'no-store'});res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end();}});
