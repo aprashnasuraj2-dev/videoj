@@ -195,3 +195,35 @@ test('contradictory completion metadata and extra call fields are refused before
   assert.equal(calls,1);
  }
 });
+
+test('run-wide tool budget refuses the second invocation without treating repeated valid calls as a cycle',async()=>{
+ const g=copy(),base=createScriptedModel();let calls=0,children=0;
+ const model={...base,async chat(args){
+  calls++;
+  if(!args.tools.length){children++;return {content:'Child answer',toolCalls:[]};}
+  if(args.messages.filter(m=>m.role==='tool').length<2)return {content:'',toolCalls:[{id:'repeated-'+calls,type:'function',function:{name:'evidence',arguments:'{"request":"Inspect"}'}}]};
+  return {content:'Both legitimate invocations finished',toolCalls:[]};
+ }};
+ await assert.rejects(run({definition:g,model,limits:{maxToolCalls:1}}),e=>e.code==='TOOL_LIMIT');
+ assert.equal(children,1);assert.equal(calls,3);
+ calls=0;children=0;
+ const result=await run({definition:g,model,limits:{maxToolCalls:2}});
+ assert.equal(result.modelCalls,5);assert.equal(children,2);
+});
+test('bounded context applies before any model dispatch, including graph instructions',async()=>{
+ const g=copy();g.tools[0].instructions='x'.repeat(2000);let calls=0;
+ await assert.rejects(run({definition:g,limits:{maxContextBytes:1024},model:{mode:'scripted-test',chat(){calls++;}}}),e=>e.code==='CONTEXT_LIMIT');
+ assert.equal(calls,0);
+});
+test('peer graph must fit remaining combined depth; impossible depth contacts no peer',async()=>{
+ const {createConsentInspector}=await import('../../sutra-consent/index.js');
+ const g=copy();g.tools[0].tools=['https://peer.example/agents/transit'];g.tools=g.tools.slice(0,1);
+ const contacts=[],modelCalls=[];const base=createScriptedModel();
+ const model={...base,async chat(args){modelCalls.push(args.origin);return base.chat(args);}};
+ const inspector=createConsentInspector({decide:()=>({decision:'allow',scope:'once'})});
+ const fetchImpl=async url=>{contacts.push(url);return Response.json(url.endsWith('agent-manifest.json')?{networks:[{name:'transit',front_man:'learner',hocon:'./graph.json'}]}:copy());};
+ const options={definition:g,model,peerRuntime:{inspector,fetchImpl}};
+ await assert.rejects(run({...options,limits:{maxDepth:1}}),e=>e.code==='DEPTH');assert.equal(contacts.length,0);assert.deepEqual(modelCalls,['sutra-local']);
+ modelCalls.length=0;await assert.rejects(run({...options,limits:{maxDepth:2}}),e=>e.code==='PEER_DEPTH');assert.equal(contacts.length,2);assert.deepEqual(modelCalls,['sutra-local']);
+ modelCalls.length=0;contacts.length=0;const ok=await run({...options,limits:{maxDepth:3}});assert.equal(ok.agentCalls,3);assert.equal(contacts.length,2);
+});
