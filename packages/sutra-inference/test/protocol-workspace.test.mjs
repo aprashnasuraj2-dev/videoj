@@ -69,6 +69,30 @@ test('native Ollama chat has a finite generation limit and refuses nonterminal, 
  }
 });
 
+
+test('one generic capability contract spans OpenAI-compatible, local Ollama and a future custom adapter without discovery contact',async()=>{
+ const future={id:'future-wire',encode:({model,operation,maxOutputTokens})=>JSON.stringify({model,payload:operation,limit:maxOutputTokens}),decode:r=>({text:r.text,outputTokens:r.tokens})};
+ const conns=[
+  {id:'hosted-open',label:'Hosted compatible',protocol:'openai-compatible-json',endpoint:'https://hosted.example.com/v1/chat/completions',transportClass:'hosted',models:['hosted/model'],capabilities:{'hosted/model':['text.generate','structured.output']}},
+  {id:'local-ollama',label:'Local BYOM',protocol:'ollama-chat-json',endpoint:'http://127.0.0.1:11434/api/chat',transportClass:'local',models:['local/model'],capabilities:{'local/model':['text.generate']}},
+  {id:'future-adapter',label:'Future adapter',protocol:'future-wire',endpoint:'https://future.example.com/infer',transportClass:'hosted',models:['future/model'],capabilities:{'future/model':['text.generate']}}
+ ];
+ let seed=40,contacts=0;
+ const w=createProtocolWorkspace({connections:conns,adapters:[future],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async x=>{contacts++;throw Error('negotiation must not contact '+x.connectionId);}});
+ const profiles=[
+  w.addProfile({providerId:'hosted-open',label:'Hosted',credential:'HOSTED_CAPABILITY_SECRET_123'}),
+  w.addProfile({providerId:'local-ollama',label:'Local',credential:'LOCAL_CAPABILITY_SECRET_456'}),
+  w.addProfile({providerId:'future-adapter',label:'Future',credential:'FUTURE_CAPABILITY_SECRET_789'})
+ ];
+ for(let i=0;i<profiles.length;i++){
+  const model=conns[i].models[0],n=w.negotiateCapabilities({handle:profiles[i].handle,model,required:['text.generate']});
+  assert.equal(n.model,model);assert.equal(n.authority,'HOST_DECLARED_UNVERIFIED');assert.ok(n.declared.includes('text.generate'));
+ }
+ assert.throws(()=>w.negotiateCapabilities({handle:profiles[1].handle,model:'local/model',required:['structured.output']}),e=>e.code==='CAPABILITY_MISSING');
+ assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+ assert.ok(w.connections.every(x=>!('endpoint' in x)));assert.equal(JSON.stringify(w.connections).includes('SECRET'),false);
+});
+
 test('prepared wire is single-use, exact-sized and fenced without spending capacity at preflight',async()=>{
  let encoded=0,contacted=0,actual=0;const w=setup(async x=>{contacted++;actual=new TextEncoder().encode(x.bodyText).length;return {status:200,bodyText:JSON.stringify({answer:'ok',tokens:1})};},{adapters:[{...adapter,encode:x=>{encoded++;return adapter.encode(x)}}]});
  const p=profile(w,2,C),input={handle:p.handle,model:'my-local',inputBytes:1,maxOutputTokens:32,operation:{kind:'chat',request:'hello'}};

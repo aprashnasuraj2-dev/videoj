@@ -15,10 +15,16 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
  assertPublication();
  const ids=new Set(),profiles=workspace.list();
  const team=routes.map(r=>{
-  if(!councilClosed(r,['id','role','handle','model','shareScope'])||typeof r.id!=='string'||!ID.test(r.id)||ids.has(r.id)||!councilText(r.role,200)||typeof r.model!=='string'||r.shareScope!==shareScope)councilFail('ROUTE');
+  const routeKeys=r!==null&&typeof r==='object'&&Object.hasOwn(r,'requires')?['id','role','handle','model','shareScope','requires']:['id','role','handle','model','shareScope'];
+  if(!councilClosed(r,routeKeys)||typeof r.id!=='string'||!ID.test(r.id)||ids.has(r.id)||!councilText(r.role,200)||typeof r.model!=='string'||r.shareScope!==shareScope)councilFail('ROUTE');
   const profile=profiles.find(p=>p.profileId===r.handle?.profileId);
   if(!profile||!profile.models.includes(r.model))councilFail('ROUTE');
-  ids.add(r.id);return Object.freeze({id:r.id,role:r.role,handle:r.handle,model:r.model,providerId:profile.providerId,profileId:profile.profileId});
+  let capability=null;
+  if(Object.hasOwn(r,'requires')){
+   if(typeof workspace.negotiateCapabilities!=='function')councilFail('ROUTE');
+   try{capability=workspace.negotiateCapabilities({handle:r.handle,model:r.model,required:r.requires});}catch{councilFail('ROUTE');}
+  }
+  ids.add(r.id);return Object.freeze({id:r.id,role:r.role,handle:r.handle,model:r.model,providerId:profile.providerId,profileId:profile.profileId,...(capability?{requires:capability.required,declaredCapabilities:capability.declared,capabilityAuthority:capability.authority}:{})});
  });
  return Object.freeze({assertPublication,team:Object.freeze(team),execute:workspace.execute.bind(workspace),admitOperation:workspace.admitOperation.bind(workspace),capacity:typeof workspace.dispatchCapacity==='function'?workspace.dispatchCapacity.bind(workspace):null,maxRounds,maxOutputTokens,timeoutMs,signal});
 }
