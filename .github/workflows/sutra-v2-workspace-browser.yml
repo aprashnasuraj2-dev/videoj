@@ -32,6 +32,28 @@ jobs:
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - name: Independently replay actual browser downloads in isolated Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=apps/sutra-v2/test-output
+          python3 -I -S --version
+          python3 packages/sutra-knowledge/reference/test_offline_verifier.py "$out/sutra-proof-verifier.pyz" "$out/sutra-proof-verifier.pyz.sha256" "$out/capsule-current.json" "$out/capsule-current.sha256" "$out/capsule-old.json" "$out/capsule-old.sha256" | tee "$out/offline-replay.log"
+          git rev-parse HEAD > "$out/offline-replay-revision.txt"
+      - name: Preserve browser-download independent replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-browser-offline-replay
+          path: |
+            apps/sutra-v2/test-output/sutra-proof-verifier.pyz
+            apps/sutra-v2/test-output/sutra-proof-verifier.pyz.sha256
+            apps/sutra-v2/test-output/capsule-current.json
+            apps/sutra-v2/test-output/capsule-current.sha256
+            apps/sutra-v2/test-output/capsule-old.json
+            apps/sutra-v2/test-output/capsule-old.sha256
+            apps/sutra-v2/test-output/offline-replay*
+          if-no-files-found: error
+          retention-days: 30
       - name: Execute objective-first shared-model research bridge fixture
         run: node apps/sutra-v2/test/autonomous-workspace.cjs
       - name: Consume canonical V2 build from independent browser origin
@@ -54,4 +76,4 @@ jobs:
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
       - name: Scope boundary
-        run: echo 'Actual child browser execution only; full independent artifact replay and integration formal gates remain required.'
+        run: echo 'Actual browser and isolated independent fixed-capsule replay; broader integration formal gates remain required.'
