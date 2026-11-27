@@ -47,12 +47,18 @@ Read the exact preview, including the public-query disclosure scope. Supply prov
 node apps/sutra-v2/autonomous-research.mjs --execute-research --approve-public-contact --approve-estimated-cost --approve-plan "$PLAN_PIN" --checkpoint-dir ./new-private-research-session < research.json > report.json
 ```
 
-The checkpoint directory must not already exist. The option is not required for execution; without it no durable snapshots are written. Checkpoints contain objective, queries and collected public text; treat them as private local data. A retained digest is an integrity anchor, not authentication. No automatic resume is provided. A pending dispatch must be reconciled before any future resumption protocol. Events go to stderr and report JSON to stdout.
+The checkpoint directory must not already exist. The option is not required for execution; without it no durable snapshots are written. Checkpoints contain objective, queries and collected public text; treat them as private local data. A retained digest is an integrity anchor, not authentication. An explicit pause is supported with --pause-after N (completed operation boundaries) plus --checkpoint-dir. Retain the reported checkpoint digest. Only a quiescent paused checkpoint is eligible for fresh approval; a running, closed or pending-dispatch checkpoint is rejected. The original absolute deadline and all reservations are preserved. Time spent paused counts against the deadline. Resume into a NEW checkpoint directory:
+
+```sh
+node apps/sutra-v2/autonomous-research.mjs --execute-research --approve-public-contact --approve-estimated-cost --approve-plan "$PLAN_PIN" --resume-checkpoint ./new-private-research-session/checkpoint.json --resume-pin "$CHECKPOINT_PIN" --checkpoint-dir ./continued-private-session < research.json > resumed-report.json
+```
+
+No automatic replay or crash recovery is provided for unknown remote dispatches. Events go to stderr and report JSON to stdout.
 
 ## Guarantees and limits
 
 - Only objective-derived queries; no remote content is promoted into tool instructions or sent to a model. Search credentials only go to fixed provider endpoints. Public document requests are unauthenticated.
 - DNS all-answer checks and direct pinned TLS peer verification. Redirects, query-bearing document URLs, non-HTTPS, IP literals, compression and unsupported media are refused. A robots policy is fetched and evaluated conservatively; access/terms still require operator review. No browser sandbox or independent egress firewall has been deployed.
 - Serial waves use the existing bounded task DAG. Exact extracted-text passage locators and digests are checked. Source matching, domain diversity and lexical coverage are not independent corroboration or factual correctness.
-- HTML extraction is deliberately limited, not a general main-content parser. PDF, JavaScript rendering, multi-agent hosted reasoning, formal contradiction analysis, report synthesis, production gateway, authenticated tenancy and safe external-operation resume are not implemented.
+- HTML extraction is deliberately limited, not a general main-content parser. PDF, JavaScript rendering, multi-agent hosted reasoning, formal contradiction analysis, report synthesis, production gateway, authenticated tenancy and crash reconciliation for unknown external dispatches are not implemented.
 - Unit tests use injected providers/transport and do not establish live provider success. The research-specific workflow runs npm test --prefix packages/sutra-research.

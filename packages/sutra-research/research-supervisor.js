@@ -2,7 +2,7 @@
 // Search results are discovery only; extracted passages are candidates, not truth.
 import {randomUUID} from 'node:crypto';
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
-import {digest,secretLike,assertResearchAuthorization,researchResumeState} from './research-session.js';
+import {digest,secretLike,assertResearchAuthorization,researchResumeState,claimResearchRun} from './research-session.js';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {SEARCH_BYTES} from './providers.js';
 const fail=code=>{throw Object.assign(Error('Research supervisor refused: '+code),{code});};
@@ -50,7 +50,7 @@ function validateRestored(s,b){
 export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity}){
  assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
  if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
- const restored=prior?validateRestored(prior,b):null;
+ const restored=prior?validateRestored(prior,b):null;claimResearchRun(a);
  const sessionId=prior?.sessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
  let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};

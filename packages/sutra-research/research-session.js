@@ -4,7 +4,8 @@ const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});}
 export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const bounded=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
-const grants=new WeakSet(),restored=new WeakMap();
+const grants=new WeakSet(),restored=new WeakMap(),claimed=new WeakSet();
+export function claimResearchRun(a){assertResearchAuthorization(a);if(claimed.has(a))fail('CONSUMED');claimed.add(a);}
 export function researchResumeState(a){assertResearchAuthorization(a);return restored.has(a)?structuredClone(restored.get(a)):null;}
 export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHORIZATION');a.assertActive();}
 export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
