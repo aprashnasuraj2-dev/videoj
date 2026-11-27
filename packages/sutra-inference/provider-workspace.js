@@ -44,8 +44,10 @@ function normalizeCapabilityCatalog(catalog){
   if(keys.includes('capabilities')){
    const raw=descriptors.capabilities.value;
    if(!plain(raw))stop('CAPABILITY');
-   const d=Object.getOwnPropertyDescriptors(raw),names=Reflect.ownKeys(raw);
-   if(names.length>models.length||names.some(k=>typeof k!=='string'||!d[k]?.enumerable||!Object.hasOwn(d[k],'value'))||Object.values(d).some(x=>typeof x.get==='function'||typeof x.set==='function')||!Array.isArray(models)||names.some(model=>!models.includes(model)))stop('CAPABILITY');
+   const names=Reflect.ownKeys(raw);
+   if(names.length>models.length)stop('CAPABILITY');
+   const d=Object.getOwnPropertyDescriptors(raw);
+   if(names.some(k=>typeof k!=='string'||!d[k]?.enumerable||!Object.hasOwn(d[k],'value'))||Object.values(d).some(x=>typeof x.get==='function'||typeof x.set==='function')||!Array.isArray(models)||names.some(model=>!models.includes(model)))stop('CAPABILITY');
    for(const model of names)declared[model]=capabilityList(d[model].value,{allowEmpty:true});
   }
   return Object.freeze({vault:Object.freeze({id,label,models}),declared:Object.freeze(declared)});
