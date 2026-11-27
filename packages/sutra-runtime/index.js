@@ -147,6 +147,10 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowWorkspaceEvidence:!!evidence,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
+ const assertPublicText=text=>{try{privatePolicy.assertOrdinaryText(text);}catch(error){fail(error.code??'PRIVATE_CONTEXT_RETURN','Ordinary request or result contains protected private context.');}};
+ // Host grants only flow through the explicit structured channel, not through
+ // user/model-generated ordinary text, executable metadata or tool arguments.
+ assertPublicText(request);assertPublicText(JSON.stringify(compiled.network.config));
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  // The caller, not an untrusted graph (including a fetched peer), owns
@@ -211,6 +215,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // them. This catches accessors, shared expansion and sparse tool arrays.
    let response;try{response=snapshotJsonData(candidate,131072,'MODEL_RESPONSE');}catch{fail('MODEL_RESPONSE','Malformed or excessive model result.');}
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
+   assertPublicText(response.content);
    totalOutput+=response.content.length;
    if(totalOutput>bounds.maxOutputChars)fail('OUTPUT_LIMIT','Model output budget exceeded.');
    if(response.finishReason!==undefined&&response.finishReason!==(response.toolCalls.length?'tool_calls':'stop'))fail('MODEL_RESPONSE','Model did not report a complete result consistent with its tool calls.');
@@ -222,7 +227,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     const schema=schemaByName.get(call.function.name);
     if(!schema)fail('TOOL_UNAVAILABLE','Model requested an unavailable tool.');
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
-    try{validateData(schema,parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16}));}catch{fail('ARGUMENTS','Tool arguments failed the declared unambiguous invocation schema.');}
+    let parsedArgs;try{parsedArgs=parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16});validateData(schema,parsedArgs);}catch{fail('ARGUMENTS','Tool arguments failed the declared unambiguous invocation schema.');}
+    assertPublicText(JSON.stringify(parsedArgs));
    }
    if(response.toolCalls.length>bounds.maxToolCalls-toolCalls)fail('TOOL_LIMIT','Run-wide tool invocation budget exceeded.');
    toolCalls+=response.toolCalls.length;
@@ -260,7 +266,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   let loaded,peer;
   try{
    loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
-   check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:{...bounds,maxDepth:remainingDepth}});
+   check();assertPublicText(JSON.stringify(loaded.definition));peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:{...bounds,maxDepth:remainingDepth}});
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
