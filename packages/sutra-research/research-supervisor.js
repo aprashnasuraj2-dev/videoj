@@ -2,7 +2,7 @@
 // Search results are discovery only; extracted passages are candidates, not truth.
 import {randomUUID} from 'node:crypto';
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
-import {digest,secretLike} from './research-session.js';
+import {digest,secretLike,assertResearchAuthorization} from './research-session.js';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {SEARCH_BYTES} from './providers.js';
 const fail=code=>{throw Object.assign(Error('Research supervisor refused: '+code),{code});};
@@ -34,7 +34,7 @@ export function nextQuery(objective,history,docs,passages){
  return variants.find(v=>!history.some(h=>h.query===v.query))??null;
 }
 export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{}}){
- const a=authorization,plan=a.plan,b=plan.budget;
+ assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget;
  if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function'))fail('CONFIG');
  const sessionId='research_'+randomUUID(),queries=[],documents=[],passages=[],frontier=[],failures=[],seen=new Set(),content=new Set(),domainAttempts=new Map();
  let seq=0,wave=0,reason='search_variants_exhausted',pending=null;

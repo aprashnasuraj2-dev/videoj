@@ -4,6 +4,8 @@ const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});}
 export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const bounded=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
+const grants=new WeakSet();
+export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHORIZATION');a.assertActive();}
 export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
 export function admitManifest(text){
  if(typeof text!=='string'||Buffer.byteLength(text)>16384)fail('MANIFEST');
@@ -32,5 +34,5 @@ export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact
   if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
   if(k)usage[k]++;usage.reservedBytes+=bytes;usage.reservedCostMicros+=costMicros;
  }
- return Object.freeze({...p,signal:c.signal,assertActive,reserve,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});
+ const grant=Object.freeze({...p,signal:c.signal,assertActive,reserve,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);return grant;
 }

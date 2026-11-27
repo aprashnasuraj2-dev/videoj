@@ -1,6 +1,6 @@
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {pinnedPublicHttp} from './pinned-public-http.js';
-import {secretLike,digest} from './research-session.js';
+import {secretLike,digest,assertResearchAuthorization} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Research document refused: '+code),{code});};
 const ROBOTS_BYTES=65536,DOCUMENT_BYTES=262144;
 const utf8=b=>new TextDecoder('utf-8',{fatal:true}).decode(b);
@@ -40,9 +40,9 @@ export function extractDocument(body,mediaType,url){
  return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),parser:'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }
 export function createDocumentReader({authorization,transport=pinnedPublicHttp}){
- const robots=new Map();
+ assertResearchAuthorization(authorization);const robots=new Map();
  return async function read(raw){
-  authorization.assertActive();const url=admitDocumentURL(raw);if(secretLike(url))fail('SENSITIVE_URL');
+  authorization.assertActive();const url=admitDocumentURL(raw);if(secretLike(url)||secretLike(decodeURIComponent(new URL(url).pathname)))fail('SENSITIVE_URL');
   const target=new URL(url),origin=target.origin;
   if(!robots.has(origin)){
    authorization.reserve('robots',{bytes:ROBOTS_BYTES});
