@@ -58,12 +58,12 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
    // A round can contain more agents than the admitted concurrent capacity.
    // Schedule bounded waves, using the same previous-round feedback for all
    // of them. No wait/retry for unrelated or unknown active reservations.
-   const rows=await dispatchWaves(active,invoke,capacity,maxOutputTokens,controller.signal,cancelledPromise);
+   const rows=await dispatchWaves(active,invoke,capacity,maxOutputTokens,controller.signal);
    if(rows===null||controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
    assertPublication();
    for(const row of rows){
     if(row.status!=='PROPOSED'||verified.has(row.candidateKey))continue;
-    try{const artifact=await verify(row.candidateKey);if(!artifact)councilFail('VERIFICATION_REFUSED');verified.set(row.candidateKey,artifact);}
+    try{const artifact=await Promise.race([Promise.resolve().then(()=>controller.signal.aborted?null:verify(row.candidateKey)),cancelledPromise]);if(controller.signal.aborted)break;if(!artifact)councilFail('VERIFICATION_REFUSED');verified.set(row.candidateKey,artifact);}
     catch{const rejected=row.candidateKey;for(const other of rows)if(other.candidateKey===rejected){other.status='REFUSED';other.reason='VERIFICATION_REFUSED';delete other.candidateKey;}}
    }
    assertPublication();
@@ -94,7 +94,7 @@ function slots(bucket,tokens){
  return Math.max(0,Math.min(limits.maxConcurrent-used.active,limits.maxCalls-used.calls,Math.floor((limits.maxOutputTokens-used.outputTokens)/tokens)));
 }
 const refuse=(route,reason)=>({agentId:route.id,providerId:route.providerId,model:route.model,status:'REFUSED',reason});
-async function dispatchWaves(active,invoke,capacity,tokens,signal,cancelledPromise){
+async function dispatchWaves(active,invoke,capacity,tokens,signal){
  if(!capacity)return dispatchTaskWave(active,invoke,signal);
  let queue=active.slice();const results=new Map();
  while(queue.length){

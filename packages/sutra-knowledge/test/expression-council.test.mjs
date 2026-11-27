@@ -146,3 +146,9 @@ test('credential generation change during asynchronous verification refuses the 
  await started;s.workspace.removeProfile(s.routes[1].handle);release();
  await assert.rejects(pending,e=>e.code==='PROFILE_SET_CHANGED'&&!e.message.includes(B));assert.equal(s.seen.length,2);
 });
+
+test('timeout during noncooperative verification terminates without publishing a partial round',async()=>{
+ const s=setup(()=>proposal(alternative),()=>proposal(correct)),config=prepareCouncil({routes:s.routes,workspace:s.workspace,shareScope:scope,maxRounds:2,maxOutputTokens:128,timeoutMs:100});
+ let entered=false;const r=await runCouncilRounds(config,{operation:()=>({question:'synthetic'}),admit:text=>JSON.parse(text).expression,verify:()=>{entered=true;return new Promise(()=>{})},feedbackRow:()=>({})});
+ assert.equal(entered,true);assert.equal(r.termination,'CANCELLED_OR_TIMEOUT');assert.deepEqual(r.rounds,[]);assert.deepEqual(r.artifacts,[]);assert.equal(s.seen.length,2);
+});

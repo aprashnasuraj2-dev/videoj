@@ -75,6 +75,7 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,t
   while(fence()){
    let changed=false;
    for(const task of order){
+    if(!fence())break;
     if(states.get(task.id)!=='queued')continue;
     if(task.dependsOn.some(id=>['failed','blocked','cancelled'].includes(states.get(id)))){emit(task,'blocked');changed=true;}
     else if(running.size<concurrency&&task.dependsOn.every(id=>states.get(id)==='completed')){
