@@ -139,7 +139,7 @@ function renderInspector(){const a=agents[selected],box=$('orb-inspect');box.rep
  const info=ROLE[selected],cfg=configs[a.route];box.append(E('p','AGENT / '+info[0].toUpperCase(),'orb-kicker'),E('h2',info[1]+' / '+info[2]),E('p',info[3]+' personality · '+a.status,'orb-muted'));
  const metrics=E('div',undefined,'orb-meters');for(const [name,value] of [['Rehearsal energy',Math.round(a.energy)+'%'],['Rehearsal completions',String(a.done)]]){const row=E('div');row.append(E('small',name),E('strong',value));metrics.append(row);}box.append(metrics,E('p','Route draft: '+cfg.name+' / '+(cfg.model||'not configured'),'orb-muted'),E('p','Simulated reservation: '+a.reserved+' / '+a.cap+' units · '+(a.activeRoute??'no hypothetical model route'),'orb-muted'),btn('Edit route',()=>setMode('routes',true)));
  const run=reviewRunId?executionFeed.snapshot(reviewRunId):null;
- if(run?.version===latest?.current?.digest){
+ if(run&&run.version===latest?.current?.digest){
   const role=run.agents.find(x=>x.id===info[0]);if(role){
    box.append(E('h3','Actual local task execution'),E('p',run.status+' · '+role.completed+'/'+role.taskIds.length+' tasks admitted · no live model','orb-muted'));
    for(const task of run.tasks.filter(t=>t.agentId===info[0])){const row=E('article',undefined,'orb-event');row.append(E('strong',task.id+' · '+task.status),E('p',task.waitingFor.length?'Waiting for: '+task.waitingFor.join(', '):task.dependsOn.length?'Dependencies: '+task.dependsOn.join(', '):'No predecessor tasks'));box.append(row);}
