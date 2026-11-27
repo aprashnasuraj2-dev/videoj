@@ -9,9 +9,10 @@ export const councilClosed=(x,keys)=>x!==null&&typeof x==='object'&&[Object.prot
 export const councilInt=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 export const denseCouncilArray=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
 const publicFailure=e=>['HANDLE','MODEL','TRANSPORT','BUDGET','PROFILE_DISABLED','USAGE','PROVIDER_UNKNOWN','SECRET_ECHO','PROVIDER_RESULT','REQUEST','OPERATION','REQUEST_SIZE','CLOCK'].includes(e?.code)?e.code:'PROPOSAL_REFUSED';
-export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutputTokens=256,timeoutMs=15000,signal,maxSlots=12}={}){
- if(!Array.isArray(routes)||routes.length<1||routes.length>4||!denseCouncilArray(routes)||!councilInt(maxRounds,1,3)||!councilInt(maxOutputTokens,1,1024)||!councilInt(timeoutMs,1,30000)||routes.length*maxRounds>maxSlots||workspace?.mode!=='provider-workspace-laboratory'||typeof workspace.execute!=='function'||typeof workspace.list!=='function'||typeof workspace.admitOperation!=='function'||typeof workspace.capturePublicationFence!=='function')councilFail('CONFIG');
- const assertPublication=workspace.capturePublicationFence();
+export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutputTokens=256,timeoutMs=15000,signal,maxSlots=12,assertCurrent=()=>{}}={}){
+ if(!Array.isArray(routes)||routes.length<1||routes.length>4||!denseCouncilArray(routes)||!councilInt(maxRounds,1,3)||!councilInt(maxOutputTokens,1,1024)||!councilInt(timeoutMs,1,30000)||routes.length*maxRounds>maxSlots||workspace?.mode!=='provider-workspace-laboratory'||typeof workspace.execute!=='function'||typeof workspace.list!=='function'||typeof workspace.admitOperation!=='function'||typeof workspace.capturePublicationFence!=='function'||typeof assertCurrent!=='function')councilFail('CONFIG');
+ const workspaceFence=workspace.capturePublicationFence(),assertPublication=()=>{workspaceFence();assertCurrent();};
+ assertPublication();
  const ids=new Set(),profiles=workspace.list();
  const team=routes.map(r=>{
   if(!councilClosed(r,['id','role','handle','model','shareScope'])||typeof r.id!=='string'||!ID.test(r.id)||ids.has(r.id)||!councilText(r.role,200)||typeof r.model!=='string'||r.shareScope!==shareScope)councilFail('ROUTE');

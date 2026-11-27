@@ -9,9 +9,9 @@ import {prepareCouncil,runCouncilRounds,councilClosed,councilFail,councilText} f
 import {admitCouncilDisclosure,projectCouncilBindings} from './council-disclosure.js';
 const SCOPE='reviewed-question-bindings-and-conditional-feedback';
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
-export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed'}={}){
+export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed',assertCurrent}={}){
  if(!['fixed','stop-on-stagnation'].includes(roundPolicy))councilFail('CONFIG');
- const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
+ const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8,assertCurrent});
  const admitted=admitCouncilDisclosure(disclosure,config.team.map(x=>x.id)),allowed=new Set(admitted.bindingIds),includeValues=admitted.includeValues;
  const scopes=new Map(admitted.scopes.map(x=>[x.agentId,x]));
  // Snapshot disclosure and route choices BEFORE asynchronous admission.
