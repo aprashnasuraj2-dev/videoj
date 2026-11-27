@@ -13,3 +13,5 @@
 .orb-council-summary{border:1px solid var(--line);padding:12px;margin:14px 0;background:var(--surface)}#orb-council-routes p{font: .8rem ui-monospace,monospace;overflow-wrap:anywhere}#orb-council-status{font-weight:600}#orb-council-results .orb-event{padding:6px 0}
 
 #orb-station-question{display:block;width:100%;max-width:100%;margin:7px 0}#orb-inspect>button{margin:4px 4px 4px 0}#orb-inspect>label{font-size:.8rem;font-weight:650;display:block;margin-top:12px}
+
+#orb-play{display:inline-block;margin-top:8px}#orb-play[hidden]{display:none!important}@media(max-width:600px){body:has(#sutra-orbit:not([hidden]))>header{padding:8px 12px;gap:6px}body:has(#sutra-orbit:not([hidden]))>header .studio-nav{display:flex;flex-wrap:wrap;gap:4px}body:has(#sutra-orbit:not([hidden]))>header .studio-entry{font-size:.68rem;padding:4px 6px}body:has(#sutra-orbit:not([hidden]))>main{padding-top:8px}.orb-mast .orb-lede{margin:5px 0}.orb-top-actions{margin-top:8px}.orb-mast .orb-primary{min-height:44px}}
