@@ -43,6 +43,14 @@ jobs:
           name: sutra-orbital-viewport-screenshots
           path: apps/sutra-v2/test-output/orbit-*.png
           if-no-files-found: ignore
+      - name: Preserve synthetic competition browser screenshots and receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-competition-fixture-evidence
+          path: apps/sutra-v2/test-output/competition-fixture-*
+          if-no-files-found: warn
+          retention-days: 30
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
       - name: Scope boundary
