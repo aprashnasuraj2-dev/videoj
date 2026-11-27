@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test deploy/sutra-pages/ingress.test.mjs
+      - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
         run: node services/sutra-api/test-local/quota-runtime.mjs
       - name: Build independent static candidates
@@ -45,3 +45,10 @@ jobs:
           cd deploy/sutra-pages
           npx --yes wrangler@4.166.0 pages functions build functions --outfile "$RUNNER_TEMP/sutra-pages-functions.mjs"
           test -s "$RUNNER_TEMP/sutra-pages-functions.mjs"
+      - name: Observe deployed public artifacts without inference or credentials (diagnostic, not promotion)
+        run: node deploy/sutra-pages/check-public.mjs --observe > "$RUNNER_TEMP/sutra-public-observation.json" && cat "$RUNNER_TEMP/sutra-public-observation.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-public-observation
+          path: ${{ runner.temp }}/sutra-public-observation.json
+          retention-days: 7

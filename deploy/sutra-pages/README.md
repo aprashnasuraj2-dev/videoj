@@ -15,3 +15,8 @@ Do not publish a candidate solely because these checks pass. The exact intended 
 
 
 The canonical public-entry candidate is SUTRA v2. This directory still performs packaging validation only; it does not authorize or execute deployment, DNS changes, inference enablement, or promotion. The older release-materializer remains a separate compatibility gate until V2 emits every artifact that contract requires.
+
+## Read-only deployed verification
+After local candidate and guide builds, run `node deploy/sutra-pages/check-public.mjs`. It performs ten exact HTTPS GETs, compares the published V2 and guide JSON and canonical index bytes to the local candidate, verifies artifact CORS and entry CSP, and expects disabled inference. For a separately approved enabled deployment, use `--expect-model=EXACT_APPROVED_MODEL`. A matching configured router is not a live provider test. The PR workflow records the observation with `--observe` (non-gating diagnostic; inspect JSON status, never interpret workflow green as public match). No credentials or mutation are used.
+
+Before cutover independently record the previous known-good Pages deployment IDs for both sites, private Worker version and quota/config identity, previous artifact hashes, DNS bindings, and the owner-approved rollback trigger. Rehearse restoring the exact versions in staging and repeat the public probe against the retained artifacts. Never roll back a quota migration by assuming code version rollback also rolls back persistent state. This probe does not execute rollback or certify that a deployment exists.
