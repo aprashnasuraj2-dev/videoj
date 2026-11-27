@@ -21,7 +21,7 @@ const steps=[
 let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStation=null,simulation=false,playing=false,index=0,elapsed=0,lastTick=0,rotation=0,targetRotation=0,zoom=1,drag=null,latest=null,events=[],configs=[],policy='ask',era=false,lastState='',rehearsalFinished=false,konami=0,sound=false,audio=null;
 let councilRunId=null;
 let graphSelection=null,lastWorkspaceStatus='';
-let activeReview=null,reviewResult=null,reviewState='idle',impactView=null;const reviewEvents=[];
+let activeReview=null,reviewResult=null,reviewState='idle',impactView=null,reviewRunId=null;const reviewEvents=[];
 let checkpointExport=null,checkpointOpened=null,checkpointBusy=false,checkpointEpoch=0,checkpointVersion=undefined,checkpointController=null,checkpointStatus='No imported checkpoint.';
 const reviewStations={frame:0,evidence:1,compute:4,analysis:3,challenge:5,coordinate:8};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -138,6 +138,13 @@ function stationDetail(box,i){
 function renderInspector(){const a=agents[selected],box=$('orb-inspect');box.replaceChildren();if(selectedStation!==null){const [name,desc,id]=STATIONS[selectedStation];box.append(E('p','INVESTIGATION STATION','orb-kicker'),E('h2',name),E('p',desc),btn('Open '+name,()=>go(id),'orb-primary'));stationDetail(box,selectedStation);return;}
  const info=ROLE[selected],cfg=configs[a.route];box.append(E('p','AGENT / '+info[0].toUpperCase(),'orb-kicker'),E('h2',info[1]+' / '+info[2]),E('p',info[3]+' personality · '+a.status,'orb-muted'));
  const metrics=E('div',undefined,'orb-meters');for(const [name,value] of [['Rehearsal energy',Math.round(a.energy)+'%'],['Rehearsal completions',String(a.done)]]){const row=E('div');row.append(E('small',name),E('strong',value));metrics.append(row);}box.append(metrics,E('p','Route draft: '+cfg.name+' / '+(cfg.model||'not configured'),'orb-muted'),E('p','Simulated reservation: '+a.reserved+' / '+a.cap+' units · '+(a.activeRoute??'no hypothetical model route'),'orb-muted'),btn('Edit route',()=>setMode('routes',true)));
+ const run=reviewRunId?executionFeed.snapshot(reviewRunId):null;
+ if(run?.version===latest?.current?.digest){
+  const role=run.agents.find(x=>x.id===info[0]);if(role){
+   box.append(E('h3','Actual local task execution'),E('p',run.status+' · '+role.completed+'/'+role.taskIds.length+' tasks admitted · no live model','orb-muted'));
+   for(const task of run.tasks.filter(t=>t.agentId===info[0])){const row=E('article',undefined,'orb-event');row.append(E('strong',task.id+' · '+task.status),E('p',task.waitingFor.length?'Waiting for: '+task.waitingFor.join(', '):task.dependsOn.length?'Dependencies: '+task.dependsOn.join(', '):'No predecessor tasks'));box.append(row);}
+  }
+ }
  const artifact=reviewResult?.version===latest?.current?.digest?reviewResult?.artifacts.find(x=>x.agentId===info[0]):null;
  if(artifact){const d=E('details',undefined,'orb-event');d.append(E('summary','Admitted local '+artifact.kind+' artifact'),E('pre',JSON.stringify(artifact.value,null,2)));box.append(d);}
  box.append(E('h3','Recent activity (up to 10)'));if(!a.notes.length)box.append(E('p','No recorded activity.','orb-muted'));for(const e of a.notes.slice().reverse())box.append(E('p',e.kind+' · '+e.text,'orb-event-note'));
@@ -274,7 +281,7 @@ async function startRoleReview(){
  if(checkpointBusy||activeReview||!latest?.current||latest.busy||$('studio-run').disabled)return;
  if(simulation)cancel();
  const current=latest.current,controller=new AbortController(),runId='review_'+crypto.randomUUID(),run={controller,runId,version:current.digest};
- activeReview=run;reviewResult=null;reviewEvents.length=0;reviewState='running';
+ activeReview=run;reviewRunId=runId;reviewResult=null;reviewEvents.length=0;reviewState='running';
  for(const a of agents){a.status='queued';a.station=null;}
  renderRoleReview();updateCouncil();renderInspector();frameDriver.wake();
  const isCurrent=()=>{if(activeReview!==run||latest?.current?.digest!==run.version)throw Error('STALE_REVIEW');};
@@ -287,10 +294,11 @@ async function startRoleReview(){
   reviewResult=result;reviewState=result.status;
  }catch{if(activeReview===run&&latest?.current?.digest===run.version)reviewState='refused';}
  finally{
-  if(activeReview===run){activeReview=null;for(const a of agents)if(['queued','working','validating'].includes(a.status)){a.status='cancelled';a.station=null;}renderRoleReview();updateCouncil();renderInspector();frameDriver.wake();}
+  if(activeReview===run){activeReview=null;for(const a of agents)if(['queued','waiting','working','validating'].includes(a.status)){a.status='cancelled';a.station=null;}renderRoleReview();updateCouncil();renderInspector();frameDriver.wake();}
  }
 }
 function invalidateRoleReview(version){
+ if(reviewRunId&&executionFeed.snapshot(reviewRunId)?.version!==version)reviewRunId=null;
  if(activeReview&&activeReview.version!==version){activeReview.controller.abort();activeReview=null;reviewState='stale';reviewEvents.length=0;for(const a of agents){a.status='idle';a.station=null;}updateCouncil();frameDriver.wake();}
  if(reviewResult&&reviewResult.version!==version){reviewResult=null;reviewEvents.length=0;reviewState='stale';for(const a of agents){a.status='idle';a.station=null;}frameDriver.wake();}
 }
@@ -339,11 +347,12 @@ function initialize(){
    renderCouncilActivity();return;
   }
   if(event.origin!=='deterministic'||!activeReview||event.runId!==activeReview.runId||event.version!==activeReview.version||latest?.current?.digest!==event.version)return;
+  if(event.type==='run.open'){for(const role of snapshot.agents){const a=agents.find(a=>a.id===role.id);if(a)a.status=role.waitingTaskIds.length?'waiting':'queued';}renderInspector();frameDriver.wake();return;}
   if(event.type!=='task.state')return;
   const e=event.payload,i=ROLE.findIndex(a=>a[0]===e.agentId);if(i<0)return;
   // One agent can own multiple tasks; status is projected from all assigned tasks.
   const role=snapshot.agents.find(x=>x.id===e.agentId),a=agents[i];
-  a.status=role.status==='executing'?'working':role.status;
+  for(const state of snapshot.agents){const avatar=agents.find(x=>x.id===state.id);if(avatar)avatar.status=state.status==='executing'?'working':state.status==='queued'&&state.waitingTaskIds.length?'waiting':state.status;}
   a.station=reviewStations[role.activeTaskIds[0]??e.taskId]??null;
   if(e.status==='executing'){
    const task=snapshot.tasks.find(t=>t.id===e.taskId);

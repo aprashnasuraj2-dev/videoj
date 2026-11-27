@@ -35,3 +35,12 @@ test('deadline returns without waiting for an uncooperative handler',async()=>{
  const r=await runTaskGraph(cfg([t('a')],{local:handler(()=>new Promise(()=>{}))},{timeoutMs:5}));
  assert.equal(r.status,'timeout');assert.deepEqual(r.artifacts,[]);
 });
+
+test('per-agent execution cap reserves ownership before invoking handlers while independent agents run',async()=>{
+ let peak=0,active=0;const activeByRole=new Map(),peaks=new Map(),events=[];
+ const tasks=[{...t('a'),agentId:'planner'},{...t('b'),agentId:'planner'},{...t('c'),agentId:'critic'},{...t('d',['a','b']),agentId:'critic'}];
+ const r=await runTaskGraph(cfg(tasks,{local:handler(async({task})=>{active++;peak=Math.max(active,peak);const n=(activeByRole.get(task.agentId)??0)+1;activeByRole.set(task.agentId,n);peaks.set(task.agentId,Math.max(peaks.get(task.agentId)??0,n));await new Promise(r=>setImmediate(r));active--;activeByRole.set(task.agentId,n-1);return 1;})},{concurrency:3,maxPerAgent:1,onEvent:e=>events.push(e)}));
+ assert.equal(r.status,'completed');assert.equal(peak,2);assert.deepEqual([...peaks.values()],[1,1]);
+ assert.ok(events.find(e=>e.taskId==='a'&&e.status==='completed').sequence<events.find(e=>e.taskId==='b'&&e.status==='executing').sequence);
+ await assert.rejects(runTaskGraph(cfg(tasks,{local:handler(()=>1)},{maxPerAgent:0})),e=>e.code==='CONFIG');
+});

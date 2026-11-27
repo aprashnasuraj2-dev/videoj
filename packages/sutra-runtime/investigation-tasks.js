@@ -46,9 +46,9 @@ function copyTaskArtifact(value){
  return copy(value,0);
 }
 
-export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',assertCurrent=()=>{}}={}){
- if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin))taskFail('CONFIG');
- const {order,registry}=compileTaskGraph(tasks,handlers),controller=new AbortController(),states=new Map(order.map(t=>[t.id,'queued'])),artifacts=new Map(),running=new Map();
+export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,maxPerAgent=concurrency,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',assertCurrent=()=>{}}={}){
+ if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(maxPerAgent)||maxPerAgent<1||maxPerAgent>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin))taskFail('CONFIG');
+ const {order,registry}=compileTaskGraph(tasks,handlers),controller=new AbortController(),states=new Map(order.map(t=>[t.id,'queued'])),artifacts=new Map(),running=new Map(),agentActive=new Map();
  let sequence=0,stopReason=null;
  const emitter=onExecutionEvent?createExecutionEmitter({runId,version,origin:executionOrigin,publish:onExecutionEvent}):null;
  emitter?.emit('run.open',{tasks:order});
@@ -81,9 +81,10 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,t
     if(!fence())break;
     if(states.get(task.id)!=='queued')continue;
     if(task.dependsOn.some(id=>['failed','blocked','cancelled'].includes(states.get(id)))){emit(task,'blocked');changed=true;}
-    else if(running.size<concurrency&&task.dependsOn.every(id=>states.get(id)==='completed')){
+    else if(running.size<concurrency&&(agentActive.get(task.agentId)??0)<maxPerAgent&&task.dependsOn.every(id=>states.get(id)==='completed')){
      // Mark in-flight before executing: synchronous observers cannot allocate the same task twice.
-     const job=Promise.resolve().then(()=>invoke(task)).finally(()=>running.delete(task.id));
+     agentActive.set(task.agentId,(agentActive.get(task.agentId)??0)+1);
+     const job=Promise.resolve().then(()=>invoke(task)).finally(()=>{running.delete(task.id);agentActive.set(task.agentId,agentActive.get(task.agentId)-1);});
      running.set(task.id,job);states.set(task.id,'scheduled');changed=true;
     }
    }

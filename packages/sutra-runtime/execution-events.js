@@ -51,11 +51,11 @@ function close(run,p){
  run.status=s;return true;
 }
 function snapshot(r){
- const tasks=[...r.tasks.values()].map(t=>({...t,dependsOn:[...t.dependsOn]}));
+ const tasks=[...r.tasks.values()].map(t=>({...t,dependsOn:[...t.dependsOn],waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
  const agents=r.origin==='local-scripted'?[...r.agents.values()].map(({rounds,...a})=>({...a})):Array.from(new Set(tasks.map(t=>t.agentId)),id=>{
   const assigned=tasks.filter(t=>t.agentId===id),states=assigned.map(t=>t.status);
   const status=['executing','validating','queued','failed','blocked','cancelled','completed'].find(s=>states.includes(s));
-  return {id,status,taskIds:assigned.map(t=>t.id),activeTaskIds:assigned.filter(t=>['executing','validating'].includes(t.status)).map(t=>t.id),completed:states.filter(s=>s==='completed').length};
+  return {id,status,taskIds:assigned.map(t=>t.id),activeTaskIds:assigned.filter(t=>['executing','validating'].includes(t.status)).map(t=>t.id),waitingTaskIds:assigned.filter(t=>t.waitingFor.length).map(t=>t.id),completed:states.filter(s=>s==='completed').length};
  });
  return freeze({schema:'sutra-execution-event/v1',runId:r.runId,version:r.version,origin:r.origin,sequence:r.sequence,status:r.status,tasks,agents});
 }
