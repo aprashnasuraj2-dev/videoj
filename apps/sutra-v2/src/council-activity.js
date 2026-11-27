@@ -7,7 +7,7 @@ export function createCouncilActivity(){
  function apply(e){
   if(!e||Object.getPrototypeOf(e)!==Object.prototype||Object.keys(e).sort().join(',')!=='agent,agentIds,origin,phase,round,runId,sequence,version'||e.version!==1||e.origin!=='local-scripted'||!Number.isSafeInteger(e.runId)||e.runId<1||!Number.isSafeInteger(e.sequence)||e.sequence<1)return false;
   if(e.phase==='started'){
-   if(!Array.isArray(e.agentIds)||e.agentIds.length<1||e.agentIds.length>4||new Set(e.agentIds).size!==e.agentIds.length||e.agentIds.some(id=>typeof id!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(id))||e.sequence!==1||e.agent!==null||e.round!==null||(run&&(!terminal.has(run.status)||e.runId<=run.id)))return false;
+   if(!Array.isArray(e.agentIds)||e.agentIds.length<1||e.agentIds.length>4||new Set(e.agentIds).size!==e.agentIds.length||Array.from(e.agentIds).some(id=>typeof id!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(id))||e.sequence!==1||e.agent!==null||e.round!==null||(run&&(!terminal.has(run.status)||e.runId<=run.id)))return false;
    run={id:e.runId,status:'running',sequence:1,agents:new Map(e.agentIds.map(id=>[id,{id,status:'queued',round:0,requests:0,responses:0,proposals:0,tasks:new Map()}]))};return true;
   }
   if(e.agentIds!==null||!run||terminal.has(run.status)||e.runId!==run.id||e.sequence<=run.sequence)return false;

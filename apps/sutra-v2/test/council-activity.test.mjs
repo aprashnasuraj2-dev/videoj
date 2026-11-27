@@ -44,5 +44,6 @@ test('runtime projection accepts the existing kernel bound of four unique declar
  const start=agentIds=>({version:1,origin:'local-scripted',runId:2,sequence:1,phase:'started',agent:null,round:null,agentIds});
  assert.equal(a.apply(start(['a','b','c','d','e'])),false);
  assert.equal(a.apply(start(['a','a'])),false);
+ assert.equal(a.apply(start(Array(1))),false);
  assert.equal(a.apply(start(['a','b'])),true);
 });
