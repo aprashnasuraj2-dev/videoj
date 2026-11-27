@@ -20,7 +20,7 @@ jobs:
           cache: npm
           cache-dependency-path: apps/sutra-v2/package-lock.json
       - run: node --check apps/sutra-v2/test/browser.cjs
-      - run: node --test apps/sutra-v2/test/council-activity.test.mjs apps/sutra-v2/test/execution-channel.test.mjs apps/sutra-v2/test/investigation-graph.test.mjs apps/sutra-v2/test/frame-driver.test.mjs apps/sutra-v2/test/impact-projection.test.mjs apps/sutra-v2/test/research-source-handoff.test.mjs
+      - run: node --test apps/sutra-v2/test/council-activity.test.mjs apps/sutra-v2/test/execution-channel.test.mjs apps/sutra-v2/test/investigation-graph.test.mjs apps/sutra-v2/test/frame-driver.test.mjs apps/sutra-v2/test/impact-projection.test.mjs apps/sutra-v2/test/research-source-handoff.test.mjs apps/sutra-v2/test/reviewed-answer.test.mjs
       - run: npm ci --prefix apps/sutra-v2
       - name: Build actual canonical browser artifact
         run: |

@@ -11,9 +11,11 @@ export async function prepareAutonomousSourceCandidate({report,reportPin,sourceI
  const rows=report.documents.filter(d=>d?.id===sourceId);if(rows.length!==1)fail('SOURCE');
  const d=rows[0],text=d.text,url=d.finalUrl??d.url;
  if(typeof text!=='string'||!text.trim()||text.length>16384||/[\r\u0000\ud800-\udfff]/u.test(text)||encoder.encode(text).length>16384)fail('SOURCE_SIZE_OR_TEXT');
- if(typeof url!=='string'||url.length>2048||/[\u0000-\u0020\u007f]/.test(url))fail('SOURCE_URL');
- let parsed;try{parsed=new URL(url);}catch{fail('SOURCE_URL');}
- if(parsed.protocol!=='https:'||parsed.username||parsed.password)fail('SOURCE_URL');
+ for(const address of [d.url,url]){
+  if(typeof address!=='string'||address.length>2048||/[\u0000-\u0020\u007f]/.test(address))fail('SOURCE_URL');
+  let parsed;try{parsed=new URL(address);}catch{fail('SOURCE_URL');}
+  if(parsed.protocol!=='https:'||parsed.username||parsed.password||parsed.hash)fail('SOURCE_URL');
+ }
  if(!pin.test(d.textDigest??'')||await digest(text)!==d.textDigest)fail('SOURCE_PIN');
  const pages=(d.pageMap??[]).map(p=>({page:p.page,start:p.startOffset,end:p.endOffset}));
  const passages=(report.passages??[]).filter(p=>p.sourceId===sourceId).map(p=>{const l=p.locator;if(p.sourceDigest!==d.textDigest||l?.coordinateSystem!=='utf16-extracted-text'||!Number.isSafeInteger(l.startOffset)||!Number.isSafeInteger(l.endOffset)||text.slice(l.startOffset,l.endOffset)!==p.supportingText)fail('PASSAGE');return {start:l.startOffset,end:l.endOffset,byteStart:encoder.encode(text.slice(0,l.startOffset)).length,byteEnd:encoder.encode(text.slice(0,l.endOffset)).length,page:l.page??null,quote:p.supportingText};});
