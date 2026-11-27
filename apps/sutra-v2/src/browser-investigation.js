@@ -35,13 +35,15 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
  let consumed=false;
  return Object.freeze({preview,async run({signal,onEvent,decidePeer}={}){
   if(consumed)fail('BROWSER_PLAN_CONSUMED');consumed=true;
+  let attempted=0,responses=0,inspector;
+  try{
   const assertCurrent=()=>{if(signal?.aborted)fail('CANCELLED');if(!current())fail('EVIDENCE_STALE');};
   assertCurrent();
-  const provider=createProviderAdapter({origin,model,fetchImpl:(url,init)=>{assertCurrent();if(url!==origin+'/api/v1/chat/completions')fail('BROWSER_ROUTER');return fetchImpl(url,{...init,headers:{...init.headers,'X-Sutra-Inference-Contract':contract}});}});
+  const provider=createProviderAdapter({origin,model,fetchImpl:(url,init)=>{assertCurrent();if(url!==origin+'/api/v1/chat/completions')fail('BROWSER_ROUTER');attempted++;return fetchImpl(url,{...init,headers:{...init.headers,'X-Sutra-Inference-Contract':contract}});}});
   let groundedRead=false;
   const observe=event=>{if(evidence&&event.kind==='tool'&&event.phase==='end'&&event.tool==='mcp_inspect_evidence'&&event.status==='ok')groundedRead=true;onEvent?.(event);};
   const adapter=Object.freeze({...provider,async chat(input){assertCurrent();try{
-   const response=await provider.chat(input);assertCurrent();
+   const response=await provider.chat(input);responses++;assertCurrent();
    if(evidence)for(const call of response.toolCalls??[]){
     if(call.function?.name!=='critic')continue;
     // Grounded critique must follow the actual read, not a model assertion
@@ -52,7 +54,6 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
    return response;
   }catch(error){assertCurrent();throw error;}}});
   const request=evidence?objective+'\nApproved evidence coordinates: '+JSON.stringify({sourceId:evidence.sourceId,start:evidence.start,end:evidence.end}):objective;
-  let inspector;
   if(peerUrl){if(typeof decidePeer!=='function')fail('BROWSER_PEER_CONSENT');const peerOrigin=new URL(peerUrl).origin;inspector=createConsentInspector({decide(contact,options){const expected=contact.kind==='peer_manifest'?'/agents/agent-manifest.json':contact.kind==='peer_graph'?'/agents/checklist.network.json':null;if(!expected||contact.origin!==peerOrigin||contact.resource!==peerOrigin+expected||contact.network!=='checklist')return 'deny';return decidePeer(contact,options);},onEvent:e=>onEvent?.({kind:'peer_consent',phase:e.type,status:e.decision??e.status,origin:e.origin})});}
   const result=await runNetwork({definition,name:network.name,frontMan:network.frontMan,request,model:adapter,limits,signal,onEvent:observe,...(evidence?{workspaceEvidence:{selection:selected,assertCurrent:current}}:{}),...(inspector?{peerRuntime:{inspector,fetchImpl}}:{})});
   assertCurrent();
@@ -66,5 +67,11 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   const reviewed=evidence?admitReviewedAnswer(result.text,evidence):null;
   const receipt=createBrowserRunReceipt({preview,result,consentEvents:inspector?.exportEvents()??[]});
   return Object.freeze({receipt,text:reviewed?.text??result.text,...(reviewed?{claims:reviewed.claims}:{}),modelCalls:result.modelCalls,agentCalls:result.agentCalls,graphPin,qualification:peerUrl?'Candidate peer critique; peer graph executed in this browser using caller router; no verified external evidence.':evidence?'Candidate interpretation of one approved span; no empirical verification or new evidence acquisition.':'Candidate investigation plan only; no external evidence acquired or verified.'});
+  }catch(error){
+   const code=signal?.aborted?'CANCELLED':typeof error?.code==='string'&&/^[A-Z_]{1,60}$/.test(error.code)?error.code:typeof error?.message==='string'&&/^[A-Z_]{1,60}$/.test(error.message)?error.message:'BROWSER_RUN_FAILED';
+   const safe=new RuntimeError(code,'Browser run stopped; no completed result is claimed.');
+   safe.dispatch=Object.freeze({attempted,responses,outcome:attempted===0?'none_attempted':responses===attempted?'transport_completed':'outcome_unknown',billing:attempted?'unverified':'no_attempt'});
+   throw safe;
+  }finally{inspector?.clearSession();}
  }});
 }
