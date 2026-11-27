@@ -1,13 +1,16 @@
 name: Validate SUTRA workspace browser
 on:
+  push:
+    branches: ['main', 'sutra/v2-knowledge-compiler']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
   pull_request:
-    branches: ['sutra/v2-knowledge-compiler']
+    branches: ['main']
     paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
 permissions:
   contents: read
 jobs:
   workspace-browser:
-    if: github.head_ref == 'sutra/v2-parallel/08-unified-workspace' || github.head_ref == 'sutra/v2-validation/v2-182'
+    if: github.event_name == 'push' || github.head_ref == 'sutra/v2-parallel/08-unified-workspace' || github.head_ref == 'sutra/v2-validation/v2-182'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
