@@ -3489,5 +3489,97 @@
       "No branch merge, deployment, DNS, paid inference, or secrets. Legacy PR #48/#49 path review remains partial.",
       "Current PR #63 full two-session recovery and launcher reconciliation remain open."
     ]
+  },
+  "followupReconciliation": {
+    "observedAt": "2026-11-27T21:58:28Z",
+    "priorRecord": "latestReconciliation",
+    "implementationHead": "0c7c76be6ad5eb1e3d559fb7a3f144d81afdad93",
+    "conformanceMappingCommit": "0efb8bcd8f64d749ca0486f41380719635baf769",
+    "conformanceMapping": "docs/sutra-v2/DEVPOST-PRE-RELEASE.md#normative-mvp-mapping--2026-11-27-checkpoint-rel-c01c19",
+    "pathDispositions": [
+      {
+        "pr": 63,
+        "path": "apps/sutra-v2/test/browser.cjs",
+        "candidateBlob": "525097652f7108f98b1b0c97e2c4cb323e56b769",
+        "disposition": "replace direct host publication in the stale-CAS browser regression with a separate Chromium context, independently opened shared filesystem store, lost append acknowledgement, exact retained-pin read and no duplicate write; same proposal not divergent branch; launcher remains open",
+        "commit": "0c7c76be6ad5eb1e3d559fb7a3f144d81afdad93"
+      },
+      {
+        "pr": 49,
+        "path": "apps/sutra/public/agents/source_learner.network.json",
+        "sourceBlob": "085a65783ee5badd8464b6dbcfd341f3a02183ab",
+        "candidateBlob": "08b60445a7e5b5fc7d8dee10bd76883e30c22d84",
+        "disposition": "retain two-agent graph; reject legacy single-agent replacement as incompatible with preserved delegation and source-tool contracts"
+      },
+      {
+        "pr": 49,
+        "path": "packages/sutra-runtime/test/source-tools.test.mjs",
+        "sourceBlob": "bd8f6f14daa6a88a004c704f98e3480fd00885b7",
+        "candidateBlob": "bd8f6f14daa6a88a004c704f98e3480fd00885b7",
+        "disposition": "identical test blob; legacy 3 failures, candidate runtime tests pass; do not weaken regression"
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-evaluation/baseline.mjs",
+        "sourceBlob": "fe879e17794e93a0d502ed75c56eefb173936e34",
+        "candidateBlob": "8721fd9f0d012a298d3cb683e70e940a9a753e68",
+        "disposition": "retain current baseline implementation, legacy measured 50 versus expected 90 model calls; identical test blob 59f30269f9e24df402525efddba413f4086a4a6d passes candidate workflow; not a proof of general semantic equivalence"
+      }
+    ],
+    "evidence": [
+      {
+        "commit": "baf4c8f3e097173980cf5774dc36b5928e28c338",
+        "scope": "scoped verified",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46072951121/job/140753962402",
+        "result": "workspace workflow successful, 24/24 workspace unit selection, 9/9 build contract, 2/2 guide; five host tests included"
+      },
+      {
+        "commit": "bf7226ff705fe9feeb2286e76a8470fd74fa3c97",
+        "scope": "scoped verified",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073083165/job/140754391169",
+        "result": "24/24 workspace unit selection, 9/9 build, 2/2 guide; actual Chromium browser, autonomous workspace including stale evidence late-result refusal, neutral consumer and accessibility passed"
+      },
+      {
+        "commit": "bf7226ff705fe9feeb2286e76a8470fd74fa3c97",
+        "scope": "scoped verified",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073083063/job/140754390421",
+        "result": "270/270 combined action/inference/source/consent/content/API, 201/201 runtime, 8/8 learner, two-origin Chromium passed"
+      },
+      {
+        "commit": "bf7226ff705fe9feeb2286e76a8470fd74fa3c97",
+        "scope": "scoped verified",
+        "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073083010",
+        "result": "engineering evaluation passed"
+      },
+      {
+        "commit": "901709289065f65ef284fb94908318c1c89b0eac",
+        "scope": "scoped verified",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073146699/job/140754593310",
+        "result": "14/15 workflows success; knowledge workflow failed at formal dependency size gate; expected 4511244 bytes, received 4511362 bytes, SHA-256 18e0d9caa517a6553ef50c7105191b1bfcfe5cc630bdbceefc087093e0520ce3; refused before execution. No re-pin."
+      },
+      {
+        "commit": "0c7c76be6ad5eb1e3d559fb7a3f144d81afdad93",
+        "scope": "scoped verified",
+        "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073410881",
+        "result": "workspace browser workflow including independent second context/host CAS and lost append acknowledgement successful; 14/15 workflows success, knowledge pending at observation"
+      },
+      {
+        "commit": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+        "scope": "historical failure",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45885529368/job/140135167968",
+        "result": "3 source-tool tests fail, exact graph mismatch (1 vs 2 agent calls, missing second agent, later duplicate-call contract failure)"
+      },
+      {
+        "commit": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+        "scope": "historical failure",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45885529363/job/140135234577",
+        "result": "synthetic retrieval baseline 50 vs 90 model calls; 7/8 tests pass"
+      }
+    ],
+    "release": "NO-GO",
+    "uncheckedPreRelease": 103,
+    "closures": [],
+    "next": "Resolve independently trusted reproducible TLC artifact identity without changing acceptance gates; verify final exact CI, then complete divergent two-session recovery and launcher integration.",
+    "limitation": "Full legacy branch semantic reconciliation, all normative acceptance, real provider/public hosting and release proof remain open; canonical progress/roadmap completion states unchanged."
   }
 }
