@@ -20,3 +20,6 @@ The scripted council emits a versioned metadata-only envelope with run identity,
 
 ## Shared investigation dependency projection
 The master workbench and orbital Evidence, Quantities, Interpretations and Compute stations consume one read-only projection. Evaluated versions use the canonical report graph; drafts display only selected spans and declared ancestry. Traversal indexes edges in O(V+E) time and handles cycles without treating ancestry as independence. The orbital station inspector shows bounded upstream/downstream relationships and opens the full existing graph; no new knowledge authority or fabricated graph links. Source and binding changes now refresh the orbital inspector even when counts are unchanged.
+
+## Demand-driven orbital rendering
+The orbital scene no longer schedules a permanent idle requestAnimationFrame loop or idle breathing animation. A coalesced presentation clock wakes on motion, rehearsal, navigation, and visibility changes; settled/hidden scenes stop rendering, and hidden browser tabs suspend the clock. CSS avatar animation is paused in idle states. Actual frame-time and battery improvements remain to be measured on devices. Browser regressions inspect the new council activity projection and real dependency inspector.
