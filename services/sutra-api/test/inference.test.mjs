@@ -591,3 +591,24 @@ test('ambiguous request JSON and historical tool arguments fail before quota or 
  assert.equal((await handleSourceTools(raw(rpc,'/api/source-tools'),env)).status,400);
  assert.equal(quota,0);assert.equal(upstream,0);
 });
+
+test('hosted provider selection admits exact server-owned endpoint and cap only',async()=>{
+ const expected={openai:[UPSTREAM,'max_completion_tokens'],gemini:['https://generativelanguage.googleapis.com/v1beta/openai/chat/completions','max_tokens'],groq:['https://api.groq.com/openai/v1/chat/completions','max_tokens'],openrouter:['https://openrouter.ai/api/v1/chat/completions','max_tokens']};
+ for(const [provider,[endpoint,field]] of Object.entries(expected)){
+  const env={...environment(),SUTRA_HOSTED_PROVIDER:provider};let calls=0;
+  const response=await handleInference(request(payload(),{Cookie:'private-cookie'}),env,{fetchImpl:async(url,init)=>{
+   calls++;assert.equal(url,endpoint);assert.equal(init.headers.Authorization,'Bearer SERVER_ONLY_KEY_MARKER');assert.equal(init.headers.Cookie,undefined);assert.equal(init.redirect,'manual');assert.equal(init.credentials,'omit');
+   const body=JSON.parse(init.body);assert.equal(body[field],512);assert.equal(Object.hasOwn(body,field==='max_tokens'?'max_completion_tokens':'max_tokens'),false);assert.equal(body.stream,true);return sse();
+  }});assert.equal(response.status,200);assert.match(await response.text(),/\[DONE\]/);assert.equal(calls,1);
+ }
+ for(const bad of [{SUTRA_HOSTED_PROVIDER:'invalid'},{SUTRA_HOSTED_PROVIDER:'openrouter',SUTRA_MODELS:'openrouter/free'},{SUTRA_HOSTED_PROVIDER:'openrouter',SUTRA_MODELS:'openrouter/auto'}]){
+  const env={...environment(),...bad};let contacts=0;const response=await handleInference(request(),env,{fetchImpl:async()=>{contacts++;return sse();}});assert.equal(response.status,503);assert.equal(contacts,0);
+ }
+});
+test('client cannot override provider or reuse stale route pin after provider switch',async()=>{
+ const {inferenceContractId}=await import('../inference.js');let contacts=0;
+ const fetchImpl=async()=>{contacts++;return sse();},env=environment(),stale=await inferenceContractId(env),switched={...env,SUTRA_HOSTED_PROVIDER:'groq'};
+ assert.equal((await handleInference(request(payload(),{'X-Sutra-Inference-Contract':stale}),switched,{fetchImpl})).status,409);
+ assert.equal((await handleInference(request({...payload(),provider:'gemini'}),switched,{fetchImpl})).status,400);
+ assert.equal(contacts,0);
+});
