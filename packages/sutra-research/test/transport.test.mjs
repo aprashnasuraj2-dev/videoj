@@ -26,3 +26,10 @@ test('cancellation during DNS cannot cause late connection',async()=>{
  await ready;controller.abort();await assert.rejects(pending,/CANCELLED/);release([{address:'8.8.8.8',family:4}]);await new Promise(r=>setImmediate(r));assert.equal(f.events.length,0);
 });
 test('serialized or caller-forged authorization does not grant document capability',()=>{assert.throws(()=>createDocumentReader({authorization:{assertActive(){},reserve(){}}}),/AUTHORIZATION/);});
+
+test('redirect metadata is returned once only for explicitly credential-free GET',async()=>{
+ const f=fixture({response:{statusCode:302,headers:{location:'https://other.org/report'}}});
+ const r=await pinnedPublicHttp({...options,allowRedirectResponse:true},f.io);
+ assert.equal(r.location,'https://other.org/report');assert.equal(f.events.filter(x=>x.type==='request').length,1);
+ const x=fixture();await assert.rejects(pinnedPublicHttp({...options,allowRedirectResponse:true,headers:{Authorization:'Bearer test-secret'}},x.io),/REDIRECT_CONFIG/);assert.equal(x.events.length,0);
+});

@@ -2,6 +2,7 @@
 import {createReadStream} from 'node:fs';
 import {admitManifest,authorizeResearch} from '../../packages/sutra-research/research-session.js';
 import {createSearchProviders} from '../../packages/sutra-research/providers.js';
+import {probePdfSandbox} from '../../packages/sutra-research/pdf-parser.js';
 import {createDocumentReader} from '../../packages/sutra-research/document-reader.js';
 import {createCheckpointWriter,consumeCheckpointFile} from '../../packages/sutra-research/research-checkpoint.js';
 import {formatMarkdownReport} from '../../packages/sutra-research/research-report.js';
@@ -28,6 +29,7 @@ async function main(){
  const cancel=new AbortController(),abort=()=>cancel.abort();process.once('SIGINT',abort);process.once('SIGTERM',abort);
  const authorization=authorizeResearch(raw,{approvedPlanPin:args[4],approvePublicContact:true,approveEstimatedCost:true,signal:cancel.signal,resumeText,resumePin:opts.get('--resume-pin')});
  try{
+  if(authorization.plan.scope.allowPdf===true)await probePdfSandbox({signal:authorization.signal});
   const providers=createSearchProviders({credentials:{brave:process.env.SUTRA_SEARCH_BRAVE,tavily:process.env.SUTRA_SEARCH_TAVILY}});
   const writer=opts.has('--checkpoint-dir')?await createCheckpointWriter(opts.get('--checkpoint-dir')):undefined;
   let checkpointDigest;

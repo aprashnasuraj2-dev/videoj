@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
-import {extractPdfDocument,runSandboxedPdf} from '../pdf-parser.js';
+import {extractPdfDocument,runSandboxedPdf,probePdfSandbox} from '../pdf-parser.js';
 import {extractPassages,verifyPassage} from '../research-supervisor.js';
 const body=Buffer.from('%PDF-1.7 fixture bytes');
 test('PDF output retains page locators and rejects forged page',async()=>{
@@ -15,4 +15,10 @@ test('PDF invocation is fixed, credential-free, namespace-isolated and fails clo
  assert.equal(await runSandboxedPdf(body,{platform:'linux',spawnProcess:fake}),'text\f');assert.equal(invocation.command,'/usr/bin/prlimit');assert.ok(invocation.args.includes('--unshare-net'));assert.ok(invocation.args.includes('--disable-userns'));assert.ok(invocation.args.includes('--clearenv'));assert.equal(invocation.options.shell,false);assert.deepEqual(Object.keys(invocation.options.env).sort(),['LANG','PATH']);assert.ok(!invocation.args.includes('/home'));
  assert.throws(()=>runSandboxedPdf(body,{platform:'win32'}),/PDF_SANDBOX_UNAVAILABLE/);
  await assert.rejects(runSandboxedPdf(body,{platform:'linux',spawnProcess:()=>{throw Error('missing');}}),/PDF_SANDBOX_UNAVAILABLE/);
+});
+
+test('explicit PDF scope preflight requires successful sandbox probe; no fallback',async()=>{
+ assert.equal(await probePdfSandbox({parse:async bytes=>{assert.ok(bytes.subarray(0,5).equals(Buffer.from('%PDF-')));assert.ok(bytes.includes(Buffer.from('startxref')));return 'SUTRA PDF sandbox probe';}}),true);
+ await assert.rejects(probePdfSandbox({parse:async()=> 'wrong output'}),/PDF_SANDBOX_UNAVAILABLE/);
+ await assert.rejects(probePdfSandbox({parse:async()=>{throw Error('namespace denied');}}),/PDF_SANDBOX_UNAVAILABLE/);
 });
