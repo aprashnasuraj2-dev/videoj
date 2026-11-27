@@ -9,7 +9,7 @@ const dense=(v,max)=>Array.isArray(v)&&Object.getPrototypeOf(v)===Array.prototyp
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 const terminal=new Set(['completed','failed','blocked','cancelled']);
 const origins=new Set(['host-task','deterministic','authorized-provider','local-scripted']);
-const taskEnds=new Set(['completed','partial','cancelled','timeout','stale','refused']);
+const taskEnds=new Set(['completed','partial','paused','cancelled','timeout','stale','refused']);
 const councilEnds=new Set(['completed','refused','cancelled']);
 const taskManifest=t=>closed(t,['id','kind','agentId','dependsOn'])&&id(t.id)&&id(t.kind)&&id(t.agentId)&&dense(t.dependsOn,64)&&t.dependsOn.every(id)&&new Set(t.dependsOn).size===t.dependsOn.length;
 const taskPayload=p=>closed(p,['taskId','agentId','kind','status'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&['executing','validating','completed','failed','blocked','cancelled'].includes(p.status);
@@ -32,7 +32,13 @@ function taskStep(run,p){
  if(!taskPayload(p))return false;const t=run.tasks.get(p.taskId);if(!t||t.agentId!==p.agentId||t.kind!==p.kind)return false;
  const before=t.status,ds=t.dependsOn.map(k=>run.tasks.get(k).status),s=p.status;
  const legal=s==='executing'?before==='queued'&&ds.every(x=>x==='completed'):s==='validating'?before==='executing':s==='completed'?before==='validating':s==='failed'?['executing','validating'].includes(before):s==='blocked'?before==='queued'&&ds.some(x=>['failed','blocked','cancelled'].includes(x)):s==='cancelled'&&!terminal.has(before);
- if(!legal)return false;t.status=s;return true;
+ if(!legal)return false;t.status=s;if(s==='executing')run.hasExecuted=true;return true;
+}
+function restoreStep(run,p){
+ if(run.origin!=='deterministic'||run.hasExecuted||!closed(p,['taskId','agentId','kind','recoveryPin','priorRunId','artifactDigest','valueDigest'])||!id(p.taskId)||!id(p.agentId)||!id(p.kind)||!id(p.priorRunId)||p.priorRunId===run.runId||![p.recoveryPin,p.artifactDigest,p.valueDigest].every(v=>typeof v==='string'&&/^sha256:[0-9a-f]{64}$/.test(v)))return false;
+ const t=run.tasks.get(p.taskId);
+ if(!t||t.status!=='queued'||t.agentId!==p.agentId||t.kind!==p.kind||t.dependsOn.some(k=>run.tasks.get(k).status!=='completed')||run.recoveryPin&&run.recoveryPin!==p.recoveryPin||run.priorRunId&&run.priorRunId!==p.priorRunId)return false;
+ run.recoveryPin=p.recoveryPin;run.priorRunId=p.priorRunId;t.status='completed';t.restored={recoveryPin:p.recoveryPin,priorRunId:p.priorRunId,artifactDigest:p.artifactDigest,valueDigest:p.valueDigest};return true;
 }
 function councilStep(run,p){
  if(!councilPayload(p)||!run.agents.has(p.agentId))return false;
@@ -79,7 +85,8 @@ function close(run,p){
   for(const a of run.agents.values())a.status=s==='completed'?({queued:'not-run',working:'incomplete',validating:'unadmitted'}[a.status]??a.status):s;
  }else{
   if(!taskEnds.has(s))return false;const all=[...run.tasks.values()];
-  if(s!=='refused'&&all.some(t=>!terminal.has(t.status)))return false;
+  if(s==='paused'){if(run.origin!=='deterministic'||!all.some(t=>t.status==='queued')||all.some(t=>!terminal.has(t.status)&&t.status!=='queued'))return false;}
+  else if(s!=='refused'&&all.some(t=>!terminal.has(t.status)))return false;
   if(s==='completed'&&all.some(t=>t.status!=='completed')||s==='partial'&&(all.every(t=>t.status==='completed')||all.some(t=>t.status==='cancelled')))return false;
  }
  run.status=s;return true;
@@ -122,6 +129,7 @@ export function createExecutionJournal({maxRuns=8,maxEvents=2048}={}){
   }else{
    if(!r||r.status!=='running'||r.origin!==raw.origin||r.version!==raw.version||raw.sequence!==r.sequence+1)return false;
    if(raw.type==='task.state'&&r.origin!=='local-scripted'){if(!taskStep(r,raw.payload))return false;}
+   else if(raw.type==='task.restore'&&r.origin==='deterministic'){if(!restoreStep(r,raw.payload))return false;}
    else if(raw.type==='provider.phase'&&r.origin==='authorized-provider'){if(!providerStep(r,raw.payload))return false;}
    else if(raw.type==='consultation.phase'&&r.origin==='host-task'){if(!consultationStep(r,raw.payload))return false;}
    else if(raw.type==='council.phase'&&r.origin==='local-scripted'){if(!councilStep(r,raw.payload))return false;}

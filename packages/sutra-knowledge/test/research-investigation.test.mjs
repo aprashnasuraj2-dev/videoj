@@ -18,7 +18,7 @@ test('Drone retrieves exact approved public candidates in DAG with pinned text a
  assert.equal(result.status,'completed');assert.equal(f.requests.length,2);assert.equal(consents.length,2);assert.ok(consents.every(i=>i.planPin===p.planPin));
  const reads=result.artifacts.filter(a=>a.kind==='research_fetch');assert.equal(reads.length,2);
  for(const a of reads){assert.equal(a.agentId,'researcher');assert.equal(a.value.adoption,'NONE');assert.equal(a.value.truthStatus,'UNVERIFIED');assert.equal(a.value.sourceCandidate.digest,await casePin(a.value.sourceCandidate.text));assert.equal(a.provenance.versionDigest,f.v.digest);}
- assert.equal(result.artifacts.at(-1).value.totalBytes,40);assert.equal(j.snapshot('research').status,'completed');
+ assert.equal(result.artifacts.at(-1).value.totalBytes,42);assert.equal(j.snapshot('research').status,'completed');
  assert.doesNotMatch(JSON.stringify(j.events('research')),/Public assertion|data.example.com/);
 });
 test('denied source has zero contact; independent source remains available and coordinator blocks',async()=>{

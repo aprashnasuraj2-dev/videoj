@@ -16,7 +16,7 @@ export async function prepareResearchInvestigation({planText,resolveAll,io,now=(
  await replayInvestigationVersion(p.versionText,p.versionPin);
  const wire=parseUniqueJson(p.versionText,{maxChars:262144,maxDepth:12}),contract=parseUniqueJson(wire.contractText,{maxChars:262144,maxDepth:9});
  const sources=admitSourceRoutes(p.sources);
- if(sources.some(s=>contract.sources.some(old=>old.id===s.id)))fail('SOURCE_COLLISION');
+ if(sources.some(s=>s.id==='question'||contract.sources.some(old=>old.id===s.id)))fail('SOURCE_COLLISION');
  const tasks=Object.freeze([task('frame','research_frame','planner',[]),...sources.map((s,i)=>task('source_'+i,'research_fetch','researcher',['frame'])),task('coordinate','research_coordinate','coordinator',sources.map((s,i)=>'source_'+i))]);
  const preview=Object.freeze({schema:'sutra-public-research/v1',planPin,versionDigest:p.versionPin,sources,maxTotalBytes:sources.reduce((n,s)=>n+s.maxBytes,0),timeoutMs:p.timeoutMs,tasks,qualification:'Exact public document GET only; host network address and requested path are visible to the source. No question, evidence, cookies, credential or model output sent. Retrieved bytes are not accepted evidence or factual truth.'});
  let consumed=false;

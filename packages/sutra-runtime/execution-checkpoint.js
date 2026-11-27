@@ -41,7 +41,7 @@ function replay(events){
 function checkPins(snapshot,pins){
  if(pins===null)return;
  if(snapshot.origin==='local-scripted'||!dense(pins,64))fail('ARTIFACTS');
- const expected=['completed','partial'].includes(snapshot.status)?snapshot.tasks.filter(t=>t.status==='completed'):[];
+ const expected=['completed','partial','paused'].includes(snapshot.status)?snapshot.tasks.filter(t=>t.status==='completed'):[];
  if(pins.length!==expected.length)fail('ARTIFACTS');
  const seen=new Map();
  for(const [i,p] of pins.entries()){
@@ -51,6 +51,7 @@ function checkPins(snapshot,pins){
    const id=t.dependsOn[k],prior=seen.get(id);
    if(!closed(a,['taskId','valueDigest','artifactDigest'])||!prior||a.taskId!==id||a.artifactDigest!==prior.artifactDigest||a.valueDigest!==prior.valueDigest)fail('LINEAGE');
   }
+  if(t.restored&&(t.restored.artifactDigest!==p.artifactDigest||t.restored.valueDigest!==p.valueDigest))fail('RESTORED_PIN');
   seen.set(t.id,p);
  }
 }

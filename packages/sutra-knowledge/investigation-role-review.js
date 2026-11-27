@@ -17,15 +17,17 @@ const ids=Object.freeze([
  ['challenge','exposure','critic',['evidence','compute']],['coordinate','coordinate','coordinator',['frame','evidence','compute','analysis','challenge']]
 ].map(([id,kind,agentId,dependsOn])=>Object.freeze({id,kind,agentId,dependsOn:Object.freeze(dependsOn)})));
 export const ROLE_REVIEW_TASKS=ids;
+export const ROLE_RECOVERY_PROFILE='sutra-role-review/v1';
 const decisive=s=>s==='CONDITIONALLY_SATISFIED'||s==='CONDITIONALLY_REFUTED';
 const sorted=a=>[...new Set(a)].sort();
 const pin=v=>typeof v==='string'&&/^sha256:[0-9a-f]{64}$/.test(v);
 const task=(id,kind,agentId,dependsOn)=>Object.freeze({id,kind,agentId,dependsOn:Object.freeze(dependsOn)});
 export const HYBRID_REVIEW_TASKS=Object.freeze([...ids.slice(0,5),task('consult','model_consult','critic',['evidence']),task('compare','proposal_compare','analyst',['compute','analysis','consult']),task('coordinate','coordinate','coordinator',['frame','evidence','compute','analysis','challenge','consult','compare'])]);
 export function runInvestigationReview(options){return runRoleGraph(options);}
-async function runRoleGraph({versionText,versionPin,runId,signal,onEvent,onExecutionEvent,assertCurrent,timeoutMs=30000}={},consultation=null){
+async function runRoleGraph({versionText,versionPin,runId,signal,onEvent,onExecutionEvent,assertCurrent,timeoutMs=30000,maxNewTasks,recovery}={},consultation=null){
  if(typeof versionText!=='string'||!versionText.length||versionText.length>262144||typeof versionPin!=='string'||!/^sha256:[a-f0-9]{64}$/.test(versionPin))fail('INPUT');
  let wire=null,contract=null,canonicalReport=null;
+ if(recovery!==undefined){if(consultation||await casePin(versionText)!==versionPin)fail('RECOVERY_VERSION');wire=parse(versionText,6);if(wire.version!==VERSION)fail('VERSION');contract=parse(wire.contractText,9);}
  const typed=(kind,execute,validate)=>({execute,admit:(value)=>{if(value?.versionDigest!==versionPin||value?.kind!==kind||!validate(value))fail('ARTIFACT');return value;}});
  const out=(kind,fields)=>({versionDigest:versionPin,kind,...fields,decisionAuthority:'NONE'});
  const handlers={
@@ -71,7 +73,7 @@ async function runRoleGraph({versionText,versionPin,runId,signal,onEvent,onExecu
    return out('proposal_compare',{reviewedCandidateIds:canonicalReport.investigation.candidates.map(c=>c.id),generated:generated.candidates.map(c=>({proposalDigest:c.proposalDigest,status:c.status,relation:existing.has(c.proposalDigest)?'MATCHES_REVIEWED_PROPOSAL_BYTES':'NEW_PROPOSAL_REQUIRES_REVIEW'})),semanticReview:'REQUIRED',qualification:'Byte identity is not semantic equivalence; new proposals remain quarantined.'});
   },v=>Array.isArray(v.generated)&&v.semanticReview==='REQUIRED');
  }
- return runTaskGraph({tasks:consultation?HYBRID_REVIEW_TASKS:ids,handlers,runId,version:versionPin,signal,onEvent,onExecutionEvent,executionOrigin:consultation?'host-task':'deterministic',assertCurrent,timeoutMs,concurrency:2,maxPerAgent:1,sealArtifact:sealRoleArtifact});
+ return runTaskGraph({tasks:consultation?HYBRID_REVIEW_TASKS:ids,handlers,runId,version:versionPin,signal,onEvent,onExecutionEvent,executionOrigin:consultation?'host-task':'deterministic',assertCurrent,timeoutMs,concurrency:2,maxPerAgent:1,sealArtifact:sealRoleArtifact,maxNewTasks,recovery,recoveryProfile:ROLE_RECOVERY_PROFILE});
 }
 
 // Host-held exact approval for the optional model branch of the same six-role DAG.

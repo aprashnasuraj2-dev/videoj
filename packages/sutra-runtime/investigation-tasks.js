@@ -1,3 +1,4 @@
+import {consumeTaskRecovery} from './execution-recovery.js';
 import {createExecutionEmitter} from './execution-events.js';
 /* Host-owned bounded investigation DAG. No tool, provider, credential or truth authority is granted by a task. */
 function taskFail(code){const e=new Error('Investigation task runtime refused ('+code+').');e.code=code;throw e;}
@@ -46,10 +47,13 @@ function copyTaskArtifact(value){
  return copy(value,0);
 }
 
-export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,maxPerAgent=concurrency,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',sealArtifact,assertCurrent=()=>{}}={}){
+export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,maxPerAgent=concurrency,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',sealArtifact,maxNewTasks,recovery,recoveryProfile,assertCurrent=()=>{}}={}){
  if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(maxPerAgent)||maxPerAgent<1||maxPerAgent>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin)||sealArtifact!==undefined&&typeof sealArtifact!=='function')taskFail('CONFIG');
+ if((maxNewTasks!==undefined||recovery!==undefined)&&(executionOrigin!=='deterministic'||typeof sealArtifact!=='function'||typeof recoveryProfile!=='string'))taskFail('RECOVERY_CONFIG');
+ if(maxNewTasks!==undefined&&(!Number.isSafeInteger(maxNewTasks)||maxNewTasks<1||maxNewTasks>64))taskFail('RECOVERY_CONFIG');
  const {order,registry}=compileTaskGraph(tasks,handlers),controller=new AbortController(),states=new Map(order.map(t=>[t.id,'queued'])),artifacts=new Map(),running=new Map(),agentActive=new Map();
- let sequence=0,stopReason=null;
+ const retained=recovery===undefined?null:consumeTaskRecovery(recovery,{version,runId,recoveryProfile,manifest:order});
+ let sequence=0,stopReason=null,scheduled=0;
  const emitter=onExecutionEvent?createExecutionEmitter({runId,version,origin:executionOrigin,publish:onExecutionEvent}):null;
  emitter?.emit('run.open',{tasks:order});
  const stop=reason=>{if(stopReason===null){stopReason=reason;controller.abort();}};
@@ -81,15 +85,24 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,m
   }catch{if(fence())emit(task,'failed');}
  }
  try{
+  if(retained){
+   for(const a of retained.artifacts){
+    if(!fence())break;
+    const task=order.find(t=>t.id===a.taskId);
+    if(!task||task.dependsOn.some(id=>states.get(id)!=='completed'))taskFail('RECOVERY_DEPENDENCY');
+    artifacts.set(task.id,a);states.set(task.id,'completed');
+    emitter?.emit('task.restore',{taskId:task.id,agentId:task.agentId,kind:task.kind,recoveryPin:retained.recoveryPin,priorRunId:retained.priorRunId,artifactDigest:a.provenance.artifactDigest,valueDigest:a.provenance.valueDigest});
+   }
+  }
   while(fence()){
    let changed=false;
    for(const task of order){
     if(!fence())break;
     if(states.get(task.id)!=='queued')continue;
     if(task.dependsOn.some(id=>['failed','blocked','cancelled'].includes(states.get(id)))){emit(task,'blocked');changed=true;}
-    else if(running.size<concurrency&&(agentActive.get(task.agentId)??0)<maxPerAgent&&task.dependsOn.every(id=>states.get(id)==='completed')){
+    else if(scheduled<(maxNewTasks??64)&&running.size<concurrency&&(agentActive.get(task.agentId)??0)<maxPerAgent&&task.dependsOn.every(id=>states.get(id)==='completed')){
      // Mark in-flight before executing: synchronous observers cannot allocate the same task twice.
-     agentActive.set(task.agentId,(agentActive.get(task.agentId)??0)+1);
+     scheduled++;agentActive.set(task.agentId,(agentActive.get(task.agentId)??0)+1);
      const job=Promise.resolve().then(()=>invoke(task)).finally(()=>{running.delete(task.id);agentActive.set(task.agentId,agentActive.get(task.agentId)-1);});
      running.set(task.id,job);states.set(task.id,'scheduled');changed=true;
     }
@@ -99,7 +112,7 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,m
   }
   if(stopReason){for(const task of order)if(['queued','scheduled','executing','validating'].includes(states.get(task.id)))emit(task,'cancelled');}
   // Stale/cancelled runs return metadata only, not previously admitted partial artifacts.
-  const status=stopReason??(order.every(t=>states.get(t.id)==='completed')?'completed':'partial');emitter?.emit('run.close',{status});
+  const status=stopReason??(order.every(t=>states.get(t.id)==='completed')?'completed':order.some(t=>states.get(t.id)==='queued')?'paused':'partial');emitter?.emit('run.close',{status});
   return Object.freeze({runId,version,status,tasks:Object.freeze(order.map(t=>Object.freeze({id:t.id,agentId:t.agentId,kind:t.kind,status:states.get(t.id)}))),artifacts:Object.freeze(stopReason?[]:order.filter(t=>artifacts.has(t.id)).map(t=>artifacts.get(t.id)))});
  }finally{clearTimeout(timer);controller.signal.removeEventListener('abort',wake);signal?.removeEventListener('abort',external);}
 }
