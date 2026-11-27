@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "networks": {
-    "learner": {},
-    "linked_learner": {
-      "guide_peer": "https://sutra-guide.aafnaipatro.com/agents/checklist"
-    }
-  }
-}

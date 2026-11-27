@@ -1,7 +1,7 @@
 name: Validate SUTRA workspace browser
 on:
   pull_request:
-    branches: ['sutra/v2-knowledge-compiler']
+    branches: ['main', 'sutra/v2-knowledge-compiler']
     paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
 permissions:
   contents: read

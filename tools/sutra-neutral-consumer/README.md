@@ -1,7 +1,0 @@
-# Neutral consumer laboratory (P071)
-
-This independent consumer page imports only the unchanged nsDeploy upstream kernel, runner and trace modules from the verified vendor snapshot. It does not import the SUTRA runtime adapter, learner application, private endpoints or starter. It consumes the actual checked-in public guide manifest and graph bytes over a separate loopback HTTP origin. The deliberately narrow generic JSON profile supports local agents with bounded request schemas, no cycles or remote/executable tools. It does not claim full HOCON/profile compatibility.
-
-Reproduce from repository root with Node 22+: npm --prefix apps/sutra ci; npm --prefix apps/sutra exec -- playwright install chromium; node packages/sutra-runtime/verify-vendor.mjs; node tools/sutra-neutral-consumer/browser.cjs. Playwright is test infrastructure only; the standalone page needs no player.
-
-Consent is separate for manifest and graph GETs. Denial is terminal. Exact names only, no prefix/fallback. A deterministic caller-owned adapter runs the published graph in browser memory and ignores a publisher model hint; no provider call, key, private API, write, or user data is involved. Both origins are temporary same-owner loopback servers. This is independent implementation compatibility evidence, not outside-builder adoption, live provider validation, production HTTPS, or official certification. No deployment is required.

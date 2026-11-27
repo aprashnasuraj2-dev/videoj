@@ -1,1 +1,0 @@
-Synthetic timing marker. This is not a training instruction.
