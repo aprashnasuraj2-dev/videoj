@@ -36,12 +36,14 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   // responses injected. No Node graph orchestration or automatic mock fallback.
   const contract='a'.repeat(64),browserCalls=[];
   await page.route('**/api/status',route=>route.fulfill({json:{inference:'configured',model:'browser-fixture-model',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',inferenceContractId:contract}}));
-  let delegate=true;
+  let delegate=true,evidenceMode=false,wrongSpan=false;
   await page.route('**/api/v1/chat/completions',async route=>{
    const req=route.request(),body=req.postDataJSON();browserCalls.push(body);assert.equal(req.headers()['x-sutra-inference-contract'],contract);assert.equal(req.headers()['authorization'],undefined);assert.equal(body.model,'browser-fixture-model');
    const first=body.tools.some(t=>t.function.name==='critic')&&!body.messages.some(m=>m.role==='tool');
-   const delta=first&&delegate?{tool_calls:[{index:0,id:'critic_call',type:'function',function:{name:'critic',arguments:JSON.stringify({request:'Challenge this candidate plan'})}}]}:{content:first?'Unreviewed plan':body.tools.length?'Candidate plan including critique':'Check competing evidence and missing measurements'};
-   await route.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta,finish_reason:first&&delegate?'tool_calls':'stop'}]})+'\n\ndata: [DONE]\n\n'});
+   if(evidenceMode&&body.tools.some(t=>t.function.name==='mcp_inspect_evidence')&&!body.messages.some(m=>m.role==='tool')){const delta={tool_calls:[{index:0,id:'evidence_call',type:'function',function:{name:'mcp_inspect_evidence',arguments:JSON.stringify({sourceId,start:0,end:wrongSpan?sourceText.length:15})}}]};await route.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta,finish_reason:'tool_calls'}]})+'\n\ndata: [DONE]\n\n'});return;}
+   const needsCritic=evidenceMode&&body.tools.some(t=>t.function.name==='critic')&&!body.messages.some(m=>m.name==='critic');
+   const delta=(first||needsCritic)&&delegate?{tool_calls:[{index:0,id:'critic_call',type:'function',function:{name:'critic',arguments:JSON.stringify({request:'Challenge this candidate plan'})}}]}:{content:first?'Unreviewed plan':body.tools.length?'Candidate plan including critique':'Check competing evidence and missing measurements'};
+   await route.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta,finish_reason:(first||needsCritic)&&delegate?'tool_calls':'stop'}]})+'\n\ndata: [DONE]\n\n'});
   });
   await page.locator('#orb-autonomous-objective').fill('Plan a battery cost investigation');
   await page.locator('#orb-autonomous-browser-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');
@@ -51,6 +53,11 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   assert.match(await page.locator('#orb-autonomous-result').innerText(),/Candidate plan including critique/);
   assert.match(await page.locator('#orb-log').innerText(),/BROWSER NETWORK/);
   delegate=false;await page.locator('#orb-autonomous-browser-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='refused');assert.match(await page.locator('#orb-autonomous-status').innerText(),/BROWSER_DELEGATION_MISSING/);
+  evidenceMode=true;delegate=true;browserCalls.length=0;
+  await page.locator('#review-select-text').evaluate(e=>e.setSelectionRange(0,15));
+  await page.locator('#orb-autonomous-evidence-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');assert.match(await page.locator('#orb-autonomous-preview').innerText(),/Battery storage/);assert.equal(browserCalls.length,0);
+  await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='closed');assert.equal(browserCalls.length,4);assert.ok(browserCalls.some(b=>b.messages.some(m=>m.role==='tool'&&m.name==='mcp_inspect_evidence'&&m.content.includes('Battery storage'))));assert.ok(browserCalls.every(b=>!JSON.stringify(b).includes('USD 100 million')));
+  wrongSpan=true;browserCalls.length=0;await page.locator('#orb-autonomous-evidence-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='refused');assert.match(await page.locator('#orb-autonomous-status').innerText(),/EVIDENCE_ARGUMENTS/);assert.equal(browserCalls.length,1);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  }finally{await browser.close();await app.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -5,6 +5,12 @@
       "front_man": "planner",
       "hocon": "./investigation.network.json",
       "description": "Prepare a candidate investigation plan and challenge its assumptions. No evidence acquisition or verified facts."
+    },
+    {
+      "name": "reviewed_investigation",
+      "front_man": "planner",
+      "hocon": "./reviewed-investigation.network.json",
+      "description": "Inspect one explicitly approved local source span, then challenge its interpretation. Requires the owning workspace capability."
     }
   ],
   "allowed_peers": [],

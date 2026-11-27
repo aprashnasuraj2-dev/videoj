@@ -1,3 +1,4 @@
+import {WORKSPACE_EVIDENCE_REF,prepareWorkspaceEvidence,createWorkspaceEvidenceClient} from './workspace-evidence.js';
 import {createSourceMcp,admitSourceConfig} from './source-mcp.js';
 import {parseUniqueJson} from './strict-json.js';
 import {createExternalReadMcp,validateExternalMcpConfig,snapshotContactConfig} from './external-mcp.js';
@@ -63,7 +64,7 @@ function snapshotJsonData(value,maxBytes,sizeCode='NETWORK_SIZE'){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeers=false,externalMcpUrl=null}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowWorkspaceEvidence=false,allowPeers=false,externalMcpUrl=null}={}){
  const bounds=executionLimits(limits);
  const raw=snapshotJsonData(definition,65536);
  if(!plain(raw))fail('NETWORK_DATA','Network must be an object.');
@@ -82,7 +83,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!((allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')||(typeof externalMcpUrl==='string'&&plain(ref)&&Object.keys(ref).length===1&&ref.url===externalMcpUrl))))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!((allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')||(allowWorkspaceEvidence===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url===WORKSPACE_EVIDENCE_REF)||(typeof externalMcpUrl==='string'&&plain(ref)&&Object.keys(ref).length===1&&ref.url===externalMcpUrl))))fail('TOOLS','Agent needs a bounded local tool list.');
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
@@ -105,7 +106,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   const exposed=new Set();
   for(const ref of agent.tools){
    const namesForRef=typeof ref==='string'?[safeName(names.has(ref)?ref:parseExternalAgent(ref).agentName)]:
-    ref.url==='/api/source-tools'?['mcp_search_lesson','mcp_read_cue']:['mcp_read_public'];
+    ref.url==='/api/source-tools'?['mcp_search_lesson','mcp_read_cue']:ref.url===WORKSPACE_EVIDENCE_REF?['mcp_inspect_evidence']:['mcp_read_public'];
    for(const tool of namesForRef){if(exposed.has(tool))fail('TOOL_NAME_COLLISION','Distinct capabilities cannot share one model-facing tool name.');exposed.add(tool);}
   }
  }
@@ -124,7 +125,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,workspaceEvidence,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
  let admittedPeer=null;
  if(peerRuntime!==undefined){
   try{peerRuntime=snapshotContactConfig(peerRuntime,['inspector','fetchImpl'],'PEER_CONFIG');}
@@ -136,13 +137,15 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   admittedPeer=Object.freeze({inspector,fetchImpl:fetchImpl??fetch});
  }
  const third=thirdPartyMcp===undefined?null:validateExternalMcpConfig(thirdPartyMcp);
+ let evidence=null,evidenceCurrent=null;
+ if(workspaceEvidence!==undefined){if(admittedPeer||third||sourceTools||privateContext||peerContextGrants)fail('EVIDENCE_CONFIG','Workspace evidence cannot share a run with other capabilities.');try{const c=snapshotContactConfig(workspaceEvidence,['selection','assertCurrent'],'EVIDENCE_CONFIG');evidenceCurrent=c.assertCurrent;if(typeof evidenceCurrent!=='function'||evidenceCurrent()!==true)throw Error();evidence=await prepareWorkspaceEvidence(c.selection);}catch{fail('EVIDENCE_CONFIG','Exact workspace evidence approval is unavailable.');}}
  // Snapshot source contact metadata before observers or model work, and use
  // the same pinned origin in both the client and runner context.
  if(sourceTools!==undefined){try{sourceTools=admitSourceConfig(sourceTools);}catch{fail('SOURCE_CONFIG','Source tool host configuration was refused.');}}
  let privatePolicy;
  try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowWorkspaceEvidence:!!evidence,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
@@ -157,7 +160,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
- const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
+ const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;if(evidence&&evidenceCurrent()!==true){const e=new RuntimeError('EVIDENCE_STALE','Approved evidence selection changed.');failure??=e;controller.abort(e);throw e;}};
  const emit=event=>{
   if(closed)return;
   // The upstream runner may turn a budget skip or failed child into model
@@ -225,6 +228,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:admittedPeer?2:0,maxCallsPerPeer:admittedPeer?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
+ const localEvidence=evidence?createWorkspaceEvidenceClient({evidence,assertCurrent:evidenceCurrent,signal:controller.signal}):null;
+ const evidenceClient=localEvidence?{listTools:()=>localEvidence.listTools(),callTool:async(...args)=>{check();try{const result=await localEvidence.callTool(...args);check();return result;}catch(error){return stopRun(new RuntimeError(/^EVIDENCE_[A-Z_]+$/.test(error?.code??'')?error.code:'EVIDENCE_TOOL','Workspace evidence read refused.'));}}}:null;
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{check();try{const result=await rawSourceClient[method](...args);check();return result;}catch(cause){if(controller.signal.aborted)throw controller.signal.reason;const safe=['SOURCE_QUOTA','SOURCE_VERSION','SOURCE_UNAVAILABLE','SOURCE_EVIDENCE_LIMIT','SOURCE_QUERY_TOO_BROAD'].includes(cause?.code)?cause.code:'CAPABILITY_UNAVAILABLE';return stopRun(new RuntimeError(safe,'Source retrieval failed ('+safe+'); no completed source result is claimed.'));}};
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
@@ -287,6 +292,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  };
  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
   check();
+  if(ref?.url===WORKSPACE_EVIDENCE_REF&&evidenceClient)return evidenceClient;
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
   if(ref?.url===third?.url&&externalClient)return externalClient;
   return unavailable();
@@ -308,7 +314,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
 
 // Same-origin publication loader for the restricted local profile. Cross-origin
 // loading is deliberately refused until the consent-aware peer loader is shipped.
-async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,resolvePublishedLinks=false,retryUnavailableReads=false,attemptLog}={}){
+async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,allowWorkspaceEvidence=false,resolvePublishedLinks=false,retryUnavailableReads=false,attemptLog}={}){
  let base;
  try{base=new URL(baseUrl);}catch{fail('ARTIFACT_URL','Use a complete agent site-base URL.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
@@ -369,7 +375,7 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
   definition=resolveSymbolicPeerLinks(definition,await read('links',linksUrl,16384),entry.name);
   artifacts.links=linksUrl.href;
  }
- compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools,allowPeers:resolvePublishedLinks===true});
+ compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools,allowWorkspaceEvidence,allowPeers:resolvePublishedLinks===true});
  return {definition,name:entry.name,frontMan:entry.front_man,artifacts};
 }
 
