@@ -4,22 +4,25 @@ import {createServer} from 'node:http';
 import {EventEmitter} from 'node:events';
 import {compilerFinanceFixture} from '../examples/reviewed-compiler.mjs';
 import {admitMixedCouncilConfig,MIXED_COUNCIL_VERSION} from '../mixed-council-config.js';
-import {runApprovedMixedCouncil} from '../mixed-council-runner.js';
+import {runApprovedMixedCouncil,runApprovedHybridCouncil} from '../mixed-council-runner.js';
+import {admitHybridCouncilConfig,HYBRID_OPERATOR_VERSION} from '../mixed-council-config.js';
+import {livingFixture} from '../examples/living-investigation.mjs';
+import {openExecutionCheckpoint} from '../../sutra-runtime/execution-checkpoint.js';
 import {verifyExpressionReviewReceipt} from '../expression-review-receipt.js';
 const A='HOSTED_FIXTURE_CANARY_987654321',B='LOCAL_FIXTURE_CANARY_123456789';
 const left='[ocf26] > [ocf25]',right='([ocf26] - [ppe26]) > ([ocf25] - [ppe25])';
 const response=expr=>JSON.stringify({version:1,kind:'expression',expression:expr});
-async function setup(t){
- const requests=[];
+async function setup(t,{version=null}={}){
+ const requests=[],leftExpr=version?'[first] > [baseline]':left,rightExpr=version?'[first] < [baseline]':right;
  const server=createServer((req,res)=>{
   let body='';req.on('data',x=>body+=x);req.on('end',()=>{
    requests.push({type:'local',header:req.headers.authorization,body:JSON.parse(body)});
-   res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({done:true,done_reason:'stop',message:{role:'assistant',content:response(left)},eval_count:3}));
+   res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({done:true,done_reason:'stop',message:{role:'assistant',content:response(leftExpr)},eval_count:3}));
   });
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>server.close(resolve)));
- const f=await compilerFinanceFixture();
- const config={version:MIXED_COUNCIL_VERSION,contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26','ppe25','ppe26'],includeValues:false},connections:[
+ const f=version?{contractText:JSON.parse(version.versionText).contractText,pin:JSON.parse(version.versionText).contractPin}:await compilerFinanceFixture();
+ const config={version:MIXED_COUNCIL_VERSION,contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:version?['baseline','first']:['ocf25','ocf26','ppe25','ppe26'],includeValues:false},connections:[
   {id:'local-own',label:'Local model',protocol:'ollama-chat-json',endpoint:'http://127.0.0.1:'+server.address().port+'/api/chat',models:['private/local'],authMode:'bearer',credentialEnv:'SUTRA_LOCAL_TEST',transportClass:'local'},
   {id:'remote-own',label:'Hosted model',protocol:'anthropic-messages-json',endpoint:'https://api.example.com/v1/messages',models:['private/remote'],authMode:'anthropic-key',credentialEnv:'SUTRA_HOSTED_TEST',transportClass:'hosted'}
  ],agents:[{id:'analyst',role:'Investigate',connectionId:'local-own',model:'private/local'},{id:'critic',role:'Challenge',connectionId:'remote-own',model:'private/remote'}],budget:{maxCalls:4,maxInputBytes:50000,maxOutputTokens:2048,maxConcurrent:2},maxRounds:2,maxOutputTokens:256,roundPolicy:'fixed',timeoutMs:10000,transportDeadlineMs:5000};
@@ -30,7 +33,7 @@ async function setup(t){
   dialTls(options){const s=Object.assign(new EventEmitter(),{encrypted:true,authorized:true,remoteAddress:options.host,remotePort:443,alpnProtocol:'http/1.1',getProtocol:()=> 'TLSv1.3',getPeerCertificate:()=>({subjectaltname:'DNS:api.example.com'}),destroy(){}});queueMicrotask(()=>s.emit('secureConnect'));return s;},
   requestHttps(options,callback){const s=options.createConnection(),req=Object.assign(new EventEmitter(),{destroy(){},end(body){
    requests.push({type:'hosted',header:options.headers['x-api-key'],body:JSON.parse(body)});
-   queueMicrotask(()=>{req.emit('socket',s);const res=Object.assign(new EventEmitter(),{statusCode:200,headers:{'content-type':'application/json'},complete:true,destroy(){}});callback(res);res.emit('data',Buffer.from(JSON.stringify({type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:response(right)}],usage:{output_tokens:4}})));res.emit('end');});
+   queueMicrotask(()=>{req.emit('socket',s);const res=Object.assign(new EventEmitter(),{statusCode:200,headers:{'content-type':'application/json'},complete:true,destroy(){}});callback(res);res.emit('data',Buffer.from(JSON.stringify({type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:response(rightExpr)}],usage:{output_tokens:4}})));res.emit('end');});
   }});return req;}
  };
  const reads=[];
@@ -82,4 +85,30 @@ test('credential resolver exceptions and secret-bearing plan identifiers fail be
  const configText=JSON.stringify(config),plan=await admitMixedCouncilConfig(configText);
  await assert.rejects(runApprovedMixedCouncil({...s.options,configText,approvedPlanPin:plan.planPin}),e=>e.code==='SECRET_ECHO'&&!e.message.includes(A));
  assert.equal(s.requests.length,0);assert.equal(s.dns.length,0);
+});
+
+test('exact hybrid operator runs six-role DAG with actual loopback TCP and injected hosted transport',async t=>{
+ const version=await livingFixture(),s=await setup(t,{version});
+ const configText=JSON.stringify({version:HYBRID_OPERATOR_VERSION,versionText:version.versionText,versionPin:version.digest,councilConfigText:s.wire});
+ const p=await admitHybridCouncilConfig(configText);
+ assert.equal(p.preview.tasks.length,8);assert.equal(s.requests.length,0);assert.equal(s.reads.length,0);
+ const opts={...s.options,configText,approvedPlanPin:p.planPin};
+ const r=await runApprovedHybridCouncil(opts);
+ assert.equal(r.status,'completed');assert.equal(r.result.artifacts.length,8);assert.equal(r.budget.used.calls,4);
+ assert.equal(s.requests.filter(x=>x.type==='local').length,2);assert.equal(s.requests.filter(x=>x.type==='hosted').length,2);
+ const consult=r.result.artifacts.find(x=>x.taskId==='consult').value;assert.equal(consult.candidates.length,2);assert.equal(consult.decisionAuthority,'NONE');
+ const cp=await openExecutionCheckpoint(r.checkpoint.text,r.checkpoint.pin,version.digest);
+ assert.equal(cp.checkpoint.artifactPins.length,8);assert.equal(cp.checkpoint.origin,'host-task');
+ assert.ok(!JSON.stringify(r).includes(A)&&!JSON.stringify(r).includes(B));
+});
+test('hybrid outer approval, separate hosted consent and exact contract match precede credential admission',async t=>{
+ const version=await livingFixture(),s=await setup(t,{version});
+ const configText=JSON.stringify({version:HYBRID_OPERATOR_VERSION,versionText:version.versionText,versionPin:version.digest,councilConfigText:s.wire});
+ const p=await admitHybridCouncilConfig(configText);
+ const opts={...s.options,configText,approvedPlanPin:p.planPin};
+ for(const edit of [{approvedPlanPin:s.plan.planPin},{approveDisclosure:false},{approveHosted:false},{configText:configText+' '}]){
+  await assert.rejects(runApprovedHybridCouncil({...opts,...edit}));assert.equal(s.reads.length,0);assert.equal(s.requests.length,0);
+ }
+ const other=await livingFixture('engineering'),wrong=JSON.stringify({version:HYBRID_OPERATOR_VERSION,versionText:other.versionText,versionPin:other.digest,councilConfigText:s.wire});
+ await assert.rejects(admitHybridCouncilConfig(wrong),/HYBRID_CONTRACT/);
 });
