@@ -51,7 +51,7 @@ function admitResume(text,expected,p){
  if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144+u.documents*(p.plan.scope.allowPdf===true?1048576:262144))fail('RESUME_USAGE');
  return s;
 }
-export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,approveModelDisclosure=false,signal,clock=()=>Date.now(),resumeText,resumePin}={}){
+export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,approveModelDisclosure=false,signal,clock=()=>Date.now(),resumeText,resumePin,absoluteDeadline}={}){
  // Input re-admission avoids accepting a caller-forged mutable manifest object.
  const p=admitManifest(manifest);
  if(approvedPlanPin!==p.planPin||approvePublicContact!==true||approveEstimatedCost!==true)fail('APPROVAL');
@@ -59,8 +59,8 @@ export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact
  // Model-aware durable resume requires a distinct ledger and state transition schema.
  if(p.plan.modelPolicy&&(resumeText!==undefined||resumePin!==undefined))fail('MODEL_RESUME_UNSUPPORTED');
  const prior=resumeText!==undefined||resumePin!==undefined?admitResume(resumeText,resumePin,p):null;
- const c=new AbortController(),now=clock(),started=prior?.startedAt??now,expires=prior?.expiresAt??(started+p.plan.budget.maxDurationSeconds*1000);
- if(!Number.isSafeInteger(now)||now<started||now>=expires)fail('INACTIVE');
+ const c=new AbortController(),now=clock(),started=prior?.startedAt??now,expires=prior?.expiresAt??(absoluteDeadline??(started+p.plan.budget.maxDurationSeconds*1000));
+ if(!Number.isSafeInteger(now)||!Number.isSafeInteger(expires)||absoluteDeadline!==undefined&&(prior||expires>started+p.plan.budget.maxDurationSeconds*1000)||now<started||now>=expires)fail('INACTIVE');
  const cancel=()=>c.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
  const timer=setTimeout(cancel,expires-now);timer.unref?.();
  let closed=false;const usage=prior?{...prior.usage}:{searches:0,documents:0,reservedBytes:0,reservedCostMicros:0,...(p.plan.modelPolicy?{modelCalls:0,modelInputBytes:0,modelOutputTokensReserved:0}:{})};
