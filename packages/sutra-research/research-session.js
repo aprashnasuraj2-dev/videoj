@@ -25,18 +25,28 @@ export function admitManifest(text){
  const limits={maxSearches:[2,30],maxDocuments:[1,60],maxLinkDepth:[0,3],maxDurationSeconds:[5,1200],maxDownloadBytes:[65536,52428800],maxCostMicros:[1,1000000]};
  if(hasModels)limits.maxModelCalls=[3,30];
  if(!exact(p.budget,Object.keys(limits))||Object.entries(limits).some(([k,[a,b]])=>!bounded(p.budget[k],a,b)))fail('BUDGET');
- if(!Array.isArray(p.providers)||p.providers.length<1||p.providers.length>2||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
+ if(!Array.isArray(p.providers)||p.providers.length<(hasModels&&((p.modelPolicy?.webAccess==='on_demand')||(Object.hasOwn(p.modelPolicy??{},'defaultModel')&&p.modelPolicy.webAccess===undefined))?0:1)||p.providers.length>2||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
  let modelPolicy;
  if(hasModels){
-  const m=p.modelPolicy;
-  if(!exact(m,['roles','allowPublicEvidenceDisclosure'])||m.allowPublicEvidenceDisclosure!==true||!Array.isArray(m.roles)||m.roles.length!==3)fail('MODEL_POLICY');
-  const roles=new Set();
-  for(const r of m.roles){
-   if(!exact(r,['role','vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'])||!['bot','orb','spark'].includes(r.role)||roles.has(r.role)||!['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)||typeof r.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)||!bounded(r.maxInputBytes,4096,65536)||!bounded(r.maxOutputTokens,128,4096)||!bounded(r.estimatedMaxCostMicros,1,1000000))fail('MODEL_ROLE');
-   roles.add(r.role);
+  const m=p.modelPolicy,compact=Object.hasOwn(m??{},'defaultModel'),explicitWeb=Object.hasOwn(m??{},'webAccess'),roleKeys=['bot','orb','spark'];
+  const keys=['allowPublicEvidenceDisclosure',...(compact?['defaultModel']:[]),...(Object.hasOwn(m??{},'roles')?['roles']:[]),...(explicitWeb?['webAccess']:[])];
+  if(!exact(m,keys)||m.allowPublicEvidenceDisclosure!==true||!compact&&!Object.hasOwn(m,'roles'))fail('MODEL_POLICY');
+  const webAccess=m.webAccess??(compact?'on_demand':'always');
+  if(!['on_demand','always'].includes(webAccess))fail('MODEL_WEB_ACCESS');
+  const fields=['vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'];
+  const valid=r=>['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)&&typeof r.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)&&bounded(r.maxInputBytes,4096,65536)&&bounded(r.maxOutputTokens,128,4096)&&bounded(r.estimatedMaxCostMicros,1,1000000);
+  if(compact&&(!exact(m.defaultModel,fields)||!valid(m.defaultModel)))fail('MODEL_DEFAULT');
+  const entries=m.roles??[];
+  if(!Array.isArray(entries)||entries.length>3||!compact&&entries.length!==3)fail('MODEL_POLICY');
+  const roles=new Map();
+  for(const r of entries){
+   if(!exact(r,['role',...fields])||!roleKeys.includes(r.role)||roles.has(r.role)||!valid(r))fail('MODEL_ROLE');
+   roles.set(r.role,r);
   }
-  if(m.roles.find(r=>r.role==='orb').vendor===m.roles.find(r=>r.role==='spark').vendor)fail('CRITIC_VENDOR');
-  modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,roles:Object.freeze(m.roles.map(r=>Object.freeze({...r})))});
+  const resolved=roleKeys.map(role=>Object.freeze({...m.defaultModel,...roles.get(role),role}));
+  const orb=resolved.find(r=>r.role==='orb'),spark=resolved.find(r=>r.role==='spark');
+  const reviewMode=orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':'different_configured_models_independence_unproven';
+  modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,webAccess,roles:Object.freeze(resolved),reviewMode});
  }
  const plan=Object.freeze({...p,...(modelPolicy?{modelPolicy}:{}),scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
  return Object.freeze({plan,planPin:digest(text),costPolicy:'operator-supplied estimates; not a vendor invoice guarantee'});

@@ -3,6 +3,11 @@ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 export function formatMarkdownReport(report){
  const lines=['# SUTRA autonomous research — candidate evidence','', '**Objective:** '+esc(report.objective),'','**Status:** '+esc(report.state)+' / '+esc(report.terminationReason),'','**Qualification:** '+esc(report.qualification),'','## Research methodology',''];
  for(const q of report.researchPlan?.questions??[])lines.push('- '+esc(q.question)+' — '+esc(q.status)+'; '+q.attemptedQueries+' query waves. Acceptance is not established.');
+ if(report.modelConfiguration){
+  lines.push('','## Model configuration','', 'Web access: '+esc(report.modelConfiguration.webAccess)+'; review configuration: '+esc(report.modelConfiguration.reviewMode)+'.');
+  for(const r of report.modelConfiguration.roles)lines.push('- '+esc(r.role)+': '+esc(r.vendor)+' / '+esc(r.model));
+ }
+ if(report.modelOnlyAnswer)lines.push('','## Model answer without web research','',esc(report.modelOnlyAnswer.text),'','No external evidence was acquired or verified.');
  if(report.intelligence){
   lines.push('','## Reviewed candidate findings','',esc(report.intelligence.qualification),'');
   for(const c of report.intelligence.claims.filter(c=>c.publicationStatus!=='withheld_from_findings')){

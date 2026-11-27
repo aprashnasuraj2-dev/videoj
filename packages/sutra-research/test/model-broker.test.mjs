@@ -6,9 +6,9 @@ export function modelManifest(){
  return {schema:'sutra-autonomous-research/v1',objective:'Compare battery storage costs',scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false},budget:{maxSearches:4,maxDocuments:8,maxLinkDepth:1,maxDurationSeconds:60,maxDownloadBytes:8388608,maxCostMicros:50000,maxModelCalls:5},providers:[{id:'brave',estimatedMaxCostMicros:1000}],modelPolicy:{allowPublicEvidenceDisclosure:true,roles:[{role:'bot',vendor:'openai',model:'test-bot',maxInputBytes:8192,maxOutputTokens:256,estimatedMaxCostMicros:1000},{role:'orb',vendor:'openai',model:'test-orb',maxInputBytes:16384,maxOutputTokens:1024,estimatedMaxCostMicros:2000},{role:'spark',vendor:'anthropic',model:'test-spark',maxInputBytes:16384,maxOutputTokens:1024,estimatedMaxCostMicros:2000}]}};
 }
 export function grant(p=modelManifest(),extra={}){const raw=JSON.stringify(p);return authorizeResearch(raw,{approvedPlanPin:admitManifest(raw).planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true,...extra});}
-test('model routes are manifest-pinned and require explicit disclosure; reviewer vendor differs',()=>{
+test('model routes are manifest-pinned and require explicit disclosure; same model is permitted and labeled self-review',()=>{
  assert.throws(()=>grant(modelManifest(),{approveModelDisclosure:false}),/MODEL_DISCLOSURE_APPROVAL/);
- const p=modelManifest();p.modelPolicy.roles[2].vendor='openai';assert.throws(()=>grant(p),/CRITIC_VENDOR/);
+ const p=modelManifest();p.modelPolicy.roles[2]={...p.modelPolicy.roles[1],role:'spark'};const a=grant(p);try{assert.equal(a.plan.modelPolicy.reviewMode,'same_configured_model_self_review');}finally{a.close();}
  assert.throws(()=>grant(modelManifest(),{resumeText:'x',resumePin:'x'}),/MODEL_RESUME_UNSUPPORTED/);
 });
 test('model broker reserves before dispatch, uses official routes, rejects arbitrary tool replies',async()=>{

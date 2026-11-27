@@ -20,6 +20,22 @@ export function admitModelQueries(value,objective,history){
  }
  return out;
 }
+// Model-directed web access is a proposal, never direct network authority.
+export function admitWebDecision(value,objective,history){
+ if(!value||!['search','answer_without_web','finish_research'].includes(value.webAction))fail('WEB_DECISION');
+ if(value.webAction==='search'){
+  if(!exact(value,['webAction','queries']))fail('WEB_DECISION');
+  const queries=admitModelQueries({queries:value.queries},objective,history);
+  if(!queries.length)fail('WEB_DECISION_EMPTY');
+  return {action:'search',queries};
+ }
+ if(value.webAction==='finish_research'){
+  if(!exact(value,['webAction'])||!history.length)fail('WEB_DECISION');
+  return {action:'finish_research'};
+ }
+ if(!exact(value,['webAction','answer'])||history.length||!text(value.answer,3000))fail('WEB_DECISION');
+ return {action:'answer_without_web',answer:value.answer};
+}
 export function makeEvidencePacket(documents,passages,{maxPassages=24,maxTextBytes=16000}={}){
  if(!Number.isSafeInteger(maxPassages)||maxPassages<1||maxPassages>48||!Number.isSafeInteger(maxTextBytes)||maxTextBytes<256||maxTextBytes>48000)fail('PACKET_LIMIT');
  const v=verifyEvidence(documents,passages),byDoc=new Map(documents.map(d=>[d.id,d]));
@@ -100,7 +116,7 @@ export function admitConflictReviews(value,candidates,packet){
  for(const c of candidates)if(!out.some(x=>x.id===c.id))out.push({...c,relation:'not_reviewed',status:'unresolved',citations:[],reason:'The reviewer did not return a validated assessment.',authority:'NONE'});
  return out;
 }
-export function assembleIntelligence(synthesis,reviews,receipts,packet,conflicts=[]){
+export function assembleIntelligence(synthesis,reviews,receipts,packet,conflicts=[],reviewMode='independence_unproven'){
  const byId=new Map(reviews.map(r=>[r.claimId,r]));
  const claims=synthesis.claims.map(c=>{
   const r=byId.get(c.id),cited=new Set(c.citations.map(x=>x.passageId));
@@ -108,5 +124,5 @@ export function assembleIntelligence(synthesis,reviews,receipts,packet,conflicts
   const publicationStatus=c.kind==='inference'&&affected.length?'withheld_from_findings':r?.verdict==='supported'?(affected.length?'candidate_qualified':'candidate_reviewed'):r?.verdict==='qualified'?'candidate_qualified':'withheld_from_findings';
   return {...c,reviewStatus:r?.verdict??'not_reviewed',review:r??null,conflictIds:affected,publicationStatus};
  });
- return {schema:'sutra-research-intelligence/v1',claims,gaps:synthesis.gaps,conflicts,receipts,packet:{disclosedPassages:packet.excerpts.length,availablePassages:packet.availablePassages,disclosedBytes:packet.disclosedBytes},authority:'NONE',qualification:'Exact quotations were validated against acquired extraction. Model review is a semantic opinion, not proof of truth, entailment, independence or completeness. Disputed, insufficient and unreviewed claims are excluded from findings.'};
+ return {schema:'sutra-research-intelligence/v1',claims,gaps:synthesis.gaps,conflicts,receipts,reviewMode,packet:{disclosedPassages:packet.excerpts.length,availablePassages:packet.availablePassages,disclosedBytes:packet.disclosedBytes},authority:'NONE',qualification:'Exact quotations were validated against acquired extraction. Model review is a semantic opinion, not proof of truth, entailment, independence or completeness. Disputed, insufficient and unreviewed claims are excluded from findings.'};
 }
