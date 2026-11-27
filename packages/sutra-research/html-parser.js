@@ -26,7 +26,7 @@ function attributes(raw){
  let n=0;for(const m of raw.matchAll(pattern)){if(++n>64)break;const k=m[1].toLowerCase();if(!Object.hasOwn(out,k))out[k]=decode(m[2]??m[3]??m[4]);}
  return out;
 }
-export function scanHtml(source,url,{allowCrossOriginLinks=false}={}){
+export function scanHtml(source,url,{allowCrossOriginLinks=false,allowQuery=false}={}){
  if(typeof source!=='string'||source.length>1048576)throw Error('HTML_SIZE');
  const lower=source.toLowerCase(),pieces=[],links=[],metadata=Object.create(null),base=new URL(url);let i=0,tags=0,title=false;
  while(i<source.length){
@@ -52,7 +52,7 @@ export function scanHtml(source,url,{allowCrossOriginLinks=false}={}){
   }
   if(name==='a'&&links.length<40){
    const a=attributes(tag.inside.slice(m[0].length));if(!a.href||a.href.length>2048)continue;
-   try{const next=admitDocumentURL(new URL(a.href,url).href);if(!secretLike(next)&&!secretLike(decodeURIComponent(new URL(next).pathname))&&(allowCrossOriginLinks||new URL(next).origin===base.origin)&&!links.includes(next))links.push(next);}catch{}
+   try{const next=admitDocumentURL(new URL(a.href,url).href,{allowQuery});if(!secretLike(next)&&!secretLike(decodeURIComponent(new URL(next).pathname))&&(allowCrossOriginLinks||new URL(next).origin===base.origin)&&!links.includes(next))links.push(next);}catch{}
   }
  }
  const text=pieces.join('').replace(/\r\n?/g,'\n').replace(/[^\S\n]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();

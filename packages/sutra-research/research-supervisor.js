@@ -29,15 +29,16 @@ export function nextQuery(objective,history,docs,passages){
  const v=verifyEvidence(docs,passages),potentialDiscrepancies=compareNumericObservations(extractNumericObservations(passages,v.refs)).length;
  return chooseResearchQuery(objective,history,{missing,domainCount,potentialDiscrepancies});
 }
-function validateRestored(s,b){
+function validateRestored(s,b,scope){
+ const routeOptions={allowQuery:scope.allowPublicQueryParameters===true};
  const ids=new Set(),urls=new Set(),digests=new Set();
  const isDigest=x=>typeof x==='string'&&/^sha256:[0-9a-f]{64}$/.test(x);
  for(const [i,d] of s.documents.entries()){
-  if(!d||d.id!=='source_'+(i+1)||ids.has(d.id)||typeof d.text!=='string'||d.text.length>100000||d.textDigest!==digest(d.text)||!isDigest(d.rawDigest)||admitDocumentURL(d.url)!==d.url||urls.has(d.url)||!Array.isArray(d.links)||d.links.length>40)fail('RESUME_DOCUMENT');
+  if(!d||d.id!=='source_'+(i+1)||ids.has(d.id)||typeof d.text!=='string'||d.text.length>100000||d.textDigest!==digest(d.text)||!isDigest(d.rawDigest)||admitDocumentURL(d.url,routeOptions)!==d.url||urls.has(d.url)||!Array.isArray(d.links)||d.links.length>40)fail('RESUME_DOCUMENT');
   ids.add(d.id);urls.add(d.url);digests.add(d.textDigest);digests.add(d.rawDigest);
  }
  for(const p of s.passages)if(!verifyPassage(p,s.documents.find(d=>d.id===p.sourceId))||!Array.isArray(p.matched)||p.matched.length>16||p.matched.some(x=>typeof x!=='string'||x.length>1000))fail('RESUME_PASSAGE');
- const seen=new Set(s.seen);if(seen.size!==s.seen.length||s.seen.some(x=>admitDocumentURL(x)!==x)||[...urls].some(x=>!seen.has(x)))fail('RESUME_FRONTIER');
+ const seen=new Set(s.seen);if(seen.size!==s.seen.length||s.seen.some(x=>admitDocumentURL(x,routeOptions)!==x)||[...urls].some(x=>!seen.has(x)))fail('RESUME_FRONTIER');
  const queued=new Set();
  for(const x of s.frontier){if(!x||!seen.has(x.url)||queued.has(x.url)||urls.has(x.url)||!Number.isSafeInteger(x.depth)||x.depth<0||x.depth>b.maxLinkDepth)fail('RESUME_FRONTIER');queued.add(x.url);}
  const domains=new Map(s.domainAttempts);if(domains.size!==s.domainAttempts.length||s.domainAttempts.some(x=>!Array.isArray(x)||x.length!==2||typeof x[0]!=='string'||!Number.isSafeInteger(x[1])||x[1]<1||x[1]>3))fail('RESUME_FRONTIER');
@@ -46,7 +47,7 @@ function validateRestored(s,b){
 export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity}){
  assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
  if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
- const restored=prior?validateRestored(prior,b):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
+ const restored=prior?validateRestored(prior,b,plan.scope):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
  const sessionId=prior?.sessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
  let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};
@@ -62,7 +63,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
   emit('operation.completed',{operation:kind,role});return result.artifacts[0].value;
  }
  function enqueue(raw,depth,provider,meta={}){
-  let url;try{url=admitDocumentURL(raw);}catch{return;}if(secretLike(url)||seen.has(url)||depth>b.maxLinkDepth||frontier.length>=240)return;
+  let url;try{url=admitDocumentURL(raw,{allowQuery:plan.scope.allowPublicQueryParameters===true});}catch{return;}if(secretLike(url)||seen.has(url)||depth>b.maxLinkDepth||frontier.length>=240)return;
   seen.add(url);frontier.push({url,depth,provider,title:typeof meta.title==='string'?meta.title.slice(0,300):'',rank:Number.isSafeInteger(meta.rank)&&meta.rank>=1&&meta.rank<=10?meta.rank:10});
  }
  try{

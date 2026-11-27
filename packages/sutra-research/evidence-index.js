@@ -65,7 +65,7 @@ function shingles(text){
 }
 export function compareSourceLineage(documents){
  const sameHost=new Map(),nearDuplicates=[],sh=documents.map(d=>shingles(d.text));
- for(const d of documents){const host=new URL(d.url).hostname;if(!sameHost.has(host))sameHost.set(host,[]);sameHost.get(host).push(d.id);}
+ for(const d of documents){const host=new URL(d.finalUrl??d.url).hostname;if(!sameHost.has(host))sameHost.set(host,[]);sameHost.get(host).push(d.id);}
  for(let i=0;i<documents.length;i++)for(let j=i+1;j<documents.length&&nearDuplicates.length<100;j++){
   const a=sh[i],b=sh[j];if(a.size<20||b.size<20)continue;
   let common=0;for(const x of a)if(b.has(x))common++;
@@ -75,7 +75,7 @@ export function compareSourceLineage(documents){
  return {sameHostGroups:[...sameHost].filter(([,ids])=>ids.length>1).map(([host,sourceIds])=>({host,sourceIds})),nearDuplicates,independenceStatus:'NOT_ESTABLISHED',method:'bounded lexical trigram similarity; not a citation-lineage proof'};
 }
 export function createEvidenceGraph(documents,refs,observations,comparisons,lineage){
- const nodes=[],edges=[],byUrl=new Map(documents.map(d=>[d.url,d.id]));
+ const nodes=[],edges=[],byUrl=new Map(documents.flatMap(d=>[[d.url,d.id],...(d.finalUrl?[[d.finalUrl,d.id]]:[])]));
  for(const d of documents)nodes.push({id:d.id,kind:'source',digest:d.textDigest});
  for(const r of refs){nodes.push({id:r.id,kind:'passage'});edges.push({from:r.id,to:r.sourceId,relationship:'DERIVED_FROM'});}
  for(const o of observations){nodes.push({id:o.id,kind:'numeric_observation'});edges.push({from:o.id,to:o.passageId,relationship:'DERIVED_FROM'});}

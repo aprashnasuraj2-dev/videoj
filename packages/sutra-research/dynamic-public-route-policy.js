@@ -1,14 +1,29 @@
 // Separate dynamic document policy; never changes exact hosted-model admission.
 import {isIP} from 'node:net';
 import {publicAddress} from '../sutra-inference/public-route-policy.js';
+import {secretLike} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Dynamic route refused: '+code),{code});};
-export function admitDocumentURL(raw){
+const SAFE_QUERY=new Set(['id','p','page','year','lang','format','article','report','version','v','offset','limit','start','end','sort']);
+const TRACKING=/^(?:utm_[a-z0-9_]+|gclid|fbclid|msclkid)$/i;
+export function admitDocumentURL(raw,{allowQuery=false}={}){
  if(typeof raw!=='string'||raw.length>2048||/[\u0000-\u0020\u007f\\]/.test(raw))fail('URL');
  let u;try{u=new URL(raw);}catch{fail('URL');}
- // Conservative initial profile: no query, credentials, nonstandard port or IP literal.
- if(u.protocol!=='https:'||u.username||u.password||u.port||u.search||u.href.includes('?')||u.hostname.length>253||isIP(u.hostname)||!u.hostname.includes('.')||u.hostname.endsWith('.')||!u.hostname.split('.').every(x=>/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(x))||/(?:^|\.)(localhost|local|internal|lan|home|onion|test|invalid|example|arpa)$/.test(u.hostname))fail('URL');
+ if(u.protocol!=='https:'||u.username||u.password||u.port||u.hostname.length>253||isIP(u.hostname)||!u.hostname.includes('.')||u.hostname.endsWith('.')||!u.hostname.split('.').every(x=>/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(x))||/(?:^|\.)(localhost|local|internal|lan|home|onion|test|invalid|example|arpa)$/.test(u.hostname))fail('URL');
  if(/%(?:00|0a|0d|2f|5c)/i.test(u.pathname))fail('URL');
- u.hash='';return u.href;
+ try{if(secretLike(decodeURIComponent(u.pathname)))fail('SENSITIVE_URL');}catch(e){if(e?.code)throw e;fail('URL');}
+ u.hash='';
+ if(u.search||u.href.includes('?')){
+  if(!allowQuery)fail('URL');
+  const clean=new URLSearchParams(),seen=new Set();let n=0;
+  for(const [key,value] of u.searchParams){
+   if(++n>12)fail('QUERY_PARAMETERS');
+   if(TRACKING.test(key))continue;
+   if(!SAFE_QUERY.has(key)||seen.has(key)||!/^[A-Za-z0-9._-]{1,80}$/.test(value)||secretLike(value)||/^[A-Za-z0-9_-]{40,}$/.test(value))fail('QUERY_PARAMETERS');
+   seen.add(key);clean.append(key,value);
+  }
+  u.search=clean.toString();
+ }
+ return u.href;
 }
 export async function resolvePublicPeer(host,resolveAll,signal){
  if(signal?.aborted)fail('CANCELLED');

@@ -13,7 +13,7 @@ export function formatMarkdownReport(report){
  for(const c of report.evidenceIndex?.numericComparisons??[]){const a=numbers.get(c.left),b=numbers.get(c.right);if(a&&b)lines.push('- '+esc(a.exactText)+' ('+esc(a.sourceId)+') versus '+esc(b.exactText)+' ('+esc(b.sourceId)+'); '+esc(c.reason));}
  if(!report.evidenceIndex?.numericComparisons?.length)lines.push('No narrowly matched discrepancy was detected; this is not evidence of agreement.');
  lines.push('','## Source inventory','');
- for(const d of report.documents)lines.push('- '+esc(d.id)+': '+esc(d.url)+' — '+esc(d.mediaType)+'; digest '+esc(d.textDigest)+(d.extractionTruncated?' (extraction truncated)':'')+'.');
+ for(const d of report.documents)lines.push('- '+esc(d.id)+': '+esc(d.url)+(d.finalUrl&&d.finalUrl!==d.url?' → '+esc(d.finalUrl):'')+' — '+esc(d.mediaType)+'; digest '+esc(d.textDigest)+(d.extractionTruncated?' (extraction truncated)':'')+'.');
  lines.push('','## Gaps and reservations','', 'Unmatched objective terms: '+esc(report.coverage.unmatchedTerms.join(', ')||'none (lexical diagnostic only)')+'.','', 'Searches reserved: '+report.usage.searches+'; documents reserved: '+report.usage.documents+'; response bytes reserved: '+report.usage.reservedBytes+'; estimated cost micros reserved: '+report.usage.reservedCostMicros+'.','', 'Source independence, empirical truth, causal conclusions and final vendor cost remain unverified.','');
  return lines.join('\n');
 }

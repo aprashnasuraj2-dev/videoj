@@ -6,8 +6,9 @@ import {BlockList,isIP} from 'node:net';
 import {resolvePublicPeer} from './dynamic-public-route-policy.js';
 const fail=code=>Object.assign(Error('Research transport refused: '+code),{code});
 function sameAddress(a,b,f){if(isIP(a)!==f)return false;const list=new BlockList(),kind=f===4?'ipv4':'ipv6';list.addAddress(b,kind);return list.check(a,kind);}
-export async function pinnedPublicHttp({url,method='GET',headers={},body,maxBytes,signal,acceptedTypes,allowMissing=false},{resolveAll=host=>lookup(host,{all:true,verbatim:true}),dialTls=connect,requestHttps=request}={}){
+export async function pinnedPublicHttp({url,method='GET',headers={},body,maxBytes,signal,acceptedTypes,allowMissing=false,allowRedirectResponse=false},{resolveAll=host=>lookup(host,{all:true,verbatim:true}),dialTls=connect,requestHttps=request}={}){
  if(!(url instanceof URL)||url.protocol!=='https:'||url.username||url.password||url.port||!['GET','POST'].includes(method)||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>1048576||!Array.isArray(acceptedTypes)||!acceptedTypes.length)throw fail('CONFIG');
+ if(allowRedirectResponse&&(method!=='GET'||Object.keys(headers).some(k=>/^(?:authorization|cookie|proxy-authorization|x-api-key|x-subscription-token)$/i.test(k))))throw fail('REDIRECT_CONFIG');
  const active=signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000);
  return new Promise((resolve,reject)=>{
   let done=false,socket,req,res;
@@ -25,6 +26,10 @@ export async function pinnedPublicHttp({url,method='GET',headers={},body,maxByte
      let handed=false;
      req=requestHttps({hostname:url.hostname,port:443,path:url.pathname+url.search,method,headers:{...headers,Host:url.hostname,'User-Agent':'SutraResearch/0.1','Accept-Encoding':'identity',Connection:'close'},agent:null,maxHeaderSize:8192,createConnection:()=>{if(handed||done)throw fail('SOCKET');handed=true;return socket;}},incoming=>{
       res=incoming;if(done){res.destroy();return;}
+      if(allowRedirectResponse&&[301,302,303,307,308].includes(res.statusCode)){
+       const location=res.headers.location;if(typeof location!=='string'||!location||location.length>2048||/[\u0000-\u0020\u007f]/.test(location)){finish(fail('REDIRECT_LOCATION'));return;}
+       finish(null,{status:res.statusCode,location,bytes:0,body:Buffer.alloc(0),mediaType:''});return;
+      }
       if(allowMissing&&[404,410].includes(res.statusCode)){finish(null,{status:res.statusCode,bytes:0,body:Buffer.alloc(0),mediaType:''});return;}
       const raw=res.headers['content-type'],encoding=res.headers['content-encoding'],length=res.headers['content-length'];
       const mediaType=typeof raw==='string'?raw.split(';')[0].trim().toLowerCase():'';
