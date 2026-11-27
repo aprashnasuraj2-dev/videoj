@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {loadPeerNetwork} from '../index.js';
+import {loadPeerNetwork,loadLocalNetwork} from '../index.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
 const graph=JSON.parse(fs.readFileSync(new URL('../examples/learner.network.json',import.meta.url)));
 const response=body=>Response.json(body);
@@ -131,5 +131,19 @@ test('ambiguous peer publication fails before model or additional graph consent'
   }}),e=>e.code===(stage==='manifest'?'MANIFEST_UNAVAILABLE':'GRAPH_UNAVAILABLE'));
   assert.equal(calls.length,stage==='manifest'?1:2);
   assert.deepEqual(intents,stage==='manifest'?['peer_manifest']:['peer_manifest','peer_graph']);
+ }
+});
+
+test('invalid selected manifest front and oversized artifact location refuse before graph contact',async()=>{
+ for(const entry of [{front_man:''},{front_man:'x'.repeat(61)},{front_man:'constructor'},{front_man:'bad/front'},{hocon:'x'.repeat(2049)}]){
+  const body=manifest();Object.assign(body.networks[0],entry);
+  const code=Object.hasOwn(entry,'hocon')?'MANIFEST':'NETWORK_ID';
+  let localFetches=0;
+  await assert.rejects(loadLocalNetwork({baseUrl:'https://local.example/agents/',expectedOrigin:'https://local.example',networkName:'transit',fetchImpl:async()=>{localFetches++;return response(body);}}),e=>e.code===code);
+  assert.equal(localFetches,1,'invalid local manifest must not fetch a graph');
+  const decisions=[],calls=[];
+  const inspector=createConsentInspector({decide:async intent=>{decisions.push(intent.kind);return {decision:'allow',scope:'once'};}});
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{calls.push(url);return response(body);}}),e=>e.code===code);
+  assert.deepEqual(decisions,['peer_manifest']);assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);
  }
 });
