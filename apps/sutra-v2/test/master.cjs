@@ -4,6 +4,7 @@ async function testMaster(browser,origin,assert){
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.origin!==origin&&u.protocol!=='blob:')external.push(r.url());});
  try{
  await page.goto(origin);await page.locator('#sutra-orbit').waitFor();
+ const first=await page.locator('#orb-play').boundingBox();assert.ok(first&&first.y>=0&&first.y+first.height<=800,'orbital primary action must be in first viewport');
  assert.equal(await page.locator('#orb-map .orb-agent').count(),6);assert.equal(await page.locator('#orb-map .orb-station').count(),12);
  await page.locator('#orb-play').click();await page.locator('#orb-play').click();await page.locator('#orb-step').click();assert.match(await page.locator('#orb-log').innerText(),/SIMULATED/);await page.locator('#orb-stop').click();
  await page.locator('#orb-era').click();assert.equal(await page.locator('#sutra-orbit').getAttribute('data-era'),'1997');await page.locator('#orb-era').click();

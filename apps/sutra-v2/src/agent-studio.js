@@ -69,6 +69,7 @@ function render(r,configuration,calls){
  for(const round of r.rounds){
   const section=document.createElement('section');section.className='studio-round';section.append(element('h4','Round '+round.round));
   for(const agent of round.agents){
+   document.dispatchEvent(new CustomEvent('sutra-council-event',{detail:{phase:agent.status==='PROPOSED'?'proposal':agent.status==='ABSTAINED'?'abstained':'rejected',agent:agent.agentId,round:round.round}}));
    const item=document.createElement('article');item.className='studio-agent-event';item.dataset.agent=agent.agentId;item.dataset.status=agent.status;
    const route=configuration.agents.find(x=>x.id===agent.agentId);
    item.append(element('strong',route.role),element('small',agent.providerId+' / '+agent.model),element('p',agent.status==='PROPOSED'?'Proposed '+key(agent)+' → '+outcomes.get(key(agent)):agent.status==='ABSTAINED'?'Abstained — no proposal':'Refused: '+agent.reason));

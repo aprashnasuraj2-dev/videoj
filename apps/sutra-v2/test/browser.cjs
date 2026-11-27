@@ -1518,7 +1518,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
-  const guideStarted=Date.now();await guidePage.goto(origin);
+  const guideStarted=Date.now();await guidePage.goto(origin+'/?surface=debugger');
   const primary=guidePage.locator('#debug-guide-next');
   const checkFirstScreen=async name=>{
    await guidePage.evaluate(()=>scrollTo(0,0));
@@ -1646,7 +1646,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   console.log('PASS: actual static offline verifier and digest downloads match the built source artifacts; no external request.');
   console.log('PASS: five exact target thresholds; original evidence, result and separate control remain unchanged; conflicting evidence survives rule change; four real sensitivity exports.');
   console.log('PASS: all eight world rows, exact blocker values, copy invariance, withdrawal deltas, fresh guide ceremony and five real world trace exports.');
-  const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();
+  const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin+'/?surface=debugger');await desktopGuide.locator('#debug-guide-next').click();
   await desktopGuide.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
   const desktopRect=await desktopGuide.locator('#debug-guide-next').boundingBox();assert.ok(desktopRect&&desktopRect.y+desktopRect.height<=900);
   await desktopGuide.screenshot({path:path.join(output,'guide-desktop-supported.png'),fullPage:false});await desktopGuide.close();
