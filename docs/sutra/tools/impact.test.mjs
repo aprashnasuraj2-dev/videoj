@@ -211,3 +211,11 @@ test('validation snapshot workflows map to their live canonical verification sui
 });
 
 test('autonomous research is explicitly mapped to its dedicated verification workflow',()=>{const r=classifyChangedFiles(['packages/sutra-research/research-supervisor.js','apps/sutra-v2/autonomous-research.mjs','.github/workflows/sutra-autonomous-research.yml'],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('v2-autonomous-research'));assert.ok(r.requiredWorkflows.includes('SUTRA autonomous research'));});
+
+
+test('release reconciliation inventory is exactly mapped and cannot exempt unknown JSON',()=>{
+ const r=classifyChangedFiles(['docs/sutra-v2/release-integration-inventory.json'],map);
+ assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+ assert.deepEqual(r.requiredWorkflows,['Validate SUTRA knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-inventory.json'],map).unmapped,['docs/sutra-v2/unknown-inventory.json']);
+});

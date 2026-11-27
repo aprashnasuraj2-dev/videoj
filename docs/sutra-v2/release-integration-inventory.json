@@ -38,7 +38,748 @@
       "mergeBase": "9bd76ef8bfd05f323592f21fe4b0841188861693",
       "ahead": 198,
       "behind": 651,
-      "disposition": "not merged; path overlap review pending"
+      "disposition": "Path inventory captured; runtime web tool and epistemic answer validator absent from V2 but overlapping research functionality exists. Reconcile current consent, evidence and transport contracts instead of copying legacy learner/worker wholesale.",
+      "changedFiles": 123,
+      "paths": [
+        {
+          "path": ".github/workflows/sutra-browser-matrix.yml",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 1
+        },
+        {
+          "path": ".github/workflows/sutra-device-check.yml",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 1
+        },
+        {
+          "path": ".github/workflows/sutra-open-kit.yml",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/package.json",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra/public/agents/agent-manifest.json",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 2
+        },
+        {
+          "path": "apps/sutra/public/agents/research_learner.network.json",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/research_peer_learner.network.json",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/source_learner.network.json",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 27
+        },
+        {
+          "path": "apps/sutra/public/agents/source_peer_learner.network.json",
+          "status": "added",
+          "additions": 35,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/085a65783ee5badd8464b6dbcfd341f3a02183ab/source_learner.network.json",
+          "status": "added",
+          "additions": 34,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/14c5c880786b47c6634d5ad18fb5eafb8739971f/research_peer_learner.network.json",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/2b9d212fc1ff233a06cd35e1e571628e4622ee87/research_learner.network.json",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/573cc12362d42b41f46de4afc62b757064a597c3/research_learner.network.json",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/585ad6e003d35773580fa863ef0dd6a9d4783046/source_peer_learner.network.json",
+          "status": "added",
+          "additions": 35,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/d36734b9a15909190495fcd8a29bf821902bd6dc/source_learner.network.json",
+          "status": "added",
+          "additions": 58,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/v/ff40e39c6877a7d91591010ae8a9125d2bda4804/research_learner.network.json",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/comparison-view.js",
+          "status": "modified",
+          "additions": 11,
+          "deletions": 18
+        },
+        {
+          "path": "apps/sutra/src/comparison.js",
+          "status": "modified",
+          "additions": 0,
+          "deletions": 8
+        },
+        {
+          "path": "apps/sutra/src/local-answer.js",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 3
+        },
+        {
+          "path": "apps/sutra/src/localization.js",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 5
+        },
+        {
+          "path": "apps/sutra/src/main.js",
+          "status": "modified",
+          "additions": 17,
+          "deletions": 3
+        },
+        {
+          "path": "apps/sutra/src/provider-panel.js",
+          "status": "modified",
+          "additions": 95,
+          "deletions": 21
+        },
+        {
+          "path": "apps/sutra/src/provider-run.js",
+          "status": "modified",
+          "additions": 128,
+          "deletions": 26
+        },
+        {
+          "path": "apps/sutra/src/provider-web-tools.js",
+          "status": "added",
+          "additions": 64,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/status-state.js",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/workspace-integration.js",
+          "status": "added",
+          "additions": 84,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/browser.cjs",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 18
+        },
+        {
+          "path": "apps/sutra/test/build.test.mjs",
+          "status": "modified",
+          "additions": 61,
+          "deletions": 4
+        },
+        {
+          "path": "apps/sutra/test/comparison.test.mjs",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra/test/fixtures/synthetic-comparison.mjs",
+          "status": "added",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/hero-browser.cjs",
+          "status": "modified",
+          "additions": 16,
+          "deletions": 39
+        },
+        {
+          "path": "apps/sutra/test/local-answer.test.mjs",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/provider-browser.cjs",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 24
+        },
+        {
+          "path": "apps/sutra/test/provider-peer-browser.cjs",
+          "status": "added",
+          "additions": 65,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/provider-run.test.mjs",
+          "status": "modified",
+          "additions": 72,
+          "deletions": 4
+        },
+        {
+          "path": "apps/sutra/test/provider-telemetry.test.mjs",
+          "status": "added",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/provider-web-tools.test.mjs",
+          "status": "added",
+          "additions": 49,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/uncertainty-guidance.test.mjs",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra/test/workspace-integration.test.mjs",
+          "status": "added",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "deploy/sutra-pages/ingress.test.mjs",
+          "status": "modified",
+          "additions": 34,
+          "deletions": 1
+        },
+        {
+          "path": "docs/sutra/CHANGELOG.md",
+          "status": "added",
+          "additions": 21,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/COMMUNITY_TOOLS_AND_IMPACT.md",
+          "status": "added",
+          "additions": 140,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/CONTINUE.md",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 3
+        },
+        {
+          "path": "docs/sutra/CONTRIBUTING.md",
+          "status": "added",
+          "additions": 129,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/DECISIONS.md",
+          "status": "modified",
+          "additions": 28,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/JUDGING_AVAILABILITY_RUNBOOK.md",
+          "status": "added",
+          "additions": 210,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/MEASUREMENT_PROTOCOLS.md",
+          "status": "added",
+          "additions": 199,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/OWNERSHIP_BOUNDARY.md",
+          "status": "added",
+          "additions": 116,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/PARTICIPANT_HANDOFF.md",
+          "status": "added",
+          "additions": 86,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/PERMISSION_ASSET_INVENTORY.md",
+          "status": "added",
+          "additions": 56,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/PROGRESS.md",
+          "status": "modified",
+          "additions": 86,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/README.md",
+          "status": "modified",
+          "additions": 10,
+          "deletions": 1
+        },
+        {
+          "path": "docs/sutra/REMAINING_GATE_MAP.md",
+          "status": "added",
+          "additions": 140,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/RULES_ELIGIBILITY_SNAPSHOT.md",
+          "status": "added",
+          "additions": 87,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/SESSIONS.md",
+          "status": "modified",
+          "additions": 129,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/Technical_Report.md",
+          "status": "added",
+          "additions": 270,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/checklists/01-strategy.md",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 6
+        },
+        {
+          "path": "docs/sutra/checklists/02-foundations.md",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 5
+        },
+        {
+          "path": "docs/sutra/checklists/03-browser-runtime.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "docs/sutra/checklists/05-learner-experience.md",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 3
+        },
+        {
+          "path": "docs/sutra/checklists/07-resilience-cost.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        },
+        {
+          "path": "docs/sutra/checklists/08-validation.md",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 4
+        },
+        {
+          "path": "docs/sutra/checklists/09-public-release.md",
+          "status": "modified",
+          "additions": 34,
+          "deletions": 34
+        },
+        {
+          "path": "docs/sutra/checklists/11-added-scope.md",
+          "status": "modified",
+          "additions": 16,
+          "deletions": 1
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/PHASE-023-RUNTIME-ENTRY.md",
+          "status": "added",
+          "additions": 48,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0046.md",
+          "status": "added",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0047.md",
+          "status": "added",
+          "additions": 71,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0048.md",
+          "status": "added",
+          "additions": 85,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0049.md",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "status": "added",
+          "additions": 67,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "status": "added",
+          "additions": 79,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "status": "added",
+          "additions": 120,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0053.md",
+          "status": "added",
+          "additions": 83,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "status": "added",
+          "additions": 129,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0055.md",
+          "status": "added",
+          "additions": 89,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0056.md",
+          "status": "added",
+          "additions": 55,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0057.md",
+          "status": "added",
+          "additions": 88,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0058.md",
+          "status": "added",
+          "additions": 57,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0059.md",
+          "status": "added",
+          "additions": 100,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/progress.json",
+          "status": "modified",
+          "additions": 914,
+          "deletions": 14
+        },
+        {
+          "path": "docs/sutra/risk-register.json",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 4
+        },
+        {
+          "path": "docs/sutra/tools/impact.test.mjs",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/verification-map.json",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 3
+        },
+        {
+          "path": "packages/sutra-runtime/abortable-operation.js",
+          "status": "added",
+          "additions": 19,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/epistemic-answer.js",
+          "status": "added",
+          "additions": 78,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/index.js",
+          "status": "modified",
+          "additions": 95,
+          "deletions": 15
+        },
+        {
+          "path": "packages/sutra-runtime/test/abortable-operation.test.mjs",
+          "status": "added",
+          "additions": 29,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/epistemic-answer.test.mjs",
+          "status": "added",
+          "additions": 79,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-invocation.test.mjs",
+          "status": "modified",
+          "additions": 94,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/private-context.test.mjs",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 1
+        },
+        {
+          "path": "packages/sutra-runtime/test/runtime.test.mjs",
+          "status": "modified",
+          "additions": 34,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/source-refinement.test.mjs",
+          "status": "added",
+          "additions": 89,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/web-access.test.mjs",
+          "status": "added",
+          "additions": 80,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/web-access.js",
+          "status": "added",
+          "additions": 147,
+          "deletions": 0
+        },
+        {
+          "path": "services/sutra-api/inference.js",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 2
+        },
+        {
+          "path": "services/sutra-api/quota-transport.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "services/sutra-api/quota.js",
+          "status": "modified",
+          "additions": 32,
+          "deletions": 1
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "services/sutra-api/test/status-config.test.mjs",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        },
+        {
+          "path": "services/sutra-api/test/web-research.test.mjs",
+          "status": "added",
+          "additions": 111,
+          "deletions": 0
+        },
+        {
+          "path": "services/sutra-api/web-research-config.js",
+          "status": "added",
+          "additions": 18,
+          "deletions": 0
+        },
+        {
+          "path": "services/sutra-api/web-research.js",
+          "status": "added",
+          "additions": 140,
+          "deletions": 0
+        },
+        {
+          "path": "services/sutra-api/worker.js",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 3
+        },
+        {
+          "path": "services/sutra-api/wrangler.jsonc",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/README.md",
+          "status": "modified",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/feedback-endpoint.mjs",
+          "status": "added",
+          "additions": 14,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/feedback-endpoint.test.mjs",
+          "status": "added",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/preflight.mjs",
+          "status": "added",
+          "additions": 16,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/preflight.test.mjs",
+          "status": "added",
+          "additions": 4,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer-cli.mjs",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer-feedback.template.json",
+          "status": "added",
+          "additions": 28,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer.mjs",
+          "status": "added",
+          "additions": 18,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer.test.mjs",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-evaluation/baseline.mjs",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "tools/sutra-evaluation/mapping-harness.mjs",
+          "status": "added",
+          "additions": 45,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-evaluation/mapping-harness.test.mjs",
+          "status": "added",
+          "additions": 22,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-open-kit/test.mjs",
+          "status": "modified",
+          "additions": 114,
+          "deletions": 1
+        },
+        {
+          "path": "tools/sutra-provider-measurement/README.md",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-provider-measurement/example.synthetic.json",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 4
+        },
+        {
+          "path": "tools/sutra-provider-measurement/report.mjs",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 12
+        },
+        {
+          "path": "tools/sutra-provider-measurement/report.test.mjs",
+          "status": "modified",
+          "additions": 11,
+          "deletions": 8
+        },
+        {
+          "path": "tools/sutra-research/firecrawl.mjs",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0
+        },
+        {
+          "path": "tools/sutra-research/run.mjs",
+          "status": "added",
+          "additions": 42,
+          "deletions": 0
+        }
+      ]
     },
     {
       "number": 48,
@@ -46,7 +787,532 @@
       "mergeBase": "f4cc6e8d385d7a5e326435630fff6985fdf802cb",
       "ahead": 281,
       "behind": 1326,
-      "disposition": "not merged; path overlap review pending"
+      "disposition": "Path inventory captured; legacy learner/peer graph changes require selective review. Browser-direct OpenRouter-only adapter is absent from V2; do not import old adapter without current route, token, cancellation and CSP review.",
+      "changedFiles": 87,
+      "paths": [
+        {
+          "path": ".github/workflows/sutra-evidence.yml",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra-peer/README.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        },
+        {
+          "path": "apps/sutra-peer/peer.config.json",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 2
+        },
+        {
+          "path": "apps/sutra-peer/public/agents/checklist.evidence.json",
+          "status": "added",
+          "additions": 17,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra-peer/scripts/serve.mjs",
+          "status": "modified",
+          "additions": 15,
+          "deletions": 4
+        },
+        {
+          "path": "apps/sutra-peer/src/main.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra-peer/test/preview.test.mjs",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra-peer/test/publication.test.mjs",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 3
+        },
+        {
+          "path": "apps/sutra/public/agents/agent-manifest.json",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/agents/learner.network.json",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra/public/agents/links.json",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "apps/sutra/public/evidence/transcript-v3.vtt",
+          "status": "added",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/public/media/timing-transcript.vtt",
+          "status": "added",
+          "additions": 13,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/fixtures/timing-transcript.json",
+          "status": "added",
+          "additions": 13,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/main.js",
+          "status": "modified",
+          "additions": 318,
+          "deletions": 51
+        },
+        {
+          "path": "apps/sutra/src/player-adapter.js",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 6
+        },
+        {
+          "path": "apps/sutra/src/provenance-store.js",
+          "status": "added",
+          "additions": 89,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/review-actions.js",
+          "status": "added",
+          "additions": 68,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/run-lifecycle.js",
+          "status": "added",
+          "additions": 33,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/seek-policy.js",
+          "status": "added",
+          "additions": 15,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/source-comparison.js",
+          "status": "added",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/style.css",
+          "status": "modified",
+          "additions": 21,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/src/transcript-index.js",
+          "status": "added",
+          "additions": 41,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/browser.cjs",
+          "status": "modified",
+          "additions": 195,
+          "deletions": 29
+        },
+        {
+          "path": "apps/sutra/test/build.test.mjs",
+          "status": "modified",
+          "additions": 42,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/provenance-store.test.mjs",
+          "status": "added",
+          "additions": 72,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/review-actions.test.mjs",
+          "status": "added",
+          "additions": 52,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/run-lifecycle.test.mjs",
+          "status": "added",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/seek-policy.test.mjs",
+          "status": "added",
+          "additions": 23,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/source-comparison.test.mjs",
+          "status": "added",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/test/transcript-index.test.mjs",
+          "status": "added",
+          "additions": 35,
+          "deletions": 0
+        },
+        {
+          "path": "apps/sutra/vite.config.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "docs/sutra/CHECKLIST.md",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/CONTINUE.md",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/DECISIONS.md",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/LEARNER_WORKSPACE.md",
+          "status": "added",
+          "additions": 94,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/PROGRESS.md",
+          "status": "modified",
+          "additions": 114,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/PUBLIC_ARTIFACT_INVENTORY.md",
+          "status": "added",
+          "additions": 36,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/README.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        },
+        {
+          "path": "docs/sutra/SESSIONS.md",
+          "status": "modified",
+          "additions": 181,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/checklists/02-foundations.md",
+          "status": "modified",
+          "additions": 31,
+          "deletions": 28
+        },
+        {
+          "path": "docs/sutra/checklists/03-browser-runtime.md",
+          "status": "modified",
+          "additions": 38,
+          "deletions": 38
+        },
+        {
+          "path": "docs/sutra/checklists/04-peer-trust.md",
+          "status": "modified",
+          "additions": 67,
+          "deletions": 67
+        },
+        {
+          "path": "docs/sutra/checklists/05-learner-experience.md",
+          "status": "modified",
+          "additions": 79,
+          "deletions": 78
+        },
+        {
+          "path": "docs/sutra/checklists/06-grounding-community.md",
+          "status": "modified",
+          "additions": 53,
+          "deletions": 52
+        },
+        {
+          "path": "docs/sutra/checklists/07-resilience-cost.md",
+          "status": "modified",
+          "additions": 15,
+          "deletions": 15
+        },
+        {
+          "path": "docs/sutra/checklists/08-validation.md",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 14
+        },
+        {
+          "path": "docs/sutra/checklists/09-public-release.md",
+          "status": "modified",
+          "additions": 41,
+          "deletions": 42
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "status": "added",
+          "additions": 124,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "status": "added",
+          "additions": 85,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "status": "added",
+          "additions": 86,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "status": "added",
+          "additions": 62,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "status": "added",
+          "additions": 70,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "status": "added",
+          "additions": 79,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "status": "added",
+          "additions": 63,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "status": "added",
+          "additions": 84,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "status": "added",
+          "additions": 83,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "status": "added",
+          "additions": 139,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "status": "added",
+          "additions": 86,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "status": "added",
+          "additions": 170,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "status": "added",
+          "additions": 163,
+          "deletions": 0
+        },
+        {
+          "path": "docs/sutra/progress.json",
+          "status": "modified",
+          "additions": 2602,
+          "deletions": 377
+        },
+        {
+          "path": "packages/sutra-consent/index.js",
+          "status": "modified",
+          "additions": 38,
+          "deletions": 10
+        },
+        {
+          "path": "packages/sutra-consent/test/consent.test.mjs",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        },
+        {
+          "path": "packages/sutra-consent/test/redirect.test.mjs",
+          "status": "added",
+          "additions": 118,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/README.md",
+          "status": "modified",
+          "additions": 67,
+          "deletions": 17
+        },
+        {
+          "path": "packages/sutra-evidence/annotation-cli.mjs",
+          "status": "added",
+          "additions": 17,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/annotation.js",
+          "status": "added",
+          "additions": 142,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/cue-link.js",
+          "status": "added",
+          "additions": 19,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/examples/annotation.json",
+          "status": "added",
+          "additions": 33,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/examples/integrity-manifest.json",
+          "status": "added",
+          "additions": 17,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/examples/transcript-v3.vtt",
+          "status": "added",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/index.js",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-evidence/package.json",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 6
+        },
+        {
+          "path": "packages/sutra-evidence/test/annotation.test.mjs",
+          "status": "added",
+          "additions": 37,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-inference/README.md",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-inference/byok.js",
+          "status": "added",
+          "additions": 55,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-inference/package.json",
+          "status": "modified",
+          "additions": 18,
+          "deletions": 1
+        },
+        {
+          "path": "packages/sutra-inference/test/byok.test.mjs",
+          "status": "added",
+          "additions": 74,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/examples/learner.network.json",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 1
+        },
+        {
+          "path": "packages/sutra-runtime/index.js",
+          "status": "modified",
+          "additions": 125,
+          "deletions": 25
+        },
+        {
+          "path": "packages/sutra-runtime/source-mcp.js",
+          "status": "modified",
+          "additions": 16,
+          "deletions": 4
+        },
+        {
+          "path": "packages/sutra-runtime/test/external.test.mjs",
+          "status": "added",
+          "additions": 208,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/test/runtime.test.mjs",
+          "status": "modified",
+          "additions": 64,
+          "deletions": 3
+        },
+        {
+          "path": "packages/sutra-runtime/test/source-tools.test.mjs",
+          "status": "modified",
+          "additions": 29,
+          "deletions": 0
+        },
+        {
+          "path": "packages/sutra-runtime/testing.js",
+          "status": "modified",
+          "additions": 16,
+          "deletions": 0
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "status": "modified",
+          "additions": 31,
+          "deletions": 0
+        }
+      ]
     }
   ],
   "specification": {
@@ -66,8 +1332,29 @@
   },
   "limits": [
     "Historical release tags and production deployed SHA not independently verified.",
-    "PR #48/#49 full path-by-path overlap and extraction not finished.",
+    "PR #48/#49 compare file inventories recorded; per-path semantic reconciliation, extraction and regression tests remain incomplete.",
     "No live provider calls, external peer, public release or deployment in this checkpoint.",
     "Release gates remain open until acceptance evidence."
+  ],
+  "crossPrPathOverlap": [
+    "apps/sutra/public/agents/agent-manifest.json",
+    "apps/sutra/src/main.js",
+    "apps/sutra/test/browser.cjs",
+    "apps/sutra/test/build.test.mjs",
+    "docs/sutra/CONTINUE.md",
+    "docs/sutra/DECISIONS.md",
+    "docs/sutra/PROGRESS.md",
+    "docs/sutra/README.md",
+    "docs/sutra/SESSIONS.md",
+    "docs/sutra/checklists/02-foundations.md",
+    "docs/sutra/checklists/03-browser-runtime.md",
+    "docs/sutra/checklists/05-learner-experience.md",
+    "docs/sutra/checklists/07-resilience-cost.md",
+    "docs/sutra/checklists/08-validation.md",
+    "docs/sutra/checklists/09-public-release.md",
+    "docs/sutra/progress.json",
+    "packages/sutra-runtime/index.js",
+    "packages/sutra-runtime/test/runtime.test.mjs",
+    "services/sutra-api/test/inference.test.mjs"
   ]
 }

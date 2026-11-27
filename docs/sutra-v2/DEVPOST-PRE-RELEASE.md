@@ -229,3 +229,7 @@ Inventory: [release-integration-inventory.json](release-integration-inventory.js
 - REL-C02–C04 remain critical: current V2 public directory does not yet publish an executable agent manifest/graph, current autonomous research UI delegates orchestration to the local host, and production CSP restricts network connections to self. Reuse the existing pinned browser runtime, not a second disconnected demo. A manifest without actual browser execution is insufficient.
 
 No merge, branch deletion, deployment, DNS mutation, credential retrieval or live provider call performed. NO-GO remains unchanged.
+
+### Verification follow-up
+
+All 13 [workflows at 12478b8824345c483ba96536dd452e412a027bea](https://github.com/aprashnasuraj2-dev/videoj/commit/12478b8824345c483ba96536dd452e412a027bea/checks) passed. At `fbec5bfb48e70f80435c027d5c43d0420364d3b8`, [impact classification](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45997273727) correctly failed on the new unregistered inventory JSON. This follow-up maps that exact path, retains rejection of unknown files and adds a regression test. It also records all 87 #48 and 123 #49 compare paths and their shared paths; implementation-level reconciliation still remains. The older OpenRouter-only browser adapter, legacy web-tool runtime and epistemic validator require contract review; absence of the old files does not prove current V2 lacks equivalent security/research behavior. No external release gate closed.
