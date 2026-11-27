@@ -6,13 +6,25 @@ import {openInvestigationHistory} from '../../../packages/sutra-knowledge/invest
 
 const PIN=/^sha256:[a-f0-9]{64}$/;
 const fail=code=>{throw TypeError('HISTORY_HOST_'+code);};
-const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+// Compare only within the shape and depth of the freshly replayed view.
+function matchesView(actual,expected){
+ if(expected===null||typeof expected!=='object')return actual===expected;
+ if(!actual||typeof actual!=='object'||Array.isArray(actual)!==Array.isArray(expected))return false;
+ if(Array.isArray(expected)&&actual.length!==expected.length)return false;
+ let count=0;
+ for(const key in actual){
+  if(!Object.hasOwn(actual,key))continue;
+  if(!Object.hasOwn(expected,key)||!matchesView(actual[key],expected[key]))return false;
+  count++;
+ }
+ return count===Object.keys(expected).length;
+}
 const pin=x=>typeof x==='string'&&PIN.test(x);
 async function replaySnapshot(snapshot){
  if(!snapshot||typeof snapshot!=='object'||typeof snapshot.historyText!=='string'||!pin(snapshot.digest))fail('SNAPSHOT');
  const history=await openInvestigationHistory(snapshot.historyText,snapshot.digest);
  const exact=history.snapshot();
- if(snapshot.view!==undefined&&JSON.stringify(snapshot.view)!==JSON.stringify(exact.view))fail('VIEW_DIVERGENCE');
+ if(snapshot.view!==undefined&&!matchesView(snapshot.view,exact.view))fail('VIEW_DIVERGENCE');
  return exact;
 }
 function responseError(value){
@@ -21,11 +33,19 @@ function responseError(value){
 }
 export function createHistoryHostClient(capability=globalThis.sutraHistoryHost){
  if(!capability||capability.version!==1||typeof capability.call!=='function')return null;
- const call=async(operation,payload,expectedDigest)=>{
+ const call=async(operation,payload,expectedDigest,signal)=>{
   const writing=operation!=='read_snapshot';
   let response;
-  try{response=await capability.call(operation,payload);}
-  catch{fail(writing?'OUTCOME_UNKNOWN':'TRANSPORT');}
+  if(signal?.aborted)fail('CANCELLED');
+  let onAbort;
+  try{
+   const stopped=new Promise((_,reject)=>{
+    onAbort=()=>reject(Error('cancelled'));
+    signal?.addEventListener('abort',onAbort,{once:true});
+   });
+   response=await Promise.race([capability.call(operation,payload),stopped]);
+  }catch{fail(writing?'OUTCOME_UNKNOWN':signal?.aborted?'CANCELLED':'TRANSPORT');}
+  finally{signal?.removeEventListener('abort',onAbort);}
   if(!response||typeof response.ok!=='boolean')fail(writing?'OUTCOME_UNKNOWN':'RESPONSE');
   if(!response.ok){
    const code=responseError(response.error);
@@ -45,18 +65,18 @@ export function createHistoryHostClient(capability=globalThis.sutraHistoryHost){
   return snapshot;
  };
  return Object.freeze({
-  async initialize(snapshot){
+  async initialize(snapshot,signal){
    const exact=await replaySnapshot(snapshot);
-   return call('initialize_snapshot',{historyText:exact.historyText,historyPin:exact.digest},exact.digest);
+   return call('initialize_snapshot',{historyText:exact.historyText,historyPin:exact.digest},exact.digest,signal);
   },
-  async append(expectedHistoryPin,snapshot){
+  async append(expectedHistoryPin,snapshot,signal){
    if(!pin(expectedHistoryPin))fail('EXPECTED_PIN');
    const exact=await replaySnapshot(snapshot);
-   return call('append_snapshot',{expectedHistoryPin,historyText:exact.historyText,historyPin:exact.digest},exact.digest);
+   return call('append_snapshot',{expectedHistoryPin,historyText:exact.historyText,historyPin:exact.digest},exact.digest,signal);
   },
-  async read(expectedHistoryPin){
+  async read(expectedHistoryPin,signal){
    if(!pin(expectedHistoryPin))fail('EXPECTED_PIN');
-   return call('read_snapshot',{expectedHistoryPin},expectedHistoryPin);
+   return call('read_snapshot',{expectedHistoryPin},expectedHistoryPin,signal);
   }
  });
 }

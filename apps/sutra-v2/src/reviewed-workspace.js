@@ -49,7 +49,7 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
-let durableBase=null, inspectedHistory=null, lastAttempt=null, previousHistory=null, needsInspection=false;
+let saveController=null,durableBase=null, inspectedHistory=null, lastAttempt=null, previousHistory=null, needsInspection=false;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -1353,12 +1353,16 @@ function durableHistoryControl(){
  by('history-durable-initialize').disabled=busy||!available||!s||!!retained||needsInspection||!!durableBase;
  by('history-durable-append').disabled=busy||!available||!s||!retained||retained!==durableBase||needsInspection||retained===s.digest;
  by('history-durable-read').disabled=busy||!available||!retained;
+ by('history-durable-cancel').disabled=!saveController;
  by('history-durable-check-attempt').disabled=busy||!lastAttempt;
  by('history-durable-reload').disabled=busy||!inspectedHistory||inspectedHistory.snapshot().digest!==retained||retained===s?.digest;
  by('history-durable-undo').disabled=busy||!previousHistory;
  const saved=inspectedHistory?.snapshot();
+ const currentVersions=new Set(saved?.view.versions.map(v=>v.digest));
+ const localVersions=new Set(s?.view.versions.map(v=>v.digest));
+ const difference=s&&saved?(s.view.versions.filter(v=>!currentVersions.has(v.digest)).length+' local-only, '+saved.view.versions.filter(v=>!localVersions.has(v.digest)).length+' saved-only reviewed versions.'):'';
  const describe=h=>h.view.versions.length+' version(s), '+h.view.branches.map(b=>b.name+' '+b.head.slice(7,19)).join(', ');
- by('history-durable-detail').textContent=[s?'Local history: '+describe(s):'No local history.',saved?'Inspected save: '+describe(saved):'',lastAttempt?'Attempted save: '+lastAttempt:''].filter(Boolean).join(' · ');
+ by('history-durable-detail').textContent=[s?'Local history: '+describe(s):'No local history.',saved?'Inspected save: '+describe(saved):'',difference,lastAttempt?'Attempted save: '+lastAttempt:''].filter(Boolean).join(' · ');
  if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
 }
 function historyControl(){
@@ -1396,9 +1400,9 @@ function saveHistory(initialize){
  return work(async ticket=>{
   const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();
   if(!s||!historyHost||needsInspection||(initialize?!!expected:expected!==durableBase))return;
-  inspectedHistory=null;lastAttempt=s.digest;
+  inspectedHistory=null;lastAttempt=s.digest;saveController=new AbortController();durableHistoryControl();
   try{
-   const saved=initialize?await historyHost.initialize(s):await historyHost.append(expected,s);
+   const saved=initialize?await historyHost.initialize(s,saveController.signal):await historyHost.append(expected,s,saveController.signal);
    if(ticket!==epoch||history!==h){needsInspection=true;durableHistoryStatus('unknown','Workspace changed during save. Check the attempted save before continuing.');return;}
    durableBase=saved.digest;by('history-durable-pin').value=durableBase;lastAttempt=null;
    durableHistoryStatus('ready',initialize?'Saved history initialized. Keep the digest separately.':'Reviewed changes saved. Keep the updated digest separately.');
@@ -1411,9 +1415,10 @@ function saveHistory(initialize){
    const state=stale?'stale':unknown?'unknown':'refused';
    const message=stale?'Saved history differs from your base. No retry occurred. Inspect the independently retained current digest.':unknown?'Save outcome unknown. Check the attempted save or inspect a separately retained current digest.':'Save refused. Your local work is available.';
    durableHistoryStatus(state,message);status('history_durable_'+state,message);
-  }
+  }finally{saveController=null;}
  });
 }
+by('history-durable-cancel').onclick=()=>saveController?.abort();
 by('history-durable-initialize').onclick=()=>saveHistory(true);
 by('history-durable-append').onclick=()=>saveHistory(false);
 function inspectDurable(pin){

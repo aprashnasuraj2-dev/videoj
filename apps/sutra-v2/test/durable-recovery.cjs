@@ -9,7 +9,7 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
  const {attachHistoryHost}=await import('../local-history.mjs');
  const {openDurableInvestigationHistory}=await import('../../../packages/sutra-knowledge/durable-investigation-history.mjs');
  const {livingFixture}=await import('../../../packages/sutra-knowledge/examples/living-investigation.mjs');
- const {createInvestigationHistory}=await import('../../../packages/sutra-knowledge/investigation-history.js');
+ const {createInvestigationHistory,openInvestigationHistory}=await import('../../../packages/sutra-knowledge/investigation-history.js');
  const parent=await livingFixture('finance'),portable=await createInvestigationHistory(parent.versionText,parent.digest);
  const snapshot=portable.snapshot(),host=await openDurableInvestigationHistory(dir);
  const browser=await chromium.launch({executablePath:process.env.SUTRA_TEST_CHROMIUM});
@@ -57,9 +57,16 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
   await b.locator(selector('durable-pin')).fill(snapshot.digest);
   const reading=performance.now();await click(b,'durable-read');await state(b,'ready');const loadMs=performance.now()-reading;
   for(const [i,page] of pages.entries()){
+   const child=await livingFixture('finance',i===0?{revised:true,previousDigest:parent.digest}:{withdraw:true,previousDigest:parent.digest});
+   const graph=await openInvestigationHistory(snapshot.historyText,snapshot.digest);
+   const revised=await graph.append({expectedHistoryPin:snapshot.digest,branch:'main',expectedHead:parent.digest,versionText:child.versionText,versionPin:child.digest});
+   await click(page,'clear');
+   await page.locator(selector('file')).setInputFiles({name:'revised.json',mimeType:'application/json',buffer:Buffer.from(revised.historyText)});
+   await page.locator(selector('pin')).fill(revised.digest);await click(page,'import');
+   await page.waitForFunction(pin=>document.querySelector('#review-history-digest').textContent===pin,revised.digest);
    await page.locator(selector('fork-name')).fill('session'+i);
    await click(page,'fork');
-   await page.waitForFunction(pin=>document.querySelector('#review-history-digest').textContent!==pin,snapshot.digest);
+   await page.waitForFunction(pin=>document.querySelector('#review-history-digest').textContent!==pin,revised.digest);
   }
   const pinA=await a.locator(selector('digest')).innerText(),pinB=await b.locator(selector('digest')).innerText();
   const question='Unsent second-session evidence';
@@ -87,6 +94,6 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
   await b.evaluate(()=>document.documentElement.style.fontSize='200%');
   assert.ok(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-  console.log(JSON.stringify({versions:1,branches:2,bytes:bytes.length,saveMs,loadMs,replayMs,heapBytes:await b.evaluate(()=>performance.memory?.usedJSHeapSize??null)}));
+  console.log(JSON.stringify({versions:2,branches:2,bytes:bytes.length,saveMs,loadMs,replayMs,heapBytes:await b.evaluate(()=>performance.memory?.usedJSHeapSize??null)}));
  }finally{await browser.close();await fs.rm(dir,{recursive:true,force:true});}
 })().catch(error=>{console.error(error);process.exitCode=1;});

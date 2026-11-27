@@ -29,6 +29,7 @@ jobs:
       - name: Build independent static candidates
         run: |
           npm --prefix apps/sutra ci
+          npm --prefix apps/sutra-v2 ci
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs

@@ -31,6 +31,7 @@ jobs:
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - run: node --test apps/sutra-v2/test/history-host.test.mjs
       - name: Exercise two durable sessions and a lost save response
         run: node apps/sutra-v2/test/durable-recovery.cjs
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
