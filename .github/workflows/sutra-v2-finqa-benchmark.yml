@@ -1,5 +1,5 @@
 name: Validate SUTRA independent held-out FinQA benchmark
-# Canonical SUTRA main-line verification.
+# Canonical SUTRA main-line verification. Exact-head sweep marker.
 on:
   push:
     branches: ['main', 'sutra/v2-knowledge-compiler']
