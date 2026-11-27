@@ -28,7 +28,7 @@ export function createHostedPlanPanel(root,{saveFile}){
  const prepare=button('orb-hosted-prepare','Prepare exact hosted plan'),exportButton=button('orb-hosted-export','Export hosted operator configuration'),approve=input('orb-hosted-export-approve','checkbox'),status=E('p','No hosted plan prepared.','orb-muted');status.id='orb-hosted-status';status.setAttribute('role','status');
  const preview=E('pre');preview.id='orb-hosted-preview';preview.hidden=true;
  const actions=E('div',undefined,'orb-controls');actions.append(prepare,exportButton);
- root.append(help,hint,slots,field('Maximum rounds (eight slot-round ceiling)',rounds),field('Output token cap per request',tokens),actions,field('I approve exporting the full pinned investigation, including reviewed source text, to my local operator.',approve),status,preview);
+ root.append(help,hint,slots,field('Hosted slot rounds (eight slot-round ceiling)',rounds),field('Output token cap per request',tokens),actions,field('I approve exporting the full pinned investigation, including reviewed source text, to my local operator.',approve),status,preview);
  const controls=()=>{prepare.disabled=blocked||!version||preparing;approve.disabled=!pending||blocked||preparing;exportButton.disabled=!pending||!approve.checked||blocked||preparing;};
  const invalidate=()=>{epoch++;pending=null;preparing=false;approve.checked=false;preview.hidden=true;preview.textContent='';status.textContent='Configuration changed. Prepare and review a fresh plan.';controls();};
  for(const r of rows)for(const e of [r.enabled,r.vendor,r.model,r.bindings,r.values])e.addEventListener('input',invalidate);
