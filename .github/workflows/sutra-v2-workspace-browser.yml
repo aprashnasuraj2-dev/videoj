@@ -32,6 +32,8 @@ jobs:
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - name: Execute objective-first shared-model research bridge fixture
+        run: node apps/sutra-v2/test/autonomous-workspace.cjs
       - name: Preserve orbital viewport screenshots
         if: always()
         uses: actions/upload-artifact@v4
