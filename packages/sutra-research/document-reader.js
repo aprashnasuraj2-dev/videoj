@@ -41,46 +41,49 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
  if(!Number.isSafeInteger(minIntervalMs)||minIntervalMs<0||minIntervalMs>5000)fail('THROTTLE_CONFIG');
  const scope=authorization.plan.scope,allowQuery=scope.allowPublicQueryParameters===true,allowRedirects=scope.allowRedirects===true,routeOptions={allowQuery};
  const robots=new Map(),lastRequest=new Map(),documentRequests=new Map();
- async function throttle(origin){const wait=minIntervalMs-(performance.now()-(lastRequest.get(origin)??-Infinity));if(wait>0)await delay(wait,undefined,{signal:authorization.signal});authorization.assertActive();lastRequest.set(origin,performance.now());}
+ const activeCheck=signal=>{authorization.assertActive();if(signal?.aborted)fail('CANCELLED');};
+ async function throttle(origin,signal){const wait=minIntervalMs-(performance.now()-(lastRequest.get(origin)??-Infinity));if(wait>0)await delay(wait,undefined,{signal});activeCheck(signal);lastRequest.set(origin,performance.now());}
  function redirectTarget(current,location){
   if(!allowRedirects||typeof location!=='string')fail('REDIRECT_SCOPE');
   let absolute;try{absolute=new URL(location,current).href;}catch{fail('REDIRECT_LOCATION');}
   return admitDocumentURL(absolute,routeOptions);
  }
- async function readRobots(origin){
+ async function readRobots(origin,signal){
+  activeCheck(signal);
   if(robots.has(origin))return robots.get(origin);
   let current=new URL('/robots.txt',origin).href;const seen=new Set();
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('ROBOTS_REDIRECT_LOOP');seen.add(current);
-   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin);
-   const r=await transport({url:new URL(current),signal:authorization.signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects});
-   authorization.assertActive();
+   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin,signal);
+   const r=await transport({url:new URL(current),signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects});
+   activeCheck(signal);
    if([301,302,303,307,308].includes(r.status)){if(hop===3)fail('ROBOTS_REDIRECT_LIMIT');current=redirectTarget(current,r.location);continue;}
    if(![200,404,410].includes(r.status))fail('ROBOTS_RESPONSE');
    const text=r.status===200?utf8(r.body):'';robots.set(origin,text);return text;
   }
   fail('ROBOTS_REDIRECT_LIMIT');
  }
- return async function read(raw){
-  authorization.assertActive();const requested=admitDocumentURL(raw,routeOptions);let current=requested;
+ return async function read(raw,{signal:callerSignal}={}){
+  const signal=callerSignal?AbortSignal.any([authorization.signal,callerSignal]):authorization.signal;
+  activeCheck(signal);const requested=admitDocumentURL(raw,routeOptions);let current=requested;
   const chain=[],seen=new Set(),allowPdf=scope.allowPdf===true,maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
   if(allowPdf)acceptedTypes.push('application/pdf');
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('REDIRECT_LOOP');seen.add(current);
    const target=new URL(current),origin=target.origin,host=target.hostname,count=documentRequests.get(host)??0;
    if(count>=3)fail('DOMAIN_LIMIT');
-   const rules=await readRobots(origin);
+   const rules=await readRobots(origin,signal);
    if(!robotsAllows(rules,target.pathname+target.search))fail('ROBOTS');
-   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,count+1);await throttle(origin);
-   const r=await transport({url:target,signal:authorization.signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects});
+   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,count+1);await throttle(origin,signal);
+   const r=await transport({url:target,signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects});
    authorization.assertActive();
    if([301,302,303,307,308].includes(r.status)){
     if(hop===3)fail('REDIRECT_LIMIT');const next=redirectTarget(current,r.location);chain.push({from:current,to:next,status:r.status});current=next;continue;
    }
    if(r.status!==200)fail('DOCUMENT_RESPONSE');
-   let d;if(r.mediaType==='application/pdf'){if(!allowPdf)fail('PDF_SCOPE');d=await extractPdfDocument(r.body,current,{signal:authorization.signal,parse:parsePdf});}
+   let d;if(r.mediaType==='application/pdf'){if(!allowPdf)fail('PDF_SCOPE');d=await extractPdfDocument(r.body,current,{signal,parse:parsePdf});}
    else d=extractDocument(r.body,r.mediaType,current,{allowCrossOriginLinks:scope.allowCrossOriginLinks===true,allowQuery});
-   authorization.assertActive();return Object.freeze({...d,url:requested,finalUrl:current,redirectChain:Object.freeze(chain.map(Object.freeze))});
+   activeCheck(signal);return Object.freeze({...d,url:requested,finalUrl:current,redirectChain:Object.freeze(chain.map(Object.freeze))});
   }
   fail('REDIRECT_LIMIT');
  };

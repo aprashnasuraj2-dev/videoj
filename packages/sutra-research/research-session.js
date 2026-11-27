@@ -68,14 +68,15 @@ export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact
  // Reservations are synchronous and conservative: failures are not refunded.
  function reserve(kind,{bytes,costMicros=0}={}){
   assertActive();if(!bounded(bytes,1,52428800)||!bounded(costMicros,0,1000000)||!['search','document','robots'].includes(kind))fail('RESERVATION');
-  const b=p.plan.budget,k=kind==='search'?'searches':kind==='document'?'documents':null;
-  if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
+  const b=p.plan.budget,tail=p.plan.modelPolicy?.roles.filter(r=>r.role!=='bot')??[],heldBytes=tail.length*262144,heldCost=tail.reduce((n,r)=>n+r.estimatedMaxCostMicros,0),k=kind==='search'?'searches':kind==='document'?'documents':null;
+  if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes+heldBytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros+heldCost>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
   if(k)usage[k]++;usage.reservedBytes+=bytes;usage.reservedCostMicros+=costMicros;
  }
  function reserveModel(role,inputBytes){
   assertActive();const r=p.plan.modelPolicy?.roles.find(x=>x.role===role),b=p.plan.budget;
   if(!r||!bounded(inputBytes,1,r.maxInputBytes))fail('MODEL_RESERVATION');
-  if(usage.modelCalls>=b.maxModelCalls||usage.reservedBytes+262144>b.maxDownloadBytes||usage.reservedCostMicros+r.estimatedMaxCostMicros>b.maxCostMicros)fail('MODEL_BUDGET_EXHAUSTED');
+  const held=p.plan.modelPolicy.roles.filter(x=>role==='bot'?x.role!=='bot':role==='orb'?x.role==='spark':false),heldCost=held.reduce((n,x)=>n+x.estimatedMaxCostMicros,0);
+  if(usage.modelCalls+1+held.length>b.maxModelCalls||usage.reservedBytes+262144*(1+held.length)>b.maxDownloadBytes||usage.reservedCostMicros+r.estimatedMaxCostMicros+heldCost>b.maxCostMicros)fail('MODEL_BUDGET_EXHAUSTED');
   usage.modelCalls++;usage.modelInputBytes+=inputBytes;usage.modelOutputTokensReserved+=r.maxOutputTokens;usage.reservedBytes+=262144;usage.reservedCostMicros+=r.estimatedMaxCostMicros;
  }
  const grant=Object.freeze({...p,startedAt:started,expiresAt:expires,signal:c.signal,assertActive,reserve,reserveModel,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);if(p.plan.modelPolicy)modelApprovals.add(grant);if(prior)restored.set(grant,prior);return grant;

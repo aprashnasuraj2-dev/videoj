@@ -53,6 +53,9 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  const restored=prior?validateRestored(prior,b,plan.scope):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
  const sessionId=prior?.sessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
  const modelReceipts=[],modelQueries=[];let intelligence=null,modelPlanAttempted=false;
+ const finalRoles=plan.modelPolicy?.roles.filter(r=>r.role!=='bot')??[];
+ const finalCost=finalRoles.reduce((n,r)=>n+r.estimatedMaxCostMicros,0),finalBytes=finalRoles.length*262144;
+ function canAcquire(cost,bytes){const u=a.usage();return !plan.modelPolicy||u.reservedCostMicros+cost+finalCost<=b.maxCostMicros&&u.reservedBytes+bytes+finalBytes<=b.maxDownloadBytes;}
  let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};
  const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,startedAt:a.startedAt,expiresAt:a.expiresAt,state,phase,slots,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),...(plan.modelPolicy?{modelReceipts:structuredClone(modelReceipts),modelQueries:structuredClone(modelQueries)}:{}),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'fresh exact approval and retained checkpoint digest required; unknown dispatch is not replayed'});
@@ -86,15 +89,17 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
     if(queries.length>=3&&queries.some(q=>q.role==='spark')&&queries.slice(-2).every(q=>q.waveOutcome?.newDocuments===0&&q.waveOutcome?.newPassages===0)){reason='diminishing_returns_unverified';break;}
     // The first search remains an objective search. Subsequent waves can use a model-generated refinement.
     if(plan.modelPolicy&&queries.length>0&&!modelPlanAttempted){
+     const bot=plan.modelPolicy.roles.find(r=>r.role==='bot');
      modelPlanAttempted=true;
      const missing=terms(plan.objective).filter(w=>!new Set(passages.flatMap(p=>p.matched)).has(w));
-     const proposed=await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing));
+     const proposed=canAcquire(bot.estimatedMaxCostMicros,262144)?await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing)):null;
      if(proposed!==null)try{modelQueries.push(...admitModelQueries(proposed,plan.objective,queries));}catch(e){failures.push({operation:'model_plan_admission',reason:safeCode(e)});}
     }
     const modelNext=modelQueries.find(q=>!queries.some(h=>h.query===q.query));
     const next=modelNext??nextQuery(plan.objective,queries,documents,passages);if(!next)break;
     const provider=plan.providers[queries.length%plan.providers.length];
     if(secretLike(next.query))fail('SENSITIVE_QUERY');
+    if(!canAcquire(provider.estimatedMaxCostMicros,SEARCH_BYTES)){reason='budget_reserved_for_review';break;}
     a.reserve('search',{bytes:SEARCH_BYTES,costMicros:provider.estimatedMaxCostMicros});
     const query={...next,provider:provider.id,documentsBefore:documents.length,passagesBefore:passages.length};queries.push(query);
     const results=await operation('search',next.role,{query:next.query,provider:provider.id},signal=>providers[provider.id].search(next.query,{signal:AbortSignal.any([a.signal,signal])}));
@@ -105,6 +110,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
     phase='documents';slots=2;pending=null;operations++;await checkpoint();continue;
    }
    if(slots===0||!frontier.length||a.usage().documents>=b.maxDocuments){const q=queries.at(-1);if(q&&Number.isSafeInteger(q.documentsBefore)&&Number.isSafeInteger(q.passagesBefore))q.waveOutcome={newDocuments:documents.length-q.documentsBefore,newPassages:passages.length-q.passagesBefore};phase='search';slots=0;await checkpoint();continue;}
+   if(!canAcquire(0,(plan.scope.allowPdf?1048576:262144)+65536)){reason='budget_reserved_for_review';break;}
    const ranked=rankFrontier(frontier,plan.objective,domainAttempts);frontier.splice(0,frontier.length,...ranked);const item=frontier.shift(),host=new URL(item.url).hostname;
    const count=domainAttempts.get(host)??0;if(count>=3)continue;
    domainAttempts.set(host,count+1);slots--;
@@ -144,11 +150,12 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
       const review=await consult('spark',{objective:plan.objective,claims:candidateClaims,evidence:packet.excerpts});
       if(review!==null)try{reviews=admitReviews(review,synthesis,packet);}catch(e){failures.push({operation:'model_review_admission',reason:safeCode(e)});}
      }
-     intelligence=assembleIntelligence(synthesis,reviews,modelReceipts,packet);
+     a.assertActive();intelligence=assembleIntelligence(synthesis,reviews,modelReceipts,packet);
     }
    }
   }catch(e){failures.push({operation:'model_intelligence',reason:safeCode(e)});}
  }
+ if(a.signal.aborted){intelligence=null;reason='cancelled_or_expired';}
  if(state!=='paused')state='closed';
  const covered=new Set(passages.flatMap(p=>p.matched)),all=terms(plan.objective);
  const verified=verifyEvidence(documents,passages),numericObservations=extractNumericObservations(passages,verified.refs),numericComparisons=compareNumericObservations(numericObservations),lineage=compareSourceLineage(documents),evidenceGraph=createEvidenceGraph(documents,verified.refs,numericObservations,numericComparisons,lineage);
