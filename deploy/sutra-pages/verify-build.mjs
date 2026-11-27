@@ -49,8 +49,12 @@ const callerLinks=await json(candidate,'agents/links.json');
 assert.deepEqual(callerLinks,{version:1,networks:{peer_investigation:{guide_peer:GUIDE_ORIGIN+'/agents/checklist'}}});
 for(const [name,frontMan,hocon] of callerNetworks){
  let graph=await json(candidate,'agents/'+hocon.slice(2));
- assert.ok(graph.tools.length>=2,'Missing functional agent pair');
- if(name==='peer_investigation')graph=resolveSymbolicPeerLinks(graph,callerLinks,name);
+ if(name==='peer_investigation'){
+  // This graph deliberately delegates from one local front to a separately published two-agent guide.
+  assert.equal(graph.tools.length,1,'Unexpected peer caller graph shape');
+  graph=resolveSymbolicPeerLinks(graph,callerLinks,name);
+  assert.deepEqual(graph.tools[0].tools,[GUIDE_ORIGIN+'/agents/checklist']);
+ }else assert.ok(graph.tools.length>=2,'Missing functional local agent pair');
  assert.equal(compileNetwork(graph,{name,frontMan,allowPeers:name==='peer_investigation',allowWorkspaceEvidence:name==='reviewed_investigation'}).frontMan,frontMan);
 }
 const guideGraph=await json(guide,'agents/checklist.network.json');
