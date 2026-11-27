@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "sourceRevision": "0000000000000000000000000000000000000000",
   "provider": "synthetic-example-not-live",
   "model": "fixture-only",
@@ -24,7 +24,8 @@
           "usage": {
             "promptTokens": 1000,
             "completionTokens": 200
-          }
+          },
+          "latencyMs": 275
         },
         {
           "sequence": 2,
@@ -33,9 +34,12 @@
           "usage": {
             "promptTokens": 500,
             "completionTokens": 100
-          }
+          },
+          "latencyMs": 400
         }
       ]
     }
-  ]
+  ],
+  "backend": "hosted",
+  "routerPath": "/api/v1/chat/completions"
 }
