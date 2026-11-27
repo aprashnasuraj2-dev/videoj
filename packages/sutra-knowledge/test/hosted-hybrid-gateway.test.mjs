@@ -34,3 +34,26 @@ test('real gateway composition refuses private DNS answer before TLS dial or HTT
  const result=await g.execute({approvedPlanPin:g.planPin,approveDisclosure:true,approveHosted:true});
  assert.equal(dns,1);assert.equal(dials,0);assert.equal(result.result.artifacts.find(a=>a.taskId==='consult').value.candidates.length,0);assert.doesNotMatch(JSON.stringify(result),/TEST_HOSTED_GATEWAY_SECRET/);
 });
+
+test('all three official vendor profiles execute the six-specialist hybrid using isolated credentials and an eight-task checkpoint',async()=>{
+ const {EventEmitter}=await import('node:events'),{buildHostedHybridPlan}=await import('../hosted-plan.js'),{openExecutionCheckpoint}=await import('../../sutra-runtime/execution-checkpoint.js');
+ const v=await livingFixture(),roles=['planner','researcher','coder','analyst','critic','coordinator'],specialists=roles.map((id,i)=>({id,role:'Specialist '+id,vendor:HOSTED_GATEWAY_PROFILES[i%3].vendor,model:'fixture-model-'+i,bindingIds:['first','baseline'],includeValues:false,feedbackFrom:[]}));
+ const b=await buildHostedHybridPlan({versionText:v.versionText,versionPin:v.digest,specialists,maxConcurrent:2}),requests=[],dns=[],reads=[],dials=[];
+ const byHost=new Map(HOSTED_GATEWAY_PROFILES.map(p=>[new URL(p.endpoint).hostname,p])),keys=new Map(HOSTED_GATEWAY_PROFILES.map(p=>[p.credentialEnv,'HOSTED_ONLY_CANARY_'+p.vendor+'_123456']));
+ const io={
+  dialTls(opts){dials.push({host:opts.host,servername:opts.servername});const s=Object.assign(new EventEmitter(),{encrypted:true,authorized:true,remoteAddress:opts.host,remotePort:443,alpnProtocol:'http/1.1',getProtocol:()=> 'TLSv1.3',getPeerCertificate:()=>({subjectaltname:'DNS:'+opts.servername}),destroy(){}});queueMicrotask(()=>s.emit('secureConnect'));return s;},
+  requestHttps(opts,callback){const sock=opts.createConnection(),p=byHost.get(opts.hostname),req=Object.assign(new EventEmitter(),{destroy(){},end(body){
+   requests.push({host:opts.hostname,path:opts.path,headers:opts.headers,body});const wire=JSON.parse(body),n=Number(wire.model.split('-').at(-1)),content=JSON.stringify({version:1,kind:'expression',expression:n%2?'[first] < [baseline]':'[first] > [baseline]'});
+   const payload=p.vendor==='anthropic'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:content}],usage:{output_tokens:4}}:{choices:[{index:0,message:{role:'assistant',content},finish_reason:'stop'}],usage:{completion_tokens:4}};
+   queueMicrotask(()=>{req.emit('socket',sock);const res=Object.assign(new EventEmitter(),{statusCode:200,headers:{'content-type':'application/json'},complete:true,destroy(){}});callback(res);res.emit('data',Buffer.from(JSON.stringify(payload)));res.emit('end');});
+  }});return req;}
+ };
+ const g=await prepareHostedHybridGateway({configText:b.text,readCredential:alias=>{reads.push(alias);return keys.get(alias);},resolveAll:async h=>{dns.push(h);return [{address:'8.8.8.8',family:4}];},hostedIO:io});
+ assert.equal(reads.length+dns.length+dials.length+requests.length,0);
+ const r=await g.execute({approvedPlanPin:b.planPin,approveDisclosure:true,approveHosted:true});
+ assert.equal(r.status,'completed');assert.equal(requests.length,6);assert.equal(dns.length,6);assert.equal(dials.length,6);assert.equal(r.budget.used.calls,6);assert.equal(new Set(reads).size,3);
+ for(const q of requests){const p=byHost.get(q.host),expected=keys.get(p.credentialEnv);assert.equal(q.path,new URL(p.endpoint).pathname);if(p.vendor==='anthropic'){assert.equal(q.headers['x-api-key'],expected);assert.equal(q.headers.Authorization,undefined);}else{assert.equal(q.headers.Authorization,'Bearer '+expected);assert.equal(q.headers['x-api-key'],undefined);}for(const key of keys.values())assert.ok(!q.body.includes(key));}
+ for(const key of keys.values())assert.ok(!JSON.stringify(r).includes(key));
+ const consult=r.result.artifacts.find(a=>a.taskId==='consult').value;assert.equal(consult.candidates.length,2);assert.equal(consult.decisionAuthority,'NONE');
+ const cp=await openExecutionCheckpoint(r.checkpoint.text,r.checkpoint.pin,v.digest);assert.equal(cp.checkpoint.artifactPins.length,8);assert.equal(cp.checkpoint.events.filter(e=>e.type==='consultation.phase'&&e.payload.phase==='proposal-admitted').length,6);
+});
