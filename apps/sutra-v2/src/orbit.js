@@ -3,7 +3,7 @@ import {impactProjection} from './impact-projection.js';
 import {runInvestigationReview,ROLE_REVIEW_TASKS} from '../../../packages/sutra-knowledge/investigation-role-review.js';
 import {createFrameDriver} from './frame-driver.js';
 import {investigationGraph,traceDependencies} from './investigation-graph.js';
-import {createCouncilActivity} from './council-activity.js';
+import {executionFeed,publishTaskExecution} from './execution-channel.js';
 import {renderGuestbook} from './orbit-guestbook.js';
 // Agent-native SUTRA. Presentation-only simulation and public council telemetry are separate.
 import './orbit.css';
@@ -19,7 +19,7 @@ const steps=[
  [0,'thinking','Frame a bounded question',0,1],[1,'working','Inspect the synthetic source inventory',1,2],[2,'working','Select declared numeric tokens',2,3],[3,'thinking','Compare competing interpretations',3,4],[3,'working','Rehearse conditional calculation',4,5],[5,'communicating','Propose withdrawal challenge',5,3],[4,'working','Record hypothetical impact',6,0],[0,'waiting','Require human review before revision',7,4],[4,'communicating','Prepare a replay handoff',8,5],[5,'working','Distinguish computation from truth',8,4]
 ];
 let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStation=null,simulation=false,playing=false,index=0,elapsed=0,lastTick=0,rotation=0,targetRotation=0,zoom=1,drag=null,latest=null,events=[],configs=[],policy='ask',era=false,lastState='',rehearsalFinished=false,konami=0,sound=false,audio=null;
-const councilActivity=createCouncilActivity();
+let councilRunId=null;
 let graphSelection=null,lastWorkspaceStatus='';
 let activeReview=null,reviewResult=null,reviewState='idle',impactView=null;const reviewEvents=[];
 let checkpointExport=null,checkpointOpened=null,checkpointBusy=false,checkpointEpoch=0,checkpointVersion=undefined,checkpointController=null,checkpointStatus='No imported checkpoint.';
@@ -279,16 +279,9 @@ async function startRoleReview(){
  renderRoleReview();updateCouncil();renderInspector();frameDriver.wake();
  const isCurrent=()=>{if(activeReview!==run||latest?.current?.digest!==run.version)throw Error('STALE_REVIEW');};
  try{
-  const result=await runInvestigationReview({versionText:current.versionText,versionPin:current.digest,runId,signal:controller.signal,assertCurrent:isCurrent,onEvent:e=>{
-   if(activeReview!==run||latest?.current?.digest!==run.version)return;
-   reviewEvents.push(e);
-   const i=ROLE.findIndex(a=>a[0]===e.agentId);if(i<0)return;const a=agents[i];
-   a.status=e.status==='executing'?'working':e.status;a.station=reviewStations[e.taskId]??null;
-   if(e.status==='executing'){
-    const task=ROLE_REVIEW_TASKS.find(t=>t.id===e.taskId);
-    for(const id of task.dependsOn){const source=ROLE_REVIEW_TASKS.find(t=>t.id===id),from=ROLE.findIndex(x=>x[0]===source.agentId);if(from>=0&&from!==i)edges.push({from,to:i,born:performance.now(),kind:'LOCAL DETERMINISTIC REVIEW'});}
-   }
-   record('LOCAL DETERMINISTIC REVIEW',i,null,e.taskId+' · '+e.status);renderRoleReview();
+  const result=await runInvestigationReview({versionText:current.versionText,versionPin:current.digest,runId,signal:controller.signal,assertCurrent:isCurrent,onExecutionEvent:publishTaskExecution,onEvent:e=>{
+   // Preserve the exact existing checkpoint wire format; the live UI uses the unified feed.
+   if(activeReview===run&&latest?.current?.digest===run.version)reviewEvents.push(e);
   }});
   if(activeReview!==run||latest?.current?.digest!==run.version)return;
   reviewResult=result;reviewState=result.status;
@@ -317,7 +310,7 @@ function updateCouncil(){
 }
 function renderCouncilActivity(){
  const box=$('orb-council-activity');if(!box)return;
- const run=councilActivity.snapshot();box.replaceChildren(E('h3','Recorded council execution'));
+ const run=councilRunId?executionFeed.snapshot(councilRunId):null;box.replaceChildren(E('h3','Recorded council execution'));
  if(!run){box.append(E('p','No council execution recorded in this session.','orb-muted'));return;}
  box.append(E('p','Run '+run.runId+' · '+run.status+' · local scripted transport (not live inference)','orb-muted'));
  for(const [i,a] of run.agents.entries()){const row=E('article',undefined,'orb-event');row.append(E('strong','Council slot '+String.fromCharCode(65+i)),E('p',a.status+' · round '+a.round+' · '+a.requests+' requests · '+a.responses+' responses · '+a.proposals+' admitted proposals'));box.append(row);}
@@ -336,13 +329,27 @@ function initialize(){
  $('orb-offline').onclick=async()=>{if(!('serviceWorker' in navigator)||!isSecureContext){announce('Offline shell requires a secure browser context.');return;}try{const registration=await navigator.serviceWorker.register('./orbit-sw.js');await navigator.serviceWorker.ready;announce('Offline fallback enabled. No investigation data is cached.');}catch{announce('Offline registration failed. No offline availability claimed.');}};
  const dialog=$('orb-dialog'),filter=()=>{const term=$('orb-search').value.toLowerCase();$('orb-command-list').replaceChildren();for(const [name,desc,id] of STATIONS.filter(x=>(x[0]+' '+x[1]).toLowerCase().includes(term)))$('orb-command-list').append(btn(name,()=>{dialog.close();go(id);}));};const open=()=>{filter();if(!dialog.open)dialog.showModal();$('orb-search').focus();};$('orb-command').onclick=open;$('orb-close').onclick=()=>dialog.close();$('orb-search').oninput=filter;
  const sequence=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open();return;}if(e.target.matches('input,textarea,select,[contenteditable]'))return;if(e.key.toLowerCase()===sequence[konami].toLowerCase()){konami++;if(konami===sequence.length){konami=0;setEra();announce('Secret era unlocked.');}}else konami=0;});
- document.addEventListener('sutra-council-event',event=>{
-  const d=event.detail;if(!councilActivity.apply(d))return;
-  if(d.phase==='started'&&activeReview)stopRoleReview('cancelled by council');
-  if(d.phase==='started'&&simulation){playing=false;simulation=false;for(const x of agents){x.status='idle';x.station=null;}renderControls();}
-  // The two configurable council slots are not six independent role avatars. No synthetic handoff is drawn.
-  record('LOCAL SCRIPTED COUNCIL',null,null,'Run '+d.runId+' · '+d.phase+(d.agent?' · '+d.agent+' · round '+d.round:''));
-  renderCouncilActivity();
+ executionFeed.subscribe((event,snapshot)=>{
+  if(event.origin==='local-scripted'){
+   councilRunId=event.runId;
+   if(event.type==='run.open'&&activeReview)stopRoleReview('cancelled by council');
+   if(event.type==='run.open'&&simulation){playing=false;simulation=false;for(const x of agents){x.status='idle';x.station=null;}renderControls();}
+   const detail=event.payload,phase=event.type==='run.open'?'started':event.type==='run.close'?detail.status:detail.phase;
+   record('LOCAL SCRIPTED COUNCIL',null,null,'Run '+event.runId+' · '+phase+(detail.agentId?' · '+detail.agentId+' · round '+detail.round:''));
+   renderCouncilActivity();return;
+  }
+  if(event.origin!=='deterministic'||!activeReview||event.runId!==activeReview.runId||event.version!==activeReview.version||latest?.current?.digest!==event.version)return;
+  if(event.type!=='task.state')return;
+  const e=event.payload,i=ROLE.findIndex(a=>a[0]===e.agentId);if(i<0)return;
+  // One agent can own multiple tasks; status is projected from all assigned tasks.
+  const role=snapshot.agents.find(x=>x.id===e.agentId),a=agents[i];
+  a.status=role.status==='executing'?'working':role.status;
+  a.station=reviewStations[role.activeTaskIds[0]??e.taskId]??null;
+  if(e.status==='executing'){
+   const task=snapshot.tasks.find(t=>t.id===e.taskId);
+   for(const id of task.dependsOn){const source=snapshot.tasks.find(t=>t.id===id),from=ROLE.findIndex(x=>x[0]===source.agentId);if(from>=0&&from!==i)edges.push({from,to:i,born:performance.now(),kind:'LOCAL DETERMINISTIC REVIEW'});}
+  }
+  record('LOCAL DETERMINISTIC REVIEW',i,null,e.taskId+' · '+e.status);renderRoleReview();
  });
  setMode('map');renderInspector();renderLog();if(new URLSearchParams(location.search).get('surface')==='debugger'){root.hidden=true;master.hidden=true;const workspace=$('reviewed-workspace'),economics=$('economics-lab');economics.before(workspace);document.querySelector('.sm-lab-heading')?.remove();const old=document.querySelector('.intro h2');if(old)old.replaceWith(E('h1',old.textContent));return;}const requested=location.hash.slice(1);if(['swarm','investigation','routes','policy','audit','guestbook'].includes(requested))setMode(requested);window.addEventListener('popstate',()=>{const next=location.hash.slice(1);if(['map','swarm','investigation','routes','policy','audit','guestbook'].includes(next))setMode(next);else if(!next)setMode('map');});document.addEventListener('visibilitychange',()=>{if(document.hidden)frameDriver.stop();else frameDriver.wake();});reduced.addEventListener('change',()=>frameDriver.wake());frameDriver.wake();
 }

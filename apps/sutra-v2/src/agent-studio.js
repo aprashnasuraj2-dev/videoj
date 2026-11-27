@@ -1,4 +1,4 @@
-import {createCouncilEmitter} from './council-activity.js';
+import {createStudioExecution} from './execution-channel.js';
 import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
 import {validateReviewedContract} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {createProtocolWorkspace} from '../../../packages/sutra-inference/protocol-workspace.js';
@@ -160,7 +160,8 @@ form.addEventListener('submit',async event=>{
  const ticket=++epoch,controller=new AbortController();active=controller;busy(true);status('Running local agents and independent verification…','busy');
  try{
   const config=readConfig();if(expression)admitCouncilDisclosure(config.disclosure,config.agents.map(x=>x.id));
-  const telemetry=createCouncilEmitter(ticket,detail=>document.dispatchEvent(new CustomEvent('sutra-council-event',{detail})),()=>controller.signal.aborted||ticket!==epoch,config.agents.map(a=>a.id));activeTelemetry=telemetry;telemetry.send('started');const {workspace,routes}=setup(config,telemetry);
+  const version=expression&&/^sha256:[0-9a-f]{64}$/.test(config.contractPin)?config.contractPin:'studio_draft:'+ticket;
+  const telemetry=createStudioExecution(ticket,version,()=>controller.signal.aborted||ticket!==epoch,config.agents.map(a=>a.id));activeTelemetry=telemetry;telemetry.send('started');const {workspace,routes}=setup(config,telemetry);
   const options={workspace,routes,maxRounds:config.rounds,maxOutputTokens:256,signal:controller.signal};
   const r=expression?await runExpressionCouncil({...options,contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure,roundPolicy:config.roundPolicy}):await runAgentCouncil({...options,caseText:config.caseText,question:config.question});
   if(ticket!==epoch||controller.signal.aborted)return;
