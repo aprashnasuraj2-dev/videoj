@@ -187,3 +187,10 @@ test('resolved JSON publication refuses hostile graph bytes on both local and co
   assert.deepEqual(decisions,['peer_manifest','peer_graph']);
  }
 });
+
+test('query-bearing publication resource is refused before graph consent or fetch',async()=>{
+ const calls=[],decisions=[];
+ const inspector=createConsentInspector({decide:async intent=>{decisions.push(intent.kind);return 'allow';}});
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{calls.push(url);return response(manifest('./transit.network.json?private=synthetic-canary'));}}),e=>e.code==='ARTIFACT_ORIGIN'&&!e.message.includes('synthetic-canary'));
+ assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);assert.deepEqual(decisions,['peer_manifest']);
+});
