@@ -59,6 +59,42 @@ function compare(op,a,b,same){
  else fail('OP');
  return yes?'HOLDS_FOR_ALL_DECLARED_VALUES':no?'REFUTED_FOR_ALL_DECLARED_VALUES':'NOT_RESOLVED_BY_INTERVAL_ENCLOSURE';
 }
+function visitIntervalCone(nodes,targetId,inputRange){
+ const byId=new Map(nodes.map(n=>[n.id,n])),memo=new Map(),rows=[];
+  function visit(id){
+   if(memo.has(id))return memo.get(id);
+   const n=byId.get(id);
+   let value=null,status='ENCLOSED',reason=null;
+   if(n.kind==='input'){
+    value=inputRange(n);
+   }else{
+    const [a,b]=n.args.map(visit);
+    if(!a.value||!b.value){status='UNRESOLVED_INTERVAL';reason='DEPENDENCY_UNRESOLVED';}
+    else if(n.kind==='constraint')status=compare(n.op,a.value,b.value,n.args[0]===n.args[1]);
+    else try{value=derive(n.op,a.value,b.value,n.args[0]===n.args[1]);}
+    catch(e){if(!['INTERVAL_ZERO_POSSIBLE','INTERVAL_ARITHMETIC_LIMIT'].includes(e.message))throw e;status='UNRESOLVED_INTERVAL';reason=e.message;}
+   }
+   const result={value,status,reason};memo.set(id,result);
+   rows.push({id,kind:n.kind,operator:n.op??null,bounds:value?range(value):null,status,reason});
+   return result;
+  }
+ return {target:visit(targetId),rows};
+}
+
+export function reviewedRangeContains(lower,upper,point,{requireWidth=false}={}){
+ const lo=read(lower),hi=read(upper),value=read(point);
+ return (!requireWidth||cmp(lo,hi)<0)&&cmp(lo,value)<=0&&cmp(value,hi)<=0;
+}
+
+// A caller admits the projected point graph before interval evaluation.
+export function evaluateQuantityConeIntervals(nodes,targetId,intervals){
+ const inputRange=n=>{
+  const declared=intervals.get(n.id);
+  if(declared)return [read(declared.lower),read(declared.upper)];
+  const value=read(n.value);return [value,value];
+ };
+ return visitIntervalCone(nodes,targetId,inputRange).target.status;
+}
 export async function evaluateReviewedIntervals(versionText,versionPin,planText,planPin){
  if(typeof planPin!=='string'||await casePin(planText)!==planPin)fail('PIN');
  const replay=await replayInvestigationVersion(versionText,versionPin),raw=parse(versionText,6),contract=parse(raw.contractText),batch=parse(raw.batchText,5),p=parse(planText,6);
@@ -82,26 +118,12 @@ export async function evaluateReviewedIntervals(versionText,versionPin,planText,
   const base=c.computation?.status??'REFUSED';
   if(!['CONDITIONALLY_SATISFIED','CONDITIONALLY_REFUTED'].includes(base)){candidates.push({id:c.id,baseline:base,status:'BASELINE_UNRESOLVED_NOT_EVALUATED',nodes:[],usedRanges:[]});continue;}
   const compiled=c.id===first.id?compiledFirst:await compileReviewedProposal(raw.contractText,raw.contractPin,batch.proposals.find(x=>x.id===c.id).proposalText);
-  const nodes=new Map(compiled.nodes.map(n=>[n.id,n])),memo=new Map(),rows=[],used=new Set();
-  function visit(id){
-   if(memo.has(id))return memo.get(id);
-   const n=nodes.get(id);
-   let value=null,status='ENCLOSED',reason=null;
-   if(n.kind==='input'){
-    const point=baseline.get(n.bindingId);value=intervals.get(n.bindingId)??[point,point];
-    if(intervals.has(n.bindingId))used.add(n.bindingId);
-   }else{
-    const [a,b]=n.args.map(visit);
-    if(!a.value||!b.value){status='UNRESOLVED_INTERVAL';reason='DEPENDENCY_UNRESOLVED';}
-    else if(n.kind==='constraint')status=compare(n.op,a.value,b.value,n.args[0]===n.args[1]);
-    else try{value=derive(n.op,a.value,b.value,n.args[0]===n.args[1]);}
-    catch(e){if(!['INTERVAL_ZERO_POSSIBLE','INTERVAL_ARITHMETIC_LIMIT'].includes(e.message))throw e;status='UNRESOLVED_INTERVAL';reason=e.message;}
-   }
-   const result={value,status,reason};memo.set(id,result);
-   rows.push({id,kind:n.kind,operator:n.op??null,bounds:value?range(value):null,status,reason});
-   return result;
-  }
-  const target=visit(compiled.target.id);
+  const used=new Set();
+  const {target,rows}=visitIntervalCone(compiled.nodes,compiled.target.id,n=>{
+   const point=baseline.get(n.bindingId),declared=intervals.get(n.bindingId);
+   if(declared)used.add(n.bindingId);
+   return declared??[point,point];
+  });
   // The original exact point lies inside every declared interval. A proven
   // opposite universal result is an invariant failure, never a new verdict.
   if((target.status==='HOLDS_FOR_ALL_DECLARED_VALUES'&&base==='CONDITIONALLY_REFUTED')||(target.status==='REFUTED_FOR_ALL_DECLARED_VALUES'&&base==='CONDITIONALLY_SATISFIED'))fail('POINT_CONTRADICTION');

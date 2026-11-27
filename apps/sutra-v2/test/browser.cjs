@@ -871,6 +871,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await reviewPage.locator('#review-capsule-retained-pin').fill(capsulePin);
   await reviewPage.locator('#review-capsule-open').click();
   await reviewPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('CONDITIONALLY SATISFIED'));
+  await reviewPage.locator('#review-capsule-range').locator('..').locator('summary').click();
+  const maskedNode=capsuleBody.nodes.find(n=>n.value==='25/2');
+  await reviewPage.locator('#review-capsule-mask').selectOption(maskedNode.id);
+  await reviewFill('capsule-lower','11/1');await reviewFill('capsule-upper','13/1');
+  assert.equal(await reviewPage.locator('#review-capsule-export').isDisabled(),true);
+  await reviewPage.locator('#review-capsule-range').click();
+  const rangePath=reviewPage.waitForEvent('download');
+  await reviewPage.locator('#review-capsule-export').click();
+  const rangeBytes=fs.readFileSync(await (await rangePath).path());
+  const rangePin=await reviewPage.locator('#review-capsule-pin').innerText();
+  assert.ok(!rangeBytes.includes('25/2'));
+  assert.equal(JSON.parse(rangeBytes).nodes.find(n=>n.id===maskedNode.id).lower,'11/1');
+  await reviewPage.locator('#review-capsule-file').setInputFiles({name:'capsule-range.json',mimeType:'application/json',buffer:rangeBytes});
+  await reviewFill('capsule-retained-pin',rangePin);
+  await reviewPage.locator('#review-capsule-open').click();
+  await reviewPage.waitForFunction(()=>document.querySelector('#review-capsule-replay').textContent.includes('1 bounded quantities'));
+
   await reviewPage.locator('#review-capsule-candidate').selectOption('proposal_2');
   assert.equal(await reviewPage.locator('#review-capsule-export').isDisabled(),true);
 

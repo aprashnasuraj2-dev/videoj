@@ -112,6 +112,17 @@
   <button id="review-capsule-prepare" type="button" disabled>Preview calculation capsule</button>
   <button id="review-capsule-export" type="button" disabled>Download calculation capsule</button>
  </div>
+ <details>
+  <summary>Share a range in place of an exact quantity</summary>
+  <p>Choose a quantity from the local preview. Both bounds use exact fractions such as 100/1. SUTRA checks the result across the whole declared range.</p>
+  <label for="review-capsule-mask">Quantity to bound</label>
+  <select id="review-capsule-mask" disabled><option value="">Preview the calculation first</option></select>
+  <label for="review-capsule-lower">Inclusive lower bound</label>
+  <input id="review-capsule-lower" maxlength="100" autocomplete="off" spellcheck="false">
+  <label for="review-capsule-upper">Inclusive upper bound</label>
+  <input id="review-capsule-upper" maxlength="100" autocomplete="off" spellcheck="false">
+  <button id="review-capsule-range" type="button" disabled>Preview range capsule</button>
+ </details>
  <p id="review-capsule-pin" class="mono" aria-label="Calculation capsule digest"></p>
  <pre id="review-capsule-preview" aria-label="Calculation capsule bytes"></pre>
  <p id="review-capsule-status" role="status"></p>
