@@ -6,12 +6,8 @@ import {request} from 'node:https';
 import {admitHybridCouncilConfig} from './mixed-council-config.js';
 import {runApprovedHybridCouncil} from './mixed-council-runner.js';
 const fail=code=>{const e=Error('Hosted gateway refused ('+code+').');e.code=code;throw e;};
-const profiles=Object.freeze([
- Object.freeze({vendor:'openai',endpoint:'https://api.openai.com/v1/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',credentialEnv:'SUTRA_HOSTED_OPENAI'}),
- Object.freeze({vendor:'anthropic',endpoint:'https://api.anthropic.com/v1/messages',protocol:'anthropic-messages-json',authMode:'anthropic-key',credentialEnv:'SUTRA_HOSTED_ANTHROPIC'}),
- Object.freeze({vendor:'gemini',endpoint:'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',credentialEnv:'SUTRA_HOSTED_GEMINI'})
-]);
-export const HOSTED_GATEWAY_PROFILES=profiles;
+import {HOSTED_GATEWAY_PROFILES as profiles} from './hosted-plan.js';
+export {HOSTED_GATEWAY_PROFILES} from './hosted-plan.js';
 export async function resolveHostedAddresses(hostname){
  if(!profiles.some(p=>new URL(p.endpoint).hostname===hostname))fail('HOST');
  // The OS resolver returns all available addresses; the existing public route

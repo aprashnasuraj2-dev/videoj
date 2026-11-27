@@ -26,3 +26,12 @@ test('denied source has zero contact; independent source remains available and c
  const result=await p.execute({approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:i=>i.destination.endsWith('other.txt')?'deny':'allow'}),runId:'research'});
  assert.equal(result.status,'partial');assert.equal(f.requests.length,1);assert.equal(result.tasks.find(t=>t.id==='coordinate').status,'blocked');assert.equal(result.artifacts.filter(a=>a.kind==='research_fetch').length,1);
 });
+
+test('revoking source consent during DNS prevents socket dial and late publication',async()=>{
+ const f=await fixture();let release,entered;const ready=new Promise(r=>entered=r);let decisions=0;const inspector=createDisclosureConsentInspector({decide:()=>++decisions===1?'allow':'deny'});
+ const p=await prepareResearchInvestigation({...f,resolveAll:()=>{entered();return new Promise(r=>release=r);}});
+ const pending=p.execute({approvedPlanPin:p.planPin,consentInspector:inspector,runId:'research'});
+ await ready;inspector.clearSession();
+ release([{address:'8.8.8.8',family:4}]);
+ const result=await pending;assert.equal(result.status,'partial');assert.equal(f.requests.length,0);
+});

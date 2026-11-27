@@ -13,8 +13,8 @@ function dataRecord(value,keys,code){
   }
   return out;
 }
-function dataLabels(value){
-  if(!Array.isArray(value)||value.length<1||value.length>12)fail('DISCLOSURE','Disclosure must list one to twelve public field labels.');
+function dataLabels(value,max=12){
+  if(!Array.isArray(value)||value.length<1||value.length>max)fail('DISCLOSURE','Disclosure must list one to '+max+' public field labels.');
   const descriptors=Object.getOwnPropertyDescriptors(value);
   if(Reflect.ownKeys(descriptors).length!==value.length+1)fail('DISCLOSURE','Disclosure must be a dense data array.');
   return Array.from({length:value.length},(_,i)=>{
@@ -206,7 +206,7 @@ export function normalizeDisclosureIntent(input){
   if(typeof input.operation!=='string'||!disclosureOperationPattern.test(input.operation))fail('DISCLOSURE_INTENT','Disclosure operation must be a bounded identifier.');
   const destination=publicText(input.destination,'Destination',1024);
   const purpose=publicText(input.purpose,'Purpose',240);
-  const disclosure=dataLabels(input.disclosure);
+  const disclosure=dataLabels(input.disclosure,16);
   if(new Set(disclosure).size!==disclosure.length)fail('DISCLOSURE','Disclosure labels must be unique.');
   if(typeof input.planPin!=='string'||!disclosurePinPattern.test(input.planPin))fail('DISCLOSURE_PIN','Disclosure intent requires an exact SHA-256 plan pin.');
   let preview;
