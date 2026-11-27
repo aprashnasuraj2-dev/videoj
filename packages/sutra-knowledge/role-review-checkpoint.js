@@ -16,8 +16,10 @@ function transitions(events,runId,version,until=events.length){
  const states=new Map(ROLE_REVIEW_TASKS.map(t=>[t.id,'queued']));
  if(!dense(events,64)||!Number.isSafeInteger(until)||until<0||until>events.length)fail('EVENTS');
  for(let i=0;i<until;i++){
-  const e=events[i],task=taskById.get(e?.taskId);
-  if(!closed(e,['schema','runId','version','sequence','taskId','agentId','kind','status'])||e.schema!==1||e.runId!==runId||e.version!==version||e.sequence!==i+1||!task||task.agentId!==e.agentId||task.kind!==e.kind)fail('EVENT');
+  const e=events[i];
+  if(!closed(e,['schema','runId','version','sequence','taskId','agentId','kind','status']))fail('EVENT');
+  const task=taskById.get(e.taskId);
+  if(e.schema!==1||e.runId!==runId||e.version!==version||e.sequence!==i+1||!task||task.agentId!==e.agentId||task.kind!==e.kind)fail('EVENT');
   const previous=states.get(task.id),dependencies=task.dependsOn.map(d=>states.get(d));
   const legal=e.status==='executing'?previous==='queued'&&dependencies.every(s=>s==='completed'):
    e.status==='validating'?previous==='executing':
@@ -41,6 +43,7 @@ function validate(x){
 }
 export async function createRoleReviewCheckpoint(result,events){
  if(!result||!dense(result.tasks,6)||!dense(result.artifacts,6)||!dense(events,64))fail('RESULT');
+ transitions(events,result.runId,result.version);
  const captured=events.map(e=>({...e}));
  const artifactPins=[];
  for(const a of result.artifacts){if(a.kind!==taskById.get(a.taskId)?.kind||a.agentId!==taskById.get(a.taskId)?.agentId||a.value?.versionDigest!==result.version)fail('ARTIFACTS');artifactPins.push({taskId:a.taskId,digest:await casePin(JSON.stringify(a.value))});}

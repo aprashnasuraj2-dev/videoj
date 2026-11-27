@@ -22,7 +22,7 @@ let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStati
 const councilActivity=createCouncilActivity();
 let graphSelection=null,lastWorkspaceStatus='';
 let activeReview=null,reviewResult=null,reviewState='idle',impactView=null;const reviewEvents=[];
-let checkpointExport=null,checkpointOpened=null,checkpointBusy=false,checkpointEpoch=0,checkpointController=null,checkpointStatus='No imported checkpoint.';
+let checkpointExport=null,checkpointOpened=null,checkpointBusy=false,checkpointEpoch=0,checkpointVersion=undefined,checkpointController=null,checkpointStatus='No imported checkpoint.';
 const reviewStations={frame:0,evidence:1,compute:4,analysis:3,challenge:5,coordinate:8};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const frameDriver=createFrameDriver({request:fn=>requestAnimationFrame(fn),cancel:id=>cancelAnimationFrame(id),visible:()=>!document.hidden,onFrame:frame});
@@ -203,6 +203,7 @@ function saveReviewFile(text,name,mime='application/json'){
 function renderCheckpointControls(){
  if(!$('orb-checkpoint-status'))return;
  const current=latest?.current?.digest;
+ $('orb-review-start').disabled=checkpointBusy||!!activeReview||!current||!!latest.busy||$('studio-run').disabled;
  $('orb-checkpoint-export').disabled=checkpointBusy||!!activeReview||!reviewResult||reviewResult.version!==current;
  $('orb-checkpoint-export-pin-button').disabled=!checkpointExport||checkpointExport.checkpoint.versionDigest!==current;
  $('orb-checkpoint-inspect').disabled=checkpointBusy||!!activeReview||!current||!$('orb-checkpoint-file').files?.length||!$('orb-checkpoint-pin').value.trim();
@@ -250,13 +251,14 @@ async function verifyImportedCheckpoint(){
  finally{if(ticket===checkpointEpoch){checkpointBusy=false;checkpointController=null;renderCheckpointControls();}}
 }
 function invalidateCheckpointVersion(version){
- if(checkpointExport&&checkpointExport.checkpoint.versionDigest!==version)checkpointExport=null;
- if(checkpointOpened&&checkpointOpened.checkpoint.versionDigest!==version||checkpointController&&latest?.current?.digest!==checkpointOpened?.checkpoint.versionDigest){clearCheckpointImport();checkpointStatus='Checkpoint detached: current version changed.';}
+ if(checkpointVersion===version)return;
+ const hadCheckpoint=checkpointBusy||!!checkpointExport||!!checkpointOpened;
+ checkpointVersion=version;checkpointEpoch++;checkpointController?.abort();checkpointController=null;checkpointBusy=false;checkpointExport=null;checkpointOpened=null;
+ checkpointStatus=hadCheckpoint?'Checkpoint detached: current version changed.':'No imported checkpoint.';
 }
 function renderRoleReview(){
  const panel=$('orb-review-panel');if(!panel)return;
  renderCheckpointControls();
- $('orb-review-start').disabled=checkpointBusy||!!activeReview||!latest?.current||!!latest.busy||$('studio-run').disabled;
  $('orb-review-cancel').disabled=!activeReview;
  $('orb-review-status').textContent=reviewState==='idle'?(latest?.current?'Ready for a pinned deterministic review.':'Evaluate a reviewed investigation first.'):'Local deterministic review · '+reviewState;
  const out=$('orb-review-results');out.replaceChildren();
@@ -296,7 +298,7 @@ async function startRoleReview(){
  }
 }
 function invalidateRoleReview(version){
- if(activeReview&&activeReview.version!==version){activeReview.controller.abort();activeReview=null;reviewState='stale';reviewEvents.length=0;for(const a of agents){a.status='idle';a.station=null;}frameDriver.wake();}
+ if(activeReview&&activeReview.version!==version){activeReview.controller.abort();activeReview=null;reviewState='stale';reviewEvents.length=0;for(const a of agents){a.status='idle';a.station=null;}updateCouncil();frameDriver.wake();}
  if(reviewResult&&reviewResult.version!==version){reviewResult=null;reviewEvents.length=0;reviewState='stale';for(const a of agents){a.status='idle';a.station=null;}frameDriver.wake();}
 }
 function updateCouncil(){

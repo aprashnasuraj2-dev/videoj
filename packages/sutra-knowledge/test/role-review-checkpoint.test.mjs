@@ -34,3 +34,8 @@ test('cancelled history can be inspected but cannot resume or recompute under ol
  const cp=await createRoleReviewCheckpoint(result,events);assert.equal(cp.checkpoint.status,'cancelled');assert.equal(cp.checkpoint.artifactPins.length,0);
  await assert.rejects(verifyRoleReviewCheckpoint({checkpointText:cp.text,checkpointPin:cp.pin,versionText:version.versionText,versionPin:version.digest}),e=>e.code==='NOT_COMPLETED');
 });
+
+test('checkpoint creation refuses event accessors without invoking them',async()=>{
+ const {result,events}=await fixture();let reads=0;const bad=[...events];bad[0]={...events[0]};Object.defineProperty(bad[0],'taskId',{enumerable:true,get(){reads++;return events[0].taskId;}});
+ await assert.rejects(createRoleReviewCheckpoint(result,bad),e=>e.code==='EVENT');assert.equal(reads,0);
+});
