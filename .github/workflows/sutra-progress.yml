@@ -1,0 +1,33 @@
+name: Validate SUTRA progress register
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/sutra/**'
+      - '.github/workflows/sutra-progress.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/sutra/**'
+      - '.github/workflows/sutra-progress.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check audit tool syntax
+        run: node --check docs/sutra/tools/progress.mjs
+      - name: Validate checklist IDs, evidence records and resume pointers
+        run: node docs/sutra/tools/progress.mjs check
+      - name: Validate stabilization risk register
+        run: node --test docs/sutra/tools/risk.test.mjs

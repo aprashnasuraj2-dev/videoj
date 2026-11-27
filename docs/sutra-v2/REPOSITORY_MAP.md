@@ -1,22 +1,23 @@
-# Active SUTRA V2 repository map
+# Active SUTRA repository map
 
-The active tree contains one product: SUTRA V2.
+The repository contains one active product: SUTRA.
 
-| Path | Responsibility |
+The current SUTRA product combines the advanced living-knowledge system with reusable implementation inherited from earlier SUTRA engineering. Inherited code is retained when current runtime, consent, evidence, provider, source-integrity, browser or verification paths depend on it.
+
+| Path | Role |
 | --- | --- |
-| `apps/sutra-v2/` | Browser investigation workspace and standalone build |
-| `packages/sutra-knowledge/` | Knowledge representation, revision, computation, counterfactual and replay kernel |
-| `packages/sutra-runtime/` | Bounded portable-agent execution |
-| `packages/sutra-inference/` | Provider-neutral inference and credential/budget contracts |
-| `packages/sutra-consent/` | Contact and disclosure authorization |
-| `packages/sutra-evidence/` | Evidence contracts and validation primitives |
-| `packages/sutra-content-profile/` | Bounded content/source profile primitives |
-| `packages/sutra-source-tools/` | Source capability primitives |
-| `packages/sutra-actions/` | Scoped action contracts |
-| `services/sutra-api/` | Service-side bounded adapters |
-| `docs/sutra-v2/` | Current mandate, roadmap, security and verification documents |
-| `.github/workflows/sutra-v2-*.yml` | Active V2 verification |
+| `apps/sutra-v2/` | Current investigation workspace |
+| `packages/sutra-knowledge/` | Living-knowledge kernel, revision, counterfactual and replay logic |
+| `packages/sutra-runtime/` | Portable bounded agent execution inherited and extended by current SUTRA |
+| `packages/sutra-inference/` | Provider-neutral inference contracts |
+| `packages/sutra-consent/` | Permission and disclosure boundaries |
+| `packages/sutra-evidence/` | Evidence contracts |
+| `packages/sutra-source-tools/` and `packages/sutra-content-profile/` | Source/profile primitives still used by SUTRA paths |
+| `services/sutra-api/` | Bounded service adapters |
+| `apps/sutra/` | Earlier SUTRA implementation retained as reusable/inherited code where current integration still depends on it |
+| `docs/sutra/` | Earlier SUTRA engineering evidence and exact historical verification records |
+| `docs/sutra-v2/` | Current product mandate, roadmap and active verification state |
 
-The root package is a dependency-free command dispatcher. The browser app owns its pinned Vite/Playwright toolchain.
+Standalone DHAGO, DETOUR and AFTERIMAGE trees are retired from the active repository. Historical Git revisions remain intact.
 
-Removed products and development experiments remain available only through Git history.
+Do not infer obsolescence from directory age. Remove inherited SUTRA code only after exact import/test/runtime analysis proves that the current product no longer depends on it.

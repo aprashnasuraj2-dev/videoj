@@ -1,7 +1,7 @@
 name: Validate SUTRA independent held-out FinQA benchmark
 on:
   pull_request:
-    branches: ['main', 'sutra/v2-knowledge-compiler']
+    branches: ['sutra/v2-knowledge-compiler']
     paths: ['packages/sutra-knowledge/evaluation/finqa-public-test-heldout.json','packages/sutra-knowledge/finqa-heldout-benchmark.js','packages/sutra-knowledge/reference/score_finqa_heldout.py','packages/sutra-knowledge/evaluation/run-finqa-heldout.mjs','.github/workflows/sutra-v2-finqa-benchmark.yml']
 permissions:
   contents: read

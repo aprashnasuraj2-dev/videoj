@@ -1,0 +1,29 @@
+{
+  "networks": [
+    {
+      "name": "learner",
+      "front_man": "learner",
+      "hocon": "./v/585c70ba5c6d1ed8d3dd681eae398fe354f909ab/learner.network.json",
+      "description": "Local learner/evidence graph; funded inference and peer composition are pending."
+    },
+    {
+      "name": "source_learner",
+      "front_man": "learner",
+      "hocon": "./v/08b60445a7e5b5fc7d8dee10bd76883e30c22d84/source_learner.network.json",
+      "description": "Bounded source retrieval with mechanical broad-search refusal and abstention semantics; development catalog remains synthetic."
+    },
+    {
+      "name": "linked_learner",
+      "front_man": "learner",
+      "hocon": "./v/bcf648decc4f80ab57279b4fa72dae0c80b26923/linked_learner.network.json",
+      "description": "Opt-in symbolic guide link; closed default policy, no deployed peer asserted."
+    }
+  ],
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed"
+  },
+  "deployment": {
+    "mode": "static"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "networks": {
+    "learner": {
+      "example_peer": "https://peer.example/agents/learner"
+    }
+  },
+  "note": "Illustrative reserved origin only; not an active link, configure an actual allowed HTTPS peer and verify challenge-profile link schema before publication."
+}

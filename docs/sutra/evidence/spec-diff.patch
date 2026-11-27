@@ -1,0 +1,54 @@
+--- Profile-0.2-fd872b9
+
++++ Profile-0.3-a0ceda3
+
+@@ -2,7 +2,7 @@
+
+ 
+ Draft for web implementers and agent system builders
+ 
+-MVP Profile 0.2 | 6 November 2026 | Cognizant AI Lab
++MVP Profile 0.3 | 18 November 2026 | Cognizant AI Lab
+ 
+ **Purpose:** This document defines the minimum interoperable behavior needed to publish and run portable multi-agent
+ systems on the existing web. A conforming agent site publishes a data-only network definition. A standard web browser
+@@ -36,7 +36,7 @@
+
+ <!-- pyml disable md013 -->
+ | **Capability** | **Minimum requirement** | **Interoperability result** |
+ | --- | --- | --- |
+-| Portable network | [Neuro SAN HOCON](https://cognizantonline-my.sharepoint.com/:w:/r/personal/754339_cognizant_com/Documents/Misc/Projects/AgenticWeb/Worldwide_Agentic_Web_MVP_Spec_v0.1_BH1.docx?d=wd2c38a2b43a547eca0b24872b2b85135&csf=1&web=1&e=4djWdd&nav=eyJoIjoiMTAxMjM0NDM4In0) data model with a resolved, data-only web artifact | The same multi-agent graph can move between publishers and runtimes |
++| Portable network | [Neuro SAN HOCON](https://github.com/cognizant-ai-lab/neuro-san/blob/main/docs/agent_hocon_reference.md) data model with a resolved, data-only web artifact | The same multi-agent graph can move between publishers and runtimes |
+ | Browser execution | JavaScript orchestration, validation, tool calls, and linked-site loading | A normal browser is the agent container |
+ | Pluggable inference | Site-provided default router and model with optional visitor Bring-Your-Own-Key (BYOK) | Inference funding and deployment can change without changing the agent graph |
+ | Web publication | Manifest, resolved network definition, peer-link and peer-policy metadata, and CORS-enabled hosting | A caller can locate and validate a peer without a central registry |
+@@ -176,7 +176,7 @@
+
+ Other agent frameworks available in the browser space can map into this representation. Google ADK names, descriptions,
+ instructions, sub-agents, tools, models, and input or output schemas map to core HOCON constructs. Framework-specific
+ workflows, lifecycle hooks, state, or custom runtime behavior may require an adapter or may not be portable. A converter
+-or Skill file MAYautomate the mapping; conformance is determined by the emitted HOCON profile, not by the source
++or Skill file MAY automate the mapping; conformance is determined by the emitted HOCON profile, not by the source
+ framework. See the [Google ADK agent configuration
+ documentation](https://github.com/google/adk-docs/blob/main/docs/agents/config.md) and a [reference
+ implementation](https://github.com/jcyn2004/airline-turnaround/tree/main/.agents/skills) for a convertor.
+@@ -250,7 +250,7 @@
+
+    HTTP or HTTPS URL. This version follows normal browser fetch redirects and relies on browser CORS enforcement; it
+    does not require the final network-definition URL to remain on the manifest's origin.
+ 
+-1. **Result return: Result return:** The peer front agent’s answer and declared structured output return through the
++1. **Result return:** The peer front agent’s answer and declared structured output return through the
+    caller’s normal tool-result path. Private context MUST NOT return through that path except for fields explicitly
+    permitted by the caller network.
+ 
+@@ -339,7 +339,7 @@
+
+ visitor supplies a router, model, and credential. The reference implementation supports both modes through the [nsDeploy
+ browser engine](https://github.com/cognizant-ai-lab/nsdeploy/blob/main/nsdeploy/runtime/engine.js), its BYOK profiles,
+ and its [runtime-supported
+-router](https://cognizantonline-my.sharepoint.com/:w:/r/personal/754339_cognizant_com/Documents/Misc/Projects/AgenticWeb/Worldwide_Agentic_Web_MVP_Spec_v0.1_BH1.docx?d=wd2c38a2b43a547eca0b24872b2b85135&csf=1&web=1&e=kdm5tu&nav=eyJoIjoiMTA1OTIzNTA3MSJ9).
++router](docs/providers/providers.md).
+ <!-- pyml enable md013 -->
+ 
+ - **Default inference:** A site MAY publish a default router and model that work without a visitor-supplied key. The

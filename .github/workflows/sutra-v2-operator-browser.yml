@@ -1,7 +1,7 @@
 name: Validate SUTRA operator model approval browser
 on:
   pull_request:
-    branches: ['main', 'sutra/v2-knowledge-compiler']
+    branches: ['sutra/v2-knowledge-compiler']
     paths: ['apps/sutra-v2/**','packages/sutra-knowledge/**','packages/sutra-inference/**','.github/workflows/sutra-v2-operator-browser.yml']
 permissions:
   contents: read

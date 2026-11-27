@@ -1,0 +1,17 @@
+# CloudflareB learner ingress candidate (not deployed)
+
+This directory is an isolated cross-account adaptation. Build the learner using its existing instructions, run node prepare.mjs here, and validate the resulting dist/_routes.json. Pages serves static assets; only /api/* invokes the Pages Function, which invokes the private API Worker by same-account service binding. The worker config is services/sutra-api/wrangler.private.jsonc. No public workers.dev or preview URL; inference disabled. No deployment command is executed by CI. The original Worker-with-assets config is preserved.
+
+Before staging: validate Wrangler packaging and Pages service-binding behavior; ensure both resources target CloudflareB and no production token is embedded. Verify Pages returns the intended static headers, CORS, exact routing, and that the private service preserves client identity, original Origin, cancellation and streaming. If CF-Connecting-IP changes or is missing at the service boundary, keep paid inference disabled until a trusted identity mechanism is proven. Requests through Pages Functions and the API Worker may incur two dynamic invocations; ordinary static traffic should incur neither. Use measured request attribution, not inference from configuration.
+
+For later DNS cutover, associate custom names with their Pages projects first; then create DNS-only CNAMEs in the Patro zone, with HTTPS and CORS verified. Never configure wildcard/apex changes or use a workers.dev CNAME shortcut. Keep public promotion gated.
+
+## Candidate artifact build (no account access)
+`npm --prefix apps/sutra ci`, `rustup target add wasm32-unknown-unknown`, `node apps/sutra-v2/build.mjs`, then `node deploy/sutra-pages/prepare.mjs`. The legacy `apps/sutra` package supplies the pinned build toolchain and inherited fixture bytes; the static candidate itself is copied from `apps/sutra-v2/dist`. The Pages-specific output replaces the self-only connect-src with the single intended guide origin and checks it against the private API Worker configuration. The original app build retains self-only CSP. No peer is contacted without user consent. The guide is built independently with `npm --prefix apps/sutra-peer run build`; its Pages configuration exposes CORS only for public /agents/* artifacts.
+
+`node deploy/sutra-pages/verify-build.mjs` verifies the built static files, API-only routes, matching security policy, guide CORS isolation, and byte-identical copies of all other learner artifacts. CI additionally uses a pinned Wrangler CLI to dry-run the private Worker and compile Pages Functions; no Cloudflare credentials or deployment command without --dry-run is used. This is packaging proof only. A real staging service binding must still verify platform client identity, actual edge request accounting, HTTPS/TLS, browser CORS and DNS precedence.
+
+Do not publish a candidate solely because these checks pass. The exact intended origin is a configuration choice, not a live domain claim. If a different hostname is approved, change and revalidate both candidate policies together before cutover.
+
+
+The canonical public-entry candidate is SUTRA v2. This directory still performs packaging validation only; it does not authorize or execute deployment, DNS changes, inference enablement, or promotion. The older release-materializer remains a separate compatibility gate until V2 emits every artifact that contract requires.

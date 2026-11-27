@@ -1,0 +1,12 @@
+{
+  "name": "sutra-pages-ingress",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare": "node prepare.mjs",
+    "test": "node --test ingress.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

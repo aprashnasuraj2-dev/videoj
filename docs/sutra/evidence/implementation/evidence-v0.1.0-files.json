@@ -1,0 +1,10 @@
+{
+  "packages/sutra-evidence/README.md": "f7c0c7c621a2426ec94700b1f16dcf29c677fa5526df2e7f60806d3e9d442303",
+  "packages/sutra-evidence/cli.mjs": "04cdfe4dba80db54f4b8aad05949ea488932ae587134d3cbe56437b2e3bef500",
+  "packages/sutra-evidence/examples/receipt.json": "4ee19553f3ce50a80cf5f54027f973fea1aa832749dd778d537824a641fbb43f",
+  "packages/sutra-evidence/examples/sources.json": "08ebef4392e9928cae91e4f1f0ccf50fea4684e1fff15a81cb7e8f61b447f0ad",
+  "packages/sutra-evidence/index.js": "8eee76fd666757ab1c7378bc412a433b9f0d62e4477c8cd2ddfd65b7b691618c",
+  "packages/sutra-evidence/package.json": "554c4fa4fdccdf4d2c9d179b73dd9d8c3c5436dbed154dda1643690ee214019e",
+  "packages/sutra-evidence/receipt.schema.json": "d190afed6c9450b0e93fde40d3723bd80abe627f2f6698ddc6a220af8322f29f",
+  "packages/sutra-evidence/test/receipt.test.mjs": "9ba9d9716cd1571929e7c36fa4d9f90acc34e4dd2466f7eebd4b2bfe21e45ed0"
+}

@@ -1,0 +1,137 @@
+import {snapshotDataRecord,snapshotDataArray} from '../../packages/sutra-evidence/index.js';
+import fs from 'node:fs/promises';
+import {constants as fsConstants} from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {assessContentManifest,snapshotContentManifest} from '../sutra-content-intake/intake.mjs';
+import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
+import {renderReviewedGuideDerivative} from '../../packages/sutra-content-profile/guide-derivative.js';
+
+const ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
+const validId=v=>typeof v==='string'&&ID.test(v);
+const ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
+const exact=(o,keys)=>plain(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
+const safePath=v=>typeof v==='string'&&v.length<=240&&!v.startsWith('/')&&!v.includes('\\')&&!v.split('/').some(x=>!x||x==='.'||x==='..'||x.startsWith('.'));
+const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+const canonical=value=>JSON.stringify(value,null,2)+'\n';
+const html=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+async function readRegular(root,relative,max){
+ if(!safePath(relative))throw Error('Unsafe source path: '+relative);
+ const full=path.resolve(root,...relative.split('/')),prefix=path.resolve(root)+path.sep;
+ if(!full.startsWith(prefix))throw Error('Source path escaped root.');
+ let current=path.resolve(root);const parts=relative.split('/');
+ for(const part of parts.slice(0,-1)){current=path.join(current,part);const ancestor=await fs.lstat(current);if(!ancestor.isDirectory()||ancestor.isSymbolicLink())throw Error('Invalid source directory: '+relative);}
+ const stat=await fs.lstat(full);
+ if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>max)throw Error('Invalid source file: '+relative);
+ const handle=await fs.open(full,fsConstants.O_RDONLY|(fsConstants.O_NOFOLLOW??0));
+ try{
+  const before=await handle.stat();
+  if(!before.isFile()||before.dev!==stat.dev||before.ino!==stat.ino||before.size!==stat.size)throw Error('Source identity changed: '+relative);
+  const buffer=Buffer.allocUnsafe(stat.size+1);let read=0;
+  while(read<buffer.length){const result=await handle.read(buffer,read,buffer.length-read,read);if(!result.bytesRead)break;read+=result.bytesRead;}
+  const after=await handle.stat();
+  if(read!==stat.size||after.size!==stat.size||after.mtimeMs!==before.mtimeMs)throw Error('Source changed during bounded read: '+relative);
+  return {full,bytes:buffer.subarray(0,read),size:read};
+ }finally{await handle.close();}
+}
+function validateClaim(c,guide){
+ const keys=guide?['title','scope','claimKey','value','excerpt','provenance','anchor','dateBasis']:['title','scope','claimKey','value','provenance','dateBasis'];
+ if(!exact(c,keys)||typeof c.title!=='string'||!c.title.trim()||c.title.length>120||typeof c.scope!=='string'||!c.scope.trim()||c.scope.length>160||
+  !validId(c.claimKey)||!['string','number','boolean'].includes(typeof c.value)||typeof c.provenance!=='string'||!c.provenance.trim()||c.provenance.length>240||
+  typeof c.dateBasis!=='string'||!c.dateBasis.trim()||c.dateBasis.length>120)throw Error('Invalid claim metadata.');
+ if(guide&&(typeof c.excerpt!=='string'||!c.excerpt.trim()||c.excerpt.length>1200||!validId(c.anchor)))throw Error('Invalid guide claim.');
+}
+function validateSemantic(meta){
+ try{
+  const m=snapshotDataRecord(meta,16),rawCues=snapshotDataArray(m.cues,500),video=snapshotDataRecord(m.videoClaim,12),guide=snapshotDataRecord(m.guideClaim,16),ui=snapshotDataRecord(m.ui,4);
+  const cues=rawCues.map(raw=>{const c=snapshotDataRecord(raw,8);return {id:c.id,start:c.start,end:c.end,text:c.text};});
+  meta={schema:m.schema,contentVersion:m.contentVersion,title:m.title,observedAt:m.observedAt,sourceId:m.sourceId,sourceVersion:m.sourceVersion,featuredCueId:m.featuredCueId,cues,
+   videoClaim:{title:video.title,scope:video.scope,claimKey:video.claimKey,value:video.value,provenance:video.provenance,dateBasis:video.dateBasis},
+   guideClaim:{title:guide.title,scope:guide.scope,claimKey:guide.claimKey,value:guide.value,excerpt:guide.excerpt,provenance:guide.provenance,anchor:guide.anchor,dateBasis:guide.dateBasis},
+   ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
+ }catch{throw Error('Invalid semantic metadata data.');}
+ const keys=['schema','contentVersion','title','observedAt','sourceId','sourceVersion','featuredCueId','cues','videoClaim','guideClaim','ui'];
+ if(!exact(meta,keys)||meta.schema!==1||!validId(meta.contentVersion)||typeof meta.title!=='string'||!meta.title.trim()||meta.title.length>160||(typeof meta.observedAt!=='string'||!ISO.test(meta.observedAt))||
+  !validId(meta.sourceId)||typeof meta.sourceVersion!=='string'||!meta.sourceVersion.trim()||meta.sourceVersion.length>100||!validId(meta.featuredCueId)||
+  !Array.isArray(meta.cues)||meta.cues.length<1||meta.cues.length>500)throw Error('Invalid semantic metadata.');
+ const ids=new Set();
+ for(const cue of meta.cues){
+  if(!exact(cue,['id','start','end','text'])||!validId(cue.id)||ids.has(cue.id)||!Number.isFinite(cue.start)||!Number.isFinite(cue.end)||cue.start<0||cue.end<=cue.start||
+   typeof cue.text!=='string'||!cue.text.trim()||cue.text.length>2000)throw Error('Invalid cue metadata.');
+  ids.add(cue.id);
+ }
+ if(!ids.has(meta.featuredCueId))throw Error('Featured cue missing.');
+ validateClaim(meta.videoClaim,false);validateClaim(meta.guideClaim,true);
+ if(meta.videoClaim.scope!==meta.guideClaim.scope||meta.videoClaim.claimKey!==meta.guideClaim.claimKey)throw Error('Video and guide claims must address the same declared question.');
+ if(!exact(meta.ui,['noticeTitle','noticeBody'])||typeof meta.ui.noticeTitle!=='string'||!meta.ui.noticeTitle.trim()||typeof meta.ui.noticeBody!=='string'||!meta.ui.noticeBody.trim()||
+  /synthetic|fixture|pending/i.test(meta.ui.noticeTitle+' '+meta.ui.noticeBody))throw Error('Reviewed UI copy contains development-only claims.');
+ return structuredClone(meta);
+}
+function makePoster(title){
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="'+html(title)+'"><rect width="1280" height="720" fill="#111"/><text x="80" y="360" fill="#fff" font-family="system-ui,sans-serif" font-size="54">'+html(title)+'</text><text x="80" y="430" fill="#ccc" font-family="system-ui,sans-serif" font-size="28">Reviewed lesson media</text></svg>';
+}
+// A deliberate authoring interchange format, not an HTML sanitizer/parser.
+// Require one explicit text-only anchored section with no surrounding HTML,
+// attributes, comments, hidden text, scripts, duplicate IDs or entity tricks.
+// A richer original must be reviewed/exported as this exact derivative.
+export function assertReviewedGuideFragment(input,anchor,excerpt){
+ const match=/^\s*(?:<!doctype html>\s*)?<section id=(["'])([A-Za-z][A-Za-z0-9._:-]{0,127})\1>([^<>]*)<\/section>\s*$/i.exec(input);
+ if(!match||match[2]!==anchor)throw Error('Guide must be one exact reviewed text-only anchored section.');
+ const entity={amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"};
+ const raw=match[3];
+ if(/&(?!(?:amp|lt|gt|quot|#39);)/.test(raw))throw Error('Guide contains unsupported entity syntax.');
+ const decoded=raw.replace(/&(amp|lt|gt|quot|#39);/g,(_,key)=>entity[key]);
+ if(decoded!==excerpt)throw Error('Guide anchored excerpt does not exactly match the reviewed text.');
+}
+
+async function write(root,relative,bytes){
+ if(!safePath(relative))throw Error('Unsafe output path.');
+ const target=path.join(root,...relative.split('/'));await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes,{flag:'wx'});
+}
+export async function buildContentPack({manifest,semantic,contentRoot,outputDir}){
+ manifest=snapshotContentManifest(manifest);
+ const meta=validateSemantic(semantic),requestedRoot=path.resolve(contentRoot),requestedOut=path.resolve(outputDir);
+ const rootStat=await fs.lstat(requestedRoot);if(!rootStat.isDirectory()||rootStat.isSymbolicLink())throw Error('Content root must be a real directory.');
+ const root=await fs.realpath(requestedRoot),out=path.join(await fs.realpath(path.dirname(requestedOut)),path.basename(requestedOut));
+ if(out===root||out.startsWith(root+path.sep)||root.startsWith(out+path.sep))throw Error('Content source and output trees must not overlap.');
+ const assetPaths=Object.fromEntries(['media','transcript','guide'].map(kind=>[kind,manifest.assets[kind].path]));
+ try{await fs.lstat(out);throw Error('Output already exists; refuse overwrite.');}catch(error){if(error?.code!=='ENOENT')throw error;}
+ const media=await readRegular(root,assetPaths.media,MAX_REVIEWED_MEDIA_BYTES);
+ const transcript=await readRegular(root,assetPaths.transcript,2*1024*1024);
+ const guide=await readRegular(root,assetPaths.guide,10*1024*1024);
+ const observed={media:{path:assetPaths.media,sha256:digest(media.bytes),bytes:media.size},transcript:{path:assetPaths.transcript,sha256:digest(transcript.bytes),bytes:transcript.size},guide:{path:assetPaths.guide,sha256:digest(guide.bytes),bytes:guide.size}};
+ const intake=assessContentManifest(manifest,{observedFiles:observed});
+ if(!intake.structuralIntakeComplete||intake.contentVersion!==meta.contentVersion)throw Error('Content intake is not structurally complete for this version.');
+ if(meta.cues.some(c=>c.end>manifest.lesson.durationSeconds))throw Error('Cue timing exceeds declared lesson duration.');
+ let transcriptText,guideText;
+ try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcript.bytes);guideText=new TextDecoder('utf-8',{fatal:true}).decode(guide.bytes);}catch{throw Error('Transcript and guide must be UTF-8.');}
+ for(const cue of meta.cues)if(!transcriptText.includes(cue.text))throw Error('Transcript does not contain exact cue text: '+cue.id);
+ assertReviewedGuideFragment(guideText,meta.guideClaim.anchor,meta.guideClaim.excerpt);
+ const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
+ const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
+ const guideProvenance=Array.from('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240).join('');
+ const guideMeta={...meta,guideClaim:{...meta.guideClaim,provenance:guideProvenance}};
+ const safeGuideBytes=Buffer.from(renderReviewedGuideDerivative(guideMeta.guideClaim,guideMeta.guideClaim.anchor,observed.guide.sha256));if(safeGuideBytes.length>65536)throw Error('Safe guide excerpt exceeds browser integrity-read budget.');const publishedGuideSha=digest(safeGuideBytes);
+ const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
+ const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
+ const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);
+ const profile={schema:1,mode:'reviewed',contentVersion:meta.contentVersion,title:meta.title,observedAt:meta.observedAt,primarySourceId:meta.sourceId,featuredCueId:meta.featuredCueId,
+  catalog:{path:'./source-catalog.json',sha256:catalogSha},transcript:{path:'/'+transcriptBase+'/lesson.txt',sha256:observed.transcript.sha256},
+  media:{video:'/'+mediaBase+'/lesson'+ext,poster:'/'+mediaBase+'/poster.svg',chapters:'/'+transcriptBase+'/chapters.vtt',captions:'/'+transcriptBase+'/captions.vtt'},
+  videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:guideProvenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
+ validateContentProfile(profile,sourceCatalog);
+ const tracks=deriveReviewedTracks(sourceCatalog.sources[0]);
+ const profileBytes=Buffer.from(canonical(profile)),profileSha=digest(profileBytes);
+ if(profileBytes.length>32768||catalogBytes.length>262144)throw Error('Content metadata exceeds learner read budget.');
+ await fs.mkdir(out,{recursive:false});
+ await write(out,'content/content-profile.json',profileBytes);await write(out,'content/source-catalog.json',catalogBytes);
+ await write(out,mediaBase+'/lesson'+ext,media.bytes);await write(out,mediaBase+'/poster.svg',makePoster(meta.title));
+ await write(out,transcriptBase+'/lesson.txt',transcript.bytes);await write(out,transcriptBase+'/chapters.vtt',tracks.chapters??'WEBVTT\n\n');await write(out,transcriptBase+'/captions.vtt',tracks.captions);
+ await write(out,guideBase+'/'+guideName,safeGuideBytes);
+ const core={schema:1,contentVersion:meta.contentVersion,intakeRecordHash:intake.recordHash,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:observed.media.sha256,transcriptSha256:observed.transcript.sha256,guideSha256:publishedGuideSha,
+  publicPaths:{profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:profile.media.video,transcript:profile.transcript.path,guide:profile.guideClaim.sourceHref.split('#')[0]}};
+ const record={...core,recordHash:digest(Buffer.from(canonical(core))),limitation:'Byte packaging is verified. The published guide is a non-executable excerpt derivative bound to the reviewed guide-input hash; the intake record retains the original byte declaration. Legal rights, reviewer competence, cue timing correctness, semantic truth and public deployment remain human/external evidence.'};
+ await write(out,'content/content-pack-record.json',canonical(record));
+ return {profile,sourceCatalog,record};
+}

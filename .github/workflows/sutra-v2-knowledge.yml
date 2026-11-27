@@ -1,11 +1,11 @@
 name: Validate SUTRA v2 knowledge kernel
 on:
   push:
-    branches: ['main', 'sutra/v2-knowledge-compiler']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    branches: ['sutra/v2-knowledge-compiler']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
-    branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    branches: ['main', 'sutra/caller-peer-failure-boundary']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 24
       - name: Validate executable SUTRA v2 threat model coverage
-        run: node docs/sutra-v2/tools/threat-model-check.mjs
+        run: node docs/sutra/tools/threat-model-check.mjs
       - name: Run bounded inference and opaque credential boundary tests
         run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Verify council orchestration and operator integration before external formal tool download

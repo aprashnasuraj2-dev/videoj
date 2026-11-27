@@ -1,8 +1,11 @@
 SUTRA — Living, verifiable knowledge
+
 Copyright 2026 SUTRA contributors.
 
-This repository is distributed under the Apache License 2.0 except where a file or bundled third-party component states otherwise.
+SUTRA includes inherited media-player implementation whose historical source identifiers and copyright notices must remain attributable. Video.js copyright 2025-present Video.js contributors. Upstream and dependency license terms remain applicable.
 
-Vendored or adapted third-party material retains its upstream copyright and license headers. Runtime and development dependencies retain their respective licenses.
+Standalone historical prototypes/products are not active repository products. Their source history remains available through Git; no standalone DETOUR or AFTERIMAGE implementation is part of the active tree.
 
-Historical repository revisions remain available through Git history but are not active product source or documentation.
+Some inherited SUTRA media-player files retain historical DHAGO identifiers solely for source compatibility and attribution. Those files are part of SUTRA, not a separately maintained product.
+
+See file headers and dependency license metadata for exact third-party terms.

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "contentVersion": "synthetic-timing-v1",
+  "sources": [
+    {
+      "id": "synthetic-timing-fixture",
+      "version": "v1",
+      "hash": "a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d",
+      "mediaHash": "cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+      "duration": 8,
+      "cues": [
+        {
+          "id": "timing-marker",
+          "start": 2,
+          "end": 4,
+          "text": "Synthetic timing marker. This is not a training instruction."
+        }
+      ]
+    }
+  ]
+}

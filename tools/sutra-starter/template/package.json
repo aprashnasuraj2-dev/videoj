@@ -1,0 +1,15 @@
+{
+  "name": "sutra-agentic-site-starter",
+  "version": "0.1.0-dev.1",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node serve.mjs",
+    "test": "node --test starter.test.mjs",
+    "verify:vendor": "node packages/sutra-runtime/verify-vendor.mjs"
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "code_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+  "files": [
+    {
+      "path": "apps/sutra/index.html",
+      "sha256": "2c6b2c31f37581270d2f50628c9f9b71a92cffdbb6474199a405ac6a55597f28"
+    },
+    {
+      "path": "apps/sutra/.gitignore",
+      "sha256": "6be8bdc9b1c3c2649c2e28059389607191c778ced96dc8fe2a574834125991fd"
+    },
+    {
+      "path": "apps/sutra/package.json",
+      "sha256": "b01b2a98d8ca81860915c9ed8dd24a0408f7c7c998f7c9e3c68f52c976d8ce63"
+    },
+    {
+      "path": "apps/sutra/package-lock.json",
+      "sha256": "09174d90fb2868a5b84e9d5b3b07c2f17b6e3b412e96c58312f17be871ac5a08"
+    },
+    {
+      "path": "apps/sutra/vite.config.js",
+      "sha256": "952ea29308fec021769a114cf940c3755ac48f60c3630420b86ebf694845098b"
+    },
+    {
+      "path": "apps/sutra/README.md",
+      "sha256": "154eccf5a4d0303951d22ce1891f54109eba933f42d20235cbfbb54adb1772c5"
+    },
+    {
+      "path": "apps/sutra/test/review-store.test.mjs",
+      "sha256": "643d0cc6acace79c51d564b49030555a276748d8b5c43e1754e939fdd5ed666e"
+    },
+    {
+      "path": "apps/sutra/test/build.test.mjs",
+      "sha256": "46fbb3b78e50a7dd6951f15e9c6fd4228b9abcd541e59e63441554d6ca5c20e6"
+    },
+    {
+      "path": "apps/sutra/test/browser.cjs",
+      "sha256": "298fee8011f750194c2e98d42530e07f338b7e3940a3a9b7a8db9d991d96d24b"
+    },
+    {
+      "path": "apps/sutra/test/playback-state.test.mjs",
+      "sha256": "6314a050bcac7f6d1169d1ef7cb9a0df5b1b2813ef3aa6a93ad81e79f663d989"
+    },
+    {
+      "path": "apps/sutra/tools/make-timing-fixture.py",
+      "sha256": "a64a851f3abaeeed8616404720df5d05322c0b89c0d6e481ee2d25610ab4f428"
+    },
+    {
+      "path": "apps/sutra/src/main.js",
+      "sha256": "445dd4341c5878ac07ff175354f22137f37837ccba118047538e66d8900ea23e"
+    },
+    {
+      "path": "apps/sutra/src/style.css",
+      "sha256": "226f3cadf3410bf3e5063e7d92d94ad299f446c12e90457174196adf9aa3f243"
+    },
+    {
+      "path": "apps/sutra/src/player-adapter.js",
+      "sha256": "88cb47065ce0744593df204864e93c5e571c6a4879b67ca52b0e5a2fdb4ff744"
+    },
+    {
+      "path": "apps/sutra/src/playback-state.js",
+      "sha256": "76dcdb7fa9debd8b40790f4c259976d450dd39c2a317c1a6c2bb6cb6326f046c"
+    },
+    {
+      "path": "apps/sutra/src/review-store.js",
+      "sha256": "88194e7cc6e6beb2664c9acb2ec5acbad9a9613af15a60297524f480b57bb91c"
+    },
+    {
+      "path": "apps/sutra/public/media/timing-chapters.vtt",
+      "sha256": "b67628b13029e0f10be10654a0a06223687e2742df8178beef14714c84d40041"
+    },
+    {
+      "path": "apps/sutra/public/media/timing-captions.vtt",
+      "sha256": "5f16e036265069862f2b98b087ce88d5bf4169bd18df1d7b511930199772311f"
+    },
+    {
+      "path": "apps/sutra/public/media/timing-source.json",
+      "sha256": "0e00fc4ec6411c3ce9cefa61c853bc6d60202ee78a2aae2471113139a9f790a4"
+    },
+    {
+      "path": "apps/sutra/public/agents/agent-manifest.json",
+      "sha256": "a280cc2f89ca79b8f05cb2a45a8ca0e6a86b6c6be316f75ac9b65f725a7af535"
+    },
+    {
+      "path": "apps/sutra/public/agents/learner.network.json",
+      "sha256": "bbd0fa47727253dda312c2076d99f9df469d56da3ea9ff8742f129cacd9fe0e3"
+    },
+    {
+      "path": "apps/sutra/public/agents/source_learner.network.json",
+      "sha256": "564abf60c7a6854644ca7bcd4b2a26d6977d33a9bd8f47e75f7799752ea6f243"
+    },
+    {
+      "path": "apps/sutra/public/agents/links.json",
+      "sha256": "91182dc7d5986d77d718bdd148c6165a9e1014e04469d68caee28b4f48e6855e"
+    },
+    {
+      "path": "apps/sutra/src/fixtures/timing-source.json",
+      "sha256": "0e00fc4ec6411c3ce9cefa61c853bc6d60202ee78a2aae2471113139a9f790a4"
+    },
+    {
+      "path": "packages/sutra-runtime/verify-vendor.mjs",
+      "sha256": "022fa3944bc3cf57e3d9e2c56888bdb07453280b8fa30011bc33fd1aadaa2209"
+    },
+    {
+      "path": "packages/sutra-runtime/index.js",
+      "sha256": "a0f1f07b6ff58e0f77f9ae871f79150c5d68f6ec4d9aa8fc7ed11f8497d7ae85"
+    },
+    {
+      "path": "packages/sutra-runtime/source-mcp.js",
+      "sha256": "0f7be2884d70658a77b7a417c5d7a2530d6648fe947ec5c0ed976602f36c8102"
+    },
+    {
+      "path": "packages/sutra-runtime/package.json",
+      "sha256": "7bc3783b96c61b2ce90a4090eb7167bc4afdfbe23b1488d99d4e5f9e48489862"
+    },
+    {
+      "path": "packages/sutra-runtime/testing.js",
+      "sha256": "c50924472474d30f4802cb54c9874950a566a35930db64780df5401fd558d955"
+    },
+    {
+      "path": "packages/sutra-runtime/README.md",
+      "sha256": "34873d6fb1cb20d81280f28f307e834401dc4dcef0c84ce29504391c792757c6"
+    },
+    {
+      "path": "packages/sutra-runtime/test/loader.test.mjs",
+      "sha256": "3ca30089ddea44988a974705a09d2cd5397a63d60bec04eb764c09762dc32107"
+    },
+    {
+      "path": "packages/sutra-runtime/test/runtime.test.mjs",
+      "sha256": "bf17a735739b7312c4ae7ded077449f97522843d0b8e4a2c9467dbd4e42a4791"
+    },
+    {
+      "path": "packages/sutra-runtime/test/source-tools.test.mjs",
+      "sha256": "badd04ad08c5c21984a5ea13f960daf5668df587d0c0fbd21c4f88c71298ce90"
+    },
+    {
+      "path": "packages/sutra-runtime/examples/learner.network.json",
+      "sha256": "bbd0fa47727253dda312c2076d99f9df469d56da3ea9ff8742f129cacd9fe0e3"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/trace.js",
+      "sha256": "b2186480f683649795f76ce371241da1c53c24cfcb140f0c57487caf5c7e0f43"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/runner.js",
+      "sha256": "ebca618b329e9d43e6b88ce43dc863e55efb0064a247812e72dcd12d9b2fceac"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt",
+      "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/cruse.js",
+      "sha256": "0b14fcb79d8b81bfdb6c875b1f08a0fd5734f79eea0d21e5b1ac2790b34eb595"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/model.js",
+      "sha256": "9714913d44e3db658de0d1fd1d9b250662d798a568ecbadb37fa2e3b629b646c"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/NOTICE.md",
+      "sha256": "8cb0daff335897b81bc0badbd464545e838a1ee414f8ac96d0ca59ba0dc25193"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/kernel.js",
+      "sha256": "e850a02ea2e46498df5dcc8df342fddbbe407dc8871479c65825b09fc361b63b"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/hocon.js",
+      "sha256": "4b11ae05268c11b3fac016eec0cc67090537cef424a0b4ce7d84122130b7e4ce"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/turn-control.js",
+      "sha256": "f291b4733b3b08860b3516f6feffca433b9d7b3939993aa626e9996ebe6eabca"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/UPSTREAM.json",
+      "sha256": "30bd80789eaf360cf6c24d8d378f87094bacfee098a7b874514cc3b564a5c207"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/actions.js",
+      "sha256": "899a1eb474f09ac2521b550eea936ff621ccf42fdd2b74e0729676eeec013fca"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/generated/graph.gen.mjs",
+      "sha256": "d3344326b105069bfd7cd2de2bfa42a5e8963f88859a0fc33e678c5113b624af"
+    },
+    {
+      "path": "packages/sutra-runtime/vendor/nsdeploy/generated/validation.gen.mjs",
+      "sha256": "fc56d29878e18fa94f988311fe60f5f2e7823a45498f43139f87619015a59b3a"
+    },
+    {
+      "path": "packages/sutra-inference/client.js",
+      "sha256": "c67e89b422137b532b4b2eb8c1d4899c9e3fd1aec06b287f294fd3d6e46a6ad5"
+    },
+    {
+      "path": "packages/sutra-inference/package.json",
+      "sha256": "b81cb6b69c8702082f7da942e49f4967f54bc5e4021bb0efd35ace29f358f576"
+    },
+    {
+      "path": "packages/sutra-inference/protocol.js",
+      "sha256": "fd53680ce0575ecc23cfc970613d1d7c2e33b4c435fc1604986ed5a49b9da3c7"
+    },
+    {
+      "path": "packages/sutra-inference/README.md",
+      "sha256": "271a850091d4a3542c2457c49058214764298955122342c0eef0cc20e5df7e54"
+    },
+    {
+      "path": "packages/sutra-inference/test/protocol.test.mjs",
+      "sha256": "b83913e1bafc65d564053d4070faef2fd9491b803989007f63b47efa0d998da1"
+    },
+    {
+      "path": "packages/sutra-source-tools/index.js",
+      "sha256": "24292765e1344abb708cc6f882483cd5a6cfa5d79fc8612513d8d25b8f4f6a33"
+    },
+    {
+      "path": "packages/sutra-source-tools/package.json",
+      "sha256": "210bd2a87b54111f2455663fb2afedeac4b7fe115536b0f6b011f49e8de0f542"
+    },
+    {
+      "path": "packages/sutra-source-tools/README.md",
+      "sha256": "73815ae41c875f97b245824fd502996449929039bbb1a370cc04066dba99c9f0"
+    },
+    {
+      "path": "packages/sutra-source-tools/test/tools.test.mjs",
+      "sha256": "15d3f27e2485bd307f73c0c6329751e7f7a64285265699dcd266a62491af3577"
+    },
+    {
+      "path": "services/sutra-api/quota.js",
+      "sha256": "bb84a3b1e318778e659496350db7fb2807a2efda6e6bfb2d321e10826771948d"
+    },
+    {
+      "path": "services/sutra-api/worker.js",
+      "sha256": "93473665bfdc32fd362fa5994cc78c3d78125a0dcabbf963fb94727ebcc14168"
+    },
+    {
+      "path": "services/sutra-api/vite-plugin.js",
+      "sha256": "4b9055de5f620e38958fd20af83d82872325d23bb7b2f9718adbf2de2dbd48b6"
+    },
+    {
+      "path": "services/sutra-api/inference.js",
+      "sha256": "1991a90de3e9b425666b575f2a9694d5e315d0304d65e32419498466d99d1e53"
+    },
+    {
+      "path": "services/sutra-api/wrangler.jsonc",
+      "sha256": "8aba0096718a885d4fa40af1a41ef8e47a5060db6abd2fe177e34abf394f416e"
+    },
+    {
+      "path": "services/sutra-api/package.json",
+      "sha256": "f192197bfcffe3706751a25e6a20235ae3e669bcc83d648932c000ea5917268a"
+    },
+    {
+      "path": "services/sutra-api/README.md",
+      "sha256": "3fdbe174b7b3e54a2f72525dd9e74f2e6cc4111400d815b5806170b50671e7bc"
+    },
+    {
+      "path": "services/sutra-api/test/inference.test.mjs",
+      "sha256": "35bc0bf9dd5021211f3536924509c8fd33ba0607d1a872c016793de14f20a90a"
+    },
+    {
+      "path": ".github/workflows/sutra-shell.yml",
+      "sha256": "16a2716d3f8c5ec3f24519a38df8f6438b5230aef05a69397ebb3702a5970d66"
+    }
+  ],
+  "documentation_note": "Runtime candidate unchanged; setup documentation updated after deployment-free Wrangler observation."
+}

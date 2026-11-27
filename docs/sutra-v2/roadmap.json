@@ -1069,6 +1069,31 @@
       "knownLimitations": "Separate implementation in same project, not independent operator"
     },
     {
+      "id": "V2-M02",
+      "historicalChecked": true,
+      "objective": "Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.",
+      "phase": "00",
+      "status": "Integration verified",
+      "evidence": {
+        "id": "V2-M02",
+        "sourceRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424",
+        "description": "Exact PR classifier succeeded with new suite mapping; explicit sequential commands and challenge upload succeeded in exact push kernel run 45514929515."
+      },
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-M01"
+      ],
+      "priority": "P0",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra/verification-map.json; docs/sutra/tools/impact.test.mjs",
+      "acceptanceCriteria": "Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.",
+      "positiveTests": "Map known V2 paths and shared dependencies",
+      "adversarialTests": "Reject unmapped executable path and failed pipeline",
+      "verificationMethod": "Classifier CI and kernel gate",
+      "knownLimitations": "Roadmap mapping failure separately retained"
+    },
+    {
       "id": "V2-K07",
       "historicalChecked": false,
       "objective": "Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.",
@@ -2311,6 +2336,7 @@
   ],
   "validation": {
     "requirements": 90,
+    "legacyRequirements": 62,
     "newGates": 28,
     "phases": 23,
     "duplicateIds": 0,
@@ -2346,7 +2372,7 @@
         {
           "sourceRevision": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45567774777/job/139046680946",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, release-materializer 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, legacy release 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
         }
       ]
     },
@@ -2361,7 +2387,7 @@
         {
           "sourceRevision": "0d6305526d28df4064360162f1125835ca8f9962",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569144216/job/139051201292",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, release-materializer 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, legacy release 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
         }
       ]
     },
@@ -2389,7 +2415,7 @@
           "id": "V2-D03-DIAGNOSIS",
           "sourceRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45570334106 and push 45570324195, ingress 45570334100, impact 45570334101, evaluation 45570334144, Open Kit 45570334105, release-materializer 45570334117, publisher 45570334103, browser matrix 45570334116. Both browser jobs passed; independent Python accepted four actual diagnosis exports and rejected 28 mutations (7+8+7+6). Both knowledge jobs passed exhaustive 108-configuration direct oracle. Separate contexts preserved six original attack exports, two capsule/pin pairs, and four diagnosis exports. Scoped synthetic model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570334106 and push 45570324195, ingress 45570334100, impact 45570334101, evaluation 45570334144, Open Kit 45570334105, legacy release 45570334117, publisher 45570334103, browser matrix 45570334116. Both browser jobs passed; independent Python accepted four actual diagnosis exports and rejected 28 mutations (7+8+7+6). Both knowledge jobs passed exhaustive 108-configuration direct oracle. Separate contexts preserved six original attack exports, two capsule/pin pairs, and four diagnosis exports. Scoped synthetic model."
         }
       ]
     },
@@ -2406,7 +2432,7 @@
           "id": "V2-D04-GUIDE",
           "sourceRevision": "793187573699da06e16bd5b337349007158abdb6",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570855086/job/139056839918",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45570855086 and push 45570848503, ingress 45570855153, impact 45570855061, evaluation 45570855254, Open Kit 45570855237, release-materializer 45570855300, publisher 45570855074, browser matrix 45570855215. Actual 12-action guided route passed keyboard start, first-viewport checks at 360x800 and 1440x900, exact guided capsule equality to independently verified current bytes, pin mismatch, exact restoration, zero external requests. PR browser artifact 15001768812 SHA-256 2d54dc4a85610950e04a07af46a642c4e5b6fe6fec99d39e939a71fe96952699 verified locally; actual mobile and desktop screenshots inspected; elapsed 891 ms is automated Chromium timing, not a human usability study. No deployment."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570855086 and push 45570848503, ingress 45570855153, impact 45570855061, evaluation 45570855254, Open Kit 45570855237, legacy release 45570855300, publisher 45570855074, browser matrix 45570855215. Actual 12-action guided route passed keyboard start, first-viewport checks at 360x800 and 1440x900, exact guided capsule equality to independently verified current bytes, pin mismatch, exact restoration, zero external requests. PR browser artifact 15001768812 SHA-256 2d54dc4a85610950e04a07af46a642c4e5b6fe6fec99d39e939a71fe96952699 verified locally; actual mobile and desktop screenshots inspected; elapsed 891 ms is automated Chromium timing, not a human usability study. No deployment."
         }
       ]
     },
@@ -2423,7 +2449,7 @@
           "id": "V2-D05-WORLD-TRACE",
           "sourceRevision": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45571528317/job/139059084388",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, release-materializer 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, legacy release 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
         }
       ]
     },
@@ -2440,7 +2466,7 @@
           "id": "V2-D06-ASSUMPTIONS",
           "sourceRevision": "c42248a63399263f9cb4651024df9422d3d440c6",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572062202/job/139060857950",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, release-materializer 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, legacy release 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
         }
       ]
     },
@@ -2457,7 +2483,7 @@
           "id": "V2-D07-OFFLINE",
           "sourceRevision": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572793560/job/139063288670",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, release-materializer 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, legacy release 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
         }
       ]
     },
@@ -2475,7 +2501,7 @@
           "id": "V2-D08-ROOT-IMPACT",
           "sourceRevision": "58e133202fa83765ee79ee6d8a18697999e47fb5",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573411050/job/139065329647",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, release-materializer 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, legacy release 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
         }
       ]
     },
@@ -2493,7 +2519,7 @@
           "id": "V2-D09-WIRE-PARITY",
           "sourceRevision": "91092e8415debce567e1676405d0afecc6ef855b",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573886268/job/139066915828",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45573886268 and push 45573875402, ingress 45573886271, impact 45573886357, evaluation 45573886529, Open Kit 45573886298, release-materializer 45573886479, publisher 45573886242, browser matrix 45573886261. Actual Chromium-exported current/old capsules and downloaded independent Python verifier passed 77 explicit differential controls: 13 accepted, 64 refused; both verifiers agreed on every refusal reason and all accepted identities. Not universal parser equivalence."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573886268 and push 45573875402, ingress 45573886271, impact 45573886357, evaluation 45573886529, Open Kit 45573886298, legacy release 45573886479, publisher 45573886242, browser matrix 45573886261. Actual Chromium-exported current/old capsules and downloaded independent Python verifier passed 77 explicit differential controls: 13 accepted, 64 refused; both verifiers agreed on every refusal reason and all accepted identities. Not universal parser equivalence."
         }
       ]
     },
@@ -2511,7 +2537,7 @@
           "id": "V2-D10-PINNED-CASE",
           "sourceRevision": "43070237e15343d75f3db1a9be19c33342ca2326",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45574455950/job/139068811666",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, release-materializer 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, legacy release 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
         }
       ]
     },
@@ -2521,13 +2547,13 @@
       "dependencies": [
         "V2-D10-PINNED-CASE"
       ],
-      "scope": "Strict structural alignment across typed worlds, stable schema fingerprint, no mixed equations or changed basis under a single aligned decision, existing export compatibility preserved; independent Python replay. Not proof of real-world meaning.",
+      "scope": "Strict structural alignment across typed worlds, stable schema fingerprint, no mixed equations or changed basis under a single aligned decision, existing legacy v1 export preserved; independent Python replay. Not proof of real-world meaning.",
       "evidence": [
         {
           "id": "V2-D11-ALIGNED-CASE",
           "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45575004185/job/139070646626",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, release-materializer 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, legacy release 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
         }
       ]
     },
@@ -2565,7 +2591,7 @@
           "id": "V2-D12-ALIGNED-CAPSULE",
           "sourceRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45577083295 and push 45577073214, ingress 45577083241, impact 45577083299, evaluation 45577083367, Open Kit 45577083228, release-materializer 45577083254, publisher 45577083528, browser matrix 45577083252. Both knowledge jobs passed 61 tests, including maximum eight-observation path and 256 KiB aggregate refusal. Actual Chromium current/old aligned capsules and independent snapshot pins verified in a fresh tab, one-byte tamper refused, exact restore, stale pin and case pin mismatch refused. Both browser jobs passed 27 explicit aligned parity controls (4 accepted, 23 refused), including both profile directions and exact expected refusal reasons. Actual downloaded 68379-byte independent verifier SHA-256 f68e9b9fe9ca0a67d26cb953c6169c3a2f5e5894e2ab42559dcb69769476f3da matched deterministic local rebuild. Failed revisions 12e2d7b and 88f9446 each had seven passing auxiliary workflows and both knowledge workflows failed. Scoped exact aligned snapshot with two caller-held pins, not authenticity or freshness."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45577083295 and push 45577073214, ingress 45577083241, impact 45577083299, evaluation 45577083367, Open Kit 45577083228, legacy release 45577083254, publisher 45577083528, browser matrix 45577083252. Both knowledge jobs passed 61 tests, including maximum eight-observation path and 256 KiB aggregate refusal. Actual Chromium current/old aligned capsules and independent snapshot pins verified in a fresh tab, one-byte tamper refused, exact restore, stale pin and case pin mismatch refused. Both browser jobs passed 27 explicit aligned parity controls (4 accepted, 23 refused), including both profile directions and exact expected refusal reasons. Actual downloaded 68379-byte independent verifier SHA-256 f68e9b9fe9ca0a67d26cb953c6169c3a2f5e5894e2ab42559dcb69769476f3da matched deterministic local rebuild. Failed revisions 12e2d7b and 88f9446 each had seven passing auxiliary workflows and both knowledge workflows failed. Scoped exact aligned snapshot with two caller-held pins, not authenticity or freshness."
         }
       ]
     },
@@ -2583,7 +2609,7 @@
           "id": "V2-D13-MEASUREMENT-RANGE",
           "sourceRevision": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577758522/job/139079802299",
-          "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, release-materializer 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
+          "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, legacy release 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
         }
       ]
     },
@@ -2600,7 +2626,7 @@
           "id": "V2-D14-WORLD-COVERAGE",
           "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45578490574/job/139082271228",
-          "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, release-materializer 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
+          "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, legacy release 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
         }
       ]
     },
@@ -2628,7 +2654,7 @@
           "id": "V2-D15-COMPETING-PROPOSAL",
           "sourceRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592",
-          "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, release-materializer 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
+          "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, legacy release 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
         }
       ]
     },
@@ -2645,7 +2671,7 @@
           "id": "V2-D16-CROSS-BRANCH-CLASH",
           "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45580198159/job/139088020789",
-          "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, release-materializer 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
+          "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, legacy release 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
         }
       ]
     },
@@ -2706,13 +2732,13 @@
       "dependencies": [
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim. V2-041 candidate: versioned trial audit v2 binds every input receipt to exact normalized-source pin and row ID, preventing population/version-only changes from preserving old receipts; aggregate-only counters are null (not tested). Strict negative-zero, duplicate-key, max-ID controls. Separate 256 KiB trial snapshot verifier requires caller-retained report and normalized source pins (two source pins for version comparison); independently implemented generic Python admission/reconstruction, packaged explicit --trial profile, preserved fixed and aligned flags. Browser exports exact bytes and snapshot digest; parity tests exercise historical snapshot, forged causal conclusion, scope/receipt tampering, source substitution and repinning, zero-event synthetic control, malformed wire and size refusal. Source authenticity, freshness, medical validity and causal inference not established. Exact CI pending.",
+      "scope": "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim. V2-041 candidate: versioned trial audit v2 binds every input receipt to exact normalized-source pin and row ID, preventing population/version-only changes from preserving old receipts; aggregate-only counters are null (not tested). Strict negative-zero, duplicate-key, max-ID controls. Separate 256 KiB trial snapshot verifier requires caller-retained report and normalized source pins (two source pins for version comparison); independently implemented generic Python admission/reconstruction, packaged explicit --trial profile, preserved fixed and aligned flags. Browser exports exact bytes and snapshot digest; parity tests exercise historical snapshot, forged causal conclusion, scope/receipt tampering, source substitution and repinning, zero-event synthetic control, malformed wire and size refusal. Earlier v1 research exports remain historical development evidence, not silently accepted by v2. Source authenticity, freshness, medical validity and causal inference not established. Exact CI pending.",
       "evidence": [
         {
           "id": "V2-D20-RESEARCH-PARTITION-v1",
           "sourceRevision": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45591249190/job/139125730226",
-          "description": "V2-040 exact source 1f5173a79d60ca6576b5939600fc0a1f667c8044 passed all nine workflows (knowledge PR 45591249190, push 45591240895, auxiliary PR 45591248968,45591249213,45591248939,45591249017,45591249029,45591249001,45591249047). Browser jobs 139125730226 and 139125699734 independently replayed research partition and report-version audit. V2-041 source 550770a remains pending exact CI, no v2 snapshot promotion."
+          "description": "V2-040 exact source 1f5173a79d60ca6576b5939600fc0a1f667c8044 passed all nine workflows (knowledge PR 45591249190, push 45591240895, auxiliary PR 45591248968,45591249213,45591248939,45591249017,45591249029,45591249001,45591249047). Browser jobs 139125730226 and 139125699734 independently replayed research partition and report-version audit. This is historical v1 profile evidence; V2-041 source 550770a remains pending exact CI, no v2 snapshot promotion."
         },
         {
           "id": "V2-D20-RESEARCH-PARTITION-v2",
@@ -3673,7 +3699,7 @@
       "track": "A",
       "status": "Not started",
       "dependencies": [],
-      "scope": "Continue exact CI, WASM, integrity, consent, recovery, rollback, refinement, provider budget/BYOK and all unresolved V2 gates by actual dependencies.",
+      "scope": "Continue exact CI, WASM, integrity, consent, recovery, rollback, refinement, provider budget/BYOK and all unresolved SUTRA1/2 gates by actual dependencies.",
       "acceptance": "Old IDs, failures and evidence remain; no inherited credit or silently dropped gate.",
       "evidence": []
     }
@@ -3698,6 +3724,1489 @@
       "V2-LK08-KNOWLEDGE-GRAPH"
     ],
     "allocationIsTarget": true
+  },
+  "parallelCandidateEvidence": {
+    "session": "V2-203-durable-host-browser-candidate",
+    "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+    "history": [
+      {
+        "session": "V2-182-batch1",
+        "qualification": "Separate child observations; original gate statuses/evidence untouched until integration.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "caef11eebffef60378504a154e166efe83940f5a",
+            "run": 45753562635,
+            "conclusion": "success",
+            "change": "One-shot route-bound council disclosure approval",
+            "remaining": "Browser/operator approval wiring, live authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "8786fa2cace4b63911a6035fdd58d882a452258c",
+            "run": 45753072461,
+            "conclusion": "success",
+            "change": "Atomic staged snapshot publication before HEAD; exact orphan flush",
+            "remaining": "Real killed-writer CI pending at 8e9cd7c; offline lock recovery and power-loss/external freshness",
+            "pendingRevision": "8e9cd7c906285afa7a9b9400cda9353f10abd1f6"
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "a2912799b14d7dee8f73f41b8372231ad54c7c2a",
+            "run": 45753076834,
+            "conclusion": "success",
+            "change": "Pinned mapping review revision audit; no inherited judgments",
+            "remaining": "Independent annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "23e036f19e6b23db1a6d9c69d752992168998400",
+            "run": 45753437637,
+            "conclusion": "success",
+            "change": "Source-bound exact observation receipt and trace replay",
+            "remaining": "External identity/measurement authentication and scope applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5",
+            "run": 45753442120,
+            "conclusion": "success",
+            "change": "Independent Python replay of topology and stale same-result graph revisions",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "2a4838db0aa198daa8b54c30180437bfe6404eb9",
+            "run": 45753447406,
+            "conclusion": "success",
+            "change": "Domain-superset audit by normalized assignments, report truncated missing worlds",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque generation fence through downstream council and suggestion publication",
+            "remaining": "Post-publication lifecycle, transport and peer boundaries, arbitrary encodings"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "38a49d175be793a804b0e44b94a141078e3c8447",
+            "run": 45753299733,
+            "conclusion": "success",
+            "change": "Portable bounded draft/history/baseline checkpoint and explicit stale-safe restore",
+            "remaining": "Full historical selection restoration, user evaluation, independent replay, larger portable profile",
+            "browserRun": 45753299760
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "e73659542f738fedabc038879d078616c8d97281",
+            "run": 45753555498,
+            "conclusion": "success",
+            "change": "Engineering capacity interval journey with nominal versus degraded applicability",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "9bf0ac16d885e485b31c12531b20508f7f337e48",
+            "run": 45753566412,
+            "conclusion": "success",
+            "change": "Held-out manifest exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, actual matched metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-182-final-reconciliation",
+        "qualification": "Separate scoped child and validation-only evidence; existing product gate statuses and integration evidence remain untouched.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "1c4514adc40a950db2cbeb7c4a945747d814ef60",
+            "run": 45755206793,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1",
+            "run": 45754789265,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile",
+            "remaining": "Hardware power-loss, cross-filesystem portability, external freshness, scale"
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "504453e16c67f7f2e06b88bfd8a8baebcb4de207",
+            "run": 45754546311,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "23e036f19e6b23db1a6d9c69d752992168998400",
+            "run": 45753437637,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5",
+            "run": 45753442120,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "2a4838db0aa198daa8b54c30180437bfe6404eb9",
+            "run": 45753447406,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "60d38f1248c2c6b5d82a89c3340ea401da6f01c3",
+            "run": 45755640186,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45755640152,
+            "browserObserved": "success"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "e73659542f738fedabc038879d078616c8d97281",
+            "run": 45753555498,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "9bf0ac16d885e485b31c12531b20508f7f337e48",
+            "run": 45753566412,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-195-exact-validation-and-register-reconciliation",
+        "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "run": 45757418475,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "ae8630ec7d472263f8f8fffb16062bfbc10f96af",
+            "run": 45779075994,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile",
+            "remaining": "Hardware power-loss, cross-filesystem portability, external freshness, scale"
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "run": 45758784104,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "run": 45779263957,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "run": 45764898229,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "run": 45759676416,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "run": 45786416609,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45786416592,
+            "browserObserved": "success",
+            "publisherRun": 45786416590,
+            "publisherObserved": "success attempt 2; attempt 1 failure retained"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "run": 45759708514,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "run": 45759752586,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-199-durable-typed-history-candidate",
+        "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "run": 45757418475,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+            "run": 45788072332,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic correction/withdrawal regression",
+            "remaining": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+            "job": 139799827662
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "run": 45758784104,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "run": 45779263957,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "run": 45764898229,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "run": 45759676416,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "run": 45786416609,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45786416592,
+            "browserObserved": "success",
+            "publisherRun": 45786416590,
+            "publisherObserved": "success attempt 2; attempt 1 failure retained"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "run": 45759708514,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "run": 45759752586,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-200-history-scale-and-filesystem-profile-candidate",
+        "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "run": 45757418475,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+            "run": 45788072332,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic correction/withdrawal regression",
+            "remaining": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+            "job": 139799827662
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "run": 45758784104,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "run": 45779263957,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "run": 45764898229,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "run": 45759676416,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "run": 45786416609,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45786416592,
+            "browserObserved": "success",
+            "publisherRun": 45786416590,
+            "publisherObserved": "success attempt 2; attempt 1 failure retained"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "run": 45759708514,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "run": 45759752586,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-201-strict-linux-filesystem-profile-candidate",
+        "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "run": 45757418475,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+            "run": 45788072332,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic correction/withdrawal regression",
+            "remaining": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+            "job": 139799827662
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "run": 45758784104,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "run": 45779263957,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "run": 45764898229,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "run": 45759676416,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "run": 45786416609,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45786416592,
+            "browserObserved": "success",
+            "publisherRun": 45786416590,
+            "publisherObserved": "success attempt 2; attempt 1 failure retained"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "run": 45759708514,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "run": 45759752586,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      },
+      {
+        "session": "V2-202-explicit-mapping-review-ui-candidate",
+        "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+        "records": [
+          {
+            "pr": 51,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "run": 45757418475,
+            "conclusion": "success",
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+          },
+          {
+            "pr": 52,
+            "gateIds": [
+              "V2-LK08-KNOWLEDGE-GRAPH",
+              "V2-LK09-REVISION",
+              "V2-LK10-VERSION-CONTROL"
+            ],
+            "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+            "run": 45788072332,
+            "conclusion": "success",
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic correction/withdrawal regression",
+            "remaining": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+            "job": 139799827662
+          },
+          {
+            "pr": 53,
+            "gateIds": [
+              "V2-LK02-INTENT-IR",
+              "V2-LK03-PATHWAYS",
+              "V2-LK07-AMBIGUITY-REVIEW"
+            ],
+            "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "run": 45758784104,
+            "conclusion": "success",
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "remaining": "Independent human annotation and browser review wiring"
+          },
+          {
+            "pr": 54,
+            "gateIds": [
+              "V2-LK12-ACQUISITION"
+            ],
+            "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "run": 45779263957,
+            "conclusion": "success",
+            "change": "Exact source-bound observation receipt",
+            "remaining": "External identity/measurement authentication and applicability"
+          },
+          {
+            "pr": 55,
+            "gateIds": [],
+            "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "run": 45764898229,
+            "conclusion": "success",
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "remaining": "Independent interval/statistical/semantic profiles"
+          },
+          {
+            "pr": 56,
+            "gateIds": [
+              "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+              "V2-LK06-SEMANTIC-WORLDS"
+            ],
+            "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "run": 45759676416,
+            "conclusion": "success",
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "remaining": "Scalable bounded search and measured review benefit"
+          },
+          {
+            "pr": 57,
+            "gateIds": [
+              "V2-LK19-TRUST-BOUNDARY"
+            ],
+            "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "run": 45753193964,
+            "conclusion": "success",
+            "change": "Opaque credential-generation fence through downstream publication",
+            "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+          },
+          {
+            "pr": 58,
+            "gateIds": [
+              "V2-LK15-UNIFIED-WORKSPACE"
+            ],
+            "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "run": 45786416609,
+            "conclusion": "success",
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "browserRun": 45786416592,
+            "browserObserved": "success",
+            "publisherRun": 45786416590,
+            "publisherObserved": "success attempt 2; attempt 1 failure retained"
+          },
+          {
+            "pr": 59,
+            "gateIds": [
+              "V2-LK16-SPECIALIST-JOURNEYS"
+            ],
+            "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "run": 45759708514,
+            "conclusion": "success",
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "remaining": "Rights-cleared real source and independent specialist evaluation"
+          },
+          {
+            "pr": 60,
+            "gateIds": [
+              "V2-LK17-BENCHMARK"
+            ],
+            "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "run": 45759752586,
+            "conclusion": "success",
+            "change": "Held-out exact content and declared lineage collision audit",
+            "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+          }
+        ]
+      }
+    ],
+    "records": [
+      {
+        "pr": 51,
+        "gateIds": [
+          "V2-LK19-TRUST-BOUNDARY"
+        ],
+        "sourceRevision": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+        "run": 45757418475,
+        "conclusion": "success",
+        "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+        "remaining": "Browser/operator approval wiring; actual authorized interoperability"
+      },
+      {
+        "pr": 52,
+        "gateIds": [
+          "V2-LK08-KNOWLEDGE-GRAPH",
+          "V2-LK09-REVISION",
+          "V2-LK10-VERSION-CONTROL"
+        ],
+        "sourceRevision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+        "run": 45788072332,
+        "conclusion": "success",
+        "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic correction/withdrawal regression",
+        "remaining": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+        "job": 139799827662
+      },
+      {
+        "pr": 53,
+        "gateIds": [
+          "V2-LK02-INTENT-IR",
+          "V2-LK03-PATHWAYS",
+          "V2-LK07-AMBIGUITY-REVIEW"
+        ],
+        "sourceRevision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+        "run": 45758784104,
+        "conclusion": "success",
+        "change": "Mapping revision audit and independent Python judgment reconstruction",
+        "remaining": "Independent human annotation and browser review wiring"
+      },
+      {
+        "pr": 54,
+        "gateIds": [
+          "V2-LK12-ACQUISITION"
+        ],
+        "sourceRevision": "2336566c64c4ce461042bec8b34c01c22356aba3",
+        "run": 45779263957,
+        "conclusion": "success",
+        "change": "Exact source-bound observation receipt",
+        "remaining": "External identity/measurement authentication and applicability"
+      },
+      {
+        "pr": 55,
+        "gateIds": [],
+        "sourceRevision": "1a429e24a4fca63affccedf138150480b3ee87c2",
+        "run": 45764898229,
+        "conclusion": "success",
+        "change": "Independent Python topology and stale same-result revision challenges",
+        "remaining": "Independent interval/statistical/semantic profiles"
+      },
+      {
+        "pr": 56,
+        "gateIds": [
+          "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+          "V2-LK06-SEMANTIC-WORLDS"
+        ],
+        "sourceRevision": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+        "run": 45759676416,
+        "conclusion": "success",
+        "change": "Normalized assignment domain expansion; omitted-world reporting",
+        "remaining": "Scalable bounded search and measured review benefit"
+      },
+      {
+        "pr": 57,
+        "gateIds": [
+          "V2-LK19-TRUST-BOUNDARY"
+        ],
+        "sourceRevision": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+        "run": 45753193964,
+        "conclusion": "success",
+        "change": "Opaque credential-generation fence through downstream publication",
+        "remaining": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat"
+      },
+      {
+        "pr": 58,
+        "gateIds": [
+          "V2-LK15-UNIFIED-WORKSPACE"
+        ],
+        "sourceRevision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+        "run": 45786416609,
+        "conclusion": "success",
+        "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+        "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+        "browserRun": 45786416592,
+        "browserObserved": "success",
+        "publisherRun": 45786416590,
+        "publisherObserved": "success attempt 2; attempt 1 failure retained"
+      },
+      {
+        "pr": 59,
+        "gateIds": [
+          "V2-LK16-SPECIALIST-JOURNEYS"
+        ],
+        "sourceRevision": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+        "run": 45759708514,
+        "conclusion": "success",
+        "change": "Engineering capacity interval and degraded-condition journey",
+        "remaining": "Rights-cleared real source and independent specialist evaluation"
+      },
+      {
+        "pr": 60,
+        "gateIds": [
+          "V2-LK17-BENCHMARK"
+        ],
+        "sourceRevision": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+        "run": 45759752586,
+        "conclusion": "success",
+        "change": "Held-out exact content and declared lineage collision audit",
+        "remaining": "Frozen independently annotated real cases, matched actual metering and comparative runs"
+      }
+    ],
+    "combinedValidation": {
+      "pr": 61,
+      "branch": "sutra/v2-validation/v2-182",
+      "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+      "state": "validation-only-do-not-merge",
+      "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "61714c3c095ad254486b250c80cc84b0481dfdd2"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+        },
+        {
+          "pr": 55,
+          "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "nonoverlappingFiles": 81,
+      "ci": {
+        "run": 45788350009,
+        "knowledge": "success",
+        "browser": "success",
+        "parallelRun": 45788349987,
+        "parallel": "success",
+        "workspaceRun": 45788350020,
+        "workspace": "success",
+        "browserCompatibilityRun": 45788350132,
+        "browserCompatibility": "success",
+        "operatorBrowserRun": 45788349834,
+        "operatorBrowser": "success",
+        "finqaRun": 45788349813,
+        "finqa": "success",
+        "publisherRun": 45788351602,
+        "publisher": "success"
+      },
+      "history": [
+        {
+          "revision": "1dc9dc79ce3b8255ee2f48b83f8cd95ad8678a05",
+          "combinedRun": 45754410627,
+          "observed": "success",
+          "impactRun": 45754410524,
+          "impactObserved": "failure",
+          "reason": "unmapped exact validation manifest path"
+        },
+        {
+          "revision": "e8fa3ae455a23eb9b832fde17f418510c5e48293",
+          "combinedRun": 45754665798,
+          "observed": "success",
+          "impactRun": 45754665894,
+          "impactObserved": "success"
+        },
+        {
+          "revision": "fc238782f1950f76049d78ef178dae04259d3a2d",
+          "children": [
+            {
+              "pr": 51,
+              "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+            },
+            {
+              "pr": 52,
+              "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+            },
+            {
+              "pr": 53,
+              "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+            },
+            {
+              "pr": 54,
+              "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+            },
+            {
+              "pr": 55,
+              "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+            },
+            {
+              "pr": 56,
+              "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+            },
+            {
+              "pr": 57,
+              "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+            },
+            {
+              "pr": 58,
+              "head": "ee540afba806a2ff9748c269c3229353812149a7"
+            },
+            {
+              "pr": 59,
+              "head": "e73659542f738fedabc038879d078616c8d97281"
+            },
+            {
+              "pr": 60,
+              "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+            }
+          ],
+          "run": 45755340152,
+          "observed": "success",
+          "knowledgeJob": 139692536330,
+          "browserJob": 139692536528,
+          "impactRun": 45755340151,
+          "impactObserved": "success",
+          "scopedRun": 45755340116,
+          "scopedObserved": "success"
+        },
+        {
+          "pr": 61,
+          "branch": "sutra/v2-validation/v2-182",
+          "head": "467bcc2c25abde2c43278f117e4d9ada5baeb33c",
+          "state": "validation-only-do-not-merge",
+          "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
+          "children": [
+            {
+              "pr": 51,
+              "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+            },
+            {
+              "pr": 52,
+              "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+            },
+            {
+              "pr": 53,
+              "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+            },
+            {
+              "pr": 54,
+              "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+            },
+            {
+              "pr": 55,
+              "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+            },
+            {
+              "pr": 56,
+              "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+            },
+            {
+              "pr": 57,
+              "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+            },
+            {
+              "pr": 58,
+              "head": "60d38f1248c2c6b5d82a89c3340ea401da6f01c3"
+            },
+            {
+              "pr": 59,
+              "head": "e73659542f738fedabc038879d078616c8d97281"
+            },
+            {
+              "pr": 60,
+              "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+            }
+          ],
+          "nonoverlappingFiles": 51,
+          "ci": {
+            "run": 45755925032,
+            "observed": "in_progress"
+          },
+          "qualification": "Latest exact ten child heads; no merge or broad gate promotion. Prior full combined CI passed; latest exact full run pending at observation. #58 actual browser download independent differential passed separately."
+        },
+        {
+          "pr": 61,
+          "branch": "sutra/v2-validation/v2-182",
+          "head": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+          "state": "validation-only-do-not-merge",
+          "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
+          "children": [
+            {
+              "pr": 51,
+              "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+            },
+            {
+              "pr": 52,
+              "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+            },
+            {
+              "pr": 53,
+              "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+            },
+            {
+              "pr": 54,
+              "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+            },
+            {
+              "pr": 55,
+              "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+            },
+            {
+              "pr": 56,
+              "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+            },
+            {
+              "pr": 57,
+              "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+            },
+            {
+              "pr": 58,
+              "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+            },
+            {
+              "pr": 59,
+              "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+            },
+            {
+              "pr": 60,
+              "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+            }
+          ],
+          "nonoverlappingFiles": 81,
+          "ci": {
+            "run": 45787018982,
+            "knowledge": "success",
+            "browser": "success",
+            "parallelRun": 45787019038,
+            "parallel": "success",
+            "workspaceRun": 45787019111,
+            "workspace": "success",
+            "compatibilityRun": 45787019018,
+            "compatibility": "in_progress"
+          },
+          "qualification": "Validation only; no merge or newer revision credit. Canonical browser separately observed; core gates open.",
+          "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+          "childUniquePaths": 82,
+          "exactChildBlobs": 75,
+          "reconciledPaths": 7,
+          "validationOnlyPaths": 6
+        }
+      ],
+      "qualification": "All 11 exact candidate workflows passed; later central source integration separate; validation-only.",
+      "parent": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "childUniquePaths": 82,
+      "exactChildBlobs": 75,
+      "reconciledPaths": 7,
+      "validationOnlyPaths": 6
+    }
+  },
+  "reuseFirstReconciliation": {
+    "session": "V2-183-reuse-first-reconciliation",
+    "observedDate": "2026-11-26",
+    "centralSource": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+    "legacy": {
+      "source": "9bd76ef8bfd05f323592f21fe4b0841188861693",
+      "disposition": "frozen baseline; reuse existing components; v2 roadmap is active",
+      "verified": 714,
+      "total": 1100,
+      "pending": 379,
+      "releaseSubmissionPending": 200
+    },
+    "centralBrowser": {
+      "run": 45755996159,
+      "rerunJob": 139721380052,
+      "conclusion": "success",
+      "qualification": "all three engine jobs and freshness observed successful on rerun; no broad gate promotion"
+    },
+    "children": [
+      {
+        "pr": 51,
+        "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45757418475,
+        "conclusion": "success",
+        "implemented": "Browser operator approval console, local synthetic credential lifecycle and one-shot dispatch",
+        "remaining": "Authorized live provider interoperability, budget metering, integrated consent",
+        "additionalRun": 45757418447,
+        "additionalConclusion": "success"
+      },
+      {
+        "pr": 52,
+        "head": "8caac249b3e3a6844fbef9fd9b189996d4d8566b",
+        "disposition": "implemented-candidate; verification-pending",
+        "run": 45757208682,
+        "conclusion": "in_progress",
+        "implemented": "Existing immutable snapshots, SIGKILL recovery and flock; challenge-bound external witness adapter candidate",
+        "remaining": "Observe rerun; external retained witness freshness, scale, portability and hardware power loss"
+      },
+      {
+        "pr": 53,
+        "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45758784104,
+        "conclusion": "success",
+        "implemented": "Pinned mapping review, independent Python reconstruction, 24 independently annotated FinQA gold programs",
+        "remaining": "Natural-language induction, review UI integration, broader ambiguity coverage"
+      },
+      {
+        "pr": 54,
+        "head": "0a781904d90a101b7f74a5b471d521ad8a024d05",
+        "disposition": "implemented-candidate; verification-pending",
+        "run": 45757527623,
+        "conclusion": "in_progress",
+        "implemented": "Exact source-bound acquisition and separate-process authenticated observation candidate",
+        "remaining": "Observe rerun; applicability, calibration, noisy correlated observations"
+      },
+      {
+        "pr": 55,
+        "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45753442120,
+        "conclusion": "success",
+        "implemented": "Independent rational, topology and stale-revision replay",
+        "remaining": "Independent interval/statistical and semantic profile coverage"
+      },
+      {
+        "pr": 56,
+        "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759676416,
+        "conclusion": "success",
+        "implemented": "Resumable bounded streaming counterfactual search; corrected fresh computation regression",
+        "remaining": "Workspace wiring, measured scaling and practical review benefit"
+      },
+      {
+        "pr": 57,
+        "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45753193964,
+        "conclusion": "success",
+        "implemented": "Credential-generation fencing and downstream publication refusal",
+        "remaining": "Post-publication lifecycle, transport/peer isolation, coordinated rollback"
+      },
+      {
+        "pr": 58,
+        "head": "7690ca6d874f61f8da98418c9c6e8b766b313e56",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45760669200,
+        "conclusion": "success",
+        "implemented": "Portable checkpoint, independent actual export replay; new 320px keyboard/accessibility candidate",
+        "remaining": "Observe browser rerun; integrated journey and human accessibility",
+        "additionalRun": 45760669191,
+        "additionalConclusion": "in_progress"
+      },
+      {
+        "pr": 59,
+        "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759708514,
+        "conclusion": "success",
+        "implemented": "Pinned public SEC/FHWA derived fact cards and independent calculations",
+        "remaining": "Full-document provenance, qualified review and multi-document journeys"
+      },
+      {
+        "pr": 60,
+        "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+        "disposition": "scoped-verification-observed; integration-pending",
+        "run": 45759752586,
+        "conclusion": "success",
+        "implemented": "Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer",
+        "remaining": "End-to-end natural-language reasoning, matched actual model metering",
+        "additionalRun": 45759752625,
+        "additionalConclusion": "success"
+      }
+    ],
+    "validation": {
+      "pr": 61,
+      "head": "c34dc954f7a35857e24a9d5f8795f3e61fc359dd",
+      "parent": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+      "run": 45764494043,
+      "conclusion": "in_progress",
+      "impactRun": 45764493968,
+      "qualification": "81 unique changed child paths; one HTML overlap reconciled; validation only; never merge"
+    },
+    "foundations": [
+      {
+        "ids": [
+          "V2-P00-REPRO",
+          "V2-P00-EVIDENCE"
+        ],
+        "disposition": "inherited-and-partially-implemented",
+        "reuse": "v1 exact-source CI and register; v2 source-bound artifacts",
+        "remaining": "two clean builds, locked toolchain differences, machine validation of evidence promotion"
+      },
+      {
+        "ids": [
+          "V2-P01-THREAT",
+          "V2-P02-RUNTIME",
+          "V2-P03-TAINT",
+          "V2-P04-CONSENT",
+          "V2-P08-CAUSAL"
+        ],
+        "disposition": "inherited-and-integration-pending",
+        "reuse": "v1 pinned runtime, strict parser, private context, peer admission, action consent; v2 composite policy and council",
+        "remaining": "new causal pins, taint propagation and exact combined trust boundary"
+      },
+      {
+        "ids": [
+          "V2-P05-RECOVERY",
+          "V2-P05-ROLLBACK",
+          "V2-P06-REFINE"
+        ],
+        "disposition": "implemented-in-part; verification-pending",
+        "reuse": "Go durable action protocol, bounded formal traces, child #52 immutable history and witness",
+        "remaining": "external monotonic anchor, coordinated rollback, power-loss and broader refinement"
+      },
+      {
+        "ids": [
+          "V2-P09-IR",
+          "V2-P11-UNCERTAINTY",
+          "V2-P12-ECON"
+        ],
+        "disposition": "implemented-in-part; integration-pending",
+        "reuse": "exact kernel, reviewed compiler, finite worlds, acquisition and interval profiles",
+        "remaining": "model-assisted intent induction, statistical parity and noisy observation applicability"
+      },
+      {
+        "ids": [
+          "V2-P14-BUDGET",
+          "V2-P14-BYOK-UX"
+        ],
+        "disposition": "implemented-in-part; external-validation-blocked",
+        "reuse": "v1 bounded proxy; v2 opaque credential vault and operator console #51",
+        "remaining": "authorized real providers, actual spend and global concurrency accounting"
+      },
+      {
+        "ids": [
+          "V2-P16-LEARN",
+          "V2-P17-OBSERVE",
+          "V2-P18-KIT"
+        ],
+        "disposition": "inherited-and-adaptation-pending",
+        "reuse": "v1 learner, neutral consumer, Open Kit and publisher starter; v2 observatory and receipts",
+        "remaining": "v2 independent public-compatible contract and authentic user/builder trials"
+      },
+      {
+        "ids": [
+          "V2-P19-PERF",
+          "V2-P20-BENCH",
+          "V2-P21-RESEARCH"
+        ],
+        "disposition": "implemented-in-part; evaluation-pending",
+        "reuse": "existing synthetic benchmarks, independent oracle, FinQA child #60",
+        "remaining": "held-out end-to-end reasoning, actual latency/tokens/cost, prior-art limits"
+      },
+      {
+        "ids": [
+          "V2-P07-WASM",
+          "V2-P10-LEAN",
+          "V2-P13-INTEROP"
+        ],
+        "disposition": "remaining-specific-verification",
+        "reuse": "existing bounded Rust/WASM support and formal models; v1 peer loader",
+        "remaining": "exact WASM resource profile, required machine-checked proofs, unknown independently operated publisher"
+      },
+      {
+        "ids": [
+          "V2-P15-SUPERVISE",
+          "V2-P22-RELEASE"
+        ],
+        "disposition": "deferred-with-existing-justification",
+        "reuse": "historical release/preflight infrastructure",
+        "remaining": "only reopen on product need or separate authorization"
+      }
+    ],
+    "externalBlockers": [
+      "Consenting human reviewers and actual physical devices",
+      "Operator-authorized real provider credentials and spend ceiling",
+      "Independent public HTTPS peer and release authorization",
+      "Original content rights/factual approval where applicable"
+    ],
+    "next": [
+      "Observe exact current CI (including combined).",
+      "Connect #52 history and #53 review to #58 workspace in a separate reviewed candidate; preserve child ownership.",
+      "Expand independent interval/statistical verifier, then run end-to-end reasoning evaluation rather than duplicate gold-program execution."
+    ],
+    "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion.",
+    "historicalOnly": true,
+    "supersededBy": "currentReconciliation / active checklist; old next fields are historical evidence, not executable queues"
   },
   "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
   "executionPolicy": "Only the active V2 checklist selects tasks or closes broad gates; historical/scoped roadmap statuses do not grant full acceptance.",

@@ -1,27 +1,18 @@
 # SUTRA — Living, verifiable knowledge
 
-SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge.
+SUTRA is the single active product in this repository. The current system is the advanced continuation of earlier SUTRA engineering: reusable runtime, consent, privacy, evidence, provider, browser and source-integrity work are inherited where they remain useful, while the current product direction is living computational knowledge.
 
-The product preserves investigations across model changes. It separates source evidence, interpretation, method, deterministic computation, empirical support, freshness, applicability and action authority instead of collapsing them into a single confidence score.
+SUTRA discovers, challenges, maintains, revises and acts on important knowledge through persistent, accountable and model-replaceable investigations.
 
-## Active workspace
+## Active architecture
 
-- `apps/sutra-v2/` — browser investigation workspace.
-- `packages/sutra-knowledge/` — knowledge kernel, revision engine, counterfactuals, evidence economics and independent replay contracts.
-- `packages/sutra-runtime/` — bounded portable-agent runtime.
-- `packages/sutra-inference/` — provider-neutral inference contracts and credential boundaries.
-- `packages/sutra-consent/` — explicit contact and disclosure controls.
-- `services/sutra-api/` — bounded service adapters.
-- `docs/sutra-v2/` — current product mandate, execution contract, roadmap and verification state.
+- `apps/sutra-v2/` — current investigation workspace.
+- `packages/sutra-knowledge/` — knowledge kernel, semantic compilation, revision, counterfactuals and independent replay.
+- `packages/sutra-runtime/`, `packages/sutra-consent/`, `packages/sutra-inference/`, `services/sutra-api/` — reusable execution, permission, provider and service infrastructure.
+- `apps/sutra/` and `docs/sutra/` — inherited SUTRA implementation and engineering evidence still used by the current system where referenced. They are not a separate released product.
 
-Run the core knowledge suite with Node 24:
-
-```sh
-node --test packages/sutra-knowledge/test/*.test.mjs
-```
-
-The canonical browser build uses the standalone toolchain in `apps/sutra-v2/`.
-
-Passing tests establish only their stated scope. Model output is never verification authority, and deterministic replay is not empirical truth.
+The ten parallel V2 workstreams have been reconciled into the central SUTRA line. Historical branches remain provenance, not separate product authorities.
 
 [Product mandate](docs/sutra-v2/LIVING-KNOWLEDGE.md) · [Execution contract](docs/sutra-v2/CONTINUE.md) · [Roadmap](docs/sutra-v2/ROADMAP.md) · [Checklist](docs/sutra-v2/CHECKLIST.md)
+
+Passing tests establish only their stated scope. Model output is not verification authority, and deterministic replay is not empirical truth.

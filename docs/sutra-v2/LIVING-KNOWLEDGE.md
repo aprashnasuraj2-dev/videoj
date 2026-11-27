@@ -1,61 +1,48 @@
-# Living knowledge — binding product mandate
+# Living knowledge — binding product mandate (2026-11-25)
 
-SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable and model-replaceable investigations—not general chatbot intelligence—are the product.
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
-## Knowledge and verification
+## Preservation and verification
+Resolve actual remote PR and exact CI; preserve SUTRA1/2 checks, decisions, counterexamples and pending gates. Reuse typed arithmetic, proof capsules, offline replay, source lineage, contradictions, worlds, sensitivity, withdrawal, economics, disclosure, reviewed compilation, contrast, runtime, consent and recovery. Extend through adapters rather than duplicate. Never confuse model output with authority. Preserve original question and distinct source integrity, authenticity, extraction, entity, scope, semantics, methodology, computation, empirical support, freshness and applicability statuses. No universal confidence percentage.
 
-Preserve the original question, evidence lineage and explicit uncertainty dimensions. Source integrity, authenticity, extraction, entity resolution, scope, semantics, methodology, deterministic computation, empirical support, freshness, applicability and action authority are distinct states.
+## Semantic compilation and product
+Decompose intent, evidence retrieval, extraction, entity resolution, scope, relationship selection, method justification, execution and communication into separate obligations. Keep multiple meanings, their source-bound representations and semantic versus empirical uncertainty; evaluate admitted alternatives, ask only consequential questions, preserve unresolved branches. Invariant conditional outcomes are limited to the admitted interpretations, never all possible meanings. Use controlled round-trip rendering and counterfactual distinguishing datasets. Review source spans in plain language, retain history and corrections, and route structured inputs and model proposals through appropriate bounded pathways. Models are replaceable; manual and offline operation must remain useful.
 
-A deterministic result may prove a calculation under admitted inputs. It does not establish that the inputs are true, the interpretation is correct or an external action is justified.
+Maintain versioned knowledge graph with typed dependency and provenance edges; incremental revision must equal full recompute. Branch/restore/diff hypotheses and keep conflicting evidence unresolved. Produce impact reports and portable artifacts. Extend source economics toward decision value, uncertainty, privacy and robust planning. Discover shared ancestry and bottlenecks across domains; unknown stays unknown. Select narrow statistical and causal profiles under declared assumptions, never equate deterministic proof with empirical truth.
 
-Contradictions remain explicit. Unknown stays unknown.
+## Open model connectivity and collaborative intelligence
+The 2026-11-26 user requirement is binding: provider presets are optional; user-owned models, APIs and credentials are first-class through an extensible protocol adapter registry. Agent roles must not depend on vendor identity. See [open model connectivity](OPEN-MODEL-CONNECTIVITY.md) for custom endpoint, multi-agent, budget and trust-boundary acceptance criteria. Current live inference and key entry remain disabled until existing security gates pass.
 
-## Semantic compilation
+## Optional capability boundary (V2-190)
+Web access is a standalone optional future capability, disabled and unregistered by default. No dependency from the core reasoning, evidence acquisition, knowledge compiler, investigation workspace or execution pipeline; no existing completion gate depends on it. Reuse security primitives in one direction only. Future integration requires a separate architectural decision. No live providers, paid calls or external deployment without explicit authorization.
 
-Decompose an investigation into separately reviewable obligations:
+## Human workflows and evaluation
+Researcher, engineering, finance, medical research, student and general investigation journeys share one architecture; first demonstrate two complete domains. No clinical action authority, investment recommendations or infrastructure certification. User experience: question, evidence, alternatives, review, investigation, conclusion, challenge, revision, export. Progressive disclosure, accessibility, responsiveness, recovery and source-linked explanation are core. Compare seven fair baselines with equal resources, report coverage with accuracy, review time, cost, revision latency, reproducibility, security and ablations. Staged 200 cases: 40 semantic, 40 assumption, 40 revision, 30 ancestry, 30 acquisition, 20 replay/tamper. Separate held-out, synthetic, real and expert cases. Fivefold fewer unsupported decisive conclusions and tenfold revision effort reduction are research targets, not claims. Prior art before novelty: https://aclanthology.org/2025.findings-acl.863/ ; https://aclanthology.org/2023.emnlp-main.425/ ; https://aclanthology.org/2022.findings-acl.28/ ; https://aclanthology.org/Q15-1041/ .
 
-- intent and candidate meanings;
-- evidence acquisition and extraction;
-- entity and scope resolution;
-- relationship and method selection;
-- deterministic execution;
-- empirical interpretation;
-- communication and action boundaries.
+## Coordinated execution
+Track A foundations (15%); Track B semantic compilation (30%), persistent revision (20%), UX (15%); Track C comparative evaluation (20%). Adjust allocation to blockers and measured utility. Inspect → design → implement → challenge → verify → register → commit → reconcile → continue. Every material change needs user problem, assumptions, rationale, alternatives, counterexamples, tests, failure behavior, complexity, security, integration and limitations. Keep historical registers and exact failures; no release, credentials, paid inference, external disclosure, production changes or submission without authorization.
 
-Preserve materially distinct interpretations until evidence or explicit review excludes them. Ask clarification only when it changes a consequential branch.
+## Broad acceptance obligations (reference only)
 
-## Persistent revision
-
-Maintain versioned investigations with typed dependency and provenance edges. A revision must identify what changed, what survives, what becomes unresolved and what requires recomputation.
-
-Incremental revision must match full recomputation for the admitted model. Branch, restore and compare competing hypotheses without silently merging them.
-
-## Collaborative intelligence
-
-Provider identity must not define agent roles. User-owned models and compatible APIs are supported through explicit adapters, bounded disclosure and caller-controlled budgets.
-
-Agent output is a proposal. Host verification and user authority remain separate.
-
-## Security and authority
-
-Treat documents, providers, peers and imported artifacts as untrusted. Enforce bounded parsing, disclosure controls, cancellation, resource limits, credential isolation, replay checks and recovery semantics.
-
-No automatic external action follows from a conclusion.
-
-## Optional web capability
-
-Web access is an optional capability, disabled and unregistered by default. Core reasoning and revision must remain useful without it. Any future activation requires an explicit architecture decision, destination controls, SSRF protections, provenance, budgets and adversarial verification.
-
-## Product experience
-
-The primary workflow is:
-
-**question → evidence → alternatives → review → investigation → conclusion → challenge → revision → export**
-
-At least two specialist domains must use the same architecture. Domain-specific authority claims require domain-appropriate external validation.
-
-## Evaluation
-
-Compare against fair matched-resource baselines. Measure correctness and coverage together with review effort, latency, cost, revision effort, reproducibility and security behavior.
-
-Report negative results. A simpler baseline outperforming SUTRA is a product finding, not something to hide.
+The sole active execution and closure authority is [CHECKLIST.md](CHECKLIST.md). The roadmap's unit, candidate, integration and other scoped evidence statuses do not close the full obligations below. The following definitions are reference acceptance criteria, not a second selectable queue.
+- V2-LK01-SEMANTIC-TRIAGE [Track B] Admit multiple reviewed interpretations; distinguish divergence, agreement, refusals and unresolved results without voting or semantic approval. Acceptance: Exact compiler replays, opposite/same/unresolved/refused regressions; no universal interpretation coverage. Candidate only; exact CI pending.
+- V2-LK02-INTENT-IR [Track B] Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. Acceptance: Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.
+- V2-LK03-PATHWAYS [Track B] Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. Acceptance: Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.
+- V2-LK04-ROUNDTRIP [Track B] Render admitted meaning and executable relations into controlled language with original span and unresolved qualifier review. Acceptance: Detect changed scope, definition, negation, denominator and invented relation; paraphrase is not equivalence proof.
+- V2-LK05-SEMANTIC-COUNTERFACTUAL [Track B] Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. Acceptance: Wrong year, sign, denominator, population, aggregation, units and causal inference adversaries.
+- V2-LK06-SEMANTIC-WORLDS [Track B] Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives. Acceptance: Brute-force parity on small worlds, explicit truncation, no fabricated probabilities or completeness.
+- V2-LK07-AMBIGUITY-REVIEW [Track B] Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs. Acceptance: Measured questions, review time, residual error, keyboard source highlighting/corrections; unreviewed semantics never approved.
+- V2-LK08-KNOWLEDGE-GRAPH [Track B] Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance. Acceptance: Immutable identity and edge authority; distinguish human/model/formal relations; reject cycles in executable DAG.
+- V2-LK09-REVISION [Track B] Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. Acceptance: Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.
+- V2-LK10-VERSION-CONTROL [Track B] Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. Acceptance: Conflicting updates explicit; identity not logical equivalence; restore exact historical version.
+- V2-LK11-IMPACT-REPORT [Track B] Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. Acceptance: Two independent domain journeys, independently replayable export, old snapshots retained.
+- V2-LK12-ACQUISITION [Track B] Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. Acceptance: Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.
+- V2-LK13-STRUCTURAL-WEAKNESS [Track B] Reuse lineage for shared trial, dataset, route, supplier, underlying model and economic exposure; common cuts and sensitivity templates. Acceptance: Unknown ancestry stays unknown; independent fixtures across domains; no counting URLs as independence.
+- V2-LK14-STATISTICAL-PROFILES [Track B] Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations. Acceptance: Independent numerical references, coverage and assumption sensitivity; no deterministic proof of statistical or causal validity.
+- V2-LK15-UNIFIED-WORKSPACE [Track B] Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. Acceptance: Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.
+- V2-LK16-SPECIALIST-JOURNEYS [Track C] Research, engineering, finance, medical research, student and general investigations on the same architecture; at least two complete narrow domains first. Acceptance: Realistic distinct fixtures and user evaluation; no medical authority, financial recommendations or engineering certification.
+- V2-LK17-BENCHMARK [Track C] Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. Acceptance: Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.
+- V2-LK18-PRIOR-ART [Track C] Compare semantic parsing, synthesis, belief revision, truth maintenance, provenance, argumentation, incremental computation, decision theory, causal/statistical and robust optimization prior art. Acceptance: Evidence register separates known algorithm, implementation, integration, novelty; include supplied ACL references; no unsupported superiority.
+- V2-LK19-TRUST-BOUNDARY [Track A] Maintain source/semantic/method/computation/empirical/freshness/applicability verification dimensions, untrusted document and provider boundaries, disclosure budgets, replay, rollback and cross-user isolation. Acceptance: Injection, fabricated references, poison, Unicode, overflow, exhaustion, stale/replay/credential and cross-user adversaries; no automatic external action.
+- V2-LK20-REPOSITORY-ISOLATION [Track A] Make active repository product and contributor entry points SUTRA-only; audit historical independent player files, workflows, root package, configs, media and reusable dependencies before removing non-SUTRA source. Acceptance: Clean SUTRA builds and legacy compatibility, no retired live routes, historical Git evidence intact, no production cutover.
+- V2-LK21-FOUNDATION-QUEUE [Track A] Continue exact CI, WASM, integrity, consent, recovery, rollback, refinement, provider budget/BYOK and all unresolved SUTRA1/2 gates by actual dependencies. Acceptance: Old IDs, failures and evidence remain; no inherited credit or silently dropped gate.

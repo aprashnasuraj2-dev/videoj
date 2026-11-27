@@ -1,31 +1,29 @@
-# SUTRA V2 — Living, verifiable knowledge
+# SUTRA — Living, verifiable knowledge
 
-SUTRA maintains investigations as explicit, replayable computational knowledge rather than disposable chat answers.
+> **Active execution queue reset (2026-11-26):** The user retired the 379 remaining SUTRA1 pending tasks. [CHECKLIST.md](CHECKLIST.md) is now the sole remaining-work execution queue. “Continue with SUTRA” means reconcile current V2 remote state and execute the next dependency-ready unchecked item from that checklist; V1 pending/next items are historical and must not be resumed by default.
 
-Core flow:
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
-**question → evidence → candidate interpretations → review → conditional computation → challenge → revision → impact analysis → replayable export**
+[Binding product mandate](LIVING-KNOWLEDGE.md) · [Open model connectivity](OPEN-MODEL-CONNECTIVITY.md) · [Continuation](CONTINUE.md) · [Checklist](CHECKLIST.md) · [Roadmap](ROADMAP.md) · [Sessions](SESSIONS.md) · [Machine progress](progress.json)
 
-The system keeps model proposals replaceable and separates deterministic verification from source truth, semantics, empirical support and decision authority.
+The following earlier product snapshot is retained as engineering history; current priorities follow the binding mandate and active queue, not the historical competition objective.
 
-## Current components
+# SUTRA 2.0 — A debugger for conclusions
 
-- Browser workspace: `apps/sutra-v2/`
-- Knowledge kernel: `packages/sutra-knowledge/`
-- Portable runtime: `packages/sutra-runtime/`
-- Inference boundary: `packages/sutra-inference/`
-- Consent boundary: `packages/sutra-consent/`
-- API adapters: `services/sutra-api/`
+SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
 
-## Working documents
+**Product invariant:** SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.
 
-- [Binding mandate](LIVING-KNOWLEDGE.md)
-- [Execution contract](CONTINUE.md)
-- [Remaining-work checklist](CHECKLIST.md)
-- [Roadmap](ROADMAP.md)
-- [Repository map](REPOSITORY_MAP.md)
-- [Open model connectivity](OPEN-MODEL-CONNECTIVITY.md)
-- [Optional web access](WEB-ACCESS.md)
-- [Threat model](THREAT_MODEL.md)
+The bounded attack fixture is the first candidate for this product identity. Full exact-source evidence is recorded separately; it does not certify physical truth.
 
-All historical implementation detail is recoverable from Git. Active documents describe only the current V2 product.
+Active direction approved 2026-11-25. SUTRA compiles explicit claims into domain-specific verification obligations, composes open web specialist agents, preserves incompatible assumptions and counterexamples, and tracks which conclusions depend on revised artifacts. LLM output is a proposal, not verification authority. Scientific/medical evidence is not formal proof. The product direction also includes a professional nontechnical multi-provider workspace, but BYOK remains gated behind threat, consent, taint and provider-budget verification; current live inference/key entry stays disabled.
+
+[Migration](MIGRATION.md) · [Continuation procedure](CONTINUE.md) · [Plan](PLAN.md) · [Checklist](CHECKLIST.md) · [Active phased roadmap](ROADMAP.md) · [Session evidence](SESSIONS.md) · [Kernel](../../packages/sutra-knowledge/README.md) · [Proof Capsule](PROOF_CAPSULE.md) · [Conditional diagnosis](DIAGNOSIS.md) · [Guided challenge](DEMO.md) · [World trace](WORLD_TRACE.md) · [Assumption sensitivity](ASSUMPTIONS.md) · [Offline verifier](OFFLINE_VERIFIER.md) · [Root impact](ROOT_IMPACT.md) · [Wire parity](WIRE_PARITY.md)
+
+Resume from the actual current V2 remote state, not a hard-coded branch SHA. “Continue with SUTRA” follows [CONTINUE.md](CONTINUE.md) and the sole active [remaining-work checklist](CHECKLIST.md): reconcile central/child/validation heads and exact CI, then implement the next dependency-ready unchecked item. The SUTRA1 workspace remains historical evidence and reusable source only; its 379 former pending tasks have been retired from execution.
+
+First candidate implements exact rational/dimensional operations, typed conditional constraints, a bounded dependency DAG, digest-bound results, selective calculation reuse and same-implementation replay. This is a narrow executable slice, not yet an agent network or an end-user website. All new capability credit requires actual tests and exact source evidence.
+
+[Caller-pinned investigations](PINNED_CASE.md) — separate finite-case workspace candidate; does not replace the guided synthetic fixture.
+
+The aligned finite-case workspace now has a candidate portable Proof Capsule with separate model and snapshot pins; see [caller-pinned investigations](PINNED_CASE.md). The original synthetic flagship and its Proof Capsule wire remain intact.
