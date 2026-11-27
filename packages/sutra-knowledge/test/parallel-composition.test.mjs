@@ -11,6 +11,8 @@ import {exportWorkspaceCheckpoint,openWorkspaceCheckpoint} from '../workspace-ch
 import {compilerFinanceFixture} from '../examples/reviewed-compiler.mjs';
 import {prepareApprovedExpressionCouncil} from '../approved-expression-council.js';
 import {createProviderWorkspace} from '../../sutra-inference/provider-workspace.js';
+import {createDisclosureConsentInspector} from '../../sutra-consent/index.js';
+const allowOnce=()=>createDisclosureConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
 test('durable persisted history can restore a portable workspace without granting executable authority',async t=>{
  const dir=await mkdtemp(join(tmpdir(),'sutra-combined-'));t.after(()=>rm(dir,{recursive:true,force:true}));
  const a=await livingFixture('finance'),b=await livingFixture('finance',{revised:true,previousDigest:a.digest}),history=await createInvestigationHistory(a.versionText,a.digest),root=history.snapshot();
@@ -28,9 +30,9 @@ test('approval capability and credential publication fence compose without impli
  const a=w.addProfile({providerId:'a',label:'A',credential:'SYNTHETIC_COMBINED_A'}),b=w.addProfile({providerId:'b',label:'B',credential:'SYNTHETIC_COMBINED_B'}),common={contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},workspace:w,maxRounds:1};
  const route=(p,model)=>[{id:'reviewer',role:'Propose comparison',handle:p.handle,model,shareScope:'reviewed-question-bindings-and-conditional-feedback'}];
  const first=await prepareApprovedExpressionCouncil({...common,routes:route(a,'a/model')});w.removeProfile(a.handle);
- await assert.rejects(first.execute({approveDisclosure:true,approvedPlanPin:first.planPin}),/ROUTE/);assert.deepEqual(calls,[]);
- const second=await prepareApprovedExpressionCouncil({...common,routes:route(b,'b/model')});await assert.rejects(second.execute({approveDisclosure:true,approvedPlanPin:first.planPin}),/COUNCIL_APPROVAL_PIN/);
- const r=await second.execute({approveDisclosure:true,approvedPlanPin:second.planPin});assert.deepEqual(calls,['b']);assert.equal(r.decisionAuthority,'NONE');assert.equal(r.semanticReview,'REQUIRED');assert.equal(r.contractDigest,f.pin);
+ await assert.rejects(first.execute({consentInspector:allowOnce(),approvedPlanPin:first.planPin}),/ROUTE/);assert.deepEqual(calls,[]);
+ const second=await prepareApprovedExpressionCouncil({...common,routes:route(b,'b/model')});await assert.rejects(second.execute({consentInspector:allowOnce(),approvedPlanPin:first.planPin}),/COUNCIL_APPROVAL_PIN/);
+ const r=await second.execute({consentInspector:allowOnce(),approvedPlanPin:second.planPin});assert.deepEqual(calls,['b']);assert.equal(r.decisionAuthority,'NONE');assert.equal(r.semanticReview,'REQUIRED');assert.equal(r.contractDigest,f.pin);
 });
 
 test('unrelated credential-set mutation invalidates the captured approval without touching the approved route',async()=>{
@@ -39,8 +41,8 @@ test('unrelated credential-set mutation invalidates the captured approval withou
  const a=w.addProfile({providerId:'a',label:'A',credential:'SYNTHETIC_COMBINED_A'}),b=w.addProfile({providerId:'b',label:'B',credential:'SYNTHETIC_COMBINED_B'});
  const common={contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},workspace:w,maxRounds:1,routes:[{id:'reviewer',role:'Propose comparison',handle:a.handle,model:'a/model',shareScope:'reviewed-question-bindings-and-conditional-feedback'}]};
  const stale=await prepareApprovedExpressionCouncil(common);w.removeProfile(b.handle);
- await assert.rejects(stale.execute({approveDisclosure:true,approvedPlanPin:stale.planPin}),e=>e.code==='PROFILE_SET_CHANGED');assert.deepEqual(calls,[]);
- await assert.rejects(stale.execute({approveDisclosure:true,approvedPlanPin:stale.planPin}),/CONSUMED/);
- const fresh=await prepareApprovedExpressionCouncil(common),result=await fresh.execute({approveDisclosure:true,approvedPlanPin:fresh.planPin});
+ await assert.rejects(stale.execute({consentInspector:allowOnce(),approvedPlanPin:stale.planPin}),e=>e.code==='PROFILE_SET_CHANGED');assert.deepEqual(calls,[]);
+ await assert.rejects(stale.execute({consentInspector:allowOnce(),approvedPlanPin:stale.planPin}),/CONSUMED/);
+ const fresh=await prepareApprovedExpressionCouncil(common),result=await fresh.execute({consentInspector:allowOnce(),approvedPlanPin:fresh.planPin});
  assert.deepEqual(calls,['a']);assert.equal(result.decisionAuthority,'NONE');
 });

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {runExpressionCouncil} from '../expression-council.js';
 import {compilerFinanceFixture} from '../examples/reviewed-compiler.mjs';
 import {createProviderWorkspace} from '../../sutra-inference/provider-workspace.js';
+import {createDisclosureConsentInspector} from '../../sutra-consent/index.js';
+const allowOnce=()=>createDisclosureConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
 const expression='[ocf26] > [ocf25]',scope='reviewed-question-bindings-and-conditional-feedback';
 function setup(id,model,proposed=expression){let seed=1;const seen=[],limits={maxCalls:1,maxInputBytes:50000,maxOutputTokens:1024,maxConcurrent:1};
  const workspace=createProviderWorkspace({catalog:[{id,label:id,models:[model]}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,transports:[{providerId:id,send:async req=>{seen.push(req.operation);return {actualInputBytes:1,actualOutputTokens:1,value:{text:JSON.stringify({version:1,kind:'expression',expression:proposed})}};}}]});
@@ -31,18 +33,18 @@ test('one-shot plan binds exact route, scope and question; replacement needs a n
  const common={contractText:f.contractText,contractPin:f.pin,disclosure,maxRounds:1};
  const x=await prepareApprovedExpressionCouncil({...common,routes:a.routes,workspace:a.workspace}),y=await prepareApprovedExpressionCouncil({...common,routes:b.routes,workspace:b.workspace});
  assert.notEqual(x.planPin,y.planPin);assert.equal(a.seen.length+b.seen.length,0);assert.equal(JSON.stringify(x.plan).includes('136162'),false);
- await assert.rejects(y.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_PIN/);assert.equal(b.seen.length,0);
+ await assert.rejects(y.execute({consentInspector:allowOnce(),approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_PIN/);assert.equal(b.seen.length,0);
  disclosure.bindingIds.push('ppe25');a.routes[0].role='unapproved changed role';
- const r=await x.execute({approveDisclosure:true,approvedPlanPin:x.planPin});assert.equal(r.contractDigest,f.pin);assert.equal(a.seen[0].role,'Propose a comparison');assert.deepEqual(a.seen[0].bindings.map(x=>x.id),['ocf25','ocf26']);
- await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_CONSUMED/);assert.equal(a.seen.length,1);
- const r2=await y.execute({approveDisclosure:true,approvedPlanPin:y.planPin});assert.equal(r2.candidates[0].proposalDigest,r.candidates[0].proposalDigest);assert.equal(b.seen.length,1);
+ const r=await x.execute({consentInspector:allowOnce(),approvedPlanPin:x.planPin});assert.equal(r.contractDigest,f.pin);assert.equal(a.seen[0].role,'Propose a comparison');assert.deepEqual(a.seen[0].bindings.map(x=>x.id),['ocf25','ocf26']);
+ await assert.rejects(x.execute({consentInspector:allowOnce(),approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_CONSUMED/);assert.equal(a.seen.length,1);
+ const r2=await y.execute({consentInspector:allowOnce(),approvedPlanPin:y.planPin});assert.equal(r2.candidates[0].proposalDigest,r.candidates[0].proposalDigest);assert.equal(b.seen.length,1);
 });
 
 test('a revoked captured route consumes its valid approval attempt without contact or fallback',async()=>{
  const f=await compilerFinanceFixture(),a=setup('provider-a','custom/a');
  const x=await prepareApprovedExpressionCouncil({contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:a.routes,workspace:a.workspace,maxRounds:1});
  a.workspace.removeProfile(a.routes[0].handle);
- await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/ROUTE/);
+ await assert.rejects(x.execute({consentInspector:allowOnce(),approvedPlanPin:x.planPin}),/ROUTE/);
  assert.equal(a.seen.length,0);assert.equal(a.workspace.budgetSnapshot().global.used.calls,0);
- await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/CONSUMED/);
+ await assert.rejects(x.execute({consentInspector:allowOnce(),approvedPlanPin:x.planPin}),/CONSUMED/);
 });
