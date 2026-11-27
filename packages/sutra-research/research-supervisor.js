@@ -184,7 +184,9 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  if(state!=='paused')state='closed';
  const covered=new Set(passages.flatMap(p=>p.matched)),all=terms(plan.objective);
  const verified=verifyEvidence(documents,passages),numericObservations=extractNumericObservations(passages,verified.refs),numericComparisons=compareNumericObservations(numericObservations),lineage=compareSourceLineage(documents),evidenceGraph=createEvidenceGraph(documents,verified.refs,numericObservations,numericComparisons,lineage);
+ emit('evidence.indexed',{role:'gear',passages:verified.passageCount});
  const evidenceIndex={...verified,numericObservations,numericComparisons,lineage,evidenceGraph,analysisKind:'deterministic_candidate_index'};
  const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,researchPlan:{...researchPlan,questions:questionProgress(researchPlan,queries)},queries,documents,passages,evidenceIndex,...(plan.modelPolicy?{intelligence,modelReceipts,modelWebActions,modelOnlyAnswer,modelConfiguration:{webAccess:plan.modelPolicy.webAccess,reviewMode:plan.modelPolicy.reviewMode,roles:plan.modelPolicy.roles.map(({role,vendor,model})=>({role,vendor,model}))}}:{}),failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:plan.modelPolicy?'Model output with explicit web provenance; citation integrity and review are not empirical truth, independent verification or sufficiency.':'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
+ emit('report.assembled',{role:'node',status:state,passages:verified.passageCount});
  emit(state==='paused'?'session.pause':'session.close',{reason});await checkpoint();return report;
 }
