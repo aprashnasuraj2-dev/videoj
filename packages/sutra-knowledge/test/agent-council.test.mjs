@@ -58,13 +58,13 @@ test('council works through heterogeneous wire protocol adapters without changin
  const {createProtocolWorkspace}=await import('../../sutra-inference/protocol-workspace.js');
  let seed=1;const seen=[];
  const limits={maxCalls:4,maxInputBytes:50000,maxOutputTokens:2048,maxConcurrent:2};
- const workspace=createProtocolWorkspace({connections:[{id:'custom-wire-a',label:'Private A',protocol:'openai-compatible-json',endpoint:'https://private-a.example.com/v1/chat/completions',transportClass:'hosted',models:['custom/a']},{id:'custom-wire-b',label:'Private B',protocol:'anthropic-messages-json',endpoint:'https://private-b.example.com/v1/messages',transportClass:'hosted',models:['custom/b']}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async x=>{
+ const workspace=createProtocolWorkspace({connections:[{id:'custom-wire-a',label:'Private A',protocol:'openai-compatible-json',endpoint:'https://private-a.example.com/v1/chat/completions',transportClass:'hosted',models:['custom/a'],capabilities:{'custom/a':['text.generate']}},{id:'custom-wire-b',label:'Private B',protocol:'anthropic-messages-json',endpoint:'https://private-b.example.com/v1/messages',transportClass:'hosted',models:['custom/b'],capabilities:{'custom/b':['text.generate']}}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async x=>{
   const body=JSON.parse(x.bodyText),operation=JSON.parse(body.messages.at(-1).content);seen.push({id:x.connectionId,operation});
   const content=proposal(operation.agentId==='planner'?'section_declared':'section_derived');
   return {status:200,bodyText:JSON.stringify(x.protocol==='openai-compatible-json'?{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content}}],usage:{completion_tokens:3}}:{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:content}],usage:{output_tokens:3}})};
  }});
  const a=workspace.addProfile({providerId:'custom-wire-a',label:'A',credential:A}),b=workspace.addProfile({providerId:'custom-wire-b',label:'B',credential:B});
- const routes=[{id:'planner',role:'propose',handle:a.handle,model:'custom/a',shareScope:scope},{id:'critic',role:'challenge',handle:b.handle,model:'custom/b',shareScope:scope}];
+ const routes=[{id:'planner',role:'propose',handle:a.handle,model:'custom/a',shareScope:scope,requires:['text.generate']},{id:'critic',role:'challenge',handle:b.handle,model:'custom/b',shareScope:scope,requires:['text.generate']}];
  const result=await invoke({workspace,routes});assert.equal(result.methods.length,2);assert.equal(result.agreement,'DISTINCT_METHODS');assert.equal(seen.length,4);assert.equal(seen[2].operation.feedback.length,2);assert.equal(workspace.budgetSnapshot().global.used.actualOutputTokens,12);
 });
 
@@ -100,4 +100,16 @@ test('unknown charge holds a slot, other profile can still proceed, no retries o
 test('cancelled wave never dispatches waiting agents',async()=>{
  const s=setup(()=>new Promise(()=>{}),()=>proposal('section_derived'),{calls:4,concurrent:1});
  const r=await invoke(s,{timeoutMs:15});assert.equal(s.seen.length,1);assert.equal(r.rounds.length,0);assert.equal(r.termination,'CANCELLED_OR_TIMEOUT');
+});
+
+
+test('council capability mismatch refuses during route preparation with zero model contact',async()=>{
+ let contacts=0,seed=90;
+ const {createProtocolWorkspace}=await import('../../sutra-inference/protocol-workspace.js');
+ const limits={maxCalls:2,maxInputBytes:50000,maxOutputTokens:2048,maxConcurrent:1};
+ const workspace=createProtocolWorkspace({connections:[{id:'limited-local',label:'Limited local',protocol:'ollama-chat-json',endpoint:'http://127.0.0.1:11434/api/chat',transportClass:'local',models:['limited/model'],capabilities:{'limited/model':['text.generate']}}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async()=>{contacts++;return {status:500,bodyText:'{}'};}});
+ const p=workspace.addProfile({providerId:'limited-local',label:'Local',credential:'LIMITED_CAPABILITY_SECRET_123'});
+ const routes=[{id:'planner',role:'propose',handle:p.handle,model:'limited/model',shareScope:scope,requires:['tool.call']}];
+ await assert.rejects(runAgentCouncil({caseText:caseText(),question:'Compare declared stiffness assumptions.',workspace,routes,maxRounds:1}),e=>e.code==='ROUTE');
+ assert.equal(contacts,0);assert.equal(workspace.budgetSnapshot().global.used.calls,0);
 });

@@ -80,7 +80,8 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
  }
  const map=new Map();
  for(const c of connections){
-  if(!closed(c,['id','label','protocol','endpoint','transportClass','models'])||typeof c.id!=='string'||!ID.test(c.id)||map.has(c.id)||!str(c.label,64)||!registry.has(c.protocol)||!Array.isArray(c.models)||c.models.length<1||c.models.length>16||!dense(c.models)||c.models.some(x=>typeof x!=='string'||!MODEL.test(x))||new Set(c.models).size!==c.models.length)stop('CONNECTION');
+  const connectionKeys=plain(c)&&Object.hasOwn(c,'capabilities')?['id','label','protocol','endpoint','transportClass','models','capabilities']:['id','label','protocol','endpoint','transportClass','models'];
+  if(!closed(c,connectionKeys)||typeof c.id!=='string'||!ID.test(c.id)||map.has(c.id)||!str(c.label,64)||!registry.has(c.protocol)||!Array.isArray(c.models)||c.models.length<1||c.models.length>16||!dense(c.models)||c.models.some(x=>typeof x!=='string'||!MODEL.test(x))||new Set(c.models).size!==c.models.length)stop('CONNECTION');
   map.set(c.id,Object.freeze({...c,endpoint:endpoint(c.endpoint,c.transportClass),models:Object.freeze([...c.models])}));
  }
  const transports=[...map.values()].map(connection=>({providerId:connection.id,send:async({providerId,model,credential,operation})=>{
@@ -94,7 +95,7 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
   if(!closed(decoded,['text','outputTokens'])||!str(decoded.text,16000)||!size(decoded.outputTokens,0,operation.outputCap))stop('USAGE');
   return {actualInputBytes:bytes(operation.wireText),actualOutputTokens:decoded.outputTokens,value:{text:decoded.text}};
  }}));
- const workspace=createProviderWorkspace({catalog:[...map.values()].map(({id,label,models})=>({id,label,models})),transports,globalLimits,defaultProfileLimits,leaseTicks,randomBytes,clock});
+ const workspace=createProviderWorkspace({catalog:[...map.values()].map(({id,label,models,capabilities})=>({id,label,models,...(capabilities===undefined?{}:{capabilities})})),transports,globalLimits,defaultProfileLimits,leaseTicks,randomBytes,clock});
  return Object.freeze({...workspace,transportMode:'injected-protocol-laboratory',
   connections:Object.freeze([...map.values()].map(({id,label,protocol,transportClass,models})=>Object.freeze({id,label,protocol,transportClass,models}))),
   async execute(input){
