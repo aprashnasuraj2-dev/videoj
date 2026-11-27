@@ -5,6 +5,8 @@ const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});}
 export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const bounded=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
+const modelApprovals=new WeakSet();
+export function assertModelAuthorization(a){assertResearchAuthorization(a);if(!modelApprovals.has(a))fail('MODEL_DISCLOSURE_APPROVAL');}
 const grants=new WeakSet(),restored=new WeakMap(),claimed=new WeakSet();
 export function claimResearchRun(a){assertResearchAuthorization(a);if(claimed.has(a))fail('CONSUMED');claimed.add(a);}
 export function researchResumeState(a){assertResearchAuthorization(a);return restored.has(a)?structuredClone(restored.get(a)):null;}
@@ -13,16 +15,30 @@ export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|A
 export function admitManifest(text){
  if(typeof text!=='string'||Buffer.byteLength(text)>16384)fail('MANIFEST');
  let p;try{p=parseUniqueJson(text,{maxChars:16384,maxDepth:8});}catch{fail('MANIFEST');}
- if(!exact(p,['schema','objective','scope','budget','providers'])||p.schema!=='sutra-autonomous-research/v1'||typeof p.objective!=='string'||p.objective.trim()!==p.objective||!p.objective||p.objective.length>1000||secretLike(p.objective)||/[\u0000-\u001f\u007f]/.test(p.objective))fail('OBJECTIVE');
+ const hasModels=Object.hasOwn(p??{},'modelPolicy');
+ if(!exact(p,['schema','objective','scope','budget','providers',...(hasModels?['modelPolicy']:[])])||p.schema!=='sutra-autonomous-research/v1'||typeof p.objective!=='string'||p.objective.trim()!==p.objective||!p.objective||p.objective.length>1000||secretLike(p.objective)||/[\u0000-\u001f\u007f]/.test(p.objective))fail('OBJECTIVE');
  const scopeKeys=['publicWeb','queryDisclosureAllowed','allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'];
  if(Object.hasOwn(p.scope??{},'allowCrossOriginLinks'))scopeKeys.push('allowCrossOriginLinks');
  if(Object.hasOwn(p.scope??{},'allowPdf'))scopeKeys.push('allowPdf');
  for(const key of ['allowRedirects','allowPublicQueryParameters'])if(Object.hasOwn(p.scope??{},key))scopeKeys.push(key);
  if(!exact(p.scope,scopeKeys)||Object.hasOwn(p.scope,'allowCrossOriginLinks')&&typeof p.scope.allowCrossOriginLinks!=='boolean'||Object.hasOwn(p.scope,'allowPdf')&&typeof p.scope.allowPdf!=='boolean'||['allowRedirects','allowPublicQueryParameters'].some(k=>Object.hasOwn(p.scope,k)&&typeof p.scope[k]!=='boolean')||p.scope.publicWeb!==true||p.scope.queryDisclosureAllowed!==true||['allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'].some(k=>p.scope[k]!==false))fail('SCOPE');
  const limits={maxSearches:[2,30],maxDocuments:[1,60],maxLinkDepth:[0,3],maxDurationSeconds:[5,1200],maxDownloadBytes:[65536,52428800],maxCostMicros:[1,1000000]};
+ if(hasModels)limits.maxModelCalls=[3,30];
  if(!exact(p.budget,Object.keys(limits))||Object.entries(limits).some(([k,[a,b]])=>!bounded(p.budget[k],a,b)))fail('BUDGET');
  if(!Array.isArray(p.providers)||p.providers.length<1||p.providers.length>2||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
- const plan=Object.freeze({...p,scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
+ let modelPolicy;
+ if(hasModels){
+  const m=p.modelPolicy;
+  if(!exact(m,['roles','allowPublicEvidenceDisclosure'])||m.allowPublicEvidenceDisclosure!==true||!Array.isArray(m.roles)||m.roles.length!==3)fail('MODEL_POLICY');
+  const roles=new Set();
+  for(const r of m.roles){
+   if(!exact(r,['role','vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'])||!['bot','orb','spark'].includes(r.role)||roles.has(r.role)||!['openai','anthropic','gemini'].includes(r.vendor)||typeof r.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)||!bounded(r.maxInputBytes,4096,65536)||!bounded(r.maxOutputTokens,128,4096)||!bounded(r.estimatedMaxCostMicros,1,1000000))fail('MODEL_ROLE');
+   roles.add(r.role);
+  }
+  if(m.roles.find(r=>r.role==='orb').vendor===m.roles.find(r=>r.role==='spark').vendor)fail('CRITIC_VENDOR');
+  modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,roles:Object.freeze(m.roles.map(r=>Object.freeze({...r})))});
+ }
+ const plan=Object.freeze({...p,...(modelPolicy?{modelPolicy}:{}),scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
  return Object.freeze({plan,planPin:digest(text),costPolicy:'operator-supplied estimates; not a vendor invoice guarantee'});
 }
 function admitResume(text,expected,p){
@@ -35,16 +51,19 @@ function admitResume(text,expected,p){
  if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144+u.documents*(p.plan.scope.allowPdf===true?1048576:262144))fail('RESUME_USAGE');
  return s;
 }
-export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,signal,clock=()=>Date.now(),resumeText,resumePin}={}){
+export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,approveModelDisclosure=false,signal,clock=()=>Date.now(),resumeText,resumePin}={}){
  // Input re-admission avoids accepting a caller-forged mutable manifest object.
  const p=admitManifest(manifest);
  if(approvedPlanPin!==p.planPin||approvePublicContact!==true||approveEstimatedCost!==true)fail('APPROVAL');
+ if(p.plan.modelPolicy&&approveModelDisclosure!==true)fail('MODEL_DISCLOSURE_APPROVAL');
+ // Model-aware durable resume requires a distinct ledger and state transition schema.
+ if(p.plan.modelPolicy&&(resumeText!==undefined||resumePin!==undefined))fail('MODEL_RESUME_UNSUPPORTED');
  const prior=resumeText!==undefined||resumePin!==undefined?admitResume(resumeText,resumePin,p):null;
  const c=new AbortController(),now=clock(),started=prior?.startedAt??now,expires=prior?.expiresAt??(started+p.plan.budget.maxDurationSeconds*1000);
  if(!Number.isSafeInteger(now)||now<started||now>=expires)fail('INACTIVE');
  const cancel=()=>c.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
  const timer=setTimeout(cancel,expires-now);timer.unref?.();
- let closed=false;const usage=prior?{...prior.usage}:{searches:0,documents:0,reservedBytes:0,reservedCostMicros:0};
+ let closed=false;const usage=prior?{...prior.usage}:{searches:0,documents:0,reservedBytes:0,reservedCostMicros:0,...(p.plan.modelPolicy?{modelCalls:0,modelInputBytes:0,modelOutputTokensReserved:0}:{})};
  function assertActive(){if(closed||c.signal.aborted||clock()>=expires)fail('INACTIVE');}
  // Reservations are synchronous and conservative: failures are not refunded.
  function reserve(kind,{bytes,costMicros=0}={}){
@@ -53,5 +72,11 @@ export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact
   if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
   if(k)usage[k]++;usage.reservedBytes+=bytes;usage.reservedCostMicros+=costMicros;
  }
- const grant=Object.freeze({...p,startedAt:started,expiresAt:expires,signal:c.signal,assertActive,reserve,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);if(prior)restored.set(grant,prior);return grant;
+ function reserveModel(role,inputBytes){
+  assertActive();const r=p.plan.modelPolicy?.roles.find(x=>x.role===role),b=p.plan.budget;
+  if(!r||!bounded(inputBytes,1,r.maxInputBytes))fail('MODEL_RESERVATION');
+  if(usage.modelCalls>=b.maxModelCalls||usage.reservedBytes+262144>b.maxDownloadBytes||usage.reservedCostMicros+r.estimatedMaxCostMicros>b.maxCostMicros)fail('MODEL_BUDGET_EXHAUSTED');
+  usage.modelCalls++;usage.modelInputBytes+=inputBytes;usage.modelOutputTokensReserved+=r.maxOutputTokens;usage.reservedBytes+=262144;usage.reservedCostMicros+=r.estimatedMaxCostMicros;
+ }
+ const grant=Object.freeze({...p,startedAt:started,expiresAt:expires,signal:c.signal,assertActive,reserve,reserveModel,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);if(p.plan.modelPolicy)modelApprovals.add(grant);if(prior)restored.set(grant,prior);return grant;
 }
