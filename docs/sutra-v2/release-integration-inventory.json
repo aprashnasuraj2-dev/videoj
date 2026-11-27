@@ -3318,5 +3318,176 @@
       }
     ],
     "qualification": "Both PRs remain open. No merge, deletion or full parity claim."
+  },
+  "latestReconciliation": {
+    "observedAt": "2026-11-27T21:53:26Z",
+    "startedAt": "2026-11-27T21:49:18Z",
+    "main": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+    "startingCandidate": "038e6953500f3336d5566bb0099f76991e2b4b0f",
+    "implementationHead": "901709289065f65ef284fb94908318c1c89b0eac",
+    "sourceHeads": [
+      {
+        "pr": 65,
+        "sha": "cf1babd925a8dfef94d801e2d23c5f3caccc3d27",
+        "workflowSuccess": 7,
+        "workflowFailure": 0,
+        "mergeBase": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7"
+      },
+      {
+        "pr": 63,
+        "sha": "cd0c931d437f1fa3f6def66255fb618ed6f81e6a",
+        "workflowSuccess": 10,
+        "workflowFailure": 0
+      },
+      {
+        "pr": 49,
+        "sha": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+        "workflowSuccess": 17,
+        "workflowFailure": 2
+      },
+      {
+        "pr": 48,
+        "sha": "61a575449c7266aad3b731468c900927a8ba5bc9",
+        "workflowSuccess": 3,
+        "workflowFailure": 0
+      }
+    ],
+    "pathDispositions": [
+      {
+        "pr": 65,
+        "path": "packages/sutra-inference/provider-workspace.js",
+        "sourceBlob": "30cc4c208b88104bc119c5ad62133925b329bc38",
+        "candidateBefore": "3b309e36a7d35e4817baa7e39cf94a962b7704eb",
+        "candidateAfter": "1159d43e54892a0f53ad9075d3fc68f4b13eeb42",
+        "disposition": "retain newer cancellation/profile generation checks; bound map before descriptors; existing all-provider credential collision and array bounds retained",
+        "commit": "ad4f8c309f6283a196dfaa9c3ed47b60852c8be4"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+        "candidateAfter": "bd583f9644bc198c8032be6ead2a6d064fdd5c72",
+        "disposition": "restore two upstream adversarial tests verbatim plus oversized map descriptor-trap test",
+        "commit": "d9c74d9a4eb0dbf5eda97da811356ca028a31273"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-inference/protocol-workspace.js",
+        "sourceBlob": "74047d9c3b2013c2e3f83da9e5137113aedd88ce",
+        "candidateBlob": "bb23145a126683fc41c4be03d94dbfcf863181a3",
+        "disposition": "retain current capability forwarding and newer transport behavior"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-inference/test/protocol-workspace.test.mjs",
+        "sourceBlob": "64736c1a924755750e9dd1ac4af724639b12719c",
+        "candidateBlob": "f626aeb64df287ea75aad079d9280237d2e4c480",
+        "disposition": "generic protocol contract regression present; retain current tests"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-knowledge/approved-expression-council.js",
+        "sourceBlob": "26be181012ccff68c125759afa2834c8c553c421",
+        "candidateBlob": "f24059719f1b71ad085f5f43fbb5a914d5e5a6da",
+        "disposition": "capabilities pinned in plan plus newer revalidation of route and capability declarations; retain"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-knowledge/council-scheduler.js",
+        "sourceBlob": "eb4a760466f1e5d64138e4c1e04fe14f9f1c4243",
+        "candidateBlob": "2ffb36915d437e0b64550c6ad75180535df9fd5b",
+        "disposition": "negotiation before admission preserved; retain current scheduler"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-knowledge/test/agent-council.test.mjs",
+        "sourceBlob": "2ed8f206700ae349d7f67948d93b15d2e4d1e49f",
+        "candidateBlob": "2ed8f206700ae349d7f67948d93b15d2e4d1e49f",
+        "disposition": "identical blob including zero-contact mismatch regression"
+      },
+      {
+        "pr": 65,
+        "path": "packages/sutra-knowledge/test/approved-expression-council.test.mjs",
+        "sourceBlob": "1486f802fedc479bd6287bfd9105a1fee9b2882e",
+        "candidateBlob": "246ca58d8638f7261bdccb5ce47618b749d04a15",
+        "disposition": "approved capability pin regression present; retain newer tests"
+      },
+      {
+        "pr": 63,
+        "path": "apps/sutra-v2/src/history-host.js",
+        "sourceBlob": "39443422990c957f4ee3ccaa80bb58f1a1c50620",
+        "candidateAfter": "806c527b864ec5bf495e7f4815f0412c953be486",
+        "disposition": "retain independent replay/known pre-publication refusals; malformed descriptor failures after write dispatch remain outcome unknown",
+        "commit": "27fcd154b422539886f7b2f91a544a711e89c598"
+      },
+      {
+        "pr": 63,
+        "path": "apps/sutra-v2/test/history-host.test.mjs",
+        "sourceBlob": "570b0b3e7e990d709f71a3a6c1541f453fa17880",
+        "disposition": "restore missing upstream unit suite and add unreadable acknowledgement and successful/stale digest regressions",
+        "commit": "b78f0b75daffdb0c59d19273656e3adf18915e00"
+      },
+      {
+        "pr": 63,
+        "path": "apps/sutra-v2/local-history.mjs",
+        "sourceBlob": "eb7f441820abdfde3e14d6216f1ec4619e9f1d3e",
+        "disposition": "absent; do not copy launcher before reviewing ownership; current browser test injects a trusted host with actual filesystem store"
+      },
+      {
+        "pr": 63,
+        "path": "apps/sutra-v2/test/durable-recovery.cjs",
+        "sourceBlob": "d40f576ef84d44656c4ec319077d64c2f5894caa",
+        "disposition": "absent; current browser.cjs covers lost ack and stale CAS, full independent two-session parity not demonstrated"
+      },
+      {
+        "path": "apps/sutra-v2/src/browser-investigation.js",
+        "disposition": "guard current evidence selection and cancellation before transport, at model result and final receipt publication",
+        "commit": "0b952932bb9c3dfa6777b2ce6e49935921513428"
+      },
+      {
+        "path": "apps/sutra-v2/test/autonomous-workspace.cjs",
+        "disposition": "add browser fixture mutating selection during final model call; require refusal and no receipt",
+        "commit": "bf7226ff705fe9feeb2286e76a8470fd74fa3c97"
+      }
+    ],
+    "specification": {
+      "startCommit": "fd872b9221aeb8ff762b75a5badbf84b23c133cc",
+      "startBlob": "7a09be795cc3eee47f601f1a6bc7dc26d408f7a9",
+      "currentMain": "90d561d6185d3b5625f9d8055da4d259074af745",
+      "currentBlob": "b72fcdf433e323e30a6052e9e0c0718b835672c1",
+      "qualification": "current main still has identical MVP 0.3 file blob; full normative mapping remains open"
+    },
+    "evidence": [
+      {
+        "commit": "d9c74d9a4eb0dbf5eda97da811356ca028a31273",
+        "scope": "scoped verified",
+        "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46072854959/job/140753654296",
+        "result": "117/117 bounded inference tests including all three added capability regressions passed; 449/449 JS knowledge tests passed; formal dependency step later failed before TLC output, no full workflow success"
+      },
+      {
+        "commit": "baf4c8f3e097173980cf5774dc36b5928e28c338",
+        "scope": "candidate",
+        "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46072951121",
+        "result": "history-host tests newly included; exact CI pending at initial observation"
+      },
+      {
+        "commit": "bf7226ff705fe9feeb2286e76a8470fd74fa3c97",
+        "scope": "candidate",
+        "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46073083165",
+        "result": "late evidence selection browser regression pending"
+      },
+      {
+        "commit": "901709289065f65ef284fb94908318c1c89b0eac",
+        "scope": "candidate",
+        "result": "TLC size mismatch diagnostic only; existing exact length/SHA-256/SHA-1 pins unchanged; no rejected JAR execution"
+      }
+    ],
+    "release": "NO-GO",
+    "uncheckedPreRelease": 103,
+    "closures": [],
+    "limitations": [
+      "Local Git clone DNS unavailable; CI used for tests, no local full build.",
+      "No branch merge, deployment, DNS, paid inference, or secrets. Legacy PR #48/#49 path review remains partial.",
+      "Current PR #63 full two-session recovery and launcher reconciliation remain open."
+    ]
   }
 }
