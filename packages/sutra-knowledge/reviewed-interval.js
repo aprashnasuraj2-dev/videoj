@@ -95,6 +95,59 @@ export function evaluateQuantityConeIntervals(nodes,targetId,intervals){
  };
  return visitIntervalCone(nodes,targetId,inputRange).target.status;
 }
+// Exact extrema of the affine difference preserve shared-input cancellation.
+// A nonlinear subexpression is unsupported even if another branch would
+// multiply its result by zero, because it could be undefined in the domain.
+export function evaluateAffineQuantityCone(nodes,targetId,intervals){
+ const forms=new Map();
+ const scale=(form,factor)=>({
+  offset:mul(form.offset,factor),
+  terms:new Map([...form.terms].flatMap(([id,value])=>{
+   const product=mul(value,factor);return product[0]===0n?[]:[[id,product]];
+  }))
+ });
+ const combine=(left,right,subtract)=>{
+  const terms=new Map(left.terms);
+  for(const [id,coefficient] of right.terms){
+   const next=(subtract?sub:add)(terms.get(id)??zero,coefficient);
+   if(next[0]===0n)terms.delete(id);else terms.set(id,next);
+  }
+  return {offset:(subtract?sub:add)(left.offset,right.offset),terms};
+ };
+ // Kernel admission permits shuffled inputs. Process dependencies recursively,
+ // memoizing shared nodes; the admitted graph depth is bounded.
+ const byId=new Map(nodes.map(node=>[node.id,node]));
+ function visit(id){
+  if(forms.has(id))return forms.get(id);
+  const node=byId.get(id);
+  let form=null;
+  if(node.kind==='input')form=intervals.has(id)
+   ?{offset:zero,terms:new Map([[id,one]])}
+   :{offset:read(node.value),terms:new Map()};
+  else{
+   const [a,b]=node.args.map(visit);
+   if(a&&b){
+    if(node.op==='add'||node.op==='sub')form=combine(a,b,node.op==='sub');
+    if(node.op==='mul'&&!a.terms.size)form=scale(b,a.offset);
+    else if(node.op==='mul'&&!b.terms.size)form=scale(a,b.offset);
+    if(node.op==='div'&&!b.terms.size&&b.offset[0]!==0n)form=scale(a,div(one,b.offset));
+   }
+  }
+  forms.set(id,form);return form;
+ }
+ const target=byId.get(targetId),[left,right]=target.args.map(visit);
+ if(!left||!right)return null;
+ const {offset,terms}=combine(left,right,true);
+ let lo=offset,hi=offset;
+ for(const [id,coefficient] of terms){
+  const {lower,upper}=intervals.get(id);
+  const a=mul(coefficient,read(lower)),b=mul(coefficient,read(upper));
+  if(cmp(a,b)<=0){lo=add(lo,a);hi=add(hi,b);}
+  else{lo=add(lo,b);hi=add(hi,a);}
+ }
+ return compare(target.op,[lo,hi],[zero,zero],false);
+}
+
 export async function evaluateReviewedIntervals(versionText,versionPin,planText,planPin){
  if(typeof planPin!=='string'||await casePin(planText)!==planPin)fail('PIN');
  const replay=await replayInvestigationVersion(versionText,versionPin),raw=parse(versionText,6),contract=parse(raw.contractText),batch=parse(raw.batchText,5),p=parse(planText,6);

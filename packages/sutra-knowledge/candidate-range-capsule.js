@@ -1,7 +1,7 @@
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
 import {projectCandidateComputation, replayCandidateCone} from './candidate-capsule.js';
-import {evaluateQuantityConeIntervals, reviewedRangeContains} from './reviewed-interval.js';
+import {evaluateAffineQuantityCone, evaluateQuantityConeIntervals, reviewedRangeContains} from './reviewed-interval.js';
 
 export const RANGE_CAPSULE_VERSION = 'sutra-candidate-range-capsule/v1';
 const PIN = /^sha256:[a-f0-9]{64}$/;
@@ -29,9 +29,18 @@ function boundsFor(nodes) {
 async function replay(nodes, target) {
   const {point, intervals} = boundsFor(nodes);
   const actual = await replayCandidateCone(point, target);
-  const state = evaluateQuantityConeIntervals(point, target, intervals);
-  if (state === 'HOLDS_FOR_ALL_DECLARED_VALUES' && actual === 'CONDITIONALLY_SATISFIED') return actual;
-  if (state === 'REFUTED_FOR_ALL_DECLARED_VALUES' && actual === 'CONDITIONALLY_REFUTED') return actual;
+  let state = evaluateQuantityConeIntervals(point, target, intervals);
+  let analysis = 'INTERVAL_ENCLOSURE';
+  if (state !== 'HOLDS_FOR_ALL_DECLARED_VALUES' && state !== 'REFUTED_FOR_ALL_DECLARED_VALUES') {
+    try {
+      state = evaluateAffineQuantityCone(point, target, intervals);
+      analysis = 'EXACT_AFFINE_DIFFERENCE';
+    } catch (error) {
+      if (error.message !== 'INTERVAL_ARITHMETIC_LIMIT') throw error;
+    }
+  }
+  if (state === 'HOLDS_FOR_ALL_DECLARED_VALUES' && actual === 'CONDITIONALLY_SATISFIED' ||
+      state === 'REFUTED_FOR_ALL_DECLARED_VALUES' && actual === 'CONDITIONALLY_REFUTED') return {outcome: actual, analysis};
   fail('OUTCOME_NOT_INVARIANT');
 }
 
@@ -59,7 +68,7 @@ export async function exportCandidateRangeCapsule(versionText, versionPin, candi
     if (!reviewedRangeContains(lower, upper, node.value, {requireWidth: true})) fail('POINT_OUTSIDE_RANGE');
     return {id: node.id, kind: 'bounded_input', lower, upper, dimension: node.dimension, basis: node.basis};
   });
-  if (await replay(hidden, target) !== outcome) fail('REPLAY_MISMATCH');
+  if ((await replay(hidden, target)).outcome !== outcome) fail('REPLAY_MISMATCH');
   const text = JSON.stringify({version: RANGE_CAPSULE_VERSION, versionPin, candidateId, nodes: hidden, target, outcome});
   return Object.freeze({text, pin: await casePin(text)});
 }
@@ -70,10 +79,10 @@ export async function openCandidateRangeCapsule(text, retainedPin) {
   if (!keys(wire, ['version', 'versionPin', 'candidateId', 'nodes', 'target', 'outcome']) ||
       wire.version !== RANGE_CAPSULE_VERSION || typeof wire.versionPin !== 'string' || !PIN.test(wire.versionPin) ||
       typeof wire.candidateId !== 'string' || !ID.test(wire.candidateId)) fail('SHAPE');
-  const outcome = await replay(wire.nodes, wire.target);
+  const {outcome, analysis} = await replay(wire.nodes, wire.target);
   if (outcome !== wire.outcome) fail('REPLAY_MISMATCH');
   return Object.freeze({
-    versionPin: wire.versionPin, candidateId: wire.candidateId, outcome,
+    versionPin: wire.versionPin, candidateId: wire.candidateId, outcome, analysis,
     boundedQuantities: wire.nodes.filter(node => node.kind === 'bounded_input').length,
     suppliedQuantities: wire.nodes.filter(node => node.kind === 'input').length,
     sourceCorrespondence: 'PUBLISHER_DECLARATION', decisionAuthority: 'NONE'

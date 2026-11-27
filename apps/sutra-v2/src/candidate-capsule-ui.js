@@ -112,7 +112,9 @@ export function connectCandidateCapsule({by, download}) {
         : await openCandidateCapsule(text, expected);
       if (epoch === importEpoch) {
         replay.textContent = result.candidateId + ' · ' + result.outcome.replaceAll('_', ' ') +
-          ' across ' + result.suppliedQuantities + ' supplied and ' + (result.boundedQuantities ?? 0) + ' bounded quantities. Source correspondence is a publisher declaration.';
+          ' across ' + result.suppliedQuantities + ' supplied and ' + (result.boundedQuantities ?? 0) + ' bounded quantities.' +
+          (result.analysis === 'EXACT_AFFINE_DIFFERENCE' ? ' Shared-input cancellation was checked using exact affine arithmetic.' : '') +
+          ' Source correspondence is a publisher declaration.';
       }
     } catch {
       if (epoch === importEpoch) replay.textContent = 'Capsule refused. Check the file and separately received digest.';
