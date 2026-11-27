@@ -11,3 +11,6 @@ Reference archive inspected: outputs/src/components/agents/AgentAvatar.tsx (six 
 - PWA registration is opt-in; only the offline fallback and immutable hashed assets are cached. Navigations are network-first, and offline cannot certify or change a conclusion. No secret/source data is cached by the service worker.
 - The previous guided debugger remains at ?surface=debugger. Its original first-viewport test is preserved on that route. The orbital landing has a separate first-viewport regression.
 - No new dependencies or remote fonts. Fonts are system fallbacks, SVG uses DOM primitives rather than React/Motion/Canvas. The 1997 skin is local and reduced motion is respected.
+
+## Rehearsal routing
+Configured model descriptors affect only simulated selection: the assigned route, then explicit fallback IDs, then the configured priority. Per-role reservation caps can pause simulated steps; these units are not actual tokens or billing. The actual local council still uses its own two-slot configuration and consent. Modern light/dark and 1997 treatments preserve the same investigation engine; the obsolete blink/marquee behavior is intentionally replaced by a static retro ticker.
