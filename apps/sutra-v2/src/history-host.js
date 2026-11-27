@@ -49,10 +49,13 @@ export function createHistoryHostClient(capability=globalThis.sutraHistoryHost){
    response=await Promise.race([capability.call(operation,payload),stopped]);
   }catch{fail(writing?'OUTCOME_UNKNOWN':signal?.aborted?'CANCELLED':'TRANSPORT');}
   finally{signal?.removeEventListener('abort',onAbort);}
-  const ok=data(response,'ok');
+  let ok,code;
+  try{
+   ok=data(response,'ok');
+   if(ok===false)code=responseError(data(response,'error'));
+  }catch{fail(writing?'OUTCOME_UNKNOWN':'RESPONSE');}
   if(typeof ok!=='boolean')fail(writing?'OUTCOME_UNKNOWN':'RESPONSE');
   if(!ok){
-   const code=responseError(data(response,'error'));
    // Only known pre-publication CAS/lock refusals are definitive. I/O may
    // fail after publication, so a lost acknowledgement is never a rejection.
    if(writing&&!/^HISTORY_STORE_(?:STALE_OR_ROLLED_BACK_HEAD|ALREADY_INITIALIZED|BUSY_OR_CRASHED_LOCK)$/.test(code))fail('OUTCOME_UNKNOWN');
