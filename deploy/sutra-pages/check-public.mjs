@@ -51,7 +51,8 @@ export async function observePublic({fetchImpl=fetch,candidate=resolve(root,'dis
   const data=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:8192,maxDepth:16});
   if(expectedModel===null){if(data.inference!=='disabled')fail('UNEXPECTED_INFERENCE_CONFIGURATION');return {inference:'disabled'};}
   if(data.inference!=='configured'||data.model!==expectedModel||data.routerBase!=='/api/v1'||data.publisherFunded!==true||data.byok!==false||!['hosted','self_hosted'].includes(data.backend)||!/^[a-f0-9]{64}$/.test(data.inferenceContractId??''))fail('ROUTER_CONTRACT');
-  return {inference:'configured',model:data.model,backend:data.backend,inferenceContractId:data.inferenceContractId};
+  if(data.provider!==undefined&&!(data.backend==='hosted'?['openai','gemini','groq','openrouter']:['self_hosted']).includes(data.provider))fail('ROUTER_CONTRACT');
+  return {inference:'configured',model:data.model,backend:data.backend,provider:data.provider??'publisher_unspecified',inferenceContractId:data.inferenceContractId};
  });
  return {schema:'sutra-public-observation/v1',observedAt:new Date().toISOString(),status:checks.every(c=>c.status==='passed')?'matched':'not_verified',checks,releaseAuthority:'NONE',qualification:'Read-only GET observations relative to the supplied candidate bytes; no browser invocation, actual inference, rollback or identity proof.'};
 }

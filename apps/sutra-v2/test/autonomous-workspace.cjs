@@ -14,7 +14,7 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
  try{
   const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'}),errors=[],external=[];
   const output=path.resolve(__dirname,'../test-output');fs.mkdirSync(output,{recursive:true});
-  const exportReceipt=async(stem,network,modelCalls)=>{const [dl]=await Promise.all([page.waitForEvent('download'),page.locator('#orb-autonomous-receipt').click()]);assert.equal(dl.suggestedFilename(),'sutra-browser-run-receipt.json');const receipt=JSON.parse(fs.readFileSync(await dl.path(),'utf8'));assert.equal(receipt.network,network);assert.equal(receipt.modelCalls,modelCalls);assert.equal(receipt.authority,'NONE');assert.doesNotMatch(JSON.stringify(receipt),/USD 100 million|Battery storage|fixture-groq-key|Plan a battery cost investigation/);fs.writeFileSync(path.join(output,stem+'.json'),JSON.stringify({testTransport:'injected_HTTP_fixture',receipt},null,2)+'\n');await page.locator('#orb-autonomous-panel').screenshot({path:path.join(output,stem+'.png')});return receipt;};
+  const exportReceipt=async(stem,network,modelCalls)=>{const [dl]=await Promise.all([page.waitForEvent('download'),page.locator('#orb-autonomous-receipt').click()]);assert.equal(dl.suggestedFilename(),'sutra-browser-run-receipt.json');const receipt=JSON.parse(fs.readFileSync(await dl.path(),'utf8'));assert.equal(receipt.network,network);assert.equal(receipt.modelCalls,modelCalls);assert.equal(receipt.authority,'NONE');assert.equal(receipt.provider,'groq');assert.equal(receipt.inferenceContractId,contract);assert.doesNotMatch(JSON.stringify(receipt),/USD 100 million|Battery storage|fixture-groq-key|Plan a battery cost investigation/);fs.writeFileSync(path.join(output,stem+'.json'),JSON.stringify({testTransport:'injected_HTTP_fixture',receipt},null,2)+'\n');await page.locator('#orb-autonomous-panel').screenshot({path:path.join(output,stem+'.png')});return receipt;};
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).origin!==origin&&new URL(r.url()).protocol!=='blob:')external.push(r.url());});
   await page.goto(origin);await page.locator('#sutra-orbit').waitFor();
   await page.locator('#orb-nav').getByRole('button',{name:'API routes'}).click();
@@ -39,7 +39,7 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   // Actual V2 public artifacts are loaded in the browser, with only inference
   // responses injected. No Node graph orchestration or automatic mock fallback.
   const contract='a'.repeat(64),browserCalls=[];
-  await page.route('**/api/status',route=>route.fulfill({json:{inference:'configured',model:'browser-fixture-model',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',inferenceContractId:contract}}));
+  await page.route('**/api/status',route=>route.fulfill({json:{inference:'configured',model:'browser-fixture-model',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',provider:'groq',inferenceContractId:contract}}));
   let delegate=true,evidenceMode=false,wrongSpan=false,peerMode=false;
   await page.route('**/api/v1/chat/completions',async route=>{
    const req=route.request(),body=req.postDataJSON();browserCalls.push(body);assert.equal(req.headers()['x-sutra-inference-contract'],contract);assert.equal(req.headers()['authorization'],undefined);assert.equal(body.model,'browser-fixture-model');

@@ -27,10 +27,10 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   else if(network.definition.tools.length!==2||!network.definition.tools.some(a=>a.name==='critic'))fail('BROWSER_GRAPH');
   const {bytes}=await readBoundedResponse({url:origin+'/api/status',fetchImpl,signal:controller.signal,maxBytes:8192,init:{method:'GET',headers:{Accept:'application/json'}},inspect:r=>{if(!isFullJson(r))fail('BROWSER_ROUTER_UNAVAILABLE');return true;}});
   route=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:8192,maxDepth:16});
-  if(route?.inference!=='configured'||route.routerBase!=='/api/v1'||route.publisherFunded!==true||route.byok!==false||!['hosted','self_hosted'].includes(route.backend)||typeof route.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(route.model)||route.model==='mock-1'||typeof route.inferenceContractId!=='string'||!/^[a-f0-9]{64}$/.test(route.inferenceContractId))fail('BROWSER_ROUTER_UNAVAILABLE');
+  if(route?.inference!=='configured'||route.routerBase!=='/api/v1'||route.publisherFunded!==true||route.byok!==false||!['hosted','self_hosted'].includes(route.backend)||route.provider!==undefined&&!(route.backend==='hosted'?['openai','gemini','groq','openrouter']:['self_hosted']).includes(route.provider)||typeof route.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(route.model)||route.model==='mock-1'||typeof route.inferenceContractId!=='string'||!/^[a-f0-9]{64}$/.test(route.inferenceContractId))fail('BROWSER_ROUTER_UNAVAILABLE');
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
  const definition=structuredClone(network.definition),graphPin=await digest(definition),model=route.model,contract=route.inferenceContractId;
- const preview=Object.freeze({objective,model,router:origin+'/api/v1',graphPin,network:network.name,front:network.frontMan,limits,...(evidence?{evidence}:{}),...(peerUrl?{peerUrl}:{})});
+ const preview=Object.freeze({objective,model,router:origin+'/api/v1',provider:route.provider??'publisher_unspecified',backend:route.backend,inferenceContractId:contract,graphPin,network:network.name,front:network.frontMan,limits,...(evidence?{evidence}:{}),...(peerUrl?{peerUrl}:{})});
  let consumed=false;
  return Object.freeze({preview,async run({signal,onEvent,decidePeer}={}){
   if(consumed)fail('BROWSER_PLAN_CONSUMED');consumed=true;
