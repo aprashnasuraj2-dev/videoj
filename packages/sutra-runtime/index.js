@@ -362,7 +362,8 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
  if(matching.length!==1)fail('NETWORK_MATCH','Exactly one matching published network is required.');
  const entry=matching[0];
- if(typeof entry.hocon!=='string'||!entry.hocon||typeof entry.front_man!=='string')fail('MANIFEST','Network entry lacks its declared data artifact or front.');
+ if(typeof entry.hocon!=='string'||!entry.hocon||entry.hocon.length>2048||typeof entry.front_man!=='string')fail('MANIFEST','Network entry lacks its declared data artifact or front.');
+ if(!validId(entry.front_man)||['constructor','prototype','__proto__'].includes(entry.front_man))fail('NETWORK_ID','Invalid published front identity.');
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared graph URL.');}
  if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
@@ -468,6 +469,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  if(matching.length!==1)fail('NETWORK_MATCH','Exactly one matching published peer network is required.');
  const entry=matching[0];
  if(typeof entry.hocon!=='string'||!entry.hocon||entry.hocon.length>2048||typeof entry.front_man!=='string')fail('MANIFEST','Peer network entry lacks its declared data artifact or front.');
+ if(!validId(entry.front_man)||['constructor','prototype','__proto__'].includes(entry.front_man))fail('NETWORK_ID','Invalid published front identity.');
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
