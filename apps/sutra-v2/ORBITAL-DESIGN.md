@@ -23,3 +23,5 @@ The master workbench and orbital Evidence, Quantities, Interpretations and Compu
 
 ## Demand-driven orbital rendering
 The orbital scene no longer schedules a permanent idle requestAnimationFrame loop or idle breathing animation. A coalesced presentation clock wakes on motion, rehearsal, navigation, and visibility changes; settled/hidden scenes stop rendering, and hidden browser tabs suspend the clock. CSS avatar animation is paused in idle states. Actual frame-time and battery improvements remain to be measured on devices. Browser regressions inspect the new council activity projection and real dependency inspector.
+
+The activity envelope now declares the exact participating slot IDs on start and rejects unknown, duplicate, or over-capacity teams. The projection supports the kernel's existing maximum of four slots; this does not expand the browser's two-slot consent UI or the separate expression slot-round budget. Browser coverage additionally exercises immediate cancellation with zero admitted proposals.

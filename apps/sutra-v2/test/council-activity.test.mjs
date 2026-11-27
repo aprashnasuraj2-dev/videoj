@@ -24,7 +24,7 @@ test('cancellation, duplicate events, stale runs and malformed payloads fail clo
  assert.equal(a.snapshot().runId,2);
 });
 test('no invented proposal or response; rejected route can be reported without transport',()=>{
- const a=createCouncilActivity();const e=(phase,sequence,agent=null,round=null)=>({version:1,origin:'local-scripted',runId:1,phase,sequence,agent,round});
+ const a=createCouncilActivity();const e=(phase,sequence,agent=null,round=null)=>({version:1,origin:'local-scripted',runId:1,phase,sequence,agent,round,agentIds:phase==='started'?['agent_one','agent_two']:null});
  assert.equal(a.apply(e('started',1)),true);
  assert.equal(a.apply(e('proposal',2,'agent_one',1)),false);
  assert.equal(a.apply(e('response',2,'agent_one',1)),false);
@@ -32,4 +32,17 @@ test('no invented proposal or response; rejected route can be reported without t
  assert.equal(a.snapshot().agents[1].responses,0);
  assert.equal(a.apply(e('completed',3)),true);
  assert.equal(a.apply(e('started',1)),false);
+});
+
+test('runtime projection accepts the existing kernel bound of four unique declared slots, not six',()=>{
+ const a=createCouncilActivity(),ids=['one','two','three','four'];
+ const e=createCouncilEmitter(1,x=>assert.equal(a.apply(x),true),()=>false,ids);
+ e.send('started');ids.push('five');
+ assert.equal(a.snapshot().agents.length,4);
+ e.send('request','four',1);e.send('response','four',1);e.finish('completed');
+ assert.equal(a.snapshot().agents[3].responses,1);
+ const start=agentIds=>({version:1,origin:'local-scripted',runId:2,sequence:1,phase:'started',agent:null,round:null,agentIds});
+ assert.equal(a.apply(start(['a','b','c','d','e'])),false);
+ assert.equal(a.apply(start(['a','a'])),false);
+ assert.equal(a.apply(start(['a','b'])),true);
 });
