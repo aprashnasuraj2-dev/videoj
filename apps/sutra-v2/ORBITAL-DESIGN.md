@@ -14,3 +14,6 @@ Reference archive inspected: outputs/src/components/agents/AgentAvatar.tsx (six 
 
 ## Rehearsal routing
 Configured model descriptors affect only simulated selection: the assigned route, then explicit fallback IDs, then the configured priority. Per-role reservation caps can pause simulated steps; these units are not actual tokens or billing. The actual local council still uses its own two-slot configuration and consent. Modern light/dark and 1997 treatments preserve the same investigation engine; the obsolete blink/marquee behavior is intentionally replaced by a static retro ticker.
+
+## Run-scoped council activity
+The scripted council emits a versioned metadata-only envelope with run identity, increasing sequence, fixed origin, agent slot, round and phase. The independent projection rejects stale, duplicate, out-of-order and malformed events; cancellation closes the emitter immediately. Transport responses are distinct from proposal admission. The two actual configurable slots have their own inspector; the six rehearsal avatars no longer fabricate role attribution or handoffs from two-slot events. This is unsigned UI telemetry, not a receipt or a source of permission or computation authority.
