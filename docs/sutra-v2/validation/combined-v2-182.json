@@ -1,0 +1,870 @@
+{
+  "version": 1,
+  "kind": "validation-only-non-merge-candidate",
+  "parent": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+  "commonChildBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+  "children": [
+    {
+      "pr": 51,
+      "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+    },
+    {
+      "pr": 52,
+      "head": "61714c3c095ad254486b250c80cc84b0481dfdd2"
+    },
+    {
+      "pr": 53,
+      "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+    },
+    {
+      "pr": 54,
+      "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+    },
+    {
+      "pr": 55,
+      "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+    },
+    {
+      "pr": 56,
+      "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+    },
+    {
+      "pr": 57,
+      "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+    },
+    {
+      "pr": 58,
+      "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+    },
+    {
+      "pr": 59,
+      "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+    },
+    {
+      "pr": 60,
+      "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+    }
+  ],
+  "materializedTree": null,
+  "nonoverlappingFiles": 81,
+  "workflowSourceBlob": "ae35710f405225be846b3e2b8ccec1c5e4e6b5f1",
+  "qualification": "Exact child blobs copied into a separate branch; no PR merge, no release or authority. Full canonical knowledge/browser job bodies unchanged except exact branch gate. Never merge validation PR; advance child PRs individually and rebuild candidate from exact heads.",
+  "previousSnapshots": [
+    {
+      "revision": "1dc9dc79ce3b8255ee2f48b83f8cd95ad8678a05",
+      "manifest": {
+        "version": 1,
+        "kind": "validation-only-non-merge-candidate",
+        "parent": "f6b69dffa78c6505ca2438291c7a966d3ff74eb2",
+        "commonChildBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+        "children": [
+          {
+            "pr": 51,
+            "head": "caef11eebffef60378504a154e166efe83940f5a"
+          },
+          {
+            "pr": 52,
+            "head": "8e9cd7c906285afa7a9b9400cda9353f10abd1f6"
+          },
+          {
+            "pr": 53,
+            "head": "a2912799b14d7dee8f73f41b8372231ad54c7c2a"
+          },
+          {
+            "pr": 54,
+            "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+          },
+          {
+            "pr": 55,
+            "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+          },
+          {
+            "pr": 56,
+            "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+          },
+          {
+            "pr": 57,
+            "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+          },
+          {
+            "pr": 58,
+            "head": "38a49d175be793a804b0e44b94a141078e3c8447"
+          },
+          {
+            "pr": 59,
+            "head": "e73659542f738fedabc038879d078616c8d97281"
+          },
+          {
+            "pr": 60,
+            "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+          }
+        ],
+        "materializedTree": "e7687498aa4e3fbf3d098847266d43254a379e0d",
+        "nonoverlappingFiles": 49,
+        "workflowSourceBlob": "d6b34cd470596280d0b9a15b1a263665c6db348f",
+        "qualification": "Exact child blobs copied into a separate branch; no PR merge, no release or authority. Full canonical knowledge/browser job bodies unchanged except exact branch gate. Never merge validation PR; advance child PRs individually and rebuild candidate from exact heads."
+      },
+      "combinedRun": 45754410627,
+      "observed": "success",
+      "impactRun": 45754410524,
+      "impactObserved": "failure: unmapped exact validation manifest path"
+    },
+    {
+      "revision": "e8fa3ae455a23eb9b832fde17f418510c5e48293",
+      "combinedRun": 45754665798,
+      "observed": "success",
+      "impactRun": 45754665894,
+      "impactObserved": "success"
+    },
+    {
+      "revision": "fc238782f1950f76049d78ef178dae04259d3a2d",
+      "children": [
+        {
+          "pr": 51,
+          "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+        },
+        {
+          "pr": 52,
+          "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+        },
+        {
+          "pr": 53,
+          "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+        },
+        {
+          "pr": 54,
+          "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+        },
+        {
+          "pr": 55,
+          "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+        },
+        {
+          "pr": 56,
+          "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ee540afba806a2ff9748c269c3229353812149a7"
+        },
+        {
+          "pr": 59,
+          "head": "e73659542f738fedabc038879d078616c8d97281"
+        },
+        {
+          "pr": 60,
+          "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+        }
+      ],
+      "combinedRun": 45755340152,
+      "observed": "success",
+      "knowledgeJob": 139692536330,
+      "browserJob": 139692536528,
+      "impactRun": 45755340151,
+      "impactObserved": "success"
+    },
+    {
+      "revision": "76b53a7c826ddee2ac7a58226e5a2c91f2ebc880",
+      "manifest": {
+        "version": 1,
+        "kind": "validation-only-non-merge-candidate",
+        "parent": "f6b69dffa78c6505ca2438291c7a966d3ff74eb2",
+        "commonChildBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+        "children": [
+          {
+            "pr": 51,
+            "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+          },
+          {
+            "pr": 52,
+            "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+          },
+          {
+            "pr": 53,
+            "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+          },
+          {
+            "pr": 54,
+            "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+          },
+          {
+            "pr": 55,
+            "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+          },
+          {
+            "pr": 56,
+            "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+          },
+          {
+            "pr": 57,
+            "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+          },
+          {
+            "pr": 58,
+            "head": "60d38f1248c2c6b5d82a89c3340ea401da6f01c3"
+          },
+          {
+            "pr": 59,
+            "head": "e73659542f738fedabc038879d078616c8d97281"
+          },
+          {
+            "pr": 60,
+            "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+          }
+        ],
+        "materializedTree": "3babae8c4e8ec1dac7bfbf49c2163233531943ce",
+        "nonoverlappingFiles": 51,
+        "workflowSourceBlob": "d6b34cd470596280d0b9a15b1a263665c6db348f",
+        "qualification": "Exact child blobs copied into a separate branch; no PR merge, no release or authority. Full canonical knowledge/browser job bodies unchanged except exact branch gate. Never merge validation PR; advance child PRs individually and rebuild candidate from exact heads.",
+        "refreshQualification": "Latest exact child snapshot. Only #58 actual Chromium download differential regression and workstream document changed after the previously green combined snapshot; no production source change, no overlap, no merge. Exact CI required again."
+      },
+      "combinedRun": 45761643771,
+      "observed": "browser success; knowledge cancelled at initial observation",
+      "parallelRun": 45761643796,
+      "parallelObserved": "cancelled at initial observation"
+    },
+    {
+      "revision": "59faf60eb73ac9064fde1c9b28205d6e87e3887c",
+      "parent": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "8caac249b3e3a6844fbef9fd9b189996d4d8566b"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "0a781904d90a101b7f74a5b471d521ad8a024d05"
+        },
+        {
+          "pr": 55,
+          "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "7690ca6d874f61f8da98418c9c6e8b766b313e56"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "qualification": "V2-184 integration-only correction; no PR workflows observed while base conflict existed."
+    },
+    {
+      "revision": "ad295ae83bcafb48d489ef96475c80a22bac3c16",
+      "parent": "deb40e01ea02d48d290790ea751039f519b85e8d",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "8caac249b3e3a6844fbef9fd9b189996d4d8566b"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "0a781904d90a101b7f74a5b471d521ad8a024d05"
+        },
+        {
+          "pr": 55,
+          "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "7690ca6d874f61f8da98418c9c6e8b766b313e56"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "combinedRun": 45765046894,
+      "combinedObserved": "cancelled attempt 2",
+      "parallelRun": 45765046841,
+      "parallelObserved": "cancelled attempt 2",
+      "workspaceRun": 45765047022,
+      "workspaceObserved": "cancelled; prior reflow assertion failure retained"
+    },
+    {
+      "revision": "f58473523181779fca3e13f0127bb18469ea76da",
+      "parent": "66440d22c457a819eebba666e8c74837f9eac382",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+        },
+        {
+          "pr": 55,
+          "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "combinedRun": 45786666581,
+      "combinedJobs": [
+        {
+          "id": 139795035606,
+          "name": "knowledge",
+          "conclusion": "failure",
+          "status": "completed"
+        },
+        {
+          "id": 139795036133,
+          "name": "browser",
+          "conclusion": null,
+          "status": "in_progress"
+        }
+      ],
+      "parallelRun": 45786657638,
+      "parallelObserved": "success",
+      "workspaceRun": 45786657934,
+      "workspaceObserved": "success",
+      "qualification": "old central queue parser failure; no new revision inherits green"
+    },
+    {
+      "revision": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+        },
+        {
+          "pr": 55,
+          "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "combinedRun": 45787018982,
+      "knowledgeJob": 139796246998,
+      "browserJob": 139796247554,
+      "combinedObserved": "success",
+      "parallelRun": 45787019038,
+      "parallelObserved": "success",
+      "workspaceRun": 45787019111,
+      "workspaceObserved": "success",
+      "browserCompatibilityRun": 45787019018,
+      "browserCompatibilityObserved": "in_progress"
+    }
+  ],
+  "refreshQualification": "V2-196 exact refresh: ten central coordination/audit paths and one #52 test-only revision, all old overlay blobs matched exact source; no overlap; no integration source change. Fresh exact CI required; validation only.",
+  "childUniquePaths": 82,
+  "overlappingPaths": [
+    {
+      "path": "apps/sutra-v2/index.html",
+      "prs": [
+        51,
+        58
+      ],
+      "resolution": "Two disjoint pure insertions relative to common child base; both retained; 834 unique id attributes."
+    }
+  ],
+  "validationReconciliations": [
+    "Preserve exact path rules for previous validation manifests/workflows and add specific operator/FinQA workflow and license paths; retain both impact tests.",
+    "Canonical knowledge/browser job bodies unchanged; new child workflows retained."
+  ],
+  "validationFollowups": [
+    {
+      "priorRevision": "c34dc954f7a35857e24a9d5f8795f3e61fc359dd",
+      "failedBrowserRun": 45764494043,
+      "failedBrowserJob": 139722015352,
+      "observedFailure": "Legacy test substring label matched new operator credential; strict-mode locator ambiguity.",
+      "correction": "Scope legacy provider labels to #provider-form; preserve both interfaces. Extend only child-specific workflow guards to include exact validation branch. Add integration-only history/review adapter and cross-workstream regression using original APIs.",
+      "newEvidence": "pending exact CI",
+      "sourceChanges": [
+        "apps/sutra-v2/test/browser.cjs",
+        "packages/sutra-knowledge/reviewed-history-workspace.js",
+        "packages/sutra-knowledge/test/reviewed-history-workspace.test.mjs",
+        ".github/workflows/sutra-v2-operator-browser.yml",
+        ".github/workflows/sutra-v2-workspace-browser.yml",
+        ".github/workflows/sutra-v2-finqa-benchmark.yml"
+      ]
+    },
+    {
+      "priorRevision": "59faf60eb73ac9064fde1c9b28205d6e87e3887c",
+      "centralHead": "deb40e01ea02d48d290790ea751039f519b85e8d",
+      "child55Head": "1a429e24a4fca63affccedf138150480b3ee87c2",
+      "child55Run": 45764898229,
+      "child55Conclusion": "success",
+      "decision": "Include central HEAD as second parent of validation-only commit to resolve base-ancestry conflict. No force push, no merge of validation PR, no central change."
+    },
+    {
+      "priorRevision": "ad295ae83bcafb48d489ef96475c80a22bac3c16",
+      "centralHead": "66440d22c457a819eebba666e8c74837f9eac382",
+      "changed": [
+        {
+          "source": "central",
+          "path": ".github/workflows/sutra-v2-knowledge.yml",
+          "before": "d6b34cd470596280d0b9a15b1a263665c6db348f",
+          "after": "ae35710f405225be846b3e2b8ccec1c5e4e6b5f1"
+        },
+        {
+          "source": "central",
+          "path": "AGENTS.md",
+          "before": "0d62e4aa0cbb666542c9394949a711071f620f0e",
+          "after": "3847347f62e19d1741b30388b131a224132ff095"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CHECKLIST.md",
+          "before": "110acdfafc494046dca8ca8d15fafc75288a11bc",
+          "after": "8aa463031a7e8de49e8e0a078a78a654e0f5b9a6"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CONTINUE.md",
+          "before": "01c97f50e600f94067dc2305d1000ad08619929a",
+          "after": "c596a0e95a9558b054b3b4e3d7a92a7b40e62e5a"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/DECISIONS.md",
+          "before": "7466c73eeb719d74effdc426c56f4f042df6b6fc",
+          "after": "35b0834936d9f930257b03431b012861ef4aeaba"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
+          "before": "38baf104598eb8c60225d0426d723ae8254c1433",
+          "after": "35c0ea5dd93b0eb9f58732aa07fe660617a41b45"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+          "before": "837d0f2f62d17559b624e07e87fbcc972e45ee71",
+          "after": "18f91094fdcea6bff2ce470a440be5bc897f09c6"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/README.md",
+          "before": "d9ebd9918c56a665011f858244cdf5487d2fe49d",
+          "after": "b82014a397f9df61e7cf90e2c0cd5683e49d001b"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/ROADMAP.md",
+          "before": "3515556adb42414ea405aeb3379308cd56152f49",
+          "after": "a9029bcb7b3ccd43b6c50143f8c75ab8c34c3d10"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/SESSIONS.md",
+          "before": "e11956d0455500ea66fbd937909e28ab467c7a07",
+          "after": "490235ac27840971c4f3714fbae35e66b3843e09"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/progress.json",
+          "before": "c003b21d0d822416f51c4a7b9f5cbe6964d7c47f",
+          "after": "145e7a812747fef085fa129574205a6ffccf6d4d"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/roadmap.json",
+          "before": "efcff57c941da7276f60b52c68ccb8a3c86504f5",
+          "after": "b6379e9c6b79ca8eeadcb7f18ce4a27064ebbb02"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/CHECKLIST.md",
+          "before": "be1ba0883d23d9fad05bbd651250282ed42240aa",
+          "after": "144d38414879d4de500ac7c9adbb12b8701bddcd"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/CONTINUE.md",
+          "before": "f4705c2608ef36cdbff5411bc141d8433a9089c4",
+          "after": "12378c99417d1e137aaa01f187130d469d18588b"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/PROGRESS.md",
+          "before": "2d541376187027292c5074b4757497dca7e35329",
+          "after": "d20a226a3d8c6c60d187ed199d2f5fec871a80f4"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/README.md",
+          "before": "83eaecc66b6e551530367c61dcd255bc07ecaf09",
+          "after": "26a5c371d043652923490a986b6214faa3b8a9f6"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/01-strategy.md",
+          "before": "84b3f2e3f700b1b30970f1d4684abaa142968260",
+          "after": "15b51858aa587680784cef1a25a06c0774b1f206"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/02-foundations.md",
+          "before": "4c2b96ad109acdc43d4bee6864d1f2024ab7ace0",
+          "after": "baf506862e05a256189ea97723e758c797df3c2d"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/03-browser-runtime.md",
+          "before": "1e53174129ba84617c57481c8d54ce971ca265dc",
+          "after": "8f56ce79e04e6c3ecf8cc02f6492261aee8287da"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/04-peer-trust.md",
+          "before": "f5d9946c341a60e729a2c681ae85f5ce05ca0155",
+          "after": "dc8ae89220ca1c0189d9316a2e034e9596893718"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/05-learner-experience.md",
+          "before": "98cf1b4623a15eab6fceddfc484e628cf8379468",
+          "after": "550f0cc09d72c9823959421c2a3f240d4397867b"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/06-grounding-community.md",
+          "before": "6721b05d6453e7cb755041f02250273821ae605a",
+          "after": "1fd7f0a7b088bbd636569abf208f5187c8b472b0"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/07-resilience-cost.md",
+          "before": "089868ebde8f0607f794c19442242f9ba0b6d0e1",
+          "after": "6a26a4d69b3bf5bf888ce11ed71c73e5a88e4acd"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/08-validation.md",
+          "before": "c18bc546b9f59b02faee52e3779ee8e7f5f3328c",
+          "after": "185ec833110eee15360fee709e2c6050f12d8be2"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/09-public-release.md",
+          "before": "b58b4765881fd430614e460f546b00515ddb21d7",
+          "after": "3ed2c445659f154fe5d244b598e248e53170c1cb"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/10-submission.md",
+          "before": "aa3e4f3cc0af3dc58970d6061aded2585f019f9d",
+          "after": "b3b6b384202033265a8c27c50e4b1315d548bc36"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/checklists/11-added-scope.md",
+          "before": "40ccd516c000888b0c61a7aa87ca6abe69566740",
+          "after": "6b8402ac87ec1beeee2e5a146e36bc0c8b66c967"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/progress.json",
+          "before": "c26d296a8f8ebc140e3c56dc4755dda3a5eb442a",
+          "after": "85d9c1916611048150a152b7e3a6283f2fcbf7ba"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra/tools/progress.mjs",
+          "before": "dcc11aac44bf0e626aa52f54806f644cb64d0773",
+          "after": "c523de37cfaff0b81d8bbcedc5b1f33e546b9059"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/WEB-ACCESS.md",
+          "before": null,
+          "after": "538bbd78034212fb1e2fb96bd35e5b6707c6c83e"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.mjs",
+          "before": null,
+          "after": "87d54b6eb93a411a940eaa658feab7affb4c9555"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.test.mjs",
+          "before": null,
+          "after": "95b02212fd1f97e21dbf5b76c21ae1809adbc729"
+        },
+        {
+          "source": "#52",
+          "path": "packages/sutra-knowledge/history-witness-client.js",
+          "before": "f2d86ca4245ac78474256eb9b62402ed4315cd8b",
+          "after": "f1b3484b427acd1141e01b96edf917965a77f6ec"
+        },
+        {
+          "source": "#52",
+          "path": "packages/sutra-knowledge/test/history-witness-client.test.mjs",
+          "before": "3e05b7e0f771ac1562770db3a7a7d083c171b3d7",
+          "after": "584de8449cf9e89df28d8a6dea4ff232e6fe5a09"
+        },
+        {
+          "source": "#54",
+          "path": "packages/sutra-knowledge/test/authenticated-acquisition.test.mjs",
+          "before": "0c77c5fc4f9c127de7dcb95b297a243edfb0d90b",
+          "after": "fcf284075c53a46a46459f1dbdac46a5a718bbfe"
+        },
+        {
+          "source": "#58",
+          "path": "apps/sutra-v2/src/style.css",
+          "before": "c96b5fdf67b107b716919e86b8d4f3ab8d23d1c6",
+          "after": "099334b25bce582a5f4f8782e24ebc90903d94bc"
+        },
+        {
+          "source": "#58",
+          "path": "apps/sutra-v2/test/workspace-accessibility.cjs",
+          "before": "6ab5bd4ca2b524b427982a8bc2075b1a4353c415",
+          "after": "7ab3b898cd4fcbb558909af05e00a14aa46dac3d"
+        },
+        {
+          "source": "#58",
+          "path": "docs/sutra-v2/workstreams/08-unified-workspace.md",
+          "before": "97433fd3f3ab64fd8b8b59b2548278cd07608741",
+          "after": "f8cd677149dad69a9cc6db7a73cdd0eef50b21ef"
+        }
+      ],
+      "workflowJobParity": true,
+      "verification": "pending exact CI",
+      "validationOnly": true
+    },
+    {
+      "priorRevision": "f58473523181779fca3e13f0127bb18469ea76da",
+      "centralHead": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+      "changed": [
+        {
+          "path": "docs/sutra-v2/CHECKLIST.md",
+          "before": "8aa463031a7e8de49e8e0a078a78a654e0f5b9a6",
+          "after": "4b9065bc4248e36822a5202537689964e597be56"
+        },
+        {
+          "path": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+          "before": "18f91094fdcea6bff2ce470a440be5bc897f09c6",
+          "after": "64ec1f9a13db72d285aacf335a66896e9fb81237"
+        },
+        {
+          "path": "docs/sutra-v2/ROADMAP.md",
+          "before": "a9029bcb7b3ccd43b6c50143f8c75ab8c34c3d10",
+          "after": "24e91b438354787e08d8c068f4f2e2d7bffd994f"
+        },
+        {
+          "path": "docs/sutra-v2/SESSIONS.md",
+          "before": "490235ac27840971c4f3714fbae35e66b3843e09",
+          "after": "df7abfb1303ffda0f978d88c4c95467d64b7d743"
+        },
+        {
+          "path": "docs/sutra-v2/progress.json",
+          "before": "145e7a812747fef085fa129574205a6ffccf6d4d",
+          "after": "4a57fe70f8f471800f7af761329df6648129bc2f"
+        },
+        {
+          "path": "docs/sutra-v2/roadmap.json",
+          "before": "b6379e9c6b79ca8eeadcb7f18ce4a27064ebbb02",
+          "after": "1374d297910553c9552ee767ad519375dafb9384"
+        },
+        {
+          "path": "docs/sutra-v2/tools/checklist.mjs",
+          "before": "87d54b6eb93a411a940eaa658feab7affb4c9555",
+          "after": "2437c2f588df4e87ac05299fec372e535d440470"
+        },
+        {
+          "path": "docs/sutra-v2/tools/checklist.test.mjs",
+          "before": "95b02212fd1f97e21dbf5b76c21ae1809adbc729",
+          "after": "3e3a9e64c5d3abf1593e8986e1e231fbea6b819c"
+        }
+      ],
+      "validationOnly": true,
+      "verification": "pending exact CI",
+      "priorCombinedJobs": [
+        {
+          "id": 139795035606,
+          "name": "knowledge",
+          "conclusion": "failure",
+          "status": "completed"
+        },
+        {
+          "id": 139795036133,
+          "name": "browser",
+          "conclusion": null,
+          "status": "in_progress"
+        }
+      ]
+    },
+    {
+      "priorRevision": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "centralHead": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "child52Head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "child52Run": 45788072332,
+      "child52Conclusion": "success",
+      "changed": [
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CHECKLIST.md",
+          "before": "4b9065bc4248e36822a5202537689964e597be56",
+          "after": "743780557dc70f79b210ff5670249ca92dd52ae3"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CONTINUE.md",
+          "before": "c596a0e95a9558b054b3b4e3d7a92a7b40e62e5a",
+          "after": "e8dbb86e20804a5ab2f5697a46125c1d797749ab"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
+          "before": "35c0ea5dd93b0eb9f58732aa07fe660617a41b45",
+          "after": "1e21124308ab734413af55eb054a2bd8276a816d"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+          "before": "64ec1f9a13db72d285aacf335a66896e9fb81237",
+          "after": "f336581bc7af16db94219805659cb7ba9fac270f"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/ROADMAP.md",
+          "before": "24e91b438354787e08d8c068f4f2e2d7bffd994f",
+          "after": "952ce42db4817981b89b3709308cf2c8f37c01f9"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/SESSIONS.md",
+          "before": "df7abfb1303ffda0f978d88c4c95467d64b7d743",
+          "after": "680028e5986613417999b8afa6bfff9bf8fe3d6c"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/progress.json",
+          "before": "4a57fe70f8f471800f7af761329df6648129bc2f",
+          "after": "ed5633b94619a2c78d4a8fd6bedaceb7059dff1e"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/roadmap.json",
+          "before": "1374d297910553c9552ee767ad519375dafb9384",
+          "after": "25303d1bcf035acde19afffa2b01a3e3252e7822"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.mjs",
+          "before": "2437c2f588df4e87ac05299fec372e535d440470",
+          "after": "cf627b0228bfb7793931a6ff9eb2db024e621876"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.test.mjs",
+          "before": "3e3a9e64c5d3abf1593e8986e1e231fbea6b819c",
+          "after": "c28832507fbc9592a79b4e585793023828b90221"
+        },
+        {
+          "source": "#52",
+          "path": "packages/sutra-knowledge/test/revision-dependency-closure.test.mjs",
+          "before": "337882cbc3163ae9148f6efc64615a00f0f899bd",
+          "after": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b"
+        }
+      ],
+      "verification": "pending exact new CI",
+      "validationOnly": true
+    }
+  ]
+}

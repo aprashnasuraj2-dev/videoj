@@ -135,3 +135,5 @@ import './economics-lab.js';
 import './reviewed-workspace.js';
 
 import './agent-studio.js';
+
+import './operator-model-console.js';

@@ -1,0 +1,38 @@
+# Model-independent orchestration
+
+**Candidate / draft / no merge or release.** Parent: `092c7971602ee9e294e467efbb0d72c44121e480`.
+
+## Existing open gates
+V2-P14-BYOK-UX, V2-P14-BUDGET, V2-P02-RUNTIME
+
+## Initial slice
+Add a model substitution regression using the actual expression council and two separate provider workspaces; prove pinned contract identity and conditional proposal identity persist when the model changes.
+
+State: Implementation candidate; exact child CI pending.
+
+## Next dependency-ready work
+Explicit route replacement ceremony, capability negotiation, heterogeneous actual model trial with authorization, bounded cancellation and budget accounting.
+
+## Acceptance and adversaries
+No automatic fallback; model replacement does not change existing pinned evidence or grant new disclosure; real model identity remains unverified.
+
+## Verification boundary
+Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session candidate
+New actual council regression: two providers run concurrently with same pinned contract and disclosure but opposite formulas and conditional results. Separate per-workspace budget accounting; a replacement provider guessing undisclosed fields is refused. No real provider/model identity or shared production budget proof.
+Exact child CI pending.
+
+
+## V2-182 candidate
+One-shot in-memory explicit council approval captures exact host workspace/route handles, pinned contract, displayed binding disclosure, budgets and feedback policy. Replacement needs new preview and approval; plan bytes are not a capability. Regression mutates caller arrays/role after preview, refuses other route pin and repeated execution, preserves compiled proposal identity. Live identity and UI remain unverified.
+Exact child CI pending.
+
+### V2-182 approval lifecycle revalidation
+
+Revalidate route/profile identity and plan admission after asynchronous preview hashing and just before one-shot execution. In the combined security candidate, also check the originally captured opaque publication-generation fence. Revoked route consumes an otherwise valid approval attempt without contact, charge or fallback. Standalone workstream does not establish the security generation contract; combined verification required.
+
+
+## V2-183 candidate — operator-facing approval and credential lifecycle
+Add a real built-browser operator console over the ephemeral credential vault, budget ledger and one-shot expression-council capability. Operator enrolls a memory-only synthetic credential, previews exact provider/profile/model/disclosure/budget and digest without dispatch, explicitly approves that digest, consumes it once, removes the credential, and must generate a new preview after replacement or disclosure change. The form clears credential bytes immediately; UI and storage never contain them after enrollment. Dedicated 360px Chromium regression requires one scripted local call, zero external requests, no credential echo, no browser storage, replacement pin change and revocation. This is operator lifecycle for the local rehearsal transport, not live provider authentication or paid inference. Exact CI pending.

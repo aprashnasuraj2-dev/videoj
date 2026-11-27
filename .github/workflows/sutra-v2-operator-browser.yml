@@ -1,0 +1,30 @@
+name: Validate SUTRA operator model approval browser
+on:
+  pull_request:
+    branches: ['sutra/v2-knowledge-compiler']
+    paths: ['apps/sutra-v2/**','packages/sutra-knowledge/**','packages/sutra-inference/**','.github/workflows/sutra-v2-operator-browser.yml']
+permissions:
+  contents: read
+jobs:
+  operator-browser:
+    if: github.head_ref == 'sutra/v2-parallel/01-model-orchestration' || github.head_ref == 'sutra/v2-validation/v2-182'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/sutra/package-lock.json
+      - run: node --check apps/sutra-v2/test/model-approval-browser.cjs
+      - run: npm ci --prefix apps/sutra
+      - name: Build canonical browser artifact
+        run: |
+          rustup target add wasm32-unknown-unknown
+          node apps/sutra-v2/build.mjs
+          node --test apps/sutra-v2/test/build-contract.test.mjs
+      - run: node packages/sutra-runtime/verify-vendor.mjs
+      - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Execute operator approval and credential lifecycle
+        run: node apps/sutra-v2/test/model-approval-browser.cjs

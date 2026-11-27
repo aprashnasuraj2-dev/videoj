@@ -58,3 +58,23 @@ test('baseline opposite outcomes are not counted as hypothetical discovery; stal
  await assert.rejects(evaluateSemanticProbeSuite(args[0],args[1],bad,await casePin(bad)),/PROBE_SUITE_PLAN/);
  await assert.rejects(evaluateSemanticProbeSuite(...args.slice(0,3),'sha256:'+'0'.repeat(64)),/PROBE_SUITE_PIN/);
 });
+
+import {auditGridExpansion,auditGridDomainExpansion} from '../grid-expansion-audit.js';
+test('larger identical grid budget preserves prefix and discovers a joint-only witness',async()=>{
+ const v=await fixture({product:'[x]*[y]>[limit]',sum:'[x]+[x]>[limit]'});
+ const make=n=>JSON.stringify({version:1,versionDigest:v.digest,axes:[{bindingId:'x',values:['2/1','4/1']},{bindingId:'y',values:['2/1','4/1']}],maxAssignments:n});
+ const before=make(3),after=make(4),r=await auditGridExpansion({versionText:v.versionText,versionPin:v.digest,beforeText:before,beforePin:await casePin(before),afterText:after,afterPin:await casePin(after)});
+ assert.equal(r.prefixPreserved,true);assert.equal(r.newWorlds,1);assert.equal(r.newWitnessPairs.length,1);assert.equal(r.truncated,false);assert.equal(r.decisionAuthority,'NONE');
+ const reversed=JSON.stringify({...JSON.parse(after),axes:[{bindingId:'x',values:['4/1','2/1']},{bindingId:'y',values:['2/1','4/1']}]});
+ await assert.rejects(auditGridExpansion({versionText:v.versionText,versionPin:v.digest,beforeText:before,beforePin:await casePin(before),afterText:reversed,afterPin:await casePin(reversed)}),/GRID_EXPANSION_AXES/);
+});
+
+test('expanded domain checks assignment identity and exposes previously evaluated worlds lost by truncation',async()=>{
+ const v=await fixture({product:'[x]*[y]>[limit]',sum:'[x]+[x]>[limit]'});
+ const make=(values,n)=>JSON.stringify({version:1,versionDigest:v.digest,axes:[{bindingId:'x',values},{bindingId:'y',values:['2/1','4/1']}],maxAssignments:n});
+ const before=make(['2/1','4/1'],4),full=make(['6/1','2/1','4/1'],6),partial=make(['6/1','2/1','4/1'],3);
+ const run=async after=>auditGridDomainExpansion({versionText:v.versionText,versionPin:v.digest,beforeText:before,beforePin:await casePin(before),afterText:after,afterPin:await casePin(after)});
+ const a=await run(full);assert.equal(a.allPreviouslyEvaluatedRetained,true);assert.equal(a.retained.length,4);assert.equal(a.newWorlds,2);assert.notEqual(a.retained[0].before,a.retained[0].after);
+ const b=await run(partial);assert.equal(b.allPreviouslyEvaluatedRetained,false);assert.equal(b.missing.length,3);assert.equal(b.truncated,true);
+ await assert.rejects(run(make(['2/1','6/1'],4)),/GRID_EXPANSION_DOMAIN_NOT_SUPERSET/);
+});
