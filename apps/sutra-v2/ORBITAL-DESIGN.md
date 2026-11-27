@@ -17,3 +17,6 @@ Configured model descriptors affect only simulated selection: the assigned route
 
 ## Run-scoped council activity
 The scripted council emits a versioned metadata-only envelope with run identity, increasing sequence, fixed origin, agent slot, round and phase. The independent projection rejects stale, duplicate, out-of-order and malformed events; cancellation closes the emitter immediately. Transport responses are distinct from proposal admission. The two actual configurable slots have their own inspector; the six rehearsal avatars no longer fabricate role attribution or handoffs from two-slot events. This is unsigned UI telemetry, not a receipt or a source of permission or computation authority.
+
+## Shared investigation dependency projection
+The master workbench and orbital Evidence, Quantities, Interpretations and Compute stations consume one read-only projection. Evaluated versions use the canonical report graph; drafts display only selected spans and declared ancestry. Traversal indexes edges in O(V+E) time and handles cycles without treating ancestry as independence. The orbital station inspector shows bounded upstream/downstream relationships and opens the full existing graph; no new knowledge authority or fabricated graph links. Source and binding changes now refresh the orbital inspector even when counts are unchanged.

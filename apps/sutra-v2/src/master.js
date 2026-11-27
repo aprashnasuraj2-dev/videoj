@@ -1,3 +1,4 @@
+import {investigationGraph,traceDependencies} from './investigation-graph.js';
 import {updateOrbit} from './orbit.js';
 // Master investigation view. The reviewed workspace owns every mutation and result.
 import './master.css';
@@ -46,19 +47,12 @@ function initialize(){
  for(const [key,[,name]] of Object.entries(targets)){const o=make('option',name);o.value=key;select.append(o);}
  details.append(label,select,button('Open tool',()=>go(targets[select.value][0])));el('sm-rail-actions').append(cmd,details,action('session'),action('operator'));
 }
-function draftGraph(s){
- const nodes=[{id:'source:question',kind:'question',identity:s.question}],edges=[];
- for(const x of s.sources){const root='lineage:'+x.lineage;if(!nodes.some(n=>n.id===root))nodes.push({id:root,kind:'declared_lineage',identity:x.lineage});nodes.push({id:'source:'+x.id,kind:'evidence',identity:x.id});edges.push({dependent:'source:'+x.id,dependency:root,relation:'declared_ancestry',authority:'HOST_DECLARATION'});}
- for(const b of s.bindings){const x=s.sources.find(x=>x.id===b.sourceId);nodes.push({id:'binding:'+b.id,kind:'reviewed_quantity',identity:(x?.text??s.question).slice(b.start,b.end)});edges.push({dependent:'binding:'+b.id,dependency:'source:'+b.sourceId,relation:'selected_source_span',authority:'DRAFT_DECLARATION'});}
- return {nodes,edges,qualification:'Draft selections and declared ancestry only. Evaluate meanings to obtain compiler-admitted dependencies.'};
-}
-function graph(){return latest.current?.report.graph??draftGraph(latest);}
-function traverse(g,id,reverse){const seen=new Set([id]),queue=[id];while(queue.length){const x=queue.pop();for(const e of g.edges){const from=reverse?e.dependency:e.dependent,to=reverse?e.dependent:e.dependency;if(from===x&&!seen.has(to)){seen.add(to);queue.push(to);}}}seen.delete(id);return seen;}
+function graph(){return investigationGraph(latest);}
 const shortId=id=>id.slice(id.indexOf(':')+1);
 function nodeLabel(n){return n.kind==='question'?'Original question':shortId(n.id);}
 function highlight(id){
  selection=id;
- const g=graph(),up=id?traverse(g,id,false):new Set(),down=id?traverse(g,id,true):new Set();
+ const g=graph(),up=id?traceDependencies(g,id,false):new Set(),down=id?traceDependencies(g,id,true):new Set();
  for(const b of shell.querySelectorAll('[data-sm-node]')){const k=b.dataset.smNode;b.setAttribute('aria-pressed',String(k===id));b.dataset.relation=k===id?'selected':up.has(k)?'upstream':down.has(k)?'downstream':'unrelated';const mark=b.querySelector('small');mark.textContent=k===id?'Selected':up.has(k)?'Dependency':down.has(k)?'Affected':' '; }
  inspect();
 }

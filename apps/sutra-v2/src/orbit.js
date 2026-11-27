@@ -1,3 +1,4 @@
+import {investigationGraph,traceDependencies} from './investigation-graph.js';
 import {createCouncilActivity} from './council-activity.js';
 import {renderGuestbook} from './orbit-guestbook.js';
 // Agent-native SUTRA. Presentation-only simulation and public council telemetry are separate.
@@ -15,6 +16,7 @@ const steps=[
 ];
 let root,agents=[],stationGroups=[],edges=[],mode='map',selected=0,selectedStation=null,simulation=false,playing=false,index=0,elapsed=0,lastFrame=0,lastTick=0,rotation=0,targetRotation=0,zoom=1,drag=null,latest=null,events=[],configs=[],policy='ask',era=false,lastState='',raf=0,konami=0,sound=false,audio=null;
 const councilActivity=createCouncilActivity();
+let graphSelection=null,lastWorkspaceStatus='';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function go(id){const t=$(id);if(!t)return;for(let p=t;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;const focus=t.tagName==='DETAILS'?t.querySelector('summary'):t;if(!focus.matches('button,a,input,textarea,select,summary,[tabindex]'))focus.tabIndex=-1;if(!focus.disabled)focus.focus({preventScroll:true});t.scrollIntoView({block:'start'});}
 function beep(kind='click'){if(!sound)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;audio??=new AC();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=kind==='done'?660:kind==='error'?160:330;g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.1);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+.11);}catch{}}
@@ -33,6 +35,30 @@ function announce(text){$('orb-live').textContent=text;}
 function record(kind,from,to,text){const e={kind,from,to,text,time:new Date().toISOString(),seq:(events.at(-1)?.seq??0)+1};events.push(e);if(events.length>120)events.shift();if(from!==null&&agents[from]){const a=agents[from];a.notes.push(e);if(a.notes.length>10)a.notes.shift();}if(from!==null&&to!==null&&from!==to)edges.push({from,to,born:performance.now(),kind});if(edges.length>36)edges.shift();renderLog();if(selectedStation===null||kind==='WORKSPACE'||kind==='LOCAL CONFIG')renderInspector();announce(kind+': '+text);}
 function renderLog(){const box=$('orb-log');box.replaceChildren();const list=events.slice(-12).reverse();if(!list.length)box.append(E('p','No operation events. Start the labeled rehearsal or run the local council.','orb-muted'));for(const e of list){const row=E('article',undefined,'orb-event');row.append(E('small',e.kind.toUpperCase()+' · '+e.time.slice(11,19)),E('strong',e.from===null?'Workspace':ROLE[e.from][1]+(e.to===null?'':' → '+ROLE[e.to][1])),E('p',e.text));box.append(row);}}
 function existingAction(text,id,cls='orb-button'){const target=$(id),b=btn(text,()=>{if(!target.disabled)target.click();},cls);b.disabled=!!target.disabled;return b;}
+function graphDetail(box,station){
+ const g=investigationGraph(latest),kinds=station===1?['evidence','declared_lineage']:station===2?['reviewed_quantity']:['candidate_interpretation'];
+ const nodes=g.nodes.filter(n=>kinds.includes(n.kind)),byId=new Map(g.nodes.map(n=>[n.id,n]));
+ box.append(E('h3','Recorded dependencies'),E('p',g.qualification,'orb-muted'));
+ if(!nodes.length){box.append(E('p','No matching dependency nodes recorded.','orb-muted'));return;}
+ const label=E('label','Inspect dependency node');label.htmlFor='orb-graph-node';const select=E('select');select.id='orb-graph-node';
+ for(const n of nodes){const option=E('option',n.id);option.value=n.id;select.append(option);}
+ if(nodes.some(n=>n.id===graphSelection))select.value=graphSelection;
+ const details=E('div',undefined,'orb-event');
+ function inspect(){
+  const id=select.value;graphSelection=id;details.replaceChildren();
+  const up=traceDependencies(g,id),down=traceDependencies(g,id,true);
+  for(const [title,items] of [['Upstream dependencies',up],['Downstream affected nodes',down]]){
+   details.append(E('strong',title+' · '+items.size));
+   if(!items.size)details.append(E('p','None recorded','orb-muted'));
+   for(const other of [...items].slice(0,30)){const n=byId.get(other);details.append(E('p',(n?.kind??'node')+' · '+other,'orb-muted'));}
+   if(items.size>30)details.append(E('p','Showing 30 of '+items.size+' nodes. Open full investigation graph for detailed inspection.','orb-muted'));
+  }
+  const direct=g.edges.filter(e=>e.dependent===id||e.dependency===id);
+  for(const edge of direct.slice(0,30))details.append(E('small',edge.dependent+' depends on '+edge.dependency+' · '+edge.relation+' · '+edge.authority));
+ }
+ select.addEventListener('change',inspect);box.append(label,select,details);inspect();
+ box.append(btn('Open full investigation graph',()=>{setMode('investigation',true);$('sutra-master').querySelector('[data-sm-view="evidence"]')?.click();go('sm-work');}));
+}
 function stationDetail(box,i){
  const s=latest;if(!s)return;
  if(i===0){
@@ -58,6 +84,7 @@ function stationDetail(box,i){
  }else if(i===9){box.append(btn('Inspect permission matrix',()=>setMode('policy',true),'orb-primary'));}
  else if(i===10){box.append(btn('Open six connection drafts',()=>setMode('routes',true),'orb-primary'));}
  else if(i===11){box.append(E('p','Recovery requires the exact retained baseline or a separately pinned report. No missing input is invented.','orb-muted'));}
+ if([1,2,3,4].includes(i))graphDetail(box,i);
 }
 function renderInspector(){const a=agents[selected],box=$('orb-inspect');box.replaceChildren();if(selectedStation!==null){const [name,desc,id]=STATIONS[selectedStation];box.append(E('p','INVESTIGATION STATION','orb-kicker'),E('h2',name),E('p',desc),btn('Open '+name,()=>go(id),'orb-primary'));stationDetail(box,selectedStation);return;}
  const info=ROLE[selected],cfg=configs[a.route];box.append(E('p','AGENT / '+info[0].toUpperCase(),'orb-kicker'),E('h2',info[1]+' / '+info[2]),E('p',info[3]+' personality · '+a.status,'orb-muted'));
@@ -150,4 +177,4 @@ function initialize(){
  });
  setMode('map');renderInspector();renderLog();if(new URLSearchParams(location.search).get('surface')==='debugger'){root.hidden=true;master.hidden=true;const workspace=$('reviewed-workspace'),economics=$('economics-lab');economics.before(workspace);document.querySelector('.sm-lab-heading')?.remove();const old=document.querySelector('.intro h2');if(old)old.replaceWith(E('h1',old.textContent));return;}const requested=location.hash.slice(1);if(['swarm','investigation','routes','policy','audit','guestbook'].includes(requested))setMode(requested);window.addEventListener('popstate',()=>{const next=location.hash.slice(1);if(['map','swarm','investigation','routes','policy','audit','guestbook'].includes(next))setMode(next);else if(!next)setMode('map');});raf=requestAnimationFrame(frame);
 }
-export function updateOrbit(state){latest=state;if(!root)initialize();$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=[state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.sources.length,state.history?.digest].join('|');if(key!==lastState){lastState=key;if(state.status)record('WORKSPACE',null,null,state.status);else renderInspector();}}
+export function updateOrbit(state){latest=state;if(!root)initialize();$('orb-question').textContent=state.question||'No question selected';const triage=state.current?.report.investigation.triage.state;$('orb-state').textContent=triage?triage.replaceAll('_',' '):state.baseline?'Draft / historical baseline retained':'Not evaluated';const key=JSON.stringify([state.current?.digest,state.status,state.baseline?.digest,state.busy,state.proposalCount,state.question,state.sources,state.bindings,state.history?.digest]);if(key!==lastState){lastState=key;const focused=document.activeElement?.id==='orb-graph-node';if(state.status&&state.status!==lastWorkspaceStatus)record('WORKSPACE',null,null,state.status);else renderInspector();lastWorkspaceStatus=state.status;if(focused)$('orb-graph-node')?.focus({preventScroll:true});}}
