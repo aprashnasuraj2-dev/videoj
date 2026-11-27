@@ -6,7 +6,7 @@ import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
-import {startPinnedHttps} from '../pinned-https-socket.js';
+import {startPinnedHttps,startPinnedSourceRead} from '../pinned-https-socket.js';
 
 const HOST='sutra-tls-fixture.example.com',KEY='TEST_ONLY_TLS_CREDENTIAL_12345';
 async function fixture(t){
@@ -54,4 +54,12 @@ test('real TLS connection with wrong admitted peer refused before HTTP even with
  const call=startPinnedHttps({...f.pin,address:'127.0.0.2'},input,'bearer',{dialTls:opts=>connect({...opts,host:'127.0.0.1',ca:f.cert}),requestHttps:request});
  const timeout=setTimeout(()=>call.cancel(),3000);t.after(()=>{clearTimeout(timeout);call.cancel();});
  await assert.rejects(call.promise,/TLS_IDENTITY/);clearTimeout(timeout);assert.equal(f.requests.length,0);
+});
+
+test('real TLS GET reuses authenticated socket and sends no credentials or request body',async t=>{
+ const f=await fixture(t);
+ const call=startPinnedSourceRead(f.pin,{mediaType:'application/json',maxBytes:32},{dialTls:opts=>connect({...opts,ca:f.cert}),requestHttps:request});
+ const timer=setTimeout(()=>call.cancel(),3000);t.after(()=>clearTimeout(timer));
+ assert.deepEqual(await call.promise,{status:200,bodyText:'{"ok":true}',mediaType:'application/json',bytes:11});clearTimeout(timer);
+ assert.equal(f.requests.length,1);assert.equal(f.requests[0].headers.authorization,undefined);assert.equal(f.requests[0].headers['x-api-key'],undefined);assert.equal(f.requests[0].body,'');
 });
