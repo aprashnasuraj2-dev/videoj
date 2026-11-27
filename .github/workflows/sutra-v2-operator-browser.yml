@@ -19,15 +19,15 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: apps/sutra/package-lock.json
+          cache-dependency-path: apps/sutra-v2/package-lock.json
       - run: node --check apps/sutra-v2/test/model-approval-browser.cjs
-      - run: npm ci --prefix apps/sutra
+      - run: npm ci --prefix apps/sutra-v2
       - name: Build canonical browser artifact
         run: |
           rustup target add wasm32-unknown-unknown
           node apps/sutra-v2/build.mjs
           node --test apps/sutra-v2/test/build-contract.test.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
-      - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
       - name: Execute operator approval and credential lifecycle
         run: node apps/sutra-v2/test/model-approval-browser.cjs
