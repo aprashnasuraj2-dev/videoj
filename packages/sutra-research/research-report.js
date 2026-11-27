@@ -3,6 +3,17 @@ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 export function formatMarkdownReport(report){
  const lines=['# SUTRA autonomous research — candidate evidence','', '**Objective:** '+esc(report.objective),'','**Status:** '+esc(report.state)+' / '+esc(report.terminationReason),'','**Qualification:** '+esc(report.qualification),'','## Research methodology',''];
  for(const q of report.researchPlan?.questions??[])lines.push('- '+esc(q.question)+' — '+esc(q.status)+'; '+q.attemptedQueries+' query waves. Acceptance is not established.');
+ if(report.intelligence){
+  lines.push('','## Reviewed candidate findings','',esc(report.intelligence.qualification),'');
+  for(const c of report.intelligence.claims.filter(c=>c.publicationStatus!=='withheld_from_findings')){
+   lines.push('- **'+esc(c.kind)+' / '+esc(c.reviewStatus)+':** '+esc(c.statement));
+   for(const cite of c.citations)lines.push('  - “'+esc(cite.quote)+'” — '+esc(cite.sourceId)+(cite.locator.page?', page '+cite.locator.page:'')+', offsets '+cite.locator.startOffset+'–'+cite.locator.endOffset+'.');
+   if(c.review)lines.push('  - Reviewer qualification: '+esc(c.review.reason));
+  }
+  lines.push('','## Withheld or disputed candidate findings','');
+  for(const c of report.intelligence.claims.filter(c=>c.publicationStatus==='withheld_from_findings'))lines.push('- '+esc(c.id)+': '+esc(c.reviewStatus)+(c.review?' — '+esc(c.review.reason):'')+'.');
+  for(const g of report.intelligence.gaps)lines.push('- Gap: '+esc(g));
+ }
  lines.push('','## Search history','');
  for(const q of report.queries)lines.push('- '+esc(q.query)+' — '+esc(q.provider)+'; '+esc(q.reason));
  lines.push('','## Evidence excerpts','');
