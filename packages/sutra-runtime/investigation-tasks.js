@@ -65,7 +65,8 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,m
   emit(task,'executing');
   try{
    if(!fence())return;
-   const raw=await handler.execute(Object.freeze({task,inputs,signal:controller.signal}));
+   const observeProvider=activity=>{if(executionOrigin!=='authorized-provider'||states.get(task.id)!=='executing'||!fence()||!taskRecord(activity,['routeId','planPin','phase']))return false;return emitter?.emit('provider.phase',{taskId:task.id,agentId:task.agentId,kind:task.kind,routeId:activity.routeId,planPin:activity.planPin,phase:activity.phase})??false;};
+   const raw=await handler.execute(Object.freeze({task,inputs,signal:controller.signal,observeProvider}));
    if(!fence())return;
    emit(task,'validating');if(!fence())return;
    const value=copyTaskArtifact(handler.admit(raw,Object.freeze({task,inputs})));

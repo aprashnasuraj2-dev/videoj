@@ -13,6 +13,8 @@ const taskEnds=new Set(['completed','partial','cancelled','timeout','stale','ref
 const councilEnds=new Set(['completed','refused','cancelled']);
 const taskManifest=t=>closed(t,['id','kind','agentId','dependsOn'])&&id(t.id)&&id(t.kind)&&id(t.agentId)&&dense(t.dependsOn,64)&&t.dependsOn.every(id)&&new Set(t.dependsOn).size===t.dependsOn.length;
 const taskPayload=p=>closed(p,['taskId','agentId','kind','status'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&['executing','validating','completed','failed','blocked','cancelled'].includes(p.status);
+const providerPhases=new Set(['skip-budget','skip-profile','consent-requested','consent-granted','consent-denied','dispatched','response','refused','cancelled']);
+const providerPayload=p=>closed(p,['taskId','agentId','kind','routeId','planPin','phase'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&id(p.routeId)&&typeof p.planPin==='string'&&/^sha256:[0-9a-f]{64}$/.test(p.planPin)&&providerPhases.has(p.phase);
 const councilPayload=p=>closed(p,['agentId','round','phase'])&&id(p.agentId)&&int(p.round,1,100)&&['request','response','transport-refused','proposal','abstained','rejected'].includes(p.phase);
 function manifest(p,origin){
  if(origin==='local-scripted'){
@@ -38,6 +40,25 @@ function councilStep(run,p){
  a.rounds.set(p.round,s);if(s==='request')a.requests++;if(s==='response')a.responses++;if(s==='proposal')a.proposals++;
  if(p.round>=a.round){a.round=p.round;a.status=({request:'working',response:'validating','transport-refused':'refused',proposal:'proposal-admitted',abstained:'abstained',rejected:'rejected'})[s];}return true;
 }
+function providerStep(run,p){
+ if(!providerPayload(p)||run.origin!=='authorized-provider')return false;
+ const t=run.tasks.get(p.taskId);if(!t||t.agentId!==p.agentId||t.kind!==p.kind||t.status!=='executing')return false;
+ const routes=t.routes??new Map(),previous=routes.get(p.routeId),s=p.phase;
+ if(t.planPin&&t.planPin!==p.planPin)return false;
+ if(!previous&&routes.size>=8)return false;
+ if(previous&&previous.planPin!==p.planPin)return false;
+ const prev=previous?.phase;
+ // A different recipient may be tried only before dispatch. Once any route
+ // dispatched (even with unknown outcome), the task cannot choose another.
+ if(t.dispatchedRoute&&t.dispatchedRoute!==p.routeId)return false;
+ const legal=s==='consent-requested'?prev===undefined:s==='consent-granted'||s==='consent-denied'?prev==='consent-requested':
+ s==='skip-budget'||s==='skip-profile'?prev===undefined||prev==='consent-granted':
+ s==='dispatched'?prev==='consent-granted':
+ s==='response'?prev==='dispatched':
+ ['refused','cancelled'].includes(s)?['consent-requested','consent-granted','dispatched'].includes(prev):false;
+ if(!legal)return false;
+ t.planPin=p.planPin;t.routes=routes;routes.set(p.routeId,{routeId:p.routeId,planPin:p.planPin,phase:s});if(s==='dispatched')t.dispatchedRoute=p.routeId;return true;
+}
 function close(run,p){
  if(!closed(p,['status']))return false;const s=p.status;
  if(run.origin==='local-scripted'){
@@ -51,7 +72,7 @@ function close(run,p){
  run.status=s;return true;
 }
 function snapshot(r){
- const tasks=[...r.tasks.values()].map(t=>({...t,dependsOn:[...t.dependsOn],waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
+ const tasks=[...r.tasks.values()].map(({routes,dispatchedRoute,planPin,...t})=>({...t,dependsOn:[...t.dependsOn],...(routes?{routeAttempts:[...routes.values()].map(x=>({...x}))}:{}),waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
  const agents=r.origin==='local-scripted'?[...r.agents.values()].map(({rounds,...a})=>({...a})):Array.from(new Set(tasks.map(t=>t.agentId)),id=>{
   const assigned=tasks.filter(t=>t.agentId===id),states=assigned.map(t=>t.status);
   const status=['executing','validating','queued','failed','blocked','cancelled','completed'].find(s=>states.includes(s));
@@ -62,16 +83,20 @@ function snapshot(r){
 export function createExecutionEmitter({runId,version,origin,publish}){
  if(!id(runId)||!ver(version)||!origins.has(origin)||typeof publish!=='function')throw TypeError('EXECUTION_CONFIG');
  let sequence=0,ended=false;
+ // Validate the producer's own stream before publishing; refused metadata
+ // cannot consume a sequence and poison the receiver's following events.
+ const local=createExecutionJournal({maxRuns:1,maxEvents:2048});
  return Object.freeze({emit(type,payload){
   if(ended||sequence===0&&type!=='run.open'||sequence>0&&type==='run.open')return false;
-  // Payloads are host-owned closed metadata, not arbitrary provider outputs.
-  const e=freeze({schema:'sutra-execution-event/v1',runId,version,origin,sequence:++sequence,type,payload});
+  const raw={schema:'sutra-execution-event/v1',runId,version,origin,sequence:sequence+1,type,payload};
+  if(!local.accept(raw))return false;
+  const e=local.events(runId).at(-1);sequence=e.sequence;
   if(type==='run.close')ended=true;
   try{publish(e);}catch{/* Observation cannot grant or deny execution. */}return true;
  }});
 }
-export function createExecutionJournal({maxRuns=8,maxEvents=256}={}){
- if(!int(maxRuns,1,32)||!int(maxEvents,194,512))throw TypeError('EXECUTION_LIMIT');
+export function createExecutionJournal({maxRuns=8,maxEvents=2048}={}){
+ if(!int(maxRuns,1,32)||!int(maxEvents,194,2048))throw TypeError('EXECUTION_LIMIT');
  const runs=new Map(),retired=new Set(),listeners=new Set(),queue=[];let dispatching=false;
  function notify(e,s){queue.push([e,s]);if(dispatching)return;dispatching=true;try{while(queue.length){const args=queue.shift();for(const fn of [...listeners])try{fn(...args);}catch{/* isolate observers */}}}finally{dispatching=false;}}
  function accept(raw){
@@ -84,6 +109,7 @@ export function createExecutionJournal({maxRuns=8,maxEvents=256}={}){
   }else{
    if(!r||r.status!=='running'||r.origin!==raw.origin||r.version!==raw.version||raw.sequence!==r.sequence+1)return false;
    if(raw.type==='task.state'&&r.origin!=='local-scripted'){if(!taskStep(r,raw.payload))return false;}
+   else if(raw.type==='provider.phase'&&r.origin==='authorized-provider'){if(!providerStep(r,raw.payload))return false;}
    else if(raw.type==='council.phase'&&r.origin==='local-scripted'){if(!councilStep(r,raw.payload))return false;}
    else if(raw.type==='run.close'){if(!close(r,raw.payload))return false;}
    else return false;

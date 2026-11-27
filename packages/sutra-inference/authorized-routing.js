@@ -47,31 +47,43 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
   if(!capacitySlots(cap.global,maxOutputTokens,inputBytes)||!capacitySlots(profile,maxOutputTokens,inputBytes))return 'BUDGET';
   return 'CAPACITY_HINT';
  };
- const preparedPlan=Object.freeze({plan,planPin,async execute({approvedPlanPin,consentInspector,signal,assertCurrent:executionFence=()=>{}}={}){
+ const preparedPlan=Object.freeze({plan,planPin,async execute({approvedPlanPin,consentInspector,signal,assertCurrent:executionFence=()=>{},onRouteEvent}={}){
   if(consumed)routeFail('CONSUMED');
   if(approvedPlanPin!==planPin)routeFail('PIN');
   const inspector=pinConsentInspector(consentInspector);
-  if(typeof executionFence!=='function')routeFail('CONFIG');
+  if(typeof executionFence!=='function'||onRouteEvent!==undefined&&typeof onRouteEvent!=='function')routeFail('CONFIG');
   consumed=true;const deadline=AbortSignal.timeout(timeoutMs),active=signal?AbortSignal.any([signal,deadline]):deadline;
   const assertLive=()=>{if(active.aborted)routeFail('CANCELLED');check();executionFence();};
   const decisions=[];
+  const note=(route,phase)=>{try{onRouteEvent?.(Object.freeze({routeId:route.id,planPin,phase}));}catch{/* observers have no transport authority */}};
+  const skipped=(route,reason)=>{decisions.push(Object.freeze({routeId:route.id,decision:reason}));note(route,reason==='PROFILE_DISABLED'?'skip-profile':'skip-budget');};
   for(const route of eligible){
-   assertLive();const before=availability(route);if(before!=='CAPACITY_HINT'){decisions.push(Object.freeze({routeId:route.id,decision:before}));continue;}
+   assertLive();const before=availability(route);if(before!=='CAPACITY_HINT'){skipped(route,before);continue;}
    const intent={operation:'model_inference',destination:route.providerId+'/'+route.profileId+'/'+route.model,purpose:'Execute the exact reviewed provider task for this selected recipient.',disclosure:[...plan.disclosure],planPin};
    // A denial, revoked grant, unknown provider outcome or dispatch failure is terminal.
-   const outcome=await inspector.perform(intent,async(_intent,grantSignal)=>{
-    const dispatchSignal=grantSignal?AbortSignal.any([active,grantSignal]):active;
-    if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
-    const recheck=availability(route);
-    if(recheck!=='CAPACITY_HINT')return {skipped:recheck};
-    decisions.push(Object.freeze({routeId:route.id,decision:'DISPATCHED'}));
-    const result=await prepared.get(route.id).execute({signal:dispatchSignal});
-    if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
-    if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)routeFail('RESULT');
-    return {result};
-   },{signal:active});
-   assertLive();
-   if(outcome.skipped){decisions.push(Object.freeze({routeId:route.id,decision:outcome.skipped}));continue;}
+   note(route,'consent-requested');let stage='consent';
+   let outcome;
+   try{
+    assertLive();
+    outcome=await inspector.perform(intent,async(_intent,grantSignal)=>{
+     const dispatchSignal=grantSignal?AbortSignal.any([active,grantSignal]):active;
+     if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();note(route,'consent-granted');stage='granted';
+     if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
+     const recheck=availability(route);
+     if(recheck!=='CAPACITY_HINT')return {skipped:recheck};
+     decisions.push(Object.freeze({routeId:route.id,decision:'DISPATCHED'}));note(route,'dispatched');stage='dispatched';
+     if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
+     const result=await prepared.get(route.id).execute({signal:dispatchSignal});
+     if(dispatchSignal.aborted)routeFail('CANCELLED');assertLive();
+     if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)routeFail('RESULT');
+     return {result};
+    },{signal:active});
+    assertLive();
+   }catch(error){
+    note(route,stage==='consent'&&error?.code==='CONSENT_DENIED'?'consent-denied':active.aborted||error?.code==='CANCELLED'?'cancelled':'refused');throw error;
+   }
+   if(outcome.skipped){skipped(route,outcome.skipped);continue;}
+   note(route,'response');assertLive();
    return Object.freeze({status:'completed',routeId:route.id,planPin,result:outcome.result,decisions:Object.freeze(decisions),qualification:'Transport result only; not artifact admission or proof.'});
   }
   return Object.freeze({status:'unavailable',planPin,decisions:Object.freeze(decisions)});
@@ -91,8 +103,8 @@ export async function runAuthorizedProviderGraph({tasks,approvals,runId,version,
   plans.add(entry.prepared);byTask.set(entry.taskId,Object.freeze({...entry,consentInspector}));
  }
  const handlers={provider_task:{
-  async execute({task,signal:taskSignal}){
-   const a=byTask.get(task.id),out=await a.prepared.execute({approvedPlanPin:a.approvedPlanPin,consentInspector:a.consentInspector,signal:taskSignal,assertCurrent});
+  async execute({task,signal:taskSignal,observeProvider}){
+   const a=byTask.get(task.id),out=await a.prepared.execute({approvedPlanPin:a.approvedPlanPin,consentInspector:a.consentInspector,signal:taskSignal,assertCurrent,onRouteEvent:observeProvider});
    if(out.status!=='completed'||typeof out.result?.value?.text!=='string')routeFail('UNAVAILABLE');
    return Object.freeze({planPin:out.planPin,routeId:out.routeId,text:out.result.value.text});
   },
