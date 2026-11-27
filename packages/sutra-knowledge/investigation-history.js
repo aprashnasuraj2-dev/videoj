@@ -13,6 +13,7 @@ const name=x=>typeof x==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(x);
 const sort=(a,b)=>a<b?-1:a>b?1:0;
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
 async function admit(historyText,expectedPin){
+ if(typeof historyText!=='string'||historyText.length>262144||new TextEncoder().encode(historyText).length>262144)fail('SIZE');
  if(!pin(expectedPin)||await casePin(historyText)!==expectedPin)fail('PIN');
  const h=parseUniqueJson(historyText,{maxChars:262144,maxDepth:8});
  if(!keys(h,['version','versions','branches'])||h.version!==VERSION||!Array.isArray(h.versions)||!h.versions.length||h.versions.length>MAX_VERSIONS||!Array.isArray(h.branches)||!h.branches.length||h.branches.length>MAX_BRANCHES)fail('SHAPE');

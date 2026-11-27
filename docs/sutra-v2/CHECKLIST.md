@@ -1,6 +1,6 @@
-# SUTRA V2 — active remaining-work checklist
+# SUTRA — active remaining-work checklist
 
-> **SOLE ACTIVE EXECUTION CHECKLIST — 2026-11-26.** By user direction, the 379 remaining SUTRA1 pending tasks are retired and removed from the active legacy checklist. Git history and verified V1 evidence remain available for reuse, but **V1 pending IDs must never be selected as work**. “Continue with SUTRA” means reconcile the current remote V2 state and then execute the next dependency-ready unchecked item in this file.
+> Start from the current remote `main`. Continue the active item if dependency-ready, otherwise take the first dependency-ready unchecked item. The 379 retired learner tasks are preserved in history.
 
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
 
@@ -15,7 +15,7 @@
 - Older green revisions do not transfer to newer heads.
 - No percentage-complete metric. Close broad gates only on their stated acceptance.
 
-## Current live branch baseline to reconcile
+## Historical branch evidence at V2-197
 
 | PR | Workstream | Observed exact head at V2-197 reconciliation | Current evidence boundary |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
 | #61 | validation-only combined tree | `8d12e8e15ff54c42910948a6a691eb41d631be15` | [all 11 exact workflows passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350009); [workspace](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350020), [compatibility](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350132); source integration changes central separately; **DO NOT MERGE** |
 
-If any head changes, reconcile the affected delta before claiming work against it. V2-197 comparison at observed central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70`: all ten children 39 commits behind (ahead counts #51–#60: 5, 11, 7, 6, 4, 6, 5, 13, 6, 5). The current validation-only tree pins that source, not this later bookkeeping checkpoint. Subsequent changes require exact reconciliation; see session evidence.
+The table records the former parallel development period. The current integration comparison and unresolved source differences are recorded in [the main-tree reconciliation](HIST-010-RECONCILIATION.md).
 
 ---
 
@@ -87,7 +87,7 @@ Existing base: immutable snapshots, local CAS, fsync/atomic publication, subproc
 - [x] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
 - [x] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
 - [ ] `V2-HIST-009` Perform physical/hardware power-loss durability evidence when available; do not substitute SIGKILL for power loss.
-- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
+- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX. [Integration and remaining verification](HIST-010-RECONCILIATION.md).
 
 ## B3. PR #53 — semantic compilation and intent
 
@@ -308,23 +308,7 @@ External blockers do **not** stop independent engineering that does not depend o
 
 # F. Default execution order for “continue with SUTRA”
 
-Unless exact remote reconciliation shows a dependency change, execute in this order:
-
-1. `V2-N001` #52 exact CI.
-2. `V2-N002` #54 exact CI.
-3. `V2-N003` #58 browser/accessibility CI.
-4. `V2-N004` #61 current combined validation.
-5. `V2-N005` confirm manifest-bound evidence; `V2-N006`–`V2-N012` normalize branches/registers and prepare reviewed integration.
-6. Integrate `#52 history + #53 semantic review → #58 workspace`.
-7. Integrate #57 trust boundaries and #51 operator/model approval around that path.
-8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation.
-9. Expand #55 statistical/semantic independent verification.
-10. Exercise #59 complete specialist journeys.
-11. Advance #60 to end-to-end natural-language and full staged benchmarking.
-12. Close the 21 Living Knowledge gates and remaining foundations only when their acceptance is genuinely satisfied.
-13. Develop WEB-001–004 independently when higher-priority foundation work permits; never make web access a foundation gate.
-
-Do not choose a former SUTRA1 pending task merely because it once had a lower numeric phase or appeared in an old `next_task` queue.
+Resolve the current `main` revision and its CI. Continue the single active task if ready, then use the first dependency-ready unchecked task in this checklist. Skip external blockers. Historical PR numbers in workstream headings identify the source of the work. Verify broad gates separately and keep optional web access behind ready core work.
 
 ---
 
