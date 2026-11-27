@@ -1429,3 +1429,15 @@ HIST-010 is active. Extend the real durable adapter with exact portable snapshot
 ## V2-203 browser test scope self-correction
 
 Exact candidate `50f4dba58b71aef236da05d45832a508ef7afbe2` run [45795433588](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45795433588) reached the durable-host journey but failed with `ReferenceError: rootHistoryPin is not defined`: the retained root digest was block-scoped in the first finance setup and later used by the finance stale-CAS recovery block. This is test orchestration, not evidence of a passing host contract. Hoist that test-only variable across the guided-domain loop; preserve every stale-write, no-retry, no-local-mutation and exact-read assertion. HIST-010/UX-002 remain open pending exact new CI.
+
+
+## SUTRA-ORCH-001 — common disclosure consent integration (2026-11-27)
+
+- Canonical base: `ad182e801d969e9209009de54df1c8a9cfb1a6de`; PR #64 branch `sutra/orch-001-common-consent`.
+- Reconciliation first proved `V2-HIST-010` / `V2-UX-002` were already implemented on canonical main rather than duplicating the durable-history system. Main runs 45921932719 and 45921932730 passed the stale-CAS/recovery path.
+- `V2-ORCH-001`: removed the separate `approveDisclosure:true` execution bypass. `packages/sutra-consent` now provides a bounded one-shot disclosure-consent contract; council execution binds exact plan pin, destination and disclosed fields and revalidates route/profile state immediately before dispatch.
+- Adversarial browser evidence force-enables the disabled Run control while consent is unchecked; common consent returns `CONSENT_DENIED` and transport call count remains zero. Approved replay requires a fresh preview and remains decision authority `NONE`.
+- Package regressions cover denial-before-dispatch, consumed approval, wrong plan pin, route revocation, unrelated credential-set mutation and omission of reviewed values/credentials from consent event history.
+- Failure history retained: impact classifier still referenced the intentionally retired combined validation workflow; operator CI omitted `packages/sutra-consent/**`; the first adversarial browser test exposed a checkbox early-return that bypassed the consent decision; Cloudflare ingress installed the old app toolchain while building the current workspace; four historical council tests still used the removed boolean bypass. Each cause was fixed rather than bypassed.
+- Exact implementation checkpoint `bef87881387adb9a02a225a49b993a9b4389ec64`: all 11 triggered workflows passed. Key evidence: operator-browser run 45927484259/job 140272135117; full knowledge/browser run 45927484224; workspace run 45927484296.
+- Scope: synthetic injected transports only. This does not close live-provider interoperability, paid inference, billing uncertainty or capability negotiation. Next active item: `V2-ORCH-002`.

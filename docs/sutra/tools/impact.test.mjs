@@ -143,7 +143,7 @@ test('HTML loading shell changes invalidate the first viewer, browser, performan
 test('v2 knowledge kernel and reference consumer require their own verification without invalidating unrelated legacy learner metrics',()=>{
  const r=classifyChangedFiles(['packages/sutra-knowledge/index.js','packages/sutra-knowledge/reference/verify.py','docs/sutra-v2/progress.json','docs/sutra-v2/roadmap.json'],map);
  assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
- assert.deepEqual(r.requiredWorkflows,['Validate SUTRA v2 knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ assert.deepEqual(r.requiredWorkflows,['Validate SUTRA knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
  const shared=classifyChangedFiles(['packages/sutra-consent/strict-json.js'],map);
  assert.ok(shared.affectedSuites.includes('v2-knowledge-verification'));assert.ok(shared.affectedSuites.includes('security-boundary'));
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-executable.mjs'],map).unmapped,['docs/sutra-v2/unknown-executable.mjs']);
@@ -152,13 +152,13 @@ test('v2 knowledge kernel and reference consumer require their own verification 
 
 test('v2 workspace and shared runtime require the v2 browser/kernel workflow',()=>{
  const r=classifyChangedFiles(['apps/sutra-v2/src/main.js'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
- assert.ok(classifyChangedFiles(['packages/sutra-runtime/index.js'],map).requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'));
+ assert.ok(classifyChangedFiles(['packages/sutra-runtime/index.js'],map).requiredWorkflows.includes('Validate SUTRA knowledge kernel'));
 });
 
 
 test('v2 integrated learner source changes require v2 verification as well as legacy checks',()=>{
  for(const file of ['packages/sutra-content-profile/index.js','packages/sutra-source-tools/index.js','apps/sutra/public/content/source-catalog.json','apps/sutra/public/transcripts/synthetic-timing.txt','apps/sutra/public/media/timing-fixture.mp4','apps/sutra/src/seek-policy.js']){
-  const r=classifyChangedFiles([file],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'),file);
+  const r=classifyChangedFiles([file],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'),file);
  }
 });
 
@@ -167,7 +167,7 @@ test('v2 research register and protocol are explicitly classified without waivin
  for(const file of files){
   const r=classifyChangedFiles([file],map);
   assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
-  assert.ok(r.requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'));
+  assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'));
   assert.deepEqual(r.invalidatedMetrics,[]);
  }
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/unknown.json'],map).unmapped,['docs/sutra-v2/evaluation/unknown.json']);
@@ -175,13 +175,37 @@ test('v2 research register and protocol are explicitly classified without waivin
 
 
 test('third-party v2 license artifacts are exact-mapped without waiving unknown evaluation files',()=>{const r=classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.invalidatedMetrics,[]);assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/third-party/unknown.txt'],map).unmapped,['docs/sutra-v2/evaluation/third-party/unknown.txt']);});
-test('exact combined validation manifests and workflows require canonical v2 gates; unknown artifacts still fail closed',()=>{
+test('historical combined validation paths stay classified while live verification resolves to canonical main workflows',()=>{
  const files=['docs/sutra-v2/validation/combined-v2-182.json','.github/workflows/sutra-v2-combined-v2-182.yml','.github/workflows/sutra-v2-workspace-browser.yml'];
- const r=classifyChangedFiles(files,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.requiredWorkflows,['Validate SUTRA v2 knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ const r=classifyChangedFiles(files,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);assert.deepEqual(r.requiredWorkflows,['Validate SUTRA knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/validation/unknown.json'],map).unmapped,['docs/sutra-v2/validation/unknown.json']);
- const orig=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-knowledge.yml',import.meta.url),'utf8'),combined=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-combined-v2-182.yml',import.meta.url),'utf8');
- const jobs=x=>x.slice(x.indexOf('\njobs:\n'));
- assert.equal(jobs(combined).replaceAll("    if: github.head_ref == 'sutra/v2-validation/v2-182'\n",''),jobs(orig));
+ const knowledgeUrl=new URL('../../../.github/workflows/sutra-v2-knowledge.yml',import.meta.url),workspaceUrl=new URL('../../../.github/workflows/sutra-v2-workspace-browser.yml',import.meta.url),combinedUrl=new URL('../../../.github/workflows/sutra-v2-combined-v2-182.yml',import.meta.url);
+ assert.equal(fs.existsSync(combinedUrl),false);
+ const knowledge=fs.readFileSync(knowledgeUrl,'utf8'),workspace=fs.readFileSync(workspaceUrl,'utf8');
+ for(const live of [knowledge,workspace]){assert.match(live,/branches:\s*\['main'\]/);assert.doesNotMatch(live,/sutra\/v2-(?:knowledge-compiler|validation|parallel)/);}
+ assert.match(knowledge,/name: Validate SUTRA knowledge kernel/);
 });
 
-test('validation snapshot new workflows require canonical knowledge verification',()=>{const paths=['.github/workflows/sutra-v2-operator-browser.yml','.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'];const r=classifyChangedFiles(paths,map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);});
+
+test('common consent changes require the dedicated operator approval browser as well as kernel security verification',()=>{
+ const r=classifyChangedFiles(['packages/sutra-consent/index.js'],map);
+ assert.deepEqual(r.unmapped,[]);
+ assert.ok(r.affectedSuites.includes('v2-knowledge-verification'));
+ assert.ok(r.affectedSuites.includes('v2-operator-consent'));
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'));
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA operator model approval browser'));
+ assert.ok(r.invalidatedMetrics.includes('security_boundary'));
+ const workflow=fs.readFileSync(new URL('../../../.github/workflows/sutra-v2-operator-browser.yml',import.meta.url),'utf8');
+ assert.match(workflow,/packages\/sutra-consent\/\*\*/);
+});
+
+test('validation snapshot workflows map to their live canonical verification suites',()=>{
+ const operator=classifyChangedFiles(['.github/workflows/sutra-v2-operator-browser.yml'],map);
+ assert.deepEqual(operator.unmapped,[]);
+ assert.deepEqual(operator.affectedSuites,['v2-knowledge-verification','v2-operator-consent']);
+ assert.deepEqual(operator.requiredWorkflows,['Validate SUTRA knowledge kernel','Validate SUTRA operator model approval browser']);
+ const benchmark=classifyChangedFiles(['.github/workflows/sutra-v2-finqa-benchmark.yml','docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md'],map);
+ assert.deepEqual(benchmark.unmapped,[]);
+ assert.deepEqual(benchmark.affectedSuites,['v2-knowledge-verification']);
+ assert.deepEqual(benchmark.requiredWorkflows,['Validate SUTRA knowledge kernel']);
+});

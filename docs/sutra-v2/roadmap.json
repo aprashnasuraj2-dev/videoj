@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-203-durable-host-browser-candidate",
+  "session": "SUTRA-ORCH-001-common-consent-integration",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3726,8 +3726,8 @@
     "allocationIsTarget": true
   },
   "parallelCandidateEvidence": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "qualification": "Historical child and validation-only evidence retained as provenance after canonical main integration. It grants no separate execution or merge authority.",
     "history": [
       {
         "session": "V2-182-batch1",
@@ -5520,6 +5520,15 @@
       "apps/sutra-v2/test/browser.cjs"
     ],
     "contract": "No browser filesystem authority. Optional versioned injected host absent by default; browser independently replays snapshots before/after calls; retained-head CAS; no automatic write retry or state adoption.",
-    "verification": "pending exact central knowledge/browser/accessibility"
+    "verification": "integrated success on canonical main ad182e801d969e9209009de54df1c8a9cfb1a6de: full knowledge/browser run 45921932719 and workspace run 45921932730"
+  },
+  "orchestratorConsentCandidate": {
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "task": "V2-ORCH-001",
+    "sourceRevision": "bef87881387adb9a02a225a49b993a9b4389ec64",
+    "contract": "Common one-shot consent mediates model disclosure and dispatch independently of DOM state; exact plan/destination/disclosure are pinned and captured routes are revalidated before the effect.",
+    "verification": "11/11 triggered PR workflows passed at exact implementation head; operator-browser 45927484259 and knowledge/browser 45927484224",
+    "next": "V2-ORCH-002 capability negotiation",
+    "qualification": "Synthetic/provider-neutral injected transports only; no live-provider interoperability or billing claim."
   }
 }

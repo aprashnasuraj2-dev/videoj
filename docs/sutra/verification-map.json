@@ -321,6 +321,22 @@
       "reason": "Operator-owned loopback model gateway changes can affect secret isolation, resource bounds, compatibility, inference cost and failure isolation; local integration tests do not establish live GPU readiness."
     },
     {
+      "id": "v2-operator-consent",
+      "prefixes": [
+        "packages/sutra-consent/"
+      ],
+      "exact": [
+        ".github/workflows/sutra-v2-operator-browser.yml"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA operator model approval browser"
+      ],
+      "invalidates": [
+        "security_boundary"
+      ],
+      "reason": "Common consent implementation changes can alter one-shot model disclosure authority, cancellation and revocation; they must pass the dedicated operator browser gate in addition to kernel/security checks."
+    },
+    {
       "id": "v2-knowledge-verification",
       "prefixes": [
         "packages/sutra-knowledge/",
@@ -353,7 +369,7 @@
         "docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md"
       ],
       "requiredWorkflows": [
-        "Validate SUTRA v2 knowledge kernel"
+        "Validate SUTRA knowledge kernel"
       ],
       "invalidates": [],
       "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics. Includes the legacy hash-bound lesson profile, source registry, timing fixture and native seek policy. Explicit research register and evaluation protocol changes require the v2 verification workflow, but do not establish research validity."

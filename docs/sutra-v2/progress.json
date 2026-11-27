@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "project": "SUTRA 2.0",
-  "branch": "sutra/v2-knowledge-compiler",
+  "project": "SUTRA",
+  "branch": "main",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-203-durable-host-browser-candidate",
+  "session": "SUTRA-ORCH-001-common-consent-integration",
   "next": [
-    "V2-HIST-010",
-    "V2-UX-002",
+    "V2-ORCH-002",
+    "V2-ORCH-003",
     "V2-HIST-009"
   ],
-  "state": "V2-203 browser test scoping correction candidate; HIST010 remains active and unverified; failed exact browser run retained",
+  "state": "Canonical main reconciled; durable-history browser integration verified on main; ORCH-001 common one-shot disclosure consent verified on PR #64 exact implementation head; ORCH-002 is the single active engineering task.",
   "verified": [
     {
       "id": "V2-M01",
@@ -561,6 +561,24 @@
       "sourceRevision": "d87414e463e396be3672e63f774de77b2ab6136d",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708/job/139821171263",
       "description": "Exact browser workspace integrates #53 mapping review API and preserves UNVERIFIED semantic status/decisionAuthority NONE; no external request added."
+    },
+    {
+      "id": "V2-HIST-010",
+      "sourceRevision": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45921932719",
+      "description": "Canonical-main full browser/knowledge verification includes real host-backed durable investigation history, retained-head CAS, explicit stale refusal, no automatic retry/adoption and recovery/read verification. Workspace run 45921932730 also passed."
+    },
+    {
+      "id": "V2-UX-002",
+      "sourceRevision": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45921932730",
+      "description": "Canonical-main workspace browser passed the durable-history host integration using the real history API; browser has no filesystem authority and stale durable state is surfaced explicitly."
+    },
+    {
+      "id": "V2-ORCH-001",
+      "sourceRevision": "bef87881387adb9a02a225a49b993a9b4389ec64",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45927484259/job/140272135117",
+      "description": "Common one-shot disclosure consent bound to exact destination, disclosed fields and plan pin; forced DOM Run-button bypass denied before model dispatch; approval consumption, route invalidation, credential-set fence and event-value redaction verified. Full knowledge/browser run 45927484224 and all 11 triggered workflows passed."
     }
   ],
   "release": "not_authorized",
@@ -9491,7 +9509,7 @@
     "activeRoadmap": "docs/sutra-v2/roadmap.json",
     "procedure": "docs/sutra-v2/CONTINUE.md",
     "inheritedV1Procedure": "docs/sutra/CONTINUE.md",
-    "semantics": "Resume the current exact remote revision using only the active V2 checklist; preserve applicable historical evidence and remaining V2 gate obligations. No retired V1 pending IDs or historical snapshot next fields select work.",
+    "semantics": "Resume exact canonical main using only the active SUTRA checklist; preserve applicable historical evidence and inherited implementation. Historical branch/task cursors do not select work.",
     "checkpointTransaction": [
       "resolve exact branch/PR HEAD and reconcile intervening commits",
       "reconcile exact-source CI before granting or withdrawing verification credit",
@@ -9514,7 +9532,7 @@
     "mandate": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
     "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
     "roadmapRole": "historical and broad dependency/gate register only",
-    "selectionRule": "Only the active V2 checklist; no V1 fallback. Reconcile exact remote HEAD and CI before acceptance."
+    "selectionRule": "Only the active SUTRA checklist; resolve exact main and CI before acceptance. Historical branches are provenance only."
   },
   "reconciledEntryParent": {
     "sourceRevision": "9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
@@ -9561,8 +9579,8 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "baseline": "d87414e463e396be3672e63f774de77b2ab6136d",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "baseline": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
     "branches": [
@@ -9786,7 +9804,7 @@
         }
       }
     ],
-    "qualification": "Current exact scoped child observation, pinned to observed central source. No broad gate promotion; historical snapshots preserved.",
+    "qualification": "Historical child/validation provenance retained after integration. Branch ahead/behind observations were measured against historicalComparisonBaseline, not current main; these branches are not active execution authorities.",
     "history": [
       {
         "session": "V2-180",
@@ -12674,7 +12692,8 @@
         "conclusion": "success",
         "scope": "real killed writer before immutable link, before HEAD rename, after HEAD rename; legacy manual lock recovery"
       }
-    ]
+    ],
+    "historicalComparisonBaseline": "d87414e463e396be3672e63f774de77b2ab6136d"
   },
   "reuseFirstReconciliation": {
     "session": "V2-183-reuse-first-reconciliation",
@@ -12912,25 +12931,25 @@
     "activatedAt": "2026-11-26T13:15:00+05:45",
     "semantics": "sole active execution queue",
     "continuationCommand": "continue with SUTRA",
-    "selectionRule": "reconcile exact remote V2 state, then execute first dependency-ready unchecked item",
+    "selectionRule": "resolve exact main and exact-head CI, then execute the single dependency-ready active item",
     "legacyV1PendingRetired": 379,
     "legacyV1ActiveQueue": false,
     "validationBranch": "sutra/v2-validation/v2-182",
     "validationPr": 61,
     "validationMergeAllowed": false,
-    "activeTask": "V2-HIST-010",
-    "remainingTasks": 144,
+    "activeTask": "V2-ORCH-002",
+    "remainingTasks": 141,
     "activeTasks": 1,
-    "completedSinceReset": 24,
-    "remainingIncludingActive": 145,
+    "completedSinceReset": 27,
+    "remainingIncludingActive": 142,
     "externalBlockers": 6,
     "optionalRemainingTasks": 4,
-    "foundationRemainingIncludingActive": 141,
+    "foundationRemainingIncludingActive": 138,
     "explicitPriorityCounts": {
       "P0": 11,
       "P1": 16,
       "P2": 3,
-      "unclassified": 115
+      "unclassified": 112
     },
     "priorityCountQualification": "Explicit roadmap/checklist priorities only; unclassified checklist tasks use dependency order, no inferred priority labels."
   },
@@ -12942,14 +12961,18 @@
     "activePath": "docs/sutra-v2/CHECKLIST.md"
   },
   "currentReconciliation": {
-    "session": "V2-203-durable-host-browser-candidate",
-    "centralSource": "d87414e463e396be3672e63f774de77b2ab6136d",
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "centralSource": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
     "centralRun": {
-      "id": 45794383708,
+      "id": 45921932719,
       "knowledge": "success",
       "browser": "success",
-      "knowledgeJob": 139821171644,
-      "browserJob": 139821171263
+      "knowledgeJob": 140254433698,
+      "browserJob": 140254433938,
+      "workspaceRun": 45921932730,
+      "workspaceJob": 140254433450,
+      "workspace": "success",
+      "qualification": "Canonical main reconciliation checkpoint; historical child branches are provenance only."
     },
     "validation": {
       "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
@@ -13118,9 +13141,12 @@
       "V2-N010",
       "V2-N011",
       "V2-N005",
-      "V2-UX-001"
+      "V2-UX-001",
+      "V2-HIST-010",
+      "V2-UX-002",
+      "V2-ORCH-001"
     ],
-    "next": "V2-HIST-010",
+    "next": "V2-ORCH-002",
     "children": [
       {
         "pr": 51,
@@ -13455,5 +13481,20 @@
       ],
       "qualification": "22 exact individually selected child blobs and two reviewed composition blobs; no validation PR merge, no external provider contact. Full central exact CI required. Host durable storage, browser checkpoint and mapping contracts composed; browser semantic review and host durable transport not yet wired."
     }
-  ]
+  ],
+  "orchestratorConsentCandidate": {
+    "session": "SUTRA-ORCH-001-common-consent-integration",
+    "task": "V2-ORCH-001",
+    "sourceRevision": "bef87881387adb9a02a225a49b993a9b4389ec64",
+    "implementation": [
+      "packages/sutra-consent/index.js",
+      "packages/sutra-knowledge/approved-expression-council.js",
+      "apps/sutra-v2/src/operator-model-console.js",
+      "packages/sutra-knowledge/test/approved-expression-council.test.mjs",
+      "apps/sutra-v2/test/model-approval-browser.cjs"
+    ],
+    "contract": "One-shot model disclosure consent is separate from DOM enablement and binds exact destination, disclosure labels and plan pin. Denial/cancellation happens before dispatch; approval is consumed on attempted use; route/profile revalidation occurs immediately inside the approved effect; consent event history excludes reviewed values.",
+    "verification": "exact implementation head bef87881387adb9a02a225a49b993a9b4389ec64: all 11 triggered PR workflows passed; operator 45927484259, knowledge/browser 45927484224, workspace 45927484296",
+    "limitations": "Synthetic injected transports only. No real provider credentials, billing semantics, provider-authenticated capability discovery or external deployment."
+  }
 }

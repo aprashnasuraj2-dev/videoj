@@ -197,3 +197,68 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
     finally{clearTimeout(timer);finished=true;if(!handedOff)cancelBody(received?.body);}
   },{signal});
 }
+
+
+const disclosureOperationPattern=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
+const disclosurePinPattern=/^sha256:[a-f0-9]{64}$/;
+export function normalizeDisclosureIntent(input){
+  input=dataRecord(input,['operation','destination','purpose','disclosure','planPin','preview'],'DISCLOSURE_INTENT');
+  if(typeof input.operation!=='string'||!disclosureOperationPattern.test(input.operation))fail('DISCLOSURE_INTENT','Disclosure operation must be a bounded identifier.');
+  const destination=publicText(input.destination,'Destination',1024);
+  const purpose=publicText(input.purpose,'Purpose',240);
+  const disclosure=dataLabels(input.disclosure);
+  if(new Set(disclosure).size!==disclosure.length)fail('DISCLOSURE','Disclosure labels must be unique.');
+  if(typeof input.planPin!=='string'||!disclosurePinPattern.test(input.planPin))fail('DISCLOSURE_PIN','Disclosure intent requires an exact SHA-256 plan pin.');
+  let preview;
+  if(input.preview!==undefined){
+    const raw=dataRecord(input.preview,disclosure,'DISCLOSURE_PREVIEW');
+    if(Object.keys(raw).length!==disclosure.length||disclosure.some(k=>!Object.hasOwn(raw,k)||typeof raw[k]!=='string'||!raw[k].trim()||raw[k].length>240||/[\u0000-\u001f\u007f]/.test(raw[k])))fail('DISCLOSURE_PREVIEW','Preview must contain exactly the bounded disclosed values.');
+    preview=Object.freeze({...raw});
+  }
+  return Object.freeze({operation:input.operation,destination,purpose,disclosure:Object.freeze([...disclosure]),planPin:input.planPin,...(preview?{preview}:{})});
+}
+export function createDisclosureConsentInspector({decide,onEvent,now=()=>new Date().toISOString()}={}){
+  if(typeof decide!=='function')fail('DECISION_HANDLER','A user decision handler is required.');
+  if(typeof now!=='function')fail('CLOCK','Clock must be callable.');
+  let controller=new AbortController();const events=[];
+  const copy=event=>Object.freeze({...event,disclosure:Object.freeze([...event.disclosure])});
+  const record=(intent,type,extra={},observe)=>{
+    const safe=copy({at:String(now()),type,operation:intent.operation,destination:intent.destination,purpose:intent.purpose,disclosure:intent.disclosure,planPin:intent.planPin,...extra});
+    if(events.length<512)events.push(safe);
+    try{onEvent?.(safe);}catch{}
+    try{observe?.(safe);}catch{}
+    return safe;
+  };
+  async function authorize(input,{signal,onEvent:observe}={}){
+    const active=combine(controller.signal,signal);check(active);
+    const intent=normalizeDisclosureIntent(input);record(intent,'intent',{},observe);check(active);
+    let answer;
+    try{answer=await raceAbort(()=>decide(Object.freeze({...intent,scopeOptions:Object.freeze(['once'])}),{signal:active}),active);}
+    catch(error){if(active.aborted||error instanceof ConsentError&&error.code==='CANCELLED')throw cancelled();fail('DECISION_FAILED','Consent decision could not be completed.');}
+    check(active);
+    if(answer==='deny')answer={decision:'deny',scope:'once'};
+    if(answer==='allow')answer={decision:'allow',scope:'once'};
+    answer=dataRecord(answer,['decision','scope'],'DECISION_INVALID');
+    if(!['allow','deny'].includes(answer.decision)||answer.scope!=='once')fail('DECISION_INVALID','Disclosure consent must explicitly allow or deny once.');
+    record(intent,'decision',{decision:answer.decision,scope:'once',source:'user'},observe);
+    if(answer.decision==='deny')throw new ConsentError('CONSENT_DENIED','Disclosure was denied before dispatch.');
+    check(active);return {intent,decision:'allow',scope:'once'};
+  }
+  async function perform(input,effect,{signal,onEvent:observe}={}){
+    if(typeof effect!=='function')fail('CONTACT_EFFECT','Approved disclosure operation must be callable.');
+    const active=combine(controller.signal,signal),approval=await authorize(input,{signal:active,onEvent:observe});check(active);
+    try{
+      const value=await raceAbort(()=>effect(approval.intent,active),active);check(active);
+      record(approval.intent,'outcome',{status:'completed',scope:'once'},observe);return value;
+    }catch(error){
+      record(approval.intent,'outcome',{status:'failed',scope:'once'},observe);
+      if(error instanceof ConsentError)throw error;
+      throw error;
+    }
+  }
+  return Object.freeze({
+    authorize,perform,
+    clearSession(){const previous=controller;controller=new AbortController();previous.abort();},
+    exportEvents(){return events.map(event=>({...event,disclosure:[...event.disclosure]}));}
+  });
+}
