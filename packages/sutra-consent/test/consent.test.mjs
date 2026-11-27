@@ -163,3 +163,10 @@ test('one-shot disclosure denial and cancellation prevent the effect',async()=>{
  const pending=pendingInspector.perform(intent,async()=>{effects++;});await new Promise(resolve=>setTimeout(resolve,0));pendingInspector.clearSession();
  await assert.rejects(pending,e=>e.code==='CANCELLED');release({decision:'allow',scope:'once'});await new Promise(resolve=>setTimeout(resolve,0));assert.equal(effects,0);
 });
+
+test('disclosure result cannot publish if consent is revoked in the outcome observer',async()=>{
+ const intent={operation:'model_inference',destination:'provider-a/profile-1/model-a',purpose:'Generate one reviewed conditional proposal',disclosure:['ocf25'],planPin:'sha256:'+'c'.repeat(64)};
+ const inspector=createDisclosureConsentInspector({decide:()=> 'allow'});let effects=0;
+ await assert.rejects(inspector.perform(intent,async()=>{effects++;return 'private result';},{onEvent:e=>{if(e.type==='outcome')inspector.clearSession();}}),e=>e.code==='CANCELLED');
+ assert.equal(effects,1);assert.deepEqual(inspector.exportEvents().filter(e=>e.type==='outcome').map(e=>e.status),['completed']);
+});

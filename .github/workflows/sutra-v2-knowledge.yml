@@ -30,7 +30,7 @@ jobs:
       - name: Run bounded inference and opaque credential boundary tests
         run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Verify council orchestration and operator integration before external formal tool download
-        run: node --test packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs packages/sutra-knowledge/test/binding-suggestion-request.test.mjs packages/sutra-knowledge/test/local-binding-runner.test.mjs
+        run: node --test packages/sutra-consent/test/consent.test.mjs packages/sutra-knowledge/test/approved-expression-council.test.mjs packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs packages/sutra-knowledge/test/binding-suggestion-request.test.mjs packages/sutra-knowledge/test/local-binding-runner.test.mjs
       - name: Execute threat-register runtime and API regressions
         run: |
           node --test packages/sutra-runtime/test/private-context.test.mjs packages/sutra-runtime/test/peer-boundary.test.mjs packages/sutra-runtime/test/peer-invocation.test.mjs

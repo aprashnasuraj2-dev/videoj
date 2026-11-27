@@ -247,14 +247,13 @@ export function createDisclosureConsentInspector({decide,onEvent,now=()=>new Dat
   async function perform(input,effect,{signal,onEvent:observe}={}){
     if(typeof effect!=='function')fail('CONTACT_EFFECT','Approved disclosure operation must be callable.');
     const active=combine(controller.signal,signal),approval=await authorize(input,{signal:active,onEvent:observe});check(active);
-    try{
-      const value=await raceAbort(()=>effect(approval.intent,active),active);check(active);
-      record(approval.intent,'outcome',{status:'completed',scope:'once'},observe);return value;
-    }catch(error){
-      record(approval.intent,'outcome',{status:'failed',scope:'once'},observe);
-      if(error instanceof ConsentError)throw error;
-      throw error;
-    }
+    let value;
+    try{value=await raceAbort(()=>effect(approval.intent,active),active);check(active);}
+    catch(error){record(approval.intent,'outcome',{status:'failed',scope:'once'},observe);throw error;}
+    record(approval.intent,'outcome',{status:'completed',scope:'once'},observe);
+    // A synchronous observer may revoke the session while recording completion.
+    // The effect completed, but its result must not cross the publication fence.
+    check(active);return value;
   }
   return Object.freeze({
     authorize,perform,

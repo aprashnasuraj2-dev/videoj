@@ -1,3 +1,4 @@
+import {pinConsentInspector} from '../sutra-consent/index.js';
 // Host-held, one-shot expression council approval. Plan bytes alone do not
 // grant a capability: execute is bound to the exact captured workspace/handles.
 import {prepareCouncil} from './council-scheduler.js';
@@ -35,12 +36,20 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
  const visible=projectCouncilBindings(c,{bindingIds:admitted.bindingIds,includeValues:admitted.includeValues});
  const consentIntent=freeze({operation:'model_inference',destination,purpose:'Generate conditional proposals from the displayed reviewed binding scope.',disclosure:[...admitted.bindingIds],planPin,...(admitted.includeValues?{preview:Object.fromEntries(visible.map(x=>[x.id,x.valueLexeme]))}:{})});
  return Object.freeze({plan,planPin,consentIntent,async execute({consentInspector,approvedPlanPin}={}){
-  if(used)fail('CONSUMED');if(approvedPlanPin!==planPin)fail('PIN');if(!consentInspector||typeof consentInspector.perform!=='function')fail('CONSENT');
+  if(used)fail('CONSUMED');if(approvedPlanPin!==planPin)fail('PIN');const inspector=pinConsentInspector(consentInspector);
   // Consume even on denial/failure; no retry or substitution under old approval.
   used=true;
-  return consentInspector.perform(consentIntent,async()=>{
+  return inspector.perform(consentIntent,async(_intent,grantSignal)=>{
+   // The grant signal is revoked by the inspector; original caller cancellation
+   // is retained as a separate fence. No later round can dispatch after either.
+   const active=grantSignal&&signal?AbortSignal.any([grantSignal,signal]):grantSignal??signal;
+   if(active?.aborted)fail('CANCELLED');
    revalidate();
-   return runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal,roundPolicy});
+   if(active?.aborted)fail('CANCELLED');
+   const result=await runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal:active,roundPolicy});
+   if(active?.aborted)fail('CANCELLED');
+   config.assertPublication();
+   return result;
   },{signal});
  }});
 }
