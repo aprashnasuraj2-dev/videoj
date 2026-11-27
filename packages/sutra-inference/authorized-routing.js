@@ -1,5 +1,7 @@
 /* Capability-declared, exact-plan, consent-per-recipient routing; no transport or credential authority. */
 import {pinConsentInspector} from '../sutra-consent/index.js';
+import {runTaskGraph,compileTaskGraph} from '../sutra-runtime/investigation-tasks.js';
+const preparedPlans=new WeakSet();
 function routeFail(code){const e=new Error('Provider route orchestration refused ('+code+').');e.code=code;throw e;}
 
 function routeClosed(x,keys){return x!==null&&typeof x==='object'&&[Object.prototype,null].includes(Object.getPrototypeOf(x))&&Reflect.ownKeys(x).length===keys.length&&keys.every(k=>{const d=Object.getOwnPropertyDescriptor(x,k);return d?.enumerable&&Object.hasOwn(d,'value');});}
@@ -45,12 +47,13 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
   if(!capacitySlots(cap.global,maxOutputTokens,inputBytes)||!capacitySlots(profile,maxOutputTokens,inputBytes))return 'BUDGET';
   return 'CAPACITY_HINT';
  };
- return Object.freeze({plan,planPin,async execute({approvedPlanPin,consentInspector,signal}={}){
+ const preparedPlan=Object.freeze({plan,planPin,async execute({approvedPlanPin,consentInspector,signal,assertCurrent:executionFence=()=>{}}={}){
   if(consumed)routeFail('CONSUMED');
   if(approvedPlanPin!==planPin)routeFail('PIN');
   const inspector=pinConsentInspector(consentInspector);
+  if(typeof executionFence!=='function')routeFail('CONFIG');
   consumed=true;const deadline=AbortSignal.timeout(timeoutMs),active=signal?AbortSignal.any([signal,deadline]):deadline;
-  const assertLive=()=>{if(active.aborted)routeFail('CANCELLED');check();};
+  const assertLive=()=>{if(active.aborted)routeFail('CANCELLED');check();executionFence();};
   const decisions=[];
   for(const route of eligible){
    assertLive();const before=availability(route);if(before!=='CAPACITY_HINT'){decisions.push(Object.freeze({routeId:route.id,decision:before}));continue;}
@@ -73,4 +76,32 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
   }
   return Object.freeze({status:'unavailable',planPin,decisions:Object.freeze(decisions)});
  }});
+ preparedPlans.add(preparedPlan);return preparedPlan;
+}
+
+// Explicit host adapter over the same typed DAG. Each task requires a separately
+// prepared and approved exact operation; inputs are for local artifact admission
+// only and are NEVER automatically appended to a model request.
+export async function runAuthorizedProviderGraph({tasks,approvals,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,assertCurrent=()=>{}}={}){
+ if(!routeDense(approvals,64)||!approvals.length||typeof assertCurrent!=='function'||typeof version!=='string'||!/^sha256:[a-f0-9]{64}$/.test(version))routeFail('CONFIG');
+ const byTask=new Map(),plans=new Set();
+ for(const entry of approvals){
+  if(!routeClosed(entry,['taskId','prepared','approvedPlanPin','consentInspector','admit'])||typeof entry.taskId!=='string'||byTask.has(entry.taskId)||!preparedPlans.has(entry.prepared)||plans.has(entry.prepared)||entry.prepared.plan.version!==version||entry.approvedPlanPin!==entry.prepared.planPin||typeof entry.admit!=='function')routeFail('GRAPH_APPROVAL');
+  const consentInspector=pinConsentInspector(entry.consentInspector);
+  plans.add(entry.prepared);byTask.set(entry.taskId,Object.freeze({...entry,consentInspector}));
+ }
+ const handlers={provider_task:{
+  async execute({task,signal:taskSignal}){
+   const a=byTask.get(task.id),out=await a.prepared.execute({approvedPlanPin:a.approvedPlanPin,consentInspector:a.consentInspector,signal:taskSignal,assertCurrent});
+   if(out.status!=='completed'||typeof out.result?.value?.text!=='string')routeFail('UNAVAILABLE');
+   return Object.freeze({planPin:out.planPin,routeId:out.routeId,text:out.result.value.text});
+  },
+  admit(value,context){
+   // Local host admission can use predecessor artifacts; provider payload remains pinned.
+   return byTask.get(context.task.id).admit(value,context);
+  }
+ }};
+ const graph=compileTaskGraph(tasks,handlers);
+ if(graph.order.length!==byTask.size||graph.order.some(t=>!byTask.has(t.id)))routeFail('GRAPH_APPROVAL');
+ return runTaskGraph({tasks:graph.order,handlers,runId,version,concurrency,timeoutMs,signal,onEvent,assertCurrent});
 }

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createProtocolWorkspace} from '../protocol-workspace.js';
 import {createDisclosureConsentInspector} from '../../sutra-consent/index.js';
-import {prepareAuthorizedProviderTask,capacitySlots,rankProviderRoutes} from '../authorized-routing.js';
+import {prepareAuthorizedProviderTask,capacitySlots,rankProviderRoutes,runAuthorizedProviderGraph} from '../authorized-routing.js';
 const pin='sha256:'+'a'.repeat(64);
 const limits={maxCalls:4,maxInputBytes:100000,maxOutputTokens:512,maxConcurrent:2};
 const one={maxCalls:1,maxInputBytes:100000,maxOutputTokens:256,maxConcurrent:1};
@@ -62,4 +62,19 @@ test('encoded wire capacity rather than payload length determines pre-dispatch f
  assert.ok(p.plan.routes[0].inputBytes>64);assert.equal(f.w.budgetSnapshot().global.used.calls,0);
  const result=await p.execute({approvedPlanPin:p.planPin,consentInspector:createDisclosureConsentInspector({decide:i=>{intents.push(i);return 'allow'}})});
  assert.equal(result.routeId,'remote_route');assert.deepEqual(f.seen,['remote']);assert.equal(intents.length,1);assert.match(intents[0].destination,/^remote\//);assert.equal(f.w.budgetSnapshot().global.used.inputBytes,p.plan.routes[1].inputBytes);
+});
+
+test('approved provider DAG admits typed artifacts and never appends predecessor output to the pinned request',async()=>{
+ const wire=[],f=fixture(req=>{wire.push(req.bodyText);return {status:200,bodyText:JSON.stringify(response)}}),p=await prepareAuthorizedProviderTask(f.config),q=await prepareAuthorizedProviderTask({...f.config,operation:{question:'independent fixed question'}}),inspector=createDisclosureConsentInspector({decide:()=> 'allow'});
+ const tasks=[{id:'first',agentId:'researcher',kind:'provider_task',dependsOn:[]},{id:'second',agentId:'analyst',kind:'provider_task',dependsOn:['first']}],events=[];
+ const approvals=[{taskId:'first',prepared:p,approvedPlanPin:p.planPin,consentInspector:inspector,admit:raw=>({kind:'local-proposal',privateLocal:'not-in-provider-request',text:raw.text})},{taskId:'second',prepared:q,approvedPlanPin:q.planPin,consentInspector:inspector,admit:(raw,{inputs})=>({kind:'local-contrast',previous:inputs[0].value.kind,text:raw.text})}];
+ const result=await runAuthorizedProviderGraph({tasks,approvals,runId:'route_graph',version:pin,onEvent:e=>events.push(e)});
+ assert.equal(result.status,'completed');assert.deepEqual(f.seen,['local','remote']);assert.equal(result.artifacts[1].value.previous,'local-proposal');assert.equal(wire[1].includes('not-in-provider-request'),false);assert.equal(events.some(e=>JSON.stringify(e).includes('proposal')),false);
+});
+test('provider graph prevalidates every exact approval and blocks dependent work after host admission refusal',async()=>{
+ const f=fixture(),p=await prepareAuthorizedProviderTask(f.config),q=await prepareAuthorizedProviderTask(f.config),inspector=createDisclosureConsentInspector({decide:()=> 'allow'});
+ const tasks=[{id:'first',agentId:'researcher',kind:'provider_task',dependsOn:[]},{id:'second',agentId:'analyst',kind:'provider_task',dependsOn:['first']}];
+ const approvals=[{taskId:'first',prepared:p,approvedPlanPin:p.planPin,consentInspector:inspector,admit:()=>{throw Error('not a valid proposal')}},{taskId:'second',prepared:q,approvedPlanPin:q.planPin,consentInspector:inspector,admit:raw=>raw}];
+ await assert.rejects(runAuthorizedProviderGraph({tasks,approvals:[approvals[0],{...approvals[1],approvedPlanPin:pin}],runId:'route_graph',version:pin}),e=>e.code==='GRAPH_APPROVAL');assert.deepEqual(f.seen,[]);
+ const result=await runAuthorizedProviderGraph({tasks,approvals,runId:'route_graph',version:pin});assert.equal(result.status,'partial');assert.deepEqual(result.tasks.map(t=>t.status),['failed','blocked']);assert.equal(result.artifacts.length,0);assert.deepEqual(f.seen,['local']);
 });
