@@ -15,6 +15,7 @@ const taskManifest=t=>closed(t,['id','kind','agentId','dependsOn'])&&id(t.id)&&i
 const taskPayload=p=>closed(p,['taskId','agentId','kind','status'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&['executing','validating','completed','failed','blocked','cancelled'].includes(p.status);
 const providerPhases=new Set(['skip-budget','skip-profile','consent-requested','consent-granted','consent-denied','dispatch-attempt','response','refused','cancelled']);
 const providerPayload=p=>closed(p,['taskId','agentId','kind','routeId','planPin','phase'])&&id(p.taskId)&&id(p.agentId)&&id(p.kind)&&id(p.routeId)&&typeof p.planPin==='string'&&/^sha256:[0-9a-f]{64}$/.test(p.planPin)&&providerPhases.has(p.phase);
+const consultationPayload=p=>closed(p,['taskId','agentId','kind','slotId','round','planPin','phase'])&&id(p.taskId)&&id(p.agentId)&&p.kind==='model_consult'&&id(p.slotId)&&int(p.round,1,3)&&typeof p.planPin==='string'&&/^sha256:[0-9a-f]{64}$/.test(p.planPin)&&['dispatch-attempt','transport-response','proposal-admitted','abstained','rejected'].includes(p.phase);
 const councilPayload=p=>closed(p,['agentId','round','phase'])&&id(p.agentId)&&int(p.round,1,100)&&['request','response','transport-refused','proposal','abstained','rejected'].includes(p.phase);
 function manifest(p,origin){
  if(origin==='local-scripted'){
@@ -60,6 +61,17 @@ function providerStep(run,p){
  if(!legal)return false;
  t.planPin=p.planPin;t.routes=routes;routes.set(p.routeId,{routeId:p.routeId,planPin:p.planPin,phase:s});if(s==='dispatch-attempt')t.dispatchedRoute=p.routeId;if(['consent-denied','refused','cancelled','response'].includes(s))t.routeClosed=p.routeId;return true;
 }
+function consultationStep(run,p){
+ if(run.origin!=='host-task'||!consultationPayload(p))return false;
+ const t=run.tasks.get(p.taskId);if(!t||t.kind!==p.kind||t.agentId!==p.agentId||t.status!=='executing')return false;
+ const slots=t.consultation??new Map(),key=p.slotId+':'+p.round,prev=slots.get(key)?.phase;
+ if(t.consultationPin&&t.consultationPin!==p.planPin)return false;
+ if(!prev&&(slots.size>=8||!Array.from(slots.values()).some(x=>x.slotId===p.slotId)&&new Set(Array.from(slots.values(),x=>x.slotId)).size>=4))return false;
+ if(!prev&&p.round>1&&slots.get(p.slotId+':'+(p.round-1))?.phase!=='proposal-admitted')return false;
+ const legal=p.phase==='dispatch-attempt'?prev===undefined:p.phase==='transport-response'?prev==='dispatch-attempt':['proposal-admitted','abstained'].includes(p.phase)?prev==='transport-response':p.phase==='rejected'&&(prev===undefined||['dispatch-attempt','transport-response'].includes(prev));
+ if(!legal)return false;
+ t.consultation=slots;t.consultationPin=p.planPin;slots.set(key,{slotId:p.slotId,round:p.round,planPin:p.planPin,phase:p.phase});return true;
+}
 function close(run,p){
  if(!closed(p,['status']))return false;const s=p.status;
  if(run.origin==='local-scripted'){
@@ -73,7 +85,7 @@ function close(run,p){
  run.status=s;return true;
 }
 function snapshot(r){
- const tasks=[...r.tasks.values()].map(({routes,dispatchedRoute,routeClosed,planPin,...t})=>({...t,dependsOn:[...t.dependsOn],...(routes?{routeAttempts:[...routes.values()].map(x=>({...x}))}:{}),waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
+ const tasks=[...r.tasks.values()].map(({routes,dispatchedRoute,routeClosed,planPin,consultation,consultationPin,...t})=>({...t,dependsOn:[...t.dependsOn],...(routes?{routeAttempts:[...routes.values()].map(x=>({...x}))}:{}),...(consultation?{consultationSlots:[...consultation.values()].map(x=>({...x}))}:{}),waitingFor:t.status==='queued'?t.dependsOn.filter(k=>r.tasks.get(k).status!=='completed'):[]}));
  const agents=r.origin==='local-scripted'?[...r.agents.values()].map(({rounds,...a})=>({...a})):Array.from(new Set(tasks.map(t=>t.agentId)),id=>{
   const assigned=tasks.filter(t=>t.agentId===id),states=assigned.map(t=>t.status);
   const status=['executing','validating','queued','failed','blocked','cancelled','completed'].find(s=>states.includes(s));
@@ -111,6 +123,7 @@ export function createExecutionJournal({maxRuns=8,maxEvents=2048}={}){
    if(!r||r.status!=='running'||r.origin!==raw.origin||r.version!==raw.version||raw.sequence!==r.sequence+1)return false;
    if(raw.type==='task.state'&&r.origin!=='local-scripted'){if(!taskStep(r,raw.payload))return false;}
    else if(raw.type==='provider.phase'&&r.origin==='authorized-provider'){if(!providerStep(r,raw.payload))return false;}
+   else if(raw.type==='consultation.phase'&&r.origin==='host-task'){if(!consultationStep(r,raw.payload))return false;}
    else if(raw.type==='council.phase'&&r.origin==='local-scripted'){if(!councilStep(r,raw.payload))return false;}
    else if(raw.type==='run.close'){if(!close(r,raw.payload))return false;}
    else return false;

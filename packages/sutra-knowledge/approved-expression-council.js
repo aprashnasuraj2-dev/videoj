@@ -35,9 +35,9 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
  const destination=config.team.map(x=>x.providerId+'/'+x.profileId+'/'+x.model).join(' | ');
  const visible=projectCouncilBindings(c,{bindingIds:admitted.bindingIds,includeValues:admitted.includeValues});
  const consentIntent=freeze({operation:'model_inference',destination,purpose:'Generate conditional proposals from the displayed reviewed binding scope.',disclosure:[...admitted.bindingIds],planPin,...(admitted.includeValues?{preview:Object.fromEntries(visible.map(x=>[x.id,x.valueLexeme]))}:{})});
- return Object.freeze({plan,planPin,consentIntent,async execute({consentInspector,approvedPlanPin,signal:executionSignal,assertCurrent=()=>{}}={}){
+ return Object.freeze({plan,planPin,consentIntent,async execute({consentInspector,approvedPlanPin,signal:executionSignal,assertCurrent=()=>{},onActivity}={}){
   if(used)fail('CONSUMED');if(approvedPlanPin!==planPin)fail('PIN');const inspector=pinConsentInspector(consentInspector);
-  if(typeof assertCurrent!=='function')fail('CONFIG');
+  if(typeof assertCurrent!=='function'||onActivity!==undefined&&typeof onActivity!=='function')fail('CONFIG');
   const callerSignal=signal&&executionSignal?AbortSignal.any([signal,executionSignal]):signal??executionSignal;
   // Consume even on denial/failure; no retry or substitution under old approval.
   used=true;
@@ -48,7 +48,7 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
    if(active?.aborted)fail('CANCELLED');
    revalidate();assertCurrent();
    if(active?.aborted)fail('CANCELLED');
-   const result=await runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal:active,roundPolicy,assertCurrent});
+   const result=await runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal:active,roundPolicy,assertCurrent,onActivity});
    if(active?.aborted)fail('CANCELLED');
    config.assertPublication();assertCurrent();
    return result;

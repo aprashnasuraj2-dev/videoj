@@ -51,3 +51,19 @@ test('provider phase admission rejects simultaneous recipients, consent denial b
  note('local','consent-requested');note('local','consent-granted');note('local','dispatch-attempt');assert.equal(note('remote','consent-requested'),false);note('local','refused');state(f,'a','failed');f.emit('run.close',{status:'partial'});
  assert.equal(j.snapshot('other').status,'partial');
 });
+
+test('hybrid consultation slots require running owner, exact plan, ordered rounds and distinct final admission',()=>{
+ const j=createExecutionJournal(),e=setup(j,'hybrid','host-task'),task={id:'consult',kind:'model_consult',agentId:'critic',dependsOn:[]};
+ const state=status=>e.emit('task.state',{taskId:task.id,agentId:task.agentId,kind:task.kind,status});
+ const planPin='sha256:'+'a'.repeat(64),note=(phase,extra={})=>e.emit('consultation.phase',{taskId:task.id,agentId:task.agentId,kind:task.kind,slotId:'one',round:1,planPin,phase,...extra});
+ e.emit('run.open',{tasks:[task]});assert.equal(note('dispatch-attempt'),false);state('executing');
+ assert.equal(note('transport-response'),false);assert.equal(note('dispatch-attempt',{round:2}),false);
+ assert.equal(note('dispatch-attempt'),true);assert.equal(note('proposal-admitted'),false);
+ assert.equal(note('transport-response',{planPin:'sha256:'+'b'.repeat(64)}),false);
+ assert.equal(note('transport-response'),true);assert.equal(note('proposal-admitted'),true);assert.equal(note('rejected'),false);
+ assert.equal(note('dispatch-attempt',{round:2}),true);assert.equal(note('rejected',{round:2}),true);assert.equal(note('dispatch-attempt',{round:3}),false);
+ for(const slotId of ['two','three','four'])assert.equal(note('rejected',{slotId}),true);
+ assert.equal(note('rejected',{slotId:'five'}),false);
+ state('validating');assert.equal(note('dispatch-attempt',{slotId:'two',round:2}),false);state('completed');e.emit('run.close',{status:'completed'});
+ assert.equal(j.snapshot('hybrid').tasks[0].consultationSlots.length,5);assert.equal(j.snapshot('hybrid').status,'completed');assert.equal(note('rejected',{slotId:'five'}),false);
+});

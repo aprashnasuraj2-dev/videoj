@@ -99,6 +99,7 @@ test('exact hybrid operator runs six-role DAG with actual loopback TCP and injec
  const consult=r.result.artifacts.find(x=>x.taskId==='consult').value;assert.equal(consult.candidates.length,2);assert.equal(consult.decisionAuthority,'NONE');
  const cp=await openExecutionCheckpoint(r.checkpoint.text,r.checkpoint.pin,version.digest);
  assert.equal(cp.checkpoint.artifactPins.length,8);assert.equal(cp.checkpoint.origin,'host-task');
+ const phases=cp.checkpoint.events.filter(e=>e.type==='consultation.phase');assert.equal(phases.filter(e=>e.payload.phase==='dispatch-attempt').length,4);assert.equal(phases.filter(e=>e.payload.phase==='transport-response').length,4);assert.equal(phases.filter(e=>e.payload.phase==='proposal-admitted').length,4);
  assert.ok(!JSON.stringify(r).includes(A)&&!JSON.stringify(r).includes(B));
 });
 test('hybrid outer approval, separate hosted consent and exact contract match precede credential admission',async t=>{

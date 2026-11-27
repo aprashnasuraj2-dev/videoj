@@ -24,11 +24,13 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
 }
 // Policies are trusted internal code. The only model-controlled value they
 // receive is bounded untrusted text; route handles never enter their operations.
-export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow,progressIdentity=null}){
+export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow,progressIdentity=null,onActivity}){
+ if(onActivity!==undefined&&typeof onActivity!=='function')councilFail('CONFIG');
  const {assertPublication,team,execute,admitOperation,capacity,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
  const cancelled=()=>controller.abort();if(signal?.aborted)cancelled();else signal?.addEventListener('abort',cancelled,{once:true});
  const timer=setTimeout(cancelled,timeoutMs);
  let abortListener;const cancelledPromise=new Promise(resolve=>{abortListener=()=>resolve(null);if(controller.signal.aborted)abortListener();else controller.signal.addEventListener('abort',abortListener,{once:true});});
+ const note=(slotId,round,phase)=>{if(controller.signal.aborted)return;try{onActivity?.(Object.freeze({slotId,round,phase}));}catch{/* observation cannot authorize or veto a dispatch */}};
  const trace=[],verified=new Map(),seenProgress=new Set();let active=team,termination='ROUND_LIMIT';
  try{
   for(let round=1;round<=maxRounds;round++){
@@ -43,10 +45,12 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      const publicRoute=Object.freeze({id:route.id,role:route.role});
      const op=operation(publicRoute,round,feedback.map(x=>({...x})));
      const inputBytes=new TextEncoder().encode(JSON.stringify(op)).length;
+     note(route.id,round,'dispatch-attempt');assertPublication();if(controller.signal.aborted)councilFail('CANCELLED');
      const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:op},{signal:controller.signal});
      if(controller.signal.aborted)councilFail('CANCELLED');
      if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)councilFail('PROPOSAL_REFUSED');
      assertPublication();
+     note(route.id,round,'transport-response');assertPublication();if(controller.signal.aborted)councilFail('CANCELLED');
      const value=result.value;if(!councilClosed(value,['text'])||typeof value.text!=='string')councilFail('PROPOSAL_REFUSED');
      const candidate=admit(value.text,publicRoute);
      if(candidate===null)return {...base,status:'ABSTAINED'};
@@ -69,6 +73,8 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
     catch{const rejected=row.candidateKey;for(const other of rows)if(other.candidateKey===rejected){other.status='REFUSED';other.reason='VERIFICATION_REFUSED';delete other.candidateKey;}}
    }
    assertPublication();
+   if(controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
+   for(const row of rows){note(row.agentId,round,row.status==='PROPOSED'?'proposal-admitted':row.status==='ABSTAINED'?'abstained':'rejected');assertPublication();if(controller.signal.aborted)break;}
    if(controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
    trace.push(Object.freeze({round,agents:Object.freeze(rows.map(Object.freeze))}));
    active=active.filter(r=>rows.some(x=>x.agentId===r.id&&x.status==='PROPOSED'));

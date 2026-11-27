@@ -66,7 +66,8 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,m
   try{
    if(!fence())return;
    const observeProvider=activity=>{if(executionOrigin!=='authorized-provider'||states.get(task.id)!=='executing'||!fence()||!taskRecord(activity,['routeId','planPin','phase']))return false;return emitter?.emit('provider.phase',{taskId:task.id,agentId:task.agentId,kind:task.kind,routeId:activity.routeId,planPin:activity.planPin,phase:activity.phase})??false;};
-   const raw=await handler.execute(Object.freeze({task,inputs,signal:controller.signal,observeProvider}));
+   const observeConsultation=activity=>{if(executionOrigin!=='host-task'||task.kind!=='model_consult'||states.get(task.id)!=='executing'||!fence()||!taskRecord(activity,['slotId','round','planPin','phase']))return false;return emitter?.emit('consultation.phase',{taskId:task.id,agentId:task.agentId,kind:task.kind,...activity})??false;};
+   const raw=await handler.execute(Object.freeze({task,inputs,signal:controller.signal,observeProvider,observeConsultation}));
    if(!fence())return;
    emit(task,'validating');if(!fence())return;
    const value=copyTaskArtifact(handler.admit(raw,Object.freeze({task,inputs})));

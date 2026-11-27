@@ -23,6 +23,7 @@ test('six operational roles plus approved consultation and comparison share a re
  assert.equal(r.artifacts.length,8);assert.equal(new Set(r.artifacts.map(a=>a.agentId)).size,6);assert.deepEqual(r.tasks.map(t=>t.id),HYBRID_REVIEW_TASKS.map(t=>t.id));
  const consult=r.artifacts.find(a=>a.taskId==='consult'),compare=r.artifacts.find(a=>a.taskId==='compare'),coordinate=r.artifacts.find(a=>a.taskId==='coordinate');
  assert.equal(consult.value.candidates.length,1);assert.equal(consult.value.decisionAuthority,'NONE');assert.equal(compare.value.generated.length,1);assert.equal(coordinate.value.semanticReview,'REQUIRED');
+ assert.deepEqual(journal.events('hybrid').filter(e=>e.type==='consultation.phase').map(e=>e.payload.phase),['dispatch-attempt','transport-response','proposal-admitted']);assert.deepEqual(journal.snapshot('hybrid').tasks.find(t=>t.id==='consult').consultationSlots,[{slotId:'model_critic',round:1,planPin:p.plan.councilPlanPin,phase:'proposal-admitted'}]);
  assert.equal(compare.provenance.parents.length,3);assert.equal(journal.snapshot('hybrid').status,'completed');assert.doesNotMatch(JSON.stringify(journal.events('hybrid')),/\[first\]|HYBRID_PRIVATE_CANARY/);
  await assert.rejects(p.execute({approvedPlanPin:p.planPin,consentInspector:inspector,runId:'again'}),e=>e.code==='CONSUMED');
 });

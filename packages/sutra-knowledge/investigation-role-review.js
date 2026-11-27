@@ -61,8 +61,8 @@ async function runRoleGraph({versionText,versionPin,runId,signal,onEvent,onExecu
   },v=>v.completedArtifactIds.length===(consultation?7:5)&&v.semanticReview==='REQUIRED')
  };
  if(consultation){
-  handlers.model_consult=typed('model_consult',async({signal:taskSignal})=>{
-   const result=await consultation.approval.execute({approvedPlanPin:consultation.approval.planPin,consentInspector:consultation.inspector,signal:taskSignal,assertCurrent});
+  handlers.model_consult=typed('model_consult',async({signal:taskSignal,observeConsultation})=>{
+   const result=await consultation.approval.execute({approvedPlanPin:consultation.approval.planPin,consentInspector:consultation.inspector,signal:taskSignal,assertCurrent,onActivity:event=>observeConsultation({...event,planPin:consultation.approval.planPin})});
    if(result.contractDigest!==wire.contractPin||result.decisionAuthority!=='NONE'||result.semanticReview!=='REQUIRED'||result.termination==='CANCELLED_OR_TIMEOUT')fail('MODEL_CONSULT');
    return out('model_consult',{planPin:consultation.approval.planPin,contractDigest:result.contractDigest,termination:result.termination,agreement:result.agreement,candidates:result.candidates.map(c=>({expression:c.expression,proposalDigest:c.proposalDigest,bindingIds:c.usedBindings,status:c.target.status,authorship:c.authorship,semanticReview:c.semanticReview})),semanticReview:'REQUIRED',qualification:'Model proposals compiled locally; not adopted into the reviewed version.'});
   },v=>pin(v.planPin)&&Array.isArray(v.candidates)&&v.candidates.every(c=>pin(c.proposalDigest)&&c.authorship==='MODEL_PROPOSAL'&&c.semanticReview==='REQUIRED'));
