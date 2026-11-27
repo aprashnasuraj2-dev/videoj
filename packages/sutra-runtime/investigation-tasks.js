@@ -1,3 +1,4 @@
+import {createExecutionEmitter} from './execution-events.js';
 /* Host-owned bounded investigation DAG. No tool, provider, credential or truth authority is granted by a task. */
 function taskFail(code){const e=new Error('Investigation task runtime refused ('+code+').');e.code=code;throw e;}
 
@@ -45,16 +46,18 @@ function copyTaskArtifact(value){
  return copy(value,0);
 }
 
-export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,assertCurrent=()=>{}}={}){
- if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function')taskFail('CONFIG');
+export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,onExecutionEvent,executionOrigin='host-task',assertCurrent=()=>{}}={}){
+ if(!taskId(runId)||typeof version!=='string'||!version.length||version.length>128||!/^[A-Za-z0-9:_-]+$/.test(version)||!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||typeof assertCurrent!=='function'||onEvent!==undefined&&typeof onEvent!=='function'||onExecutionEvent!==undefined&&typeof onExecutionEvent!=='function'||!['host-task','deterministic','authorized-provider'].includes(executionOrigin))taskFail('CONFIG');
  const {order,registry}=compileTaskGraph(tasks,handlers),controller=new AbortController(),states=new Map(order.map(t=>[t.id,'queued'])),artifacts=new Map(),running=new Map();
  let sequence=0,stopReason=null;
+ const emitter=onExecutionEvent?createExecutionEmitter({runId,version,origin:executionOrigin,publish:onExecutionEvent}):null;
+ emitter?.emit('run.open',{tasks:order});
  const stop=reason=>{if(stopReason===null){stopReason=reason;controller.abort();}};
  const external=()=>stop('cancelled');
  if(signal?.aborted)external();else signal?.addEventListener('abort',external,{once:true});
  const timer=setTimeout(()=>stop('timeout'),timeoutMs);
  let wake;const abortWait=new Promise(resolve=>{wake=()=>resolve(null);if(controller.signal.aborted)wake();else controller.signal.addEventListener('abort',wake,{once:true});});
- const emit=(task,status)=>{states.set(task.id,status);const event=Object.freeze({schema:1,runId,version,sequence:++sequence,taskId:task.id,agentId:task.agentId,kind:task.kind,status});try{onEvent?.(event);}catch{/* telemetry is not authority */}};
+ const emit=(task,status)=>{states.set(task.id,status);const event=Object.freeze({schema:1,runId,version,sequence:++sequence,taskId:task.id,agentId:task.agentId,kind:task.kind,status});emitter?.emit('task.state',{taskId:task.id,agentId:task.agentId,kind:task.kind,status});try{onEvent?.(event);}catch{/* telemetry is not authority */}};
  function fence(){if(controller.signal.aborted)return false;try{assertCurrent();}catch{stop('stale');return false;}return !controller.signal.aborted;}
  async function invoke(task){
   if(!fence())return;
@@ -89,6 +92,7 @@ export async function runTaskGraph({tasks,handlers,runId,version,concurrency=2,t
   }
   if(stopReason){for(const task of order)if(['queued','scheduled','executing','validating'].includes(states.get(task.id)))emit(task,'cancelled');}
   // Stale/cancelled runs return metadata only, not previously admitted partial artifacts.
-  return Object.freeze({runId,version,status:stopReason??(order.every(t=>states.get(t.id)==='completed')?'completed':'partial'),tasks:Object.freeze(order.map(t=>Object.freeze({id:t.id,agentId:t.agentId,kind:t.kind,status:states.get(t.id)}))),artifacts:Object.freeze(stopReason?[]:order.filter(t=>artifacts.has(t.id)).map(t=>artifacts.get(t.id)))});
+  const status=stopReason??(order.every(t=>states.get(t.id)==='completed')?'completed':'partial');emitter?.emit('run.close',{status});
+  return Object.freeze({runId,version,status,tasks:Object.freeze(order.map(t=>Object.freeze({id:t.id,agentId:t.agentId,kind:t.kind,status:states.get(t.id)}))),artifacts:Object.freeze(stopReason?[]:order.filter(t=>artifacts.has(t.id)).map(t=>artifacts.get(t.id)))});
  }finally{clearTimeout(timer);controller.signal.removeEventListener('abort',wake);signal?.removeEventListener('abort',external);}
 }

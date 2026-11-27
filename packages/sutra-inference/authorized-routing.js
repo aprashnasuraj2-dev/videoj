@@ -82,7 +82,7 @@ export async function prepareAuthorizedProviderTask({workspace,routes,capability
 // Explicit host adapter over the same typed DAG. Each task requires a separately
 // prepared and approved exact operation; inputs are for local artifact admission
 // only and are NEVER automatically appended to a model request.
-export async function runAuthorizedProviderGraph({tasks,approvals,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,assertCurrent=()=>{}}={}){
+export async function runAuthorizedProviderGraph({tasks,approvals,runId,version,concurrency=2,timeoutMs=30000,signal,onEvent,onExecutionEvent,assertCurrent=()=>{}}={}){
  if(!routeDense(approvals,64)||!approvals.length||typeof assertCurrent!=='function'||typeof version!=='string'||!/^sha256:[a-f0-9]{64}$/.test(version))routeFail('CONFIG');
  const byTask=new Map(),plans=new Set();
  for(const entry of approvals){
@@ -103,5 +103,5 @@ export async function runAuthorizedProviderGraph({tasks,approvals,runId,version,
  }};
  const graph=compileTaskGraph(tasks,handlers);
  if(graph.order.length!==byTask.size||graph.order.some(t=>!byTask.has(t.id)))routeFail('GRAPH_APPROVAL');
- return runTaskGraph({tasks:graph.order,handlers,runId,version,concurrency,timeoutMs,signal,onEvent,assertCurrent});
+ return runTaskGraph({tasks:graph.order,handlers,runId,version,concurrency,timeoutMs,signal,onEvent,onExecutionEvent,executionOrigin:'authorized-provider',assertCurrent});
 }

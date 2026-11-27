@@ -16,7 +16,7 @@ const ids=Object.freeze([
 export const ROLE_REVIEW_TASKS=ids;
 const decisive=s=>s==='CONDITIONALLY_SATISFIED'||s==='CONDITIONALLY_REFUTED';
 const sorted=a=>[...new Set(a)].sort();
-export async function runInvestigationReview({versionText,versionPin,runId,signal,onEvent,assertCurrent,timeoutMs=30000}={}){
+export async function runInvestigationReview({versionText,versionPin,runId,signal,onEvent,onExecutionEvent,assertCurrent,timeoutMs=30000}={}){
  if(typeof versionText!=='string'||!versionText.length||versionText.length>262144||typeof versionPin!=='string'||!/^sha256:[a-f0-9]{64}$/.test(versionPin))fail('INPUT');
  let wire=null,contract=null;
  const typed=(kind,execute,validate)=>({execute,admit:(value)=>{if(value?.versionDigest!==versionPin||value?.kind!==kind||!validate(value))fail('ARTIFACT');return value;}});
@@ -53,5 +53,5 @@ export async function runInvestigationReview({versionText,versionPin,runId,signa
    return out('coordinate',{triage:replay.triage,completedArtifactIds:inputs.map(a=>a.taskId),opposingPairCount:contrast.opposingPairs.length,unresolvedCandidateIds:contrast.unresolved,minimumDeclaredCohorts:exposure.cut.minimumCohorts,verification:replay.verification,semanticReview:'REQUIRED',qualification:'A coordinated review of supplied evidence and interpretations; neither agent agreement nor replay establishes empirical truth.'});
   },v=>v.completedArtifactIds.length===5&&v.semanticReview==='REQUIRED')
  };
- return runTaskGraph({tasks:ids,handlers,runId,version:versionPin,signal,onEvent,assertCurrent,timeoutMs,concurrency:2});
+ return runTaskGraph({tasks:ids,handlers,runId,version:versionPin,signal,onEvent,onExecutionEvent,executionOrigin:'deterministic',assertCurrent,timeoutMs,concurrency:2});
 }
