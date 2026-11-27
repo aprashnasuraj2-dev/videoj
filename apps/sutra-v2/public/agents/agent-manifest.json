@@ -11,11 +11,19 @@
       "front_man": "planner",
       "hocon": "./reviewed-investigation.network.json",
       "description": "Inspect one explicitly approved local source span, then challenge its interpretation. Requires the owning workspace capability."
+    },
+    {
+      "name": "peer_investigation",
+      "front_man": "planner",
+      "hocon": "./peer-investigation.network.json",
+      "description": "Consult the independently published checklist guide for a candidate investigation critique; no private evidence or external factual verification."
     }
   ],
-  "allowed_peers": [],
+  "allowed_peers": [
+    "https://sutra-guide.aafnaipatro.com"
+  ],
   "peer_policy": {
-    "mode": "closed"
+    "mode": "allowlist"
   },
   "deployment": {
     "mode": "static"

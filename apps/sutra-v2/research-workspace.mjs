@@ -18,11 +18,12 @@ async function body(req){
 function send(res,status,value){
  const raw=JSON.stringify(value);res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Length':Buffer.byteLength(raw)});res.end(raw);
 }
-export function createResearchWorkspaceServer({gateway,dist,port=8787}={}){
+export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPeerOrigin}={}){
  if(!gateway||typeof dist!=='string'||!Number.isSafeInteger(port)||port<0||port>65535)throw err('SERVER_CONFIG');
+ let policy=csp;if(loopbackPeerOrigin!==undefined){const u=new URL(loopbackPeerOrigin);if(u.origin!==loopbackPeerOrigin||u.protocol!=='http:'||u.hostname!=='127.0.0.1'||!u.port)throw err('PEER_ORIGIN');policy=csp.replace("connect-src 'self';","connect-src 'self' "+u.origin+";");}
  const root=resolve(dist),token=randomBytes(32).toString('hex');let origin;
  const server=createServer(async(req,res)=>{
-  res.setHeader('Content-Security-Policy',csp);res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');
+  res.setHeader('Content-Security-Policy',policy);res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');
   try{
    if(!origin||req.headers.host!==new URL(origin).host||req.headers.origin&&req.headers.origin!==origin||req.headers['sec-fetch-site']&&!['same-origin','none'].includes(req.headers['sec-fetch-site']))return send(res,403,{error:'LOCAL_ORIGIN'});
    const u=new URL(req.url,origin);if(u.origin!==origin)return send(res,403,{error:'LOCAL_ORIGIN'});
