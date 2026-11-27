@@ -39,6 +39,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  let browser;const cleanupDirs=[];
  try{
   browser=await chromium.launch({headless:true});
+  await require('./master.cjs').testMaster(browser,origin,assert);
   const probe=await browser.newPage();
   for(const [suffix,expected] of [['v1',{wasm:false,js:false}],['v2',{wasm:true,js:false}]]){
    await probe.goto(origin+'/__csp_probe_'+suffix);
