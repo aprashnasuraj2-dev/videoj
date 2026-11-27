@@ -2,7 +2,7 @@ name: Validate SUTRA independent held-out FinQA benchmark
 # Canonical SUTRA main-line verification. Exact-head sweep marker.
 on:
   push:
-    branches: ['main', 'sutra/v2-knowledge-compiler']
+    branches: ['main']
     paths: ['packages/sutra-knowledge/evaluation/finqa-public-test-heldout.json','packages/sutra-knowledge/finqa-heldout-benchmark.js','packages/sutra-knowledge/reference/score_finqa_heldout.py','packages/sutra-knowledge/evaluation/run-finqa-heldout.mjs','.github/workflows/sutra-v2-finqa-benchmark.yml']
   pull_request:
     branches: ['main']
@@ -11,7 +11,6 @@ permissions:
   contents: read
 jobs:
   finqa-heldout:
-    if: github.event_name == 'push' || github.head_ref == 'sutra/v2-parallel/10-benchmark' || github.head_ref == 'sutra/v2-validation/v2-182'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

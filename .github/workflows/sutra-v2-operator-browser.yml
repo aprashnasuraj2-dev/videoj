@@ -1,7 +1,7 @@
 name: Validate SUTRA operator model approval browser
 on:
   push:
-    branches: ['main', 'sutra/v2-knowledge-compiler']
+    branches: ['main']
     paths: ['apps/sutra-v2/**','packages/sutra-knowledge/**','packages/sutra-inference/**','.github/workflows/sutra-v2-operator-browser.yml']
   pull_request:
     branches: ['main']
@@ -10,7 +10,6 @@ permissions:
   contents: read
 jobs:
   operator-browser:
-    if: github.event_name == 'push' || github.head_ref == 'sutra/v2-parallel/01-model-orchestration' || github.head_ref == 'sutra/v2-validation/v2-182'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
