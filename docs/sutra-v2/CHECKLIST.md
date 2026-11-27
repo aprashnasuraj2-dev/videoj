@@ -2,6 +2,8 @@
 
 > **SOLE ACTIVE EXECUTION CHECKLIST.** SUTRA is one product and `main` is canonical. Earlier SUTRA task queues are historical only; their implementation and verified evidence remain reusable when current SUTRA depends on them. “Continue with SUTRA” means resolve exact `main`, inspect exact-head CI, and execute the single dependency-ready `[~]` item here.
 
+**Release overlay (2026-11-27):** [Devpost pre-release gates and award strategy](DEVPOST-PRE-RELEASE.md) governs release acceptance and Cloudflare cutover, without replacing this engineering queue or marking existing items complete.
+
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
 
 ## State contract
