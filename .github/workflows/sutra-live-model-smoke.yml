@@ -3,7 +3,12 @@ on:
   workflow_dispatch:
     inputs:
       approve:
-        description: 'Approve one bounded inference per selected provider; billing may apply'
+        description: 'Approve bounded inference per selected provider (one request or two with structured=true); billing may apply'
+        required: true
+        type: boolean
+        default: false
+      structured:
+        description: 'Run two-call synthetic JSON tool proposal/read/cited-answer challenge instead of single inference'
         required: true
         type: boolean
         default: false
@@ -17,7 +22,7 @@ jobs:
   live-model:
     if: github.ref == 'refs/heads/main' && inputs.approve == true
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 5
     environment: sutra-live-research
     steps:
       - uses: actions/checkout@v4
@@ -29,10 +34,12 @@ jobs:
       - name: Preview selected model challenge
         env:
           SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
+          SUTRA_SMOKE_STRUCTURED: ${{ inputs.structured }}
         run: node apps/sutra-v2/live-model-smoke.mjs --plan > /tmp/sutra-model-plan.json
       - name: Credentialed inference challenges
         env:
           SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
+          SUTRA_SMOKE_STRUCTURED: ${{ inputs.structured }}
           SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI || secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY || secrets.GEMINI_KEY || secrets.GEMINI_API || secrets.GEMINI }}
           SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ || secrets.GROQ_API_KEY || secrets.GROQ_KEY || secrets.GROQ_API || secrets.GROQ }}
           SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER || secrets.OPENROUTER_API_KEY || secrets.OPENROUTER_KEY || secrets.OPENROUTER_API || secrets.OPEN_ROUTER_API_KEY || secrets.OPEN_ROUTER }}
