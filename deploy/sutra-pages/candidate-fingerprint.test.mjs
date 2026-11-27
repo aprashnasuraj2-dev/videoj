@@ -4,7 +4,7 @@ import {mkdtemp,mkdir,writeFile,rm,cp,symlink} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {fingerprint,encode,verifyFingerprint} from './candidate-fingerprint.mjs';
+import {fingerprint,encode,verifyFingerprint,assertNoSecret} from './candidate-fingerprint.mjs';
 test('retained candidate verifies after local restoration; fails on missing, changed, extra, wrong revision and untrusted manifest',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'sutra-retain-'));
  try{
@@ -38,4 +38,12 @@ test('credential content in any retained component refuses before fingerprint or
   }
   assert.equal((await verifyFingerprint({manifest:baseline,pin,revision,roots})).status,'matched');
  }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('quoted config credential values refuse while ordinary task identifiers remain admissible',()=>{
+ const token='A'.repeat(32);
+ for(const value of [JSON.stringify({SUTRA_PROVIDER_KEY:token}),JSON.stringify({CLOUDFLARE_API_TOKEN:token}),'GROQ_API_KEY='+token]){
+  assert.throws(()=>assertNoSecret(Buffer.from(value),'ordinary.json'),e=>e.message.includes('literal-secret-assignment')&&!e.message.includes(token));
+ }
+ assert.doesNotThrow(()=>assertNoSecret(Buffer.from('task-'+token),'ordinary.json'));
 });
