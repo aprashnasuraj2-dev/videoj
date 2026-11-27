@@ -42,3 +42,10 @@ test('challenge history requires both exact versions for fresh comparison',async
  assert.equal((await verifyDeterministicExecutionCheckpoint(args)).status,'RECOMPUTED_LINEAGE_MATCHES');
  await assert.rejects(verifyDeterministicExecutionCheckpoint({...args,beforeText:undefined}));
 });
+
+test('checkpoint export refuses a frozen nested accessor without invoking it',async()=>{
+ const {result,events}=await fixture();let invoked=false;
+ const value=Object.freeze({get evil(){invoked=true;throw Error('getter');}});
+ const bad={...result,artifacts:[{...result.artifacts[0],value},...result.artifacts.slice(1)]};
+ await assert.rejects(createExecutionCheckpoint(bad,events),e=>e.code==='VALUE');assert.equal(invoked,false);
+});

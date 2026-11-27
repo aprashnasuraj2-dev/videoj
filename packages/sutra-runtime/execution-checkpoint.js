@@ -8,11 +8,32 @@ const fail=code=>{const e=Error('Execution checkpoint refused ('+code+').');e.co
 const closed=(x,ks)=>x!==null&&typeof x==='object'&&[Object.prototype,null].includes(Object.getPrototypeOf(x))&&Reflect.ownKeys(x).length===ks.length&&ks.every(k=>{const d=Object.getOwnPropertyDescriptor(x,k);return d?.enumerable&&Object.hasOwn(d,'value');});
 const dense=(a,max)=>Array.isArray(a)&&Object.getPrototypeOf(a)===Array.prototype&&a.length<=max&&Reflect.ownKeys(a).length===a.length+1&&Array.from({length:a.length},(_,i)=>{const d=Object.getOwnPropertyDescriptor(a,String(i));return d?.enumerable&&Object.hasOwn(d,'value');}).every(Boolean);
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+// Reconstruct only ordinary frozen host data. Frozen accessors, proxies
+// supplied by untrusted in-process JS (not a supported isolation boundary),
+// cycles and serialization hooks are not admissible artifact data.
+function copyFrozen(value){
+ let nodes=0,chars=0;const active=new Set();
+ function copy(v,depth){
+  if(++nodes>12000||depth>24)fail('VALUE');
+  if(v===null||typeof v==='boolean'||typeof v==='number'&&Number.isFinite(v))return v;
+  if(typeof v==='string'){chars+=v.length;if(chars>MAX||/[\ud800-\udfff]/u.test(v))fail('VALUE');return v;}
+  if(!v||typeof v!=='object'||!Object.isFrozen(v)||active.has(v))fail('VALUE');
+  active.add(v);let out;
+  if(Array.isArray(v)){if(!dense(v,4096))fail('VALUE');out=v.map(x=>copy(x,depth+1));}
+  else{
+   if(![Object.prototype,null].includes(Object.getPrototypeOf(v)))fail('VALUE');
+   const keys=Reflect.ownKeys(v);if(keys.length>1024)fail('VALUE');out={};
+   for(const k of keys){const d=Object.getOwnPropertyDescriptor(v,k);if(typeof k!=='string'||['__proto__','constructor','prototype','toJSON'].includes(k)||!d?.enumerable||!Object.hasOwn(d,'value'))fail('VALUE');chars+=k.length;if(chars>MAX)fail('VALUE');out[k]=copy(d.value,depth+1);}
+  }
+  active.delete(v);return out;
+ }
+ return copy(value,0);
+}
 async function digest(text){if(typeof text!=='string'||!text.length||text.length>MAX||/[\ud800-\udfff]/u.test(text))fail('SIZE');const bytes=new TextEncoder().encode(text);if(bytes.length>MAX)fail('SIZE');return 'sha256:'+Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');}
 function replay(events){
  if(!dense(events,2048)||!events.length)fail('EVENTS');
  const j=createExecutionJournal({maxRuns:1}),captured=[];
- for(const e of events){if(!j.accept(e)||j.runs().length!==1)fail('TRANSITION');captured.push(j.lastEvent(e.runId));}
+ for(const e of events){if(!j.accept(e))fail('TRANSITION');if(captured.length&&e.runId!==captured[0].runId)fail('IDENTITY');captured.push(j.lastEvent(e.runId));}
  const s=j.snapshot(captured[0].runId);
  if(!s||s.status==='running'||captured.at(-1).type!=='run.close'||s.sequence!==captured.length||captured.some(e=>e.runId!==s.runId))fail('INCOMPLETE');
  return {snapshot:s,events:captured};
@@ -57,10 +78,11 @@ export async function createExecutionCheckpoint(result,events){
   if(!t||a.agentId!==t.agentId||a.kind!==t.kind||!closed(p,['schema','versionDigest','taskId','agentId','kind','valueDigest','parents','authority','qualification','artifactDigest'])||p.schema!=='sutra-role-artifact/v1'||p.versionDigest!==s.version||p.taskId!==t.id||p.agentId!==t.agentId||p.kind!==t.kind||p.authority!=='NONE'||typeof p.qualification!=='string'||!dense(p.parents,64)||!pin(p.artifactDigest))fail('ARTIFACTS');
   // The admitted value is host-owned data, but do not reserialize arbitrary
   // getters through a public export interface.
-  if(!Object.isFrozen(a.value)||!Object.isFrozen(p)||await digest(JSON.stringify(a.value))!==p.valueDigest)fail('VALUE');
-  const descriptor={schema:p.schema,versionDigest:p.versionDigest,taskId:p.taskId,agentId:p.agentId,kind:p.kind,valueDigest:p.valueDigest,parents:p.parents,authority:p.authority,qualification:p.qualification};
+  if(await digest(JSON.stringify(copyFrozen(a.value)))!==p.valueDigest)fail('VALUE');
+  const safeParents=copyFrozen(p.parents);if(!safeParents.every(x=>closed(x,['taskId','artifactDigest','valueDigest'])))fail('LINEAGE');
+  const descriptor={schema:p.schema,versionDigest:p.versionDigest,taskId:p.taskId,agentId:p.agentId,kind:p.kind,valueDigest:p.valueDigest,parents:safeParents,authority:p.authority,qualification:p.qualification};
   if(await digest(JSON.stringify(descriptor))!==p.artifactDigest)fail('ARTIFACT_PIN');
-  pins.push({taskId:t.id,valueDigest:p.valueDigest,artifactDigest:p.artifactDigest,parents:p.parents.map(x=>({taskId:x.taskId,valueDigest:x.valueDigest,artifactDigest:x.artifactDigest}))});
+  pins.push({taskId:t.id,valueDigest:p.valueDigest,artifactDigest:p.artifactDigest,parents:safeParents.map(x=>({taskId:x.taskId,valueDigest:x.valueDigest,artifactDigest:x.artifactDigest}))});
  }
  return build(r.events,pins);
 }
