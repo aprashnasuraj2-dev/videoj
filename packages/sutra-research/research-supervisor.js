@@ -15,10 +15,12 @@ export function extractPassages(doc,objective){
  if(typeof doc.text!=='string'||doc.textDigest!==digest(doc.text))fail('DOCUMENT_DIGEST');
  const words=terms(objective),out=[];
  // Stable UTF-16 offsets into stored extraction, not raw byte offsets.
- for(const m of doc.text.matchAll(/[^.!?\n]{1,560}(?:[.!?]+|(?=[.!?\n]|$))?/gu)){
+ for(const m of doc.text.matchAll(/[^.!?\n\f]{1,560}(?:[.!?]+|(?=[.!?\n\f]|$))?/gu)){
   const start=m.index,end=start+m[0].length;if(end-start<15||end-start>600||secretLike(m[0]))continue;
   const lower=m[0].toLowerCase(),matched=words.filter(w=>lower.includes(w));if(!matched.length)continue;
-  out.push({sourceId:doc.id,sourceDigest:doc.textDigest,locator:{startOffset:start,endOffset:end,coordinateSystem:'utf16-extracted-text'},supportingText:m[0],matched,verificationStatus:'unverified',kind:'candidate_passage'});
+  const page=doc.pageMap?.find(x=>start>=x.startOffset&&end<=x.endOffset)?.page;
+  if(doc.mediaType==='application/pdf'&&!page)continue;
+  out.push({sourceId:doc.id,sourceDigest:doc.textDigest,locator:{startOffset:start,endOffset:end,coordinateSystem:'utf16-extracted-text',...(page?{page}:{})},supportingText:m[0],matched,verificationStatus:'unverified',kind:'candidate_passage'});
  }
  return out.sort((a,b)=>b.matched.length-a.matched.length||a.locator.startOffset-b.locator.startOffset).slice(0,8);
 }
@@ -97,7 +99,8 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
     const d=await readDocument(item.url);
     if(!d||d.url!==item.url||typeof d.text!=='string'||d.textDigest!==digest(d.text)||!Array.isArray(d.links)||d.links.length>40)fail('DOCUMENT');
     const text=d.text.slice(0,100000);
-    return {...d,text,textDigest:digest(text),extractionTruncated:text.length!==d.text.length};
+    const pageMap=d.pageMap?.filter(p=>p.startOffset<text.length).map(p=>({...p,endOffset:Math.min(p.endOffset,text.length)}));
+    return {...d,text,textDigest:digest(text),extractionTruncated:text.length!==d.text.length,...(pageMap?{pageMap}:{})};
    });
    if(doc&&!content.has(doc.rawDigest)&&!content.has(doc.textDigest)){
     content.add(doc.rawDigest);content.add(doc.textDigest);

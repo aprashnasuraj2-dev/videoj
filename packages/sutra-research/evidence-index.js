@@ -3,7 +3,7 @@ import {digest,secretLike} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Evidence refused: '+code),{code});};
 const refId=(prefix,parts)=>prefix+'_'+digest(JSON.stringify(parts)).slice(7,31);
 export function verifyPassage(p,doc){
- return Boolean(p&&doc&&p.sourceId===doc.id&&p.sourceDigest===doc.textDigest&&doc.textDigest===digest(doc.text)&&p.locator?.coordinateSystem==='utf16-extracted-text'&&Number.isSafeInteger(p.locator.startOffset)&&Number.isSafeInteger(p.locator.endOffset)&&p.locator.startOffset>=0&&p.locator.endOffset>p.locator.startOffset&&p.locator.endOffset<=doc.text.length&&doc.text.slice(p.locator.startOffset,p.locator.endOffset)===p.supportingText);
+ return Boolean(p&&doc&&p.sourceId===doc.id&&p.sourceDigest===doc.textDigest&&doc.textDigest===digest(doc.text)&&p.locator?.coordinateSystem==='utf16-extracted-text'&&Number.isSafeInteger(p.locator.startOffset)&&Number.isSafeInteger(p.locator.endOffset)&&p.locator.startOffset>=0&&p.locator.endOffset>p.locator.startOffset&&p.locator.endOffset<=doc.text.length&&doc.text.slice(p.locator.startOffset,p.locator.endOffset)===p.supportingText&&(doc.mediaType!=='application/pdf'||Number.isSafeInteger(p.locator.page)&&Array.isArray(doc.pageMap)&&doc.pageMap.some(x=>x.page===p.locator.page&&p.locator.startOffset>=x.startOffset&&p.locator.endOffset<=x.endOffset)));
 }
 export function verifyEvidence(documents,passages){
  if(!Array.isArray(documents)||documents.length>60||!Array.isArray(passages)||passages.length>480)fail('EVIDENCE_SIZE');
@@ -39,7 +39,7 @@ export function extractNumericObservations(passages,refs){
    const unit=prefix??(suffix==='percent'?'%':suffix)??null;
    const start=p.locator.startOffset+m.index,end=start+m[0].length;
    const context=(text.slice(0,m.index)+'<value>'+text.slice(m.index+m[0].length)).toLowerCase().replace(/\s+/g,' ').trim();
-   observations.push({id:refId('number',[ref.id,start,end]),passageId:ref.id,sourceId:p.sourceId,sourceDigest:p.sourceDigest,locator:{startOffset:start,endOffset:end,coordinateSystem:'utf16-extracted-text'},exactText:m[0],value:exactDecimal(m[3]),unit,scale,period,contextKey:digest(context),denominator:'NOT_ESTABLISHED',status:'candidate_observation'});
+   observations.push({id:refId('number',[ref.id,start,end]),passageId:ref.id,sourceId:p.sourceId,sourceDigest:p.sourceDigest,locator:{startOffset:start,endOffset:end,coordinateSystem:'utf16-extracted-text',...(p.locator.page?{page:p.locator.page}:{})},exactText:m[0],value:exactDecimal(m[3]),unit,scale,period,contextKey:digest(context),denominator:'NOT_ESTABLISHED',status:'candidate_observation'});
   }
  }
  return observations;

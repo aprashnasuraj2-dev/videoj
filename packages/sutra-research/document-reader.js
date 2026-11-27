@@ -1,4 +1,5 @@
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
+import {extractPdfDocument,PDF_INPUT_BYTES} from './pdf-parser.js';
 import {scanHtml} from './html-parser.js';
 import {pinnedPublicHttp} from './pinned-public-http.js';
 import {secretLike,digest,assertResearchAuthorization} from './research-session.js';
@@ -34,7 +35,7 @@ export function extractDocument(body,mediaType,url,{allowCrossOriginLinks=false}
  if(!text.trim())fail('EMPTY');
  return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),metadata:Object.freeze(metadata),parser:mediaType==='text/html'?'bounded-html/v2':'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }
-export function createDocumentReader({authorization,transport=pinnedPublicHttp}){
+export function createDocumentReader({authorization,transport=pinnedPublicHttp,parsePdf}){
  assertResearchAuthorization(authorization);const robots=new Map();
  return async function read(raw){
   authorization.assertActive();const url=admitDocumentURL(raw);if(secretLike(url)||secretLike(decodeURIComponent(new URL(url).pathname)))fail('SENSITIVE_URL');
@@ -45,8 +46,11 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp})
    authorization.assertActive();robots.set(origin,r.status===200?utf8(r.body):'');
   }
   if(!robotsAllows(robots.get(origin),target.pathname))fail('ROBOTS');
-  authorization.reserve('document',{bytes:DOCUMENT_BYTES});
-  const r=await transport({url:target,signal:authorization.signal,maxBytes:DOCUMENT_BYTES,acceptedTypes:['text/html','text/plain','application/json','text/csv']});
-  authorization.assertActive();return extractDocument(r.body,r.mediaType,url,{allowCrossOriginLinks:authorization.plan.scope.allowCrossOriginLinks===true});
+  const allowPdf=authorization.plan.scope.allowPdf===true,maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
+  if(allowPdf)acceptedTypes.push('application/pdf');
+  authorization.reserve('document',{bytes:maxBytes});
+  const r=await transport({url:target,signal:authorization.signal,maxBytes,acceptedTypes});
+  authorization.assertActive();if(r.mediaType==='application/pdf'){if(!allowPdf)fail('PDF_SCOPE');const pdf=await extractPdfDocument(r.body,url,{signal:authorization.signal,parse:parsePdf});authorization.assertActive();return pdf;}
+  return extractDocument(r.body,r.mediaType,url,{allowCrossOriginLinks:authorization.plan.scope.allowCrossOriginLinks===true});
  };
 }
