@@ -46,3 +46,41 @@ test('local link resolution fetches only same-origin public data; peer consent i
  const result=await runNetwork({...loaded,request:'x',model:createScriptedModel(),peerRuntime:{inspector:allow,fetchImpl}});
  assert.equal(result.modelCalls,5);assert.equal(result.agentCalls,3);assert.equal(calls.length,5);
 });
+
+test('caller-scoped binding is separate, cannot change network identity, shadow local tools or grant contact',async()=>{
+ const published=links(),g=graph(),caller={version:1,networks:{linked_learner:{guide_peer:'https://alternate.example/agents/checklist'}}};
+ const old=JSON.stringify(published),original=JSON.stringify(caller);
+ const resolved=resolveSymbolicPeerLinks(g,published,'linked_learner',caller);
+ assert.deepEqual(resolved.tools[0].tools,['https://alternate.example/agents/checklist']);
+ assert.equal(JSON.stringify(published),old);assert.equal(JSON.stringify(caller),original);
+ assert.deepEqual(resolveSymbolicPeerLinks(g,published,'linked_learner').tools[0].tools,[target]);
+ for(const [mutate,code] of [
+  [x=>x.networks.linked_learner.guide_peer='https://alternate.example/agents/wrong','LINKS_TARGET'],
+  [x=>x.networks.other={}, 'LINKS_SCHEMA'],
+  [x=>x.networks.linked_learner.evidence=target,'LINKS_COLLISION'],
+  [x=>x.networks.linked_learner.unused=target,'LINKS_UNUSED'],
+  [x=>x.networks.linked_learner.guide_peer='https://user:secret@alternate.example/agents/checklist','PEER_URL']
+ ]){const x=structuredClone(caller);mutate(x);assert.throws(()=>resolveSymbolicPeerLinks(g,published,'linked_learner',x),e=>e.code===code);}
+ let accessorCalls=0;const hostile=structuredClone(caller);Object.defineProperty(hostile.networks.linked_learner,'guide_peer',{enumerable:true,get(){accessorCalls++;return target;}});
+ assert.throws(()=>resolveSymbolicPeerLinks(g,published,'linked_learner',hostile));assert.equal(accessorCalls,0);
+ let contacts=0;
+ const deny=createConsentInspector({decide:async()=>({decision:'deny',scope:'once'})});
+ await assert.rejects(runNetwork({definition:resolved,name:'linked_learner',request:'x',model:createScriptedModel(),peerRuntime:{inspector:deny,fetchImpl:async()=>{contacts++;}}}),e=>e.code==='PEER_CONSENT_DENIED');assert.equal(contacts,0);
+});
+test('local loader digests exact wire bytes, independently of parsed graph or caller binding',async()=>{
+ const {createHash}=await import('node:crypto'),sha=s=>createHash('sha256').update(s).digest('hex');
+ const local='https://caller.example',manifest=JSON.stringify({networks:[{name:'linked_learner',front_man:'learner',hocon:'./linked_learner.network.json'}]}),definition=JSON.stringify(graph(),null,2)+'\n',linkText=JSON.stringify(links(),null,4)+'\n';
+ const files={'agent-manifest.json':manifest,'linked_learner.network.json':definition,'links.json':linkText};
+ const callerLinkOverrides={version:1,networks:{linked_learner:{guide_peer:'https://alternate.example/agents/checklist'}}},calls=[];
+ const options={baseUrl:local+'/agents/',networkName:'linked_learner',expectedOrigin:local,resolvePublishedLinks:true,fetchImpl:async url=>{calls.push(url);return new Response(files[url.split('/').at(-1)],{headers:{'Content-Type':'application/json'}});}};
+ const result=await loadLocalNetwork({...options,callerLinkOverrides});
+ assert.deepEqual(result.artifactDigests,{manifest:sha(manifest),definition:sha(definition),links:sha(linkText)});
+ assert.deepEqual(result.definition.tools[0].tools,['https://alternate.example/agents/checklist']);
+ assert.equal(calls.length,3);assert.ok(calls.every(url=>url.startsWith(local)));
+ files['linked_learner.network.json']=JSON.stringify(graph());
+ const compact=await loadLocalNetwork(options);
+ assert.notEqual(compact.artifactDigests.definition,result.artifactDigests.definition);
+ assert.equal(compact.artifactDigests.links,result.artifactDigests.links);
+ assert.deepEqual(compact.definition.tools[0].tools,[target]);
+ await assert.rejects(loadLocalNetwork({...options,resolvePublishedLinks:false,callerLinkOverrides}),e=>e.code==='LINKS_SCHEMA');
+});
