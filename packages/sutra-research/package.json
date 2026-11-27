@@ -1,0 +1,1 @@
+{"name":"@sutra/research","version":"0.1.0","private":true,"type":"module","engines":{"node":">=22.12"},"scripts":{"test":"node --test test/*.test.mjs"}}
