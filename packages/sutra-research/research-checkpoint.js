@@ -17,7 +17,7 @@ export async function createCheckpointWriter(directory){
    await rename(tmp,target);
    // POSIX directory fsync makes the atomic rename durable on supporting filesystems.
    const d=await open(dir,'r');try{await d.sync();}finally{await d.close();}
-   last=snapshot.sequence;
+   last=snapshot.sequence;return digest(payload);
   }finally{if(fd)await fd.close();await unlink(tmp).catch(()=>{});active=false;}
  };
 }
@@ -26,5 +26,5 @@ export function inspectCheckpoint(text,expectedDigest){
  if(e?.schema!=='sutra-checkpoint-envelope/v1'||typeof e.payload!=='string'||e.digest!==expectedDigest||digest(e.payload)!==expectedDigest)throw Error('CHECKPOINT_DIGEST');
  const p=JSON.parse(e.payload);
  if(p?.schema!=='sutra-autonomous-research-checkpoint/v1'||p.authority!=='NONE')throw Error('CHECKPOINT_STATE');
- return Object.freeze({checkpoint:p,authority:'NONE',canAutomaticallyResume:false});
+ return Object.freeze({checkpoint:p,authority:'NONE',canAutomaticallyResume:false,eligibleForFreshApproval:p.state==='paused'&&p.pending===null});
 }

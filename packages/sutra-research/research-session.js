@@ -4,7 +4,8 @@ const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});}
 export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const bounded=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
-const grants=new WeakSet();
+const grants=new WeakSet(),restored=new WeakMap();
+export function researchResumeState(a){assertResearchAuthorization(a);return restored.has(a)?structuredClone(restored.get(a)):null;}
 export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHORIZATION');a.assertActive();}
 export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
 export function admitManifest(text){
@@ -18,14 +19,26 @@ export function admitManifest(text){
  const plan=Object.freeze({...p,scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
  return Object.freeze({plan,planPin:digest(text),costPolicy:'operator-supplied estimates; not a vendor invoice guarantee'});
 }
-export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,signal,clock=()=>Date.now()}={}){
+function admitResume(text,expected,p){
+ if(typeof text!=='string'||Buffer.byteLength(text)>32*1024*1024||typeof expected!=='string'||!/^sha256:[0-9a-f]{64}$/.test(expected))fail('RESUME_PIN');
+ let envelope,s;try{envelope=JSON.parse(text);if(envelope?.schema!=='sutra-checkpoint-envelope/v1'||envelope.digest!==expected||typeof envelope.payload!=='string'||digest(envelope.payload)!==expected)fail('RESUME_PIN');s=JSON.parse(envelope.payload);}catch{fail('RESUME_PIN');}
+ if(s?.schema!=='sutra-autonomous-research-checkpoint/v1'||s.planPin!==p.planPin||s.authority!=='NONE'||s.state!=='paused'||s.pending!==null||typeof s.sessionId!=='string'||!/^research_[0-9a-f-]{36}$/.test(s.sessionId)||!bounded(s.sequence,1,100000)||!['search','documents'].includes(s.phase)||!bounded(s.slots,0,2)||s.phase==='search'&&s.slots!==0||!bounded(s.startedAt,0,Number.MAX_SAFE_INTEGER)||s.expiresAt!==s.startedAt+p.plan.budget.maxDurationSeconds*1000)fail('RESUME_STATE');
+ const b=p.plan.budget,u=s.usage;
+ if(!exact(u,['searches','documents','reservedBytes','reservedCostMicros'])||!bounded(u.searches,0,b.maxSearches)||!bounded(u.documents,0,b.maxDocuments)||!bounded(u.reservedBytes,0,b.maxDownloadBytes)||!bounded(u.reservedCostMicros,0,b.maxCostMicros)||!Array.isArray(s.queries)||s.queries.length!==u.searches||!Array.isArray(s.documents)||s.documents.length>u.documents||!Array.isArray(s.passages)||s.passages.length>s.documents.length*8||!Array.isArray(s.frontier)||s.frontier.length>240||!Array.isArray(s.seen)||s.seen.length>5000||!Array.isArray(s.domainAttempts)||s.domainAttempts.length>500||!Array.isArray(s.failures)||s.failures.length>500)fail('RESUME_STATE');
+ let cost=0;for(const q of s.queries){const provider=p.plan.providers.find(x=>x.id===q?.provider);if(!provider||typeof q.query!=='string'||!q.query.startsWith(p.plan.objective)||q.query.length>1200||secretLike(q.query))fail('RESUME_STATE');cost+=provider.estimatedMaxCostMicros;}
+ if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144)fail('RESUME_USAGE');
+ return s;
+}
+export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,signal,clock=()=>Date.now(),resumeText,resumePin}={}){
  // Input re-admission avoids accepting a caller-forged mutable manifest object.
  const p=admitManifest(manifest);
  if(approvedPlanPin!==p.planPin||approvePublicContact!==true||approveEstimatedCost!==true)fail('APPROVAL');
- const c=new AbortController(),started=clock(),expires=started+p.plan.budget.maxDurationSeconds*1000;
+ const prior=resumeText!==undefined||resumePin!==undefined?admitResume(resumeText,resumePin,p):null;
+ const c=new AbortController(),now=clock(),started=prior?.startedAt??now,expires=prior?.expiresAt??(started+p.plan.budget.maxDurationSeconds*1000);
+ if(!Number.isSafeInteger(now)||now<started||now>=expires)fail('INACTIVE');
  const cancel=()=>c.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
- const timer=setTimeout(cancel,p.plan.budget.maxDurationSeconds*1000);timer.unref?.();
- let closed=false;const usage={searches:0,documents:0,reservedBytes:0,reservedCostMicros:0};
+ const timer=setTimeout(cancel,expires-now);timer.unref?.();
+ let closed=false;const usage=prior?{...prior.usage}:{searches:0,documents:0,reservedBytes:0,reservedCostMicros:0};
  function assertActive(){if(closed||c.signal.aborted||clock()>=expires)fail('INACTIVE');}
  // Reservations are synchronous and conservative: failures are not refunded.
  function reserve(kind,{bytes,costMicros=0}={}){
@@ -34,5 +47,5 @@ export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact
   if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
   if(k)usage[k]++;usage.reservedBytes+=bytes;usage.reservedCostMicros+=costMicros;
  }
- const grant=Object.freeze({...p,signal:c.signal,assertActive,reserve,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);return grant;
+ const grant=Object.freeze({...p,startedAt:started,expiresAt:expires,signal:c.signal,assertActive,reserve,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);if(prior)restored.set(grant,prior);return grant;
 }

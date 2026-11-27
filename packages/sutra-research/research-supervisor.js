@@ -2,7 +2,7 @@
 // Search results are discovery only; extracted passages are candidates, not truth.
 import {randomUUID} from 'node:crypto';
 import {runTaskGraph} from '../sutra-runtime/investigation-tasks.js';
-import {digest,secretLike,assertResearchAuthorization} from './research-session.js';
+import {digest,secretLike,assertResearchAuthorization,researchResumeState} from './research-session.js';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {SEARCH_BYTES} from './providers.js';
 const fail=code=>{throw Object.assign(Error('Research supervisor refused: '+code),{code});};
@@ -33,13 +33,28 @@ export function nextQuery(objective,history,docs,passages){
  variants.push({query:objective+' counterarguments limitations',role:'spark',reason:'challenge first interpretation'},{query:objective+' official data methodology',role:'drone',reason:'seek primary data'},{query:objective+' systematic review evidence gaps',role:'spark',reason:'investigate unresolved questions'});
  return variants.find(v=>!history.some(h=>h.query===v.query))??null;
 }
-export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{}}){
- assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget;
- if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function'))fail('CONFIG');
- const sessionId='research_'+randomUUID(),queries=[],documents=[],passages=[],frontier=[],failures=[],seen=new Set(),content=new Set(),domainAttempts=new Map();
- let seq=0,wave=0,reason='search_variants_exhausted',pending=null;
+function validateRestored(s,b){
+ const ids=new Set(),urls=new Set(),digests=new Set();
+ const isDigest=x=>typeof x==='string'&&/^sha256:[0-9a-f]{64}$/.test(x);
+ for(const [i,d] of s.documents.entries()){
+  if(!d||d.id!=='source_'+(i+1)||ids.has(d.id)||typeof d.text!=='string'||d.text.length>100000||d.textDigest!==digest(d.text)||!isDigest(d.rawDigest)||admitDocumentURL(d.url)!==d.url||urls.has(d.url)||!Array.isArray(d.links)||d.links.length>40)fail('RESUME_DOCUMENT');
+  ids.add(d.id);urls.add(d.url);digests.add(d.textDigest);digests.add(d.rawDigest);
+ }
+ for(const p of s.passages)if(!verifyPassage(p,s.documents.find(d=>d.id===p.sourceId))||!Array.isArray(p.matched)||p.matched.length>16||p.matched.some(x=>typeof x!=='string'||x.length>1000))fail('RESUME_PASSAGE');
+ const seen=new Set(s.seen);if(seen.size!==s.seen.length||s.seen.some(x=>admitDocumentURL(x)!==x)||[...urls].some(x=>!seen.has(x)))fail('RESUME_FRONTIER');
+ const queued=new Set();
+ for(const x of s.frontier){if(!x||!seen.has(x.url)||queued.has(x.url)||urls.has(x.url)||!Number.isSafeInteger(x.depth)||x.depth<0||x.depth>b.maxLinkDepth)fail('RESUME_FRONTIER');queued.add(x.url);}
+ const domains=new Map(s.domainAttempts);if(domains.size!==s.domainAttempts.length||s.domainAttempts.some(x=>!Array.isArray(x)||x.length!==2||typeof x[0]!=='string'||!Number.isSafeInteger(x[1])||x[1]<1||x[1]>3))fail('RESUME_FRONTIER');
+ return {seen,domains,digests};
+}
+export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity}){
+ assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
+ if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.providers.some(p=>typeof providers[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
+ const restored=prior?validateRestored(prior,b):null;
+ const sessionId=prior?.sessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
+ let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};
- const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'manual reconciliation required; no automatic remote replay'});
+ const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,startedAt:a.startedAt,expiresAt:a.expiresAt,state,phase,slots,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'fresh exact approval and retained checkpoint digest required; unknown dispatch is not replayed'});
  async function checkpoint(){await onCheckpoint(snapshot());}
  async function operation(kind,role,detail,fn){
   a.assertActive();pending={kind,role,detail,state:'dispatch_unknown'};emit('operation.pending',{operation:kind,role});await checkpoint();a.assertActive();
@@ -55,53 +70,51 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
   seen.add(url);frontier.push({url,depth,provider});
  }
  try{
-  emit('session.open',{planPin:a.planPin});await checkpoint();
+  emit(prior?'session.resume':'session.open',{planPin:a.planPin});await checkpoint();
   while(true){
    a.assertActive();
-   if(a.usage().searches>=b.maxSearches){reason='search_budget_exhausted';break;}
-   const next=nextQuery(plan.objective,queries,documents,passages);if(!next)break;
-   const provider=plan.providers[queries.length%plan.providers.length];
-   // All queries are derived from the authorized objective, never remote text.
-   if(secretLike(next.query))fail('SENSITIVE_QUERY');
-   a.reserve('search',{bytes:SEARCH_BYTES,costMicros:provider.estimatedMaxCostMicros});
-   const query={...next,provider:provider.id};queries.push(query);
-   const results=await operation('search',next.role,{query:next.query,provider:provider.id},()=>providers[provider.id].search(next.query,{signal:a.signal}));
-   if(results!==null){
-    if(!Array.isArray(results)||results.length>10)fail('SEARCH_RESULT');
-    for(const r of results)if(typeof r?.url==='string')enqueue(r.url,0,provider.id);
-   }
-   pending=null;await checkpoint();
-   // Reserve opportunity for further searches: at most two docs per round.
-   for(let acquired=0;acquired<2&&frontier.length&&a.usage().documents<b.maxDocuments;){
-    // Prioritize independent domains and shallow discovery over repeated same-site links.
-    const score=x=>((domainAttempts.get(new URL(x.url).hostname)??0)*100)+x.depth*10;
-    frontier.sort((x,y)=>score(x)-score(y));const item=frontier.shift(),host=new URL(item.url).hostname;
-    const count=domainAttempts.get(host)??0;if(count>=3)continue;
-    domainAttempts.set(host,count+1);acquired++;
-    const doc=await operation('document','drone',{url:item.url,depth:item.depth},async()=>{
-     const d=await readDocument(item.url);
-     if(!d||d.url!==item.url||typeof d.text!=='string'||d.textDigest!==digest(d.text)||!Array.isArray(d.links)||d.links.length>40)fail('DOCUMENT');
-     // Runtime artifact size ceiling; truncate explicitly and re-digest extraction.
-     const text=d.text.slice(0,100000);
-     return {...d,text,textDigest:digest(text),extractionTruncated:text.length!==d.text.length};
-    });
-    if(doc&&!content.has(doc.rawDigest)&&!content.has(doc.textDigest)){
-     content.add(doc.rawDigest);content.add(doc.textDigest);
-     const saved={...doc,id:'source_'+(documents.length+1)};documents.push(saved);
-     for(const p of extractPassages(saved,plan.objective))if(verifyPassage(p,saved))passages.push(p);
-     for(const link of saved.links)enqueue(link,item.depth+1,'reference');
-     emit('evidence.admitted',{sourceId:saved.id,passages:passages.filter(p=>p.sourceId===saved.id).length});
+   if(operations>=pauseAfterOperations){state='paused';reason='operator_pause_boundary';break;}
+   if(phase==='search'){
+    if(a.usage().documents>=b.maxDocuments&&queries.length>=2){reason='document_budget_exhausted';break;}
+    if(a.usage().searches>=b.maxSearches){reason='search_budget_exhausted';break;}
+    const next=nextQuery(plan.objective,queries,documents,passages);if(!next)break;
+    const provider=plan.providers[queries.length%plan.providers.length];
+    if(secretLike(next.query))fail('SENSITIVE_QUERY');
+    a.reserve('search',{bytes:SEARCH_BYTES,costMicros:provider.estimatedMaxCostMicros});
+    const query={...next,provider:provider.id};queries.push(query);
+    const results=await operation('search',next.role,{query:next.query,provider:provider.id},()=>providers[provider.id].search(next.query,{signal:a.signal}));
+    if(results!==null){
+     if(!Array.isArray(results)||results.length>10)fail('SEARCH_RESULT');
+     for(const r of results)if(typeof r?.url==='string')enqueue(r.url,0,provider.id);
     }
-    pending=null;await checkpoint();
+    phase='documents';slots=2;pending=null;operations++;await checkpoint();continue;
    }
-   // Always attempt an independent follow-up query when budget permits.
-   if(a.usage().documents>=b.maxDocuments&&queries.length>=2){reason='document_budget_exhausted';break;}
+   if(slots===0||!frontier.length||a.usage().documents>=b.maxDocuments){phase='search';slots=0;continue;}
+   const score=x=>((domainAttempts.get(new URL(x.url).hostname)??0)*100)+x.depth*10;
+   frontier.sort((x,y)=>score(x)-score(y));const item=frontier.shift(),host=new URL(item.url).hostname;
+   const count=domainAttempts.get(host)??0;if(count>=3)continue;
+   domainAttempts.set(host,count+1);slots--;
+   const doc=await operation('document','drone',{url:item.url,depth:item.depth},async()=>{
+    const d=await readDocument(item.url);
+    if(!d||d.url!==item.url||typeof d.text!=='string'||d.textDigest!==digest(d.text)||!Array.isArray(d.links)||d.links.length>40)fail('DOCUMENT');
+    const text=d.text.slice(0,100000);
+    return {...d,text,textDigest:digest(text),extractionTruncated:text.length!==d.text.length};
+   });
+   if(doc&&!content.has(doc.rawDigest)&&!content.has(doc.textDigest)){
+    content.add(doc.rawDigest);content.add(doc.textDigest);
+    const saved={...doc,id:'source_'+(documents.length+1)};documents.push(saved);
+    for(const p of extractPassages(saved,plan.objective))if(verifyPassage(p,saved))passages.push(p);
+    for(const link of saved.links)enqueue(link,item.depth+1,'reference');
+    emit('evidence.admitted',{sourceId:saved.id,passages:passages.filter(p=>p.sourceId===saved.id).length});
+   }
+   pending=null;operations++;await checkpoint();
   }
  }catch(e){
   const code=safeCode(e);
   if(code==='BUDGET_EXHAUSTED')reason='budget_exhausted';else if(a.signal.aborted||code==='INACTIVE')reason='cancelled_or_expired';else{reason='operation_interrupted';failures.push({operation:'supervisor',reason:code});}
  }
+ if(state!=='paused')state='closed';
  const covered=new Set(passages.flatMap(p=>p.matched)),all=terms(plan.objective);
- const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,terminationReason:reason,queries,documents,passages,failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
- emit('session.close',{reason});await checkpoint();return report;
+ const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,queries,documents,passages,failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
+ emit(state==='paused'?'session.pause':'session.close',{reason});await checkpoint();return report;
 }
