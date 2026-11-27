@@ -11,11 +11,14 @@ on:
         description: 'Optional JSON object of provider to exact model ID; empty uses smoke examples'
         required: false
         type: string
+  pull_request:
+    types: [synchronize]
+    branches: [main]
 permissions:
   contents: read
 jobs:
   live-model:
-    if: github.ref == 'refs/heads/main' && inputs.approve == true
+    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.approve == true) || (github.event_name == 'pull_request' && github.event.pull_request.number == 66 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'sutra/master-investigation-ui')
     runs-on: ubuntu-latest
     timeout-minutes: 4
     environment: sutra-live-research
@@ -23,19 +26,36 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - id: gate
+        name: Check explicit one-time authorization
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || git log -1 --format=%B "$HEAD_SHA" | grep -Fxq 'SUTRA_LIVE_EXACT_SECRET_NAMES_20261127'; then
+            echo 'approved=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.approved == 'true' && github.event_name == 'pull_request'
+        with:
+          ref: 13bca132af349fc217db8157b64cd61a92d61745
+          persist-credentials: false
       - uses: actions/setup-node@v4
+        if: steps.gate.outputs.approved == 'true'
         with:
           node-version: '22'
       - name: Preview selected model challenge
+        if: steps.gate.outputs.approved == 'true'
         env:
           SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
         run: node apps/sutra-v2/live-model-smoke.mjs --plan > /tmp/sutra-model-plan.json
       - name: Credentialed inference challenges
+        if: steps.gate.outputs.approved == 'true'
         env:
           SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
-          SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI || secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY || secrets.GEMINI_KEY || secrets.GEMINI_API }}
-          SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ || secrets.GROQ_API_KEY || secrets.GROQ_KEY || secrets.GROQ_API }}
-          SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER || secrets.OPENROUTER_API_KEY || secrets.OPENROUTER_KEY || secrets.OPENROUTER_API || secrets.OPEN_ROUTER_API_KEY }}
+          SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI || secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY || secrets.GEMINI_KEY || secrets.GEMINI_API || secrets.GEMINI }}
+          SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ || secrets.GROQ_API_KEY || secrets.GROQ_KEY || secrets.GROQ_API || secrets.GROQ }}
+          SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER || secrets.OPENROUTER_API_KEY || secrets.OPENROUTER_KEY || secrets.OPENROUTER_API || secrets.OPEN_ROUTER_API_KEY || secrets.OPEN_ROUTER }}
         run: |
           if [ -z "$SUTRA_SMOKE_MODELS_JSON" ]; then
             export SUTRA_SMOKE_MODELS_JSON="$(node --input-type=module -e 'import {SMOKE_MODELS} from "./packages/sutra-research/live-model-smoke.js";const entries=Object.entries(SMOKE_MODELS).filter(([v])=>Boolean(process.env["SUTRA_HOSTED_"+v.toUpperCase()]));console.log(JSON.stringify(Object.fromEntries(entries)))')"
@@ -54,7 +74,7 @@ jobs:
           cat /tmp/sutra-model-smoke.json
           exit "$STATUS"
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.gate.outputs.approved == 'true'
         with:
           name: sutra-live-model-smoke
           path: /tmp/sutra-model-smoke.json
