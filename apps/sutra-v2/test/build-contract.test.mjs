@@ -34,3 +34,5 @@ test('standalone Python verifier is byte-reproducible, inspectable and bound to 
  const checked=spawnSync('python3',[resolve(app,'../../packages/sutra-knowledge/reference/test_offline_verifier.py'),'--build-only',archive,pin],{encoding:'utf8'});
  assert.equal(checked.status,0,checked.stderr||String(checked.error));assert.match(checked.stdout,/exact source manifest and deterministic rebuild verified/);
 });
+
+test('canonical V2 build publishes its own portable investigation graph',async()=>{const {compileNetwork}=await import('../../../packages/sutra-runtime/index.js');const manifest=JSON.parse(await readFile(resolve(app,'dist/agents/agent-manifest.json'),'utf8'));assert.equal(manifest.networks.length,1);const entry=manifest.networks[0];assert.equal(entry.name,'investigation');assert.equal(entry.front_man,'planner');const definition=JSON.parse(await readFile(resolve(app,'dist/agents',entry.hocon),'utf8'));assert.equal(definition.tools.length,2);assert.deepEqual(definition.tools[0].tools,['critic']);assert.equal(compileNetwork(definition,{name:entry.name,frontMan:entry.front_man}).frontMan,'planner');});

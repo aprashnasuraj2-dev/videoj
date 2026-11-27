@@ -1,23 +1,24 @@
 // Objective-first local research UI. Only the already-selected shared model
 // connections are sent to the trusted same-origin host. No provider key enters DOM.
+import {prepareBrowserInvestigation} from './browser-investigation.js';
 import {prepareAutonomousSourceCandidate} from './research-source-handoff.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const button=(id,text)=>{const e=E('button',text,'orb-button');e.id=id;e.type='button';return e;};
 const field=(name,input)=>{const e=E('label',undefined,'orb-field');e.append(E('span',name),input);return e;};
 const reason=e=>typeof e?.message==='string'&&/^[A-Z_]{1,60}$/.test(e.message)?e.message:'HOST_UNAVAILABLE';
 export function createAutonomousResearchPanel(root,{getModels,openConnections,onEvent=()=>{},onState=()=>{},canStart=()=>true,saveFile,stageSource}){
- let token=null,plan=null,session=null,cursor=0,epoch=0,timer=null,busy=false,running=false,report=null,mode=null,reconnects=0;
+ let token=null,plan=null,session=null,cursor=0,epoch=0,timer=null,busy=false,running=false,report=null,mode=null,reconnects=0,browserController=null;
  const objective=E('textarea');objective.id='orb-autonomous-objective';objective.maxLength=1000;objective.rows=3;objective.placeholder='Ask a question, investigate a claim, or explore an idea…';
- const prepare=button('orb-autonomous-prepare','Prepare investigation'),connect=button('orb-autonomous-connections','Model connections'),start=button('orb-autonomous-start','Launch investigation'),cancel=button('orb-autonomous-cancel','Cancel'),download=button('orb-autonomous-export','Export report');
+ const prepare=button('orb-autonomous-prepare','Prepare investigation'),browserPrepare=button('orb-autonomous-browser-prepare','Prepare browser plan'),connect=button('orb-autonomous-connections','Model connections'),start=button('orb-autonomous-start','Launch investigation'),cancel=button('orb-autonomous-cancel','Cancel'),download=button('orb-autonomous-export','Export report');
  start.classList.add('orb-primary');
  const approve=E('input');approve.type='checkbox';approve.id='orb-autonomous-approve';
  const preview=E('div',undefined,'orb-event');preview.id='orb-autonomous-preview';preview.hidden=true;
  const status=E('p','Ready to prepare. A local research host is needed for execution.','orb-muted');status.id='orb-autonomous-status';status.setAttribute('role','status');
  const result=E('div',undefined,'orb-list');result.id='orb-autonomous-result';
- const controls=E('div',undefined,'orb-controls');controls.append(prepare,connect,start,cancel,download);
+ const controls=E('div',undefined,'orb-controls');controls.append(prepare,browserPrepare,connect,start,cancel,download);
  root.append(E('p','OBJECTIVE-FIRST WORKSPACE','orb-kicker'),E('h2','Explore with SUTRA'),field('What would you like to investigate?',objective),controls,preview,field('I approve the displayed model recipients, public web access when needed, and the estimated request limits.',approve),status,result);
  function state(text,name){status.textContent=text;status.dataset.state=name;}
- function sync(){objective.disabled=busy||running;prepare.disabled=busy||running||!objective.value.trim();approve.disabled=!plan||busy||running;start.disabled=!plan||!approve.checked||busy||running;cancel.disabled=!running||busy;download.disabled=!report||busy;}
+ function sync(){objective.disabled=busy||running;prepare.disabled=busy||running||!objective.value.trim();browserPrepare.disabled=prepare.disabled;approve.disabled=!plan||busy||running;start.disabled=!plan||!approve.checked||busy||running;cancel.disabled=!running||busy&& !browserController;download.disabled=!report||busy;}
  function reset(){if(running)return;epoch++;plan=null;report=null;preview.hidden=true;preview.replaceChildren();approve.checked=false;result.replaceChildren();state('Prepare a fresh investigation using the shared model pool.','idle');sync();}
  function selectedModels(){return getModels().map(x=>({vendor:x.vendor,model:x.model}));}
  async function request(path,{method='GET',data,publicRequest=false}={}){
@@ -65,9 +66,18 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
   }catch(e){if(ticket===epoch)state(reason(e)==='MODEL_SELECTION'?'Select one to three model connections first. No avatar assignment is needed.':reason(e)==='MODEL_CREDENTIAL'?'One or more selected model providers are not configured in the local host.':'Local host unavailable or plan refused: '+reason(e)+'. No provider request made.','refused');}
   finally{if(ticket===epoch){busy=false;sync();}}
  };
+ browserPrepare.onclick=async()=>{
+  if(browserPrepare.disabled)return;reset();const ticket=epoch;busy=true;sync();state('Loading published investigation network and publisher router status…','preparing');
+  try{const p=await prepareBrowserInvestigation({origin:location.origin,objective:objective.value.trim()});if(ticket!==epoch)return;plan={browser:p};const v=p.preview;preview.hidden=false;preview.replaceChildren(E('h3','Browser plan approval'),E('p',v.objective),E('p','Publisher-funded router: '+v.router+' · '+v.model),E('p','Published graph: '+v.network+' / '+v.front+' · '+v.limits.maxModelCalls+' model calls, '+v.limits.maxAgents+' agent invocations, up to 60 seconds.'),E('small','Graph SHA-256: '+v.graphPin,'mono'),E('p','Only your objective and derived planning messages are disclosed. No web access, private workspace evidence, writes or verification. Publisher limits apply.'));state('Review this browser-executed plan. No provider request sent.','previewed');}catch(e){if(ticket===epoch)state('Browser planning unavailable: '+reason(e)+'. No provider request made.','refused');}finally{if(ticket===epoch){busy=false;sync();}}
+ };
  start.onclick=async()=>{
   if(start.disabled||!canStart()){state('Finish or cancel the other active workspace operation first.','refused');return;}
   const ticket=epoch,p=plan;busy=true;approve.checked=false;sync();
+  if(p.browser){
+   if(objective.value.trim()!==p.browser.preview.objective){plan=null;busy=false;state('Objective changed; prepare a new browser plan.','refused');sync();return;}
+   plan=null;running=true;browserController=new AbortController();const signal=browserController.signal;onState(true);state('Executing published network in this browser…','running');sync();
+   try{const r=await p.browser.run({signal,onEvent:e=>onEvent({kind:'browser.'+e.kind,role:e.agent==='critic'?'spark':e.agent==='planner'?'bot':undefined,status:e.status,operation:e.phase},'browser_runtime')});if(ticket!==epoch||signal.aborted)return;result.replaceChildren(E('h3','Candidate browser investigation plan'),E('p',r.text),E('p',r.qualification,'orb-muted'),E('small',r.agentCalls+' agent invocations · '+r.modelCalls+' model calls · '+r.graphPin,'mono'));state('Browser network completed · candidate plan only','closed');}catch(e){if(ticket===epoch)state(signal.aborted?'Browser execution cancelled. No completed plan claimed.':'Browser execution refused or incomplete: '+(e?.code??reason(e)),'refused');}finally{if(ticket===epoch){browserController=null;running=false;busy=false;onState(false);sync();}}return;
+  }
   try{
    // A changed pool or question invalidates the prepared request before dispatch.
    const current=selectedModels();if(JSON.stringify(current)!==JSON.stringify(p.models.map(({vendor,model})=>({vendor,model})))||objective.value.trim().replace(/\s+/gu,' ')!==p.objective)throw Error('PLAN_CHANGED');
@@ -77,7 +87,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
   }catch(e){if(ticket===epoch){plan=null;state('Launch refused or status unknown: '+reason(e),'refused');}}
   finally{if(ticket===epoch){busy=false;sync();}}
  };
- cancel.onclick=async()=>{if(cancel.disabled||!session)return;busy=true;sync();try{await request('cancel',{method:'POST',data:{sessionId:session.sessionId}});state('Cancellation requested; awaiting confirmed terminal state.','cancelling');}catch(e){state('Cancellation status unknown: '+reason(e),'disconnected');}finally{busy=false;sync();}};
+ cancel.onclick=async()=>{if(cancel.disabled)return;if(browserController){browserController.abort();state('Browser cancellation requested.','cancelling');return;}if(!session)return;busy=true;sync();try{await request('cancel',{method:'POST',data:{sessionId:session.sessionId}});state('Cancellation requested; awaiting confirmed terminal state.','cancelling');}catch(e){state('Cancellation status unknown: '+reason(e),'disconnected');}finally{busy=false;sync();}};
  download.onclick=()=>{if(report&&saveFile)saveFile(JSON.stringify(report),'sutra-autonomous-research-report.json');};
- sync();return Object.freeze({invalidate(){if(!busy&&!running)reset();},close(){clearTimeout(timer);epoch++;},isRunning(){return running;}});
+ sync();return Object.freeze({invalidate(){if(!busy&&!running)reset();},close(){clearTimeout(timer);browserController?.abort();epoch++;},isRunning(){return running;}});
 }

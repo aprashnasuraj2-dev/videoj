@@ -1,0 +1,17 @@
+{
+  "networks": [
+    {
+      "name": "investigation",
+      "front_man": "planner",
+      "hocon": "./investigation.network.json",
+      "description": "Prepare a candidate investigation plan and challenge its assumptions. No evidence acquisition or verified facts."
+    }
+  ],
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed"
+  },
+  "deployment": {
+    "mode": "static"
+  }
+}

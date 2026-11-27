@@ -32,6 +32,25 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   assert.equal(await page.locator('#review-select-text').inputValue(),sourceText);
   await stage.click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-stage-source_1').parentElement.textContent.includes('Not staged'));
   assert.equal(await page.locator('#review-source-pick option[value="'+sourceId+'"]').count(),1);
+  // Actual V2 public artifacts are loaded in the browser, with only inference
+  // responses injected. No Node graph orchestration or automatic mock fallback.
+  const contract='a'.repeat(64),browserCalls=[];
+  await page.route('**/api/status',route=>route.fulfill({json:{inference:'configured',model:'browser-fixture-model',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',inferenceContractId:contract}}));
+  let delegate=true;
+  await page.route('**/api/v1/chat/completions',async route=>{
+   const req=route.request(),body=req.postDataJSON();browserCalls.push(body);assert.equal(req.headers()['x-sutra-inference-contract'],contract);assert.equal(req.headers()['authorization'],undefined);assert.equal(body.model,'browser-fixture-model');
+   const first=body.tools.some(t=>t.function.name==='critic')&&!body.messages.some(m=>m.role==='tool');
+   const delta=first&&delegate?{tool_calls:[{index:0,id:'critic_call',type:'function',function:{name:'critic',arguments:JSON.stringify({request:'Challenge this candidate plan'})}}]}:{content:first?'Unreviewed plan':body.tools.length?'Candidate plan including critique':'Check competing evidence and missing measurements'};
+   await route.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta,finish_reason:first&&delegate?'tool_calls':'stop'}]})+'\n\ndata: [DONE]\n\n'});
+  });
+  await page.locator('#orb-autonomous-objective').fill('Plan a battery cost investigation');
+  await page.locator('#orb-autonomous-browser-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');
+  assert.equal(browserCalls.length,0);assert.equal(await page.locator('#orb-autonomous-start').isDisabled(),true);
+  await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='closed');
+  assert.equal(browserCalls.length,3);assert.ok(browserCalls[2].messages.some(m=>m.role==='tool'&&m.content.includes('competing evidence')));
+  assert.match(await page.locator('#orb-autonomous-result').innerText(),/Candidate plan including critique/);
+  assert.match(await page.locator('#orb-log').innerText(),/BROWSER NETWORK/);
+  delegate=false;await page.locator('#orb-autonomous-browser-prepare').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');await page.locator('#orb-autonomous-approve').check();await page.locator('#orb-autonomous-start').click();await page.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='refused');assert.match(await page.locator('#orb-autonomous-status').innerText(),/BROWSER_DELEGATION_MISSING/);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  }finally{await browser.close();await app.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

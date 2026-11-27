@@ -441,12 +441,12 @@ function initialize(){
  onState(active){autonomousActive=active;if(active&&simulation){playing=false;simulation=false;renderControls();}for(const a of agents){a.status='idle';a.station=null;}renderInspector();frameDriver.wake();},
  onEvent(e,transportMode){
   const roles={bot:0,drone:1,gear:2,orb:3,node:4,spark:5},role=roles[e.role]??(e.kind==='evidence.admitted'?1:e.kind.startsWith('session.')?4:null);
-  const stations=[0,1,2,3,8,5],kind=transportMode==='injected_fixture'?'RESEARCH FIXTURE':'HOST RESEARCH';
+  const stations=[0,1,2,3,8,5],kind=transportMode==='injected_fixture'?'RESEARCH FIXTURE':transportMode==='browser_runtime'?'BROWSER NETWORK':'HOST RESEARCH';
   if(role!==null&&agents[role]){
    const a=agents[role];
-   if(e.kind==='operation.pending'){a.status='working';a.station=stations[role];}
+   if(e.kind==='operation.pending'||e.kind==='browser.agent'&&e.operation==='start'){a.status='working';a.station=stations[role];}
    else if(e.kind==='model.response'){a.status='communicating';a.station=stations[role];}
-   else if(e.kind==='operation.completed'||e.kind==='operation.failed'||e.kind==='evidence.indexed'||e.kind==='report.assembled'){a.status='idle';a.station=null;}
+   else if(e.kind==='browser.agent'&&e.operation==='end'||e.kind==='operation.completed'||e.kind==='operation.failed'||e.kind==='evidence.indexed'||e.kind==='report.assembled'){a.status='idle';a.station=null;}
   }
   const detail=e.kind+(e.operation?' · '+e.operation:'')+(e.status?' · '+e.status:'')+(e.vendor?' · '+e.vendor+' / '+e.model:'')+(e.sourceId?' · '+e.sourceId:'')+(Number.isSafeInteger(e.passages)?' · '+e.passages+' passages':'')+(e.reason?' · '+e.reason:'');
   record(kind,role,null,detail);
