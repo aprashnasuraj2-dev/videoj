@@ -47,3 +47,24 @@ test('invalid structured tool proposal never discloses source or makes second re
  const result=await runModelSmoke({...grant,selection,structured:true,approvedPlanPin:plan.planPin,exchangeFactory:()=>({close(){},async exchange(r){calls++;return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({tool:'inspect_evidence',arguments:{sourceId:'other',start:0,end:1}})}}],usage:{completion_tokens:30}})};}})});
  assert.equal(result.status,'failed');assert.equal(calls,1);assert.equal(result.checks[0].reason,'EVIDENCE_ARGUMENTS');
 });
+
+test('native tool smoke sends actual tool schema, admits exact provider call, and returns tool result only after read',async()=>{
+ const {admitNativeSmokeBody}=await import('../../sutra-inference/native-smoke-wire.js');
+ const selection={groq:'fixture-model'},plan=previewModelSmoke(selection,{native:true}),calls=[];
+ assert.equal(plan.maxRequests,2);assert.notEqual(plan.planPin,previewModelSmoke(selection,{structured:true}).planPin);
+ const factory=options=>{assert.equal(options.nativeToolSmoke,true);return {close(){},async exchange(r){
+  admitNativeSmokeBody(r.bodyText,r.model,r.maxOutputTokens,r.protocol);calls.push(r);
+  const b=JSON.parse(r.bodyText),coords=JSON.parse(b.messages[1].content);let finish_reason,message;
+  if(calls.length===1){assert.equal(b.tool_choice,'auto');assert.equal(b.messages.length,2);finish_reason='tool_calls';message={role:'assistant',content:null,tool_calls:[{id:'call_1',type:'function',function:{name:'inspect_evidence',arguments:JSON.stringify(coords)}}]};}
+  else{assert.equal(b.tool_choice,'none');assert.equal(b.messages.length,4);assert.equal(b.messages[3].tool_call_id,'call_1');const e=JSON.parse(b.messages[3].content);finish_reason='stop';message={role:'assistant',content:JSON.stringify({claims:[{kind:'source_claim',text:'Synthetic source reports a challenge.',citation:{sourceId:e.sourceId,sourceDigest:e.sourceDigest,start:e.start,end:e.end,quote:e.quote}},{kind:'uncertainty',text:'Not empirical evidence.',citation:null}]})};}
+  return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason,message}],usage:{completion_tokens:30}})};
+ }}};
+ const result=await runModelSmoke({...grant,selection,native:true,approvedPlanPin:plan.planPin,exchangeFactory:factory});
+ assert.equal(result.status,'passed');assert.equal(result.checks[0].nativeToolCall,true);assert.equal(calls.length,2);assert.doesNotMatch(JSON.stringify(result),/Synthetic challenge|fixture-groq-key/);
+ await assert.rejects(runModelSmoke({...grant,selection,native:true,structured:true,exchangeFactory:factory}),/MODEL_SELECTION/);
+});
+test('native tool rejection cannot trigger follow-up disclosure',async()=>{
+ const selection={groq:'fixture-model'},plan=previewModelSmoke(selection,{native:true});let calls=0;
+ const result=await runModelSmoke({...grant,selection,native:true,approvedPlanPin:plan.planPin,exchangeFactory:()=>({close(){},async exchange(){calls++;return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason:'tool_calls',message:{role:'assistant',content:null,tool_calls:[{id:'call_1',type:'function',function:{name:'read_all',arguments:'{}'}}]}}],usage:{completion_tokens:20}})};}})});
+ assert.equal(result.status,'failed');assert.equal(calls,1);assert.equal(result.checks[0].reason,'NATIVE_SMOKE_BODY');
+});

@@ -63,3 +63,14 @@ test('per-task cancellation during DNS never dials a late-resolved address',asyn
  let begin,release;const entered=new Promise(r=>begin=r);const f=fixture({resolveAll:()=>{begin();return new Promise(r=>release=r)}}),x=exchange(f),c=new AbortController();
  const pending=x.exchange(wire(),{signal:c.signal});await entered;c.abort();await assert.rejects(pending,/CANCELLED/);release([{address:'8.8.8.8',family:4}]);await new Promise(r=>setImmediate(r));assert.equal(f.sockets.length,0);x.close();
 });
+
+test('native synthetic smoke requires explicit host mode and rejects other tool definitions before DNS',async()=>{
+ const {nativeSmokeCoordinates,nativeSmokeTool,NATIVE_SMOKE_SYSTEM}=await import('../native-smoke-wire.js');
+ const data={model:route.models[0],messages:[{role:'system',content:NATIVE_SMOKE_SYSTEM},{role:'user',content:JSON.stringify(nativeSmokeCoordinates())}],max_tokens:1024,stream:false,tools:[nativeSmokeTool()],tool_choice:'auto'};
+ const input=wire(route,{maxOutputTokens:1024,bodyText:JSON.stringify(data)});
+ const f=fixture(),normal=exchange(f);await assert.rejects(normal.exchange(input));assert.equal(f.events.length,0);normal.close();
+ const x=createHostedModelExchange({routes:[route],resolveAll:f.resolveAll,io:f.io,nativeToolSmoke:true});
+ const bad=structuredClone(data);bad.tools[0].function.name='arbitrary';
+ await assert.rejects(x.exchange({...input,bodyText:JSON.stringify(bad)}),/Native smoke wire/);assert.equal(f.events.length,0);
+ await x.exchange(input);assert.equal(f.events.filter(e=>e.stage==='request').length,1);x.close();
+});
