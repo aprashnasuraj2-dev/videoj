@@ -53,14 +53,14 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  const restored=prior?validateRestored(prior,b,plan.scope):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
  if(assignedSessionId!==undefined&&(typeof assignedSessionId!=='string'||!/^research_[0-9a-f-]{36}$/.test(assignedSessionId)||prior&&prior.sessionId!==assignedSessionId))fail('SESSION_ID');
  const sessionId=prior?.sessionId??assignedSessionId??'research_'+randomUUID(),queries=prior?.queries??[],documents=prior?.documents??[],passages=prior?.passages??[],frontier=prior?.frontier??[],failures=prior?.failures??[],seen=restored?.seen??new Set(),content=restored?.digests??new Set(),domainAttempts=restored?.domains??new Map();
- const modelReceipts=[],modelQueries=[];let intelligence=null,modelOnlyAnswer=null,lastModelPlanDocumentCount=-1;
+ const modelReceipts=[],modelQueries=[],modelWebActions=[];let intelligence=null,modelOnlyAnswer=null,lastModelPlanDocumentCount=-1;
  const onDemand=plan.modelPolicy?.webAccess==='on_demand',availableProviders=plan.providers.filter(p=>typeof providers?.[p.id]?.search==='function');
  const finalRoles=plan.modelPolicy?.roles.filter(r=>r.role!=='bot')??[];
  const finalCost=finalRoles.reduce((n,r)=>n+r.estimatedMaxCostMicros,0),finalBytes=finalRoles.length*262144;
  function canAcquire(cost,bytes){const u=a.usage();return !plan.modelPolicy||u.reservedCostMicros+cost+finalCost<=b.maxCostMicros&&u.reservedBytes+bytes+finalBytes<=b.maxDownloadBytes;}
  let seq=prior?.sequence??0,wave=0,reason='search_variants_exhausted',pending=null,phase=prior?.phase??'search',slots=prior?.slots??0,state='running',operations=0;
  const emit=(kind,detail)=>{const e=Object.freeze({sessionId,sequence:++seq,kind,...detail});try{onEvent(e);}catch{}};
- const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,startedAt:a.startedAt,expiresAt:a.expiresAt,state,phase,slots,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),...(plan.modelPolicy?{modelReceipts:structuredClone(modelReceipts),modelQueries:structuredClone(modelQueries),modelOnlyAnswer}:{}),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'fresh exact approval and retained checkpoint digest required; unknown dispatch is not replayed'});
+ const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,startedAt:a.startedAt,expiresAt:a.expiresAt,state,phase,slots,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),...(plan.modelPolicy?{modelReceipts:structuredClone(modelReceipts),modelQueries:structuredClone(modelQueries),modelWebActions:structuredClone(modelWebActions),modelOnlyAnswer}:{}),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'fresh exact approval and retained checkpoint digest required; unknown dispatch is not replayed'});
  async function checkpoint(){await onCheckpoint(snapshot());}
  async function operation(kind,role,detail,fn){
   a.assertActive();pending={kind,role,detail,state:'dispatch_unknown'};emit('operation.pending',{operation:kind,role});await checkpoint();a.assertActive();
@@ -93,11 +93,19 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
      const bot=plan.modelPolicy.roles.find(r=>r.role==='bot');
      if(a.usage().modelCalls+2>=b.maxModelCalls||!canAcquire(bot.estimatedMaxCostMicros,262144)){reason='model_web_decision_budget';break;}
      const covered=new Set(passages.flatMap(p=>p.matched)),missing=terms(plan.objective).filter(w=>!covered.has(w));
-     const raw=await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing));
+     const webAttempted=queries.length>0||modelWebActions.length>0;
+     const raw=await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing,{searchAvailable:availableProviders.length>0,openPublicUrls:plan.scope.allowModelPublicUrls===true,webAttempted}));
      if(raw===null){reason='model_web_decision_unavailable';break;}
-     let decision;try{decision=admitWebDecision(raw,plan.objective,queries);}catch(e){failures.push({operation:'model_web_decision',reason:safeCode(e)});reason='model_web_decision_invalid';break;}
+     let decision;try{decision=admitWebDecision(raw,plan.objective,queries,{allowPublicUrls:plan.scope.allowModelPublicUrls===true,webAttempted});}catch(e){failures.push({operation:'model_web_decision',reason:safeCode(e)});reason='model_web_decision_invalid';break;}
      if(decision.action==='answer_without_web'){modelOnlyAnswer={text:decision.answer,sourceStatus:'NO_WEB_EVIDENCE',truthStatus:'UNVERIFIED',authority:'NONE'};reason='model_answer_without_web';break;}
      if(decision.action==='finish_research'){reason='model_requested_synthesis';break;}
+     if(decision.action==='open_public_urls'){
+      const before=frontier.length;
+      for(const url of decision.urls)enqueue(url,0,'model_public_url');
+      if(frontier.length===before){reason='model_web_urls_exhausted';break;}
+      modelWebActions.push({action:'open_public_urls',urls:decision.urls});
+      phase='documents';slots=Math.min(2,frontier.length);pending=null;await checkpoint();continue;
+     }
      if(!availableProviders.length){reason='web_access_unavailable';break;}
      modelQueries.push(...decision.queries);
     }
@@ -177,6 +185,6 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  const covered=new Set(passages.flatMap(p=>p.matched)),all=terms(plan.objective);
  const verified=verifyEvidence(documents,passages),numericObservations=extractNumericObservations(passages,verified.refs),numericComparisons=compareNumericObservations(numericObservations),lineage=compareSourceLineage(documents),evidenceGraph=createEvidenceGraph(documents,verified.refs,numericObservations,numericComparisons,lineage);
  const evidenceIndex={...verified,numericObservations,numericComparisons,lineage,evidenceGraph,analysisKind:'deterministic_candidate_index'};
- const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,researchPlan:{...researchPlan,questions:questionProgress(researchPlan,queries)},queries,documents,passages,evidenceIndex,...(plan.modelPolicy?{intelligence,modelReceipts,modelOnlyAnswer,modelConfiguration:{webAccess:plan.modelPolicy.webAccess,reviewMode:plan.modelPolicy.reviewMode,roles:plan.modelPolicy.roles.map(({role,vendor,model})=>({role,vendor,model}))}}:{}),failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:plan.modelPolicy?'Model output with explicit web provenance; citation integrity and review are not empirical truth, independent verification or sufficiency.':'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
+ const report={schema:'sutra-autonomous-research-report/v1',sessionId,planPin:a.planPin,objective:plan.objective,state,terminationReason:reason,researchPlan:{...researchPlan,questions:questionProgress(researchPlan,queries)},queries,documents,passages,evidenceIndex,...(plan.modelPolicy?{intelligence,modelReceipts,modelWebActions,modelOnlyAnswer,modelConfiguration:{webAccess:plan.modelPolicy.webAccess,reviewMode:plan.modelPolicy.reviewMode,roles:plan.modelPolicy.roles.map(({role,vendor,model})=>({role,vendor,model}))}}:{}),failures,usage:a.usage(),coverage:{kind:'lexical diagnostic only',matchedTerms:all.filter(w=>covered.has(w)),unmatchedTerms:all.filter(w=>!covered.has(w))},authority:'NONE',qualification:plan.modelPolicy?'Model output with explicit web provenance; citation integrity and review are not empirical truth, independent verification or sufficiency.':'Candidate excerpts only; no verified factual synthesis, source independence, or sufficiency claim.'};
  emit(state==='paused'?'session.pause':'session.close',{reason});await checkpoint();return report;
 }

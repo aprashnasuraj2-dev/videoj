@@ -45,3 +45,19 @@ test('pool rejects duplicate routes and mixed avatar assignment fields',()=>{
  const three=admitManifest(JSON.stringify(manifest([],[{...defaultModel,vendor:'gemini',model:'second'},{...defaultModel,vendor:'openrouter',model:'third'}]))).plan;
  assert.deepEqual(three.modelPolicy.roles.map(r=>r.model),['fixture-model','second','third']);
 });
+test('on-demand public URL retrieval works with one LLM and no search key when scope permits',async()=>{
+ const p=manifest();p.scope.allowModelPublicUrls=true;
+ const f=setup(p,(input,n)=>{
+  if(n===1){assert.equal(input.webCapabilities.searchAvailable,false);assert.equal(input.webCapabilities.openPublicUrls,true);return {webAction:'open_public_urls',urls:['https://public.org/report']};}
+  if(n===2){const e=input.evidence[0];return {claims:[{statement:'A source reports battery costs.',kind:'reported',citations:[{passageId:e.passageId,quote:e.quote}]}],gaps:[]};}
+  const c=input.claims[0],e=input.evidence[0];return {reviews:[{claimId:c.claimId,verdict:'supported',reason:'The excerpt reports the figure.',citations:[{passageId:e.passageId,quote:e.quote}]}],conflicts:[]};
+ });
+ try{const r=await f.run();assert.equal(r.usage.searches,0);assert.deepEqual(f.calls,['https://public.org/report']);assert.equal(r.modelWebActions.length,1);assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');}finally{f.close();}
+});
+test('model URL actions require scope and reject private or opaque URLs before document I/O',async()=>{
+ for(const [allow,url] of [[false,'https://public.org/report'],[true,'https://127.0.0.1/private'],[true,'https://public.org/?token=secret']]){
+  const p=manifest();p.scope.allowModelPublicUrls=allow;
+  const f=setup(p,()=>({webAction:'open_public_urls',urls:[url]}));
+  try{const r=await f.run();assert.equal(f.calls.length,0);assert.equal(r.terminationReason,'model_web_decision_invalid');}finally{f.close();}
+ }
+});

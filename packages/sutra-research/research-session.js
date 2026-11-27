@@ -20,8 +20,8 @@ export function admitManifest(text){
  const scopeKeys=['publicWeb','queryDisclosureAllowed','allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'];
  if(Object.hasOwn(p.scope??{},'allowCrossOriginLinks'))scopeKeys.push('allowCrossOriginLinks');
  if(Object.hasOwn(p.scope??{},'allowPdf'))scopeKeys.push('allowPdf');
- for(const key of ['allowRedirects','allowPublicQueryParameters'])if(Object.hasOwn(p.scope??{},key))scopeKeys.push(key);
- if(!exact(p.scope,scopeKeys)||Object.hasOwn(p.scope,'allowCrossOriginLinks')&&typeof p.scope.allowCrossOriginLinks!=='boolean'||Object.hasOwn(p.scope,'allowPdf')&&typeof p.scope.allowPdf!=='boolean'||['allowRedirects','allowPublicQueryParameters'].some(k=>Object.hasOwn(p.scope,k)&&typeof p.scope[k]!=='boolean')||p.scope.publicWeb!==true||p.scope.queryDisclosureAllowed!==true||['allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'].some(k=>p.scope[k]!==false))fail('SCOPE');
+ for(const key of ['allowRedirects','allowPublicQueryParameters','allowModelPublicUrls'])if(Object.hasOwn(p.scope??{},key))scopeKeys.push(key);
+ if(!exact(p.scope,scopeKeys)||Object.hasOwn(p.scope,'allowCrossOriginLinks')&&typeof p.scope.allowCrossOriginLinks!=='boolean'||Object.hasOwn(p.scope,'allowPdf')&&typeof p.scope.allowPdf!=='boolean'||['allowRedirects','allowPublicQueryParameters','allowModelPublicUrls'].some(k=>Object.hasOwn(p.scope,k)&&typeof p.scope[k]!=='boolean')||p.scope.publicWeb!==true||p.scope.queryDisclosureAllowed!==true||['allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'].some(k=>p.scope[k]!==false))fail('SCOPE');
  const limits={maxSearches:[2,30],maxDocuments:[1,60],maxLinkDepth:[0,3],maxDurationSeconds:[5,1200],maxDownloadBytes:[65536,52428800],maxCostMicros:[1,1000000]};
  if(hasModels)limits.maxModelCalls=[3,30];
  if(!exact(p.budget,Object.keys(limits))||Object.entries(limits).some(([k,[a,b]])=>!bounded(p.budget[k],a,b)))fail('BUDGET');

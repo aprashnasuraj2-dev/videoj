@@ -1,14 +1,15 @@
 // Host admission of model outputs. Citation integrity does NOT establish entailment.
 import {digest,secretLike} from './research-session.js';
+import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {verifyEvidence,extractNumericObservations,compareNumericObservations} from './evidence-index.js';
 const fail=code=>{throw Object.assign(Error('Research intelligence refused: '+code),{code});};
 const exact=(o,k)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===k.length&&k.every(x=>Object.hasOwn(o,x));
 const text=(s,max)=>typeof s==='string'&&s.trim()===s&&s.length>0&&s.length<=max&&!/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(s)&&!secretLike(s);
 const id=(prefix,x)=>prefix+'_'+digest(JSON.stringify(x)).slice(7,31);
 const questions=new Set(['primary','counterevidence','comparability','gaps']);
-export function plannerInput(objective,history,documents,passages,coverage){
+export function plannerInput(objective,history,documents,passages,coverage,capabilities){
  // No source text, titles, URLs, model-written claims or prior model outputs.
- return {objective,searchesCompleted:history.length,documentsAdmitted:documents.length,passagesAdmitted:passages.length,missingObjectiveTerms:coverage,attemptedQuestions:[...new Set(history.map(q=>q.questionId).filter(q=>questions.has(q)))]};
+ return {objective,searchesCompleted:history.length,documentsAdmitted:documents.length,passagesAdmitted:passages.length,missingObjectiveTerms:coverage,attemptedQuestions:[...new Set(history.map(q=>q.questionId).filter(q=>questions.has(q)))],...(capabilities?{webCapabilities:capabilities}:{})};
 }
 export function admitModelQueries(value,objective,history){
  if(!exact(value,['queries'])||!Array.isArray(value.queries)||value.queries.length>4)fail('PLAN_SCHEMA');
@@ -21,8 +22,17 @@ export function admitModelQueries(value,objective,history){
  return out;
 }
 // Model-directed web access is a proposal, never direct network authority.
-export function admitWebDecision(value,objective,history){
- if(!value||!['search','answer_without_web','finish_research'].includes(value.webAction))fail('WEB_DECISION');
+export function admitWebDecision(value,objective,history,{allowPublicUrls=false,webAttempted=history.length>0}={}){
+ if(!value||!['search','open_public_urls','answer_without_web','finish_research'].includes(value.webAction))fail('WEB_DECISION');
+ if(value.webAction==='open_public_urls'){
+  if(!allowPublicUrls||!exact(value,['webAction','urls'])||!Array.isArray(value.urls)||value.urls.length<1||value.urls.length>3)fail('WEB_URL_SCOPE');
+  const urls=[];for(const raw of value.urls){
+   if(typeof raw!=='string'||raw.length>2048||secretLike(raw))fail('WEB_URL');
+   let url;try{url=admitDocumentURL(raw,{allowQuery:false});}catch{fail('WEB_URL');}
+   if(!urls.includes(url))urls.push(url);
+  }
+  return {action:'open_public_urls',urls};
+ }
  if(value.webAction==='search'){
   if(!exact(value,['webAction','queries']))fail('WEB_DECISION');
   const queries=admitModelQueries({queries:value.queries},objective,history);
@@ -30,10 +40,10 @@ export function admitWebDecision(value,objective,history){
   return {action:'search',queries};
  }
  if(value.webAction==='finish_research'){
-  if(!exact(value,['webAction'])||!history.length)fail('WEB_DECISION');
+  if(!exact(value,['webAction'])||!webAttempted)fail('WEB_DECISION');
   return {action:'finish_research'};
  }
- if(!exact(value,['webAction','answer'])||history.length||!text(value.answer,3000))fail('WEB_DECISION');
+ if(!exact(value,['webAction','answer'])||webAttempted||!text(value.answer,3000))fail('WEB_DECISION');
  return {action:'answer_without_web',answer:value.answer};
 }
 export function makeEvidencePacket(documents,passages,{maxPassages=24,maxTextBytes=16000}={}){
