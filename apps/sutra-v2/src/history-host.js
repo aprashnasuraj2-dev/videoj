@@ -22,13 +22,26 @@ function responseError(value){
 export function createHistoryHostClient(capability=globalThis.sutraHistoryHost){
  if(!capability||capability.version!==1||typeof capability.call!=='function')return null;
  const call=async(operation,payload,expectedDigest)=>{
+  const writing=operation!=='read_snapshot';
   let response;
   try{response=await capability.call(operation,payload);}
-  catch{fail('TRANSPORT');}
-  if(!response||typeof response!=='object'||typeof response.ok!=='boolean')fail('RESPONSE');
-  if(!response.ok)throw TypeError(responseError(response.error));
-  const snapshot=await replaySnapshot(response.snapshot);
-  if(expectedDigest&&snapshot.digest!==expectedDigest)fail('UNEXPECTED_HEAD');
+  catch{fail(writing?'OUTCOME_UNKNOWN':'TRANSPORT');}
+  if(!response||typeof response.ok!=='boolean')fail(writing?'OUTCOME_UNKNOWN':'RESPONSE');
+  if(!response.ok){
+   const code=responseError(response.error);
+   // Only these refusals are guaranteed to precede publication. An I/O error
+   // can occur after HEAD rename, including during final sync or readback.
+   if(writing&&!/^(?:HISTORY_STORE_(?:STALE_OR_ROLLED_BACK_HEAD|ALREADY_INITIALIZED|BUSY_OR_CRASHED_LOCK)|HISTORY_EXTENSION_[A-Z_]+)$/.test(code))fail('OUTCOME_UNKNOWN');
+   throw TypeError(code);
+  }
+  let snapshot;
+  try{
+   snapshot=await replaySnapshot(response.snapshot);
+   if(expectedDigest&&snapshot.digest!==expectedDigest)fail('UNEXPECTED_HEAD');
+  }catch(error){
+   if(writing)fail('OUTCOME_UNKNOWN');
+   throw error;
+  }
   return snapshot;
  };
  return Object.freeze({

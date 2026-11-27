@@ -49,3 +49,16 @@ Agent Studio can export an operator config using the selected model IDs, roles, 
 
 ### Return from the local operator runner
 Add `--portable-output` (optionally with `--export-version`) to produce a compact, bounded computation transfer on stdout instead of a full transcript. Redirect it to a file. Retain the receipt/version pins independently from a trusted operator; a pin from the same untrusted file is not authenticity. In Agent Studio, import the compact result, enter the retained pins and original reviewed contract, and recompute the receipt and exact expected root version. The verified version can be downloaded and imported into the existing reviewed workspace. No model authorship, contact, budget history or semantic truth is authenticated. Transfers larger than 256 KiB refuse rather than weaken the strict JSON parser.
+
+### Save a reviewed investigation locally
+
+After building the workspace and installing its pinned Playwright Chromium, launch
+`node apps/sutra-v2/local-history.mjs /absolute/path/to/private-history`.
+Use an existing, owner-only directory (mode 0700) on supported Linux ext storage.
+The launcher opens the built workspace in an ephemeral browser and serves its
+assets locally. Keep the saved digest separately, including between launches.
+Two launches can use the same directory. The second writer must inspect the
+current saved digest if the first writer advances it. After a disconnected save,
+**Check attempted save** checks the exact proposed digest without issuing another
+write. Inspecting a save previews its versions and branches. Loading it keeps the
+editable draft and offers to bring back the previous local history.

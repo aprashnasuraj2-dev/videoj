@@ -87,7 +87,7 @@ Existing base: immutable snapshots, local CAS, fsync/atomic publication, subproc
 - [x] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
 - [x] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
 - [ ] `V2-HIST-009` Perform physical/hardware power-loss durability evidence when available; do not substitute SIGKILL for power loss.
-- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
+- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX. [Integration and remaining verification](HIST-010-RECONCILIATION.md).
 
 ## B3. PR #53 — semantic compilation and intent
 

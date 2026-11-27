@@ -49,6 +49,7 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
+let durableBase=null, inspectedHistory=null, lastAttempt=null, previousHistory=null, needsInspection=false;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -1349,9 +1350,15 @@ function durableHistoryStatus(state,message){by('history-durable-status').datase
 function durableHistoryControl(){
  const s=history?.snapshot(),retained=by('history-durable-pin').value.trim(),available=!!historyHost;
  by('history-durable-pin').disabled=busy||!available;
- by('history-durable-initialize').disabled=busy||!available||!s||!!retained;
- by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest;
+ by('history-durable-initialize').disabled=busy||!available||!s||!!retained||needsInspection||!!durableBase;
+ by('history-durable-append').disabled=busy||!available||!s||!retained||retained!==durableBase||needsInspection||retained===s.digest;
  by('history-durable-read').disabled=busy||!available||!retained;
+ by('history-durable-check-attempt').disabled=busy||!lastAttempt;
+ by('history-durable-reload').disabled=busy||!inspectedHistory||inspectedHistory.snapshot().digest!==retained||retained===s?.digest;
+ by('history-durable-undo').disabled=busy||!previousHistory;
+ const saved=inspectedHistory?.snapshot();
+ const describe=h=>h.view.versions.length+' version(s), '+h.view.branches.map(b=>b.name+' '+b.head.slice(7,19)).join(', ');
+ by('history-durable-detail').textContent=[s?'Local history: '+describe(s):'No local history.',saved?'Inspected save: '+describe(saved):'',lastAttempt?'Attempted save: '+lastAttempt:''].filter(Boolean).join(' · ');
  if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
 }
 function historyControl(){
@@ -1381,32 +1388,65 @@ function renderHistory(){
 by('history-branch').onchange=historyControl;
 for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
 by('history-file').addEventListener('change',historyControl);
-by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus('idle','Retained durable digest edited. Host not contacted.');historyControl();});
-by('history-durable-initialize').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot();if(!historyHost||!h||!s)return;
- const committed=await historyHost.initialize(s);
- if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest)return;
- by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host initialized at the exact replayed history digest. Retain this digest separately.');status('history_durable_ready','Durable host initialized explicitly; browser history unchanged.');historyControl();
+by('history-durable-pin').addEventListener('input',()=>{
+ inspectedHistory=null;needsInspection=true;
+ durableHistoryStatus('idle','Inspect this digest before using it as the base for a save.');historyControl();
 });
-by('history-durable-append').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected)return;
- try{
-  const committed=await historyHost.append(expected,s);
-  if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest||by('history-durable-pin').value.trim()!==expected)return;
-  by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host advanced to the exact current history digest. Retain this new digest separately.');status('history_durable_ready','Durable history advanced with exact retained-head CAS.');historyControl();
- }catch(e){
-  if(ticket===epoch&&h===history&&by('history-durable-pin').value.trim()===expected)durableHistoryStatus(/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused',/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'Durable head differs from the retained digest. No retry or local history change occurred. Verify a separately retained current digest before proceeding.':'Durable host refused the write. No automatic retry or local history change occurred.');
-  throw e;
- }
-});
-by('history-durable-read').onclick=()=>work(async ticket=>{
- const h=history,expected=by('history-durable-pin').value.trim();if(!historyHost||!expected)return;
- const checked=await historyHost.read(expected);
- if(ticket!==epoch||h!==history||by('history-durable-pin').value.trim()!==expected)return;
- const local=history?.snapshot().digest??null,same=local===checked.digest;
- durableHistoryStatus('ready','Durable host exactly matches the retained digest. In-memory history '+(same?'matches it.':'is different and was not replaced.')+' No state was adopted automatically.');
- status('history_durable_ready','Retained durable head verified without changing browser history.');historyControl();
-});
+function saveHistory(initialize){
+ return work(async ticket=>{
+  const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();
+  if(!s||!historyHost||needsInspection||(initialize?!!expected:expected!==durableBase))return;
+  inspectedHistory=null;lastAttempt=s.digest;
+  try{
+   const saved=initialize?await historyHost.initialize(s):await historyHost.append(expected,s);
+   if(ticket!==epoch||history!==h){needsInspection=true;durableHistoryStatus('unknown','Workspace changed during save. Check the attempted save before continuing.');return;}
+   durableBase=saved.digest;by('history-durable-pin').value=durableBase;lastAttempt=null;
+   durableHistoryStatus('ready',initialize?'Saved history initialized. Keep the digest separately.':'Reviewed changes saved. Keep the updated digest separately.');
+   status('history_durable_ready','Reviewed history saved.');
+  }catch(error){
+   const stale=/STALE_OR_ROLLED_BACK_HEAD|ALREADY_INITIALIZED/.test(error.message);
+   const unknown=error.message==='HISTORY_HOST_OUTCOME_UNKNOWN';
+   needsInspection=stale||unknown;
+   if(!unknown)lastAttempt=null;
+   const state=stale?'stale':unknown?'unknown':'refused';
+   const message=stale?'Saved history differs from your base. No retry occurred. Inspect the independently retained current digest.':unknown?'Save outcome unknown. Check the attempted save or inspect a separately retained current digest.':'Save refused. Your local work is available.';
+   durableHistoryStatus(state,message);status('history_durable_'+state,message);
+  }
+ });
+}
+by('history-durable-initialize').onclick=()=>saveHistory(true);
+by('history-durable-append').onclick=()=>saveHistory(false);
+function inspectDurable(pin){
+ return work(async ticket=>{
+  const input=by('history-durable-pin'),before=input.value,h=history;
+  inspectedHistory=null;
+  try{
+   const checked=await historyHost.read(pin);
+   const opened=await openInvestigationHistory(checked.historyText,checked.digest);
+   if(ticket!==epoch||h!==history||input.value!==before)return;
+   inspectedHistory=opened;durableBase=pin;input.value=pin;needsInspection=false;lastAttempt=null;
+   durableHistoryStatus('ready','Saved history verified. In-memory history '+(history?.snapshot().digest===pin?'matches it.':'differs. Inspect both before choosing which to use.'));
+   status('history_durable_ready','Saved history inspected. Editable draft retained.');
+  }catch(error){
+   needsInspection=true;
+   const state=lastAttempt?'unknown':/STALE_OR_ROLLED_BACK_HEAD/.test(error.message)?'stale':'refused';
+   durableHistoryStatus(state,'This digest could not be confirmed as current. Your draft and local history are available.');
+   status('history_durable_'+state,'Read did not confirm the saved version.');
+  }
+ });
+}
+by('history-durable-read').onclick=()=>inspectDurable(by('history-durable-pin').value.trim());
+by('history-durable-check-attempt').onclick=()=>inspectDurable(lastAttempt);
+by('history-durable-reload').onclick=()=>{
+ if(busy||!inspectedHistory||inspectedHistory.snapshot().digest!==by('history-durable-pin').value.trim())return;
+ previousHistory=history;history=inspectedHistory;inspectedHistory=null;renderHistory();
+ durableHistoryStatus('recovered','Inspected history loaded. Editable draft retained. Select a version to compare or start a branch.');
+};
+by('history-durable-undo').onclick=()=>{
+ if(busy||!previousHistory)return;
+ history=previousHistory;previousHistory=null;renderHistory();
+ durableHistoryStatus('local','Previous local history restored. The saved history is unchanged.');
+};
 by('history-create').onclick=()=>work(async ticket=>{
  const v=semanticCurrent;if(history||!v)return;
  const h=await createInvestigationHistory(v.versionText,v.digest);

@@ -5521,5 +5521,18 @@
     ],
     "contract": "No browser filesystem authority. Optional versioned injected host absent by default; browser independently replays snapshots before/after calls; retained-head CAS; no automatic write retry or state adoption.",
     "verification": "pending exact central knowledge/browser/accessibility"
+  },
+  "durableHistoryRecovery": {
+    "task": "V2-HIST-010",
+    "base": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
+    "status": "candidate pending exact-head browser verification",
+    "reconciliation": "docs/sutra-v2/HIST-010-RECONCILIATION.md",
+    "browserTest": "apps/sutra-v2/test/durable-recovery.cjs",
+    "limits": {
+      "versions": 12,
+      "branches": 8,
+      "bytes": 262144
+    },
+    "broaderGatesClosed": []
   }
 }
