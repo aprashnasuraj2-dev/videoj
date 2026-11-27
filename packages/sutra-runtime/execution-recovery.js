@@ -14,6 +14,7 @@ function requirePaused(cp){
 }
 export async function createTaskRecoveryCheckpoint({result,events,recoveryProfile}={}){
  if(!profile(recoveryProfile))fail('PROFILE');
+ if(!Object.isFrozen(result)||!Object.isFrozen(result?.artifacts)||result.artifacts.some(a=>!Object.isFrozen(a)||!Object.isFrozen(a.provenance)))fail('RESULT');
  const cp=await createExecutionCheckpoint(result,events);requirePaused(cp);
  const text=JSON.stringify({schema:SCHEMA,recoveryProfile,checkpointText:cp.text,checkpointPin:cp.pin,artifacts:result.artifacts});
  return Object.freeze({text,pin:await digest(text),version:cp.checkpoint.version,recoveryProfile,qualification:'Contains private admitted values. Keep locally and retain the pin separately. A trusted local pin does not authenticate past execution.'});
