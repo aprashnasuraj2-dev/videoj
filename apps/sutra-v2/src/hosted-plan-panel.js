@@ -21,7 +21,7 @@ export function createHostedPlanPanel(root,{saveFile}){
   const card=E('fieldset',undefined,'orb-event');card.append(E('legend',label));
   const enabled=input('orb-hosted-enable-'+id,'checkbox'),vendor=select('orb-hosted-vendor-'+id,HOSTED_GATEWAY_PROFILES.map(p=>[p.vendor,p.vendor])),model=input('orb-hosted-model-'+id),bindings=input('orb-hosted-bindings-'+id),values=input('orb-hosted-values-'+id,'checkbox');
   vendor.value=HOSTED_GATEWAY_PROFILES[rows.length%HOSTED_GATEWAY_PROFILES.length].vendor;model.maxLength=100;model.placeholder='Exact provider model ID';
-  bindings.placeholder='Comma-separated binding IDs';card.append(field('Include this specialist',enabled),field('Provider',vendor),field('Model ID',model),field('Approved binding descriptors',bindings),field('Also disclose raw numeric values',values));slots.append(card);
+  bindings.placeholder='Comma-separated binding IDs';card.append(field('Include this specialist',enabled),field('Hosted vendor',vendor),field('Model ID',model),field('Approved binding descriptors',bindings),field('Also disclose raw numeric values',values));slots.append(card);
   rows.push({id,role,enabled,vendor,model,bindings,values});
  }
  const rounds=select('orb-hosted-rounds',[['1','1'],['2','2'],['3','3']]),tokens=select('orb-hosted-tokens',[['128','128'],['256','256'],['512','512'],['1024','1024']]);tokens.value='256';

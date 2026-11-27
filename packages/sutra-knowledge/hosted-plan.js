@@ -18,7 +18,7 @@ const dense=(a,max)=>Array.isArray(a)&&Object.getPrototypeOf(a)===Array.prototyp
 const id=x=>typeof x==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(x);
 const model=x=>typeof x==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(x);
 const ints=(n,a,b)=>Number.isSafeInteger(n)&&n>=a&&n<=b;
-export async function buildHostedHybridPlan({versionText,versionPin,specialists,maxRounds=1,maxOutputTokens=256,maxConcurrent=2,maxInputBytes=262144,timeoutMs=30000}={}){
+export async function buildHostedHybridPlan({versionText,versionPin,specialists,maxRounds=1,maxOutputTokens=256,maxConcurrent=Math.min(2,Array.isArray(specialists)?specialists.length:0),maxInputBytes=262144,timeoutMs=30000}={}){
  if(!dense(specialists,6)||specialists.length<1||!ints(maxRounds,1,3)||specialists.length*maxRounds>8||!ints(maxOutputTokens,1,1024)||!ints(maxConcurrent,1,Math.min(4,specialists.length*maxRounds))||!ints(maxInputBytes,1,1048576)||!ints(timeoutMs,100,30000))fail('CONFIG');
  // Capture data before any asynchronous replay.
  const team=specialists.map(s=>{
