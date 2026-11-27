@@ -13,12 +13,12 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
  if(!['fixed','stop-on-stagnation'].includes(roundPolicy))fail('POLICY');
  const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
  const admitted=admitCouncilDisclosure(disclosure,config.team.map(x=>x.id));
- const captured=config.team.map(x=>Object.freeze({id:x.id,role:x.role,handle:x.handle,model:x.model,shareScope:SCOPE}));
+ const captured=config.team.map(x=>Object.freeze({id:x.id,role:x.role,handle:x.handle,model:x.model,shareScope:SCOPE,...(x.requires?{requires:x.requires}:{})}));
  const grant=freeze({bindingIds:admitted.bindingIds,includeValues:admitted.includeValues,agentScopes:admitted.scopes});
  await validateReviewedContract(contractText,contractPin);
  const c=parseUniqueJson(contractText,{maxChars:262144,maxDepth:9});
  if(admitted.bindingIds.some(id=>!c.bindings.some(b=>b.id===id)))fail('DISCLOSURE');
- const plan=freeze({version:1,contractPin,question:c.question.text,agents:config.team.map(x=>({id:x.id,role:x.role,providerId:x.providerId,profileId:x.profileId,model:x.model,scope:grant.agentScopes.find(s=>s.agentId===x.id),bindings:projectCouncilBindings(c,grant.agentScopes.find(s=>s.agentId===x.id))})),maxRounds,maxOutputTokens,timeoutMs,roundPolicy,qualification:'This plan authorizes only the captured in-process routes and displayed evidence/feedback scope, not fallback or semantic adoption. Provider identity remains host supplied.'});
+ const plan=freeze({version:1,contractPin,question:c.question.text,agents:config.team.map(x=>({id:x.id,role:x.role,providerId:x.providerId,profileId:x.profileId,model:x.model,...(x.requires?{requires:x.requires,declaredCapabilities:x.declaredCapabilities,capabilityAuthority:x.capabilityAuthority}:{}),scope:grant.agentScopes.find(s=>s.agentId===x.id),bindings:projectCouncilBindings(c,grant.agentScopes.find(s=>s.agentId===x.id))})),maxRounds,maxOutputTokens,timeoutMs,roundPolicy,qualification:'This plan authorizes only the captured in-process routes and displayed evidence/feedback scope, not fallback or semantic adoption. Provider identity remains host supplied.'});
  workspace.admitOperation(plan);
  const planPin=await casePin(JSON.stringify(plan));let used=false;
  // Recheck the captured route identities after asynchronous preview generation

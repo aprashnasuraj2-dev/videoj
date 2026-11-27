@@ -236,3 +236,37 @@ test('enrollment during dispatch invalidates publication even with harmless resp
  await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}}),e=>e.code==='BUDGET');
  const next=await w.execute({handle:added.handle,model:'beta-fast',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}});assert.equal(next.lease.state,'settled');assert.equal(w.budgetSnapshot().global.used.unknown,1);
 });
+
+
+test('host-declared model capabilities negotiate locally before reservation or credential release',async()=>{
+ let contacts=0;
+ const declared=[
+  {id:'provider-a',label:'Provider A',models:['alpha-small','alpha-large'],capabilities:{'alpha-small':['text.generate'],'alpha-large':['text.generate','structured.output']}},
+  {id:'provider-b',label:'Provider B',models:['beta-fast'],capabilities:{'beta-fast':['text.generate']}}
+ ];
+ const w=createProviderWorkspace({catalog:declared,globalLimits,defaultProfileLimits:limits,randomBytes,clock:()=>0,transports:[
+  {providerId:'provider-a',send:async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:{text:'a'}};}},
+  {providerId:'provider-b',send:async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:{text:'b'}};}}
+ ]});
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
+ const b=w.addProfile({providerId:'provider-b',label:'B',credential:beta});
+ const x=w.negotiateCapabilities({handle:a.handle,model:'alpha-large',required:['text.generate','structured.output']});
+ assert.equal(x.authority,'HOST_DECLARED_UNVERIFIED');assert.deepEqual(x.required,['text.generate','structured.output']);assert.deepEqual(x.declared,['text.generate','structured.output']);
+ const y=w.negotiateCapabilities({handle:b.handle,model:'beta-fast',required:['text.generate']});assert.equal(y.providerId,'provider-b');
+ assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+ assert.throws(()=>w.negotiateCapabilities({handle:a.handle,model:'alpha-small',required:['structured.output']}),e=>e.code==='CAPABILITY_MISSING');
+ assert.throws(()=>w.negotiateCapabilities({handle:a.handle,model:'alpha-small',required:['text.generate','text.generate']}),e=>e.code==='CAPABILITY');
+ assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+});
+
+test('capability declarations are bounded host metadata and reject malformed or accessor-controlled inputs',()=>{
+ const badCatalogs=[
+  [{id:'provider-a',label:'A',models:['alpha-small'],capabilities:{'alpha-small':['Text.Generate']}}],
+  [{id:'provider-a',label:'A',models:['alpha-small'],capabilities:{'other':['text.generate']}}],
+  [{id:'provider-a',label:'A',models:['alpha-small'],capabilities:{'alpha-small':['text.generate','text.generate']}}]
+ ];
+ for(const catalog of badCatalogs)assert.throws(()=>createProviderWorkspace({catalog,globalLimits,defaultProfileLimits:limits,randomBytes,transports:[]}),e=>e.code==='CAPABILITY');
+ const caps=Object.create(null);let ran=0;Object.defineProperty(caps,'alpha-small',{enumerable:true,get(){ran++;return ['text.generate'];}});
+ assert.throws(()=>createProviderWorkspace({catalog:[{id:'provider-a',label:'A',models:['alpha-small'],capabilities:caps}],globalLimits,defaultProfileLimits:limits,randomBytes,transports:[]}),e=>e.code==='CAPABILITY');
+ assert.equal(ran,0);
+});
