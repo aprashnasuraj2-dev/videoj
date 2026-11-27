@@ -236,3 +236,14 @@ test('enrollment during dispatch invalidates publication even with harmless resp
  await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}}),e=>e.code==='BUDGET');
  const next=await w.execute({handle:added.handle,model:'beta-fast',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}});assert.equal(next.lease.state,'settled');assert.equal(w.budgetSnapshot().global.used.unknown,1);
 });
+
+test('provider cancellation before reservation and during uncooperative transport never publishes or refunds unknown usage',async()=>{
+ let entered,release,contacts=0;const started=new Promise(r=>entered=r),gate=new Promise(r=>release=r);
+ const w=make(async(_request,{signal})=>{contacts++;assert.ok(signal);entered();await gate;return {actualInputBytes:1,actualOutputTokens:1,value:'late'};});
+ const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha}),c=new AbortController();c.abort();
+ const input={handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:20,operation:{q:'x'}};
+ await assert.rejects(w.execute(input,{signal:c.signal}),e=>e.code==='CANCELLED');assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+ const next=new AbortController(),pending=w.execute(input,{signal:next.signal});await started;next.abort();await assert.rejects(pending,e=>e.code==='CANCELLED');
+ let u=w.budgetSnapshot().global.used;assert.equal(u.calls,1);assert.equal(u.unknown,1);assert.equal(u.outputTokens,20);assert.equal(u.actualOutputTokens,0);
+ release();await new Promise(r=>setImmediate(r));u=w.budgetSnapshot().global.used;assert.equal(u.unknown,1);assert.equal(u.actualOutputTokens,0);
+});

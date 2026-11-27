@@ -17,6 +17,14 @@ const closed=(x,keys)=>{
  const own=Reflect.ownKeys(x);
  return own.length===keys.length&&own.every(k=>typeof k==='string'&&keys.includes(k));
 };
+// Cancel local publication immediately; an uncooperative transport may still consume resources.
+async function raceTransport(start,signal){
+ if(signal?.aborted)stop('CANCELLED');
+ if(!signal)return start();
+ let cancel;const aborted=new Promise((_,reject)=>{cancel=()=>reject(new ProviderWorkspaceError('CANCELLED'));signal.addEventListener('abort',cancel,{once:true});});
+ try{return await Promise.race([Promise.resolve().then(()=>{if(signal.aborted)stop('CANCELLED');return start();}),aborted]);}
+ finally{signal.removeEventListener('abort',cancel);}
+}
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 
 function sanitizeProviderValue(value,isSecret,{depth=0,budget={chars:0,nodes:0}}={}){
@@ -118,7 +126,8 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
   // A host-held fence spans downstream decoding and asynchronous computation.
   // It captures only an opaque generation, never a credential or handle.
   capturePublicationFence(){const observed=profileSetToken;return ()=>{if(observed!==profileSetToken)stop('PROFILE_SET_CHANGED');};},
-  async execute(input={}){
+  async execute(input={}, {signal}={}){
+   if(signal?.aborted)stop('CANCELLED');
    if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation']))stop('REQUEST');
    const {handle,model,inputBytes,maxOutputTokens,operation}=input;
    const profile=profileMeta(handle);
@@ -129,9 +138,10 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now:readClock()});}
    catch(error){if(error instanceof BudgetLedgerError)stop(error.code==='PROFILE_DISABLED'?'PROFILE_DISABLED':'BUDGET');throw error;}
    try{
-    const raw=await vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
+    const raw=await raceTransport(()=>vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
      providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:checkedOperation
-    })));
+    }),{signal})),signal);
+    if(signal?.aborted)stop('CANCELLED');
     // A removed profile may not publish a late result. No asynchronous gap
     // between the handle check, all-profile canary scan, settlement and return.
     vault.describe(handle);

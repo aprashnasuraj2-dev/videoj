@@ -83,11 +83,13 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
   if(!closed(c,['id','label','protocol','endpoint','transportClass','models'])||typeof c.id!=='string'||!ID.test(c.id)||map.has(c.id)||!str(c.label,64)||!registry.has(c.protocol)||!Array.isArray(c.models)||c.models.length<1||c.models.length>16||!dense(c.models)||c.models.some(x=>typeof x!=='string'||!MODEL.test(x))||new Set(c.models).size!==c.models.length)stop('CONNECTION');
   map.set(c.id,Object.freeze({...c,endpoint:endpoint(c.endpoint,c.transportClass),models:Object.freeze([...c.models])}));
  }
- const transports=[...map.values()].map(connection=>({providerId:connection.id,send:async({providerId,model,credential,operation})=>{
+ const transports=[...map.values()].map(connection=>({providerId:connection.id,send:async({providerId,model,credential,operation},{signal}={})=>{
+  if(signal?.aborted)stop('CANCELLED');
   if(providerId!==connection.id||!connection.models.includes(model)||!closed(operation,['wireText','outputCap'])||!str(operation.wireText,131072)||!size(operation.outputCap,1,8192))stop('REQUEST');
   // Credentials are intentionally supplied only to the injected host exchange;
   // never to encode/decode, model messages, graph, or returned records.
-  const raw=await exchange(Object.freeze({connectionId:connection.id,protocol:connection.protocol,transportClass:connection.transportClass,endpoint:connection.endpoint,model,credential,bodyText:operation.wireText,maxOutputTokens:operation.outputCap}));
+  const raw=await exchange(Object.freeze({connectionId:connection.id,protocol:connection.protocol,transportClass:connection.transportClass,endpoint:connection.endpoint,model,credential,bodyText:operation.wireText,maxOutputTokens:operation.outputCap}),{signal});
+  if(signal?.aborted)stop('CANCELLED');
   if(!closed(raw,['status','bodyText'])||raw.status!==200||!str(raw.bodyText,262144)||bytes(raw.bodyText)>262144)stop('RESPONSE');
   const parsed=parseUniqueJson(raw.bodyText,{maxChars:262144,maxDepth:32});
   const decoded=registry.get(connection.protocol).decode(parsed);
@@ -97,7 +99,8 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
  const workspace=createProviderWorkspace({catalog:[...map.values()].map(({id,label,models})=>({id,label,models})),transports,globalLimits,defaultProfileLimits,leaseTicks,randomBytes,clock});
  return Object.freeze({...workspace,transportMode:'injected-protocol-laboratory',
   connections:Object.freeze([...map.values()].map(({id,label,protocol,transportClass,models})=>Object.freeze({id,label,protocol,transportClass,models}))),
-  async execute(input){
+  async execute(input,{signal}={}){
+   if(signal?.aborted)stop('CANCELLED');
    if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation'])||!size(input.maxOutputTokens,1,8192)||!size(input.inputBytes,1,1048576))stop('REQUEST');
    const p=workspace.list().find(x=>x.profileId===input.handle?.profileId),c=p&&map.get(p.providerId);
    if(!c||!c.models.includes(input.model))stop('MODEL');
@@ -112,7 +115,7 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
    const decodedWire=parseUniqueJson(wireText,{maxChars:131072,maxDepth:32});
    workspace.admitOperation(decodedWire);
    // Reserve actual serialized request bytes, not a caller-provided smaller estimate.
-   return workspace.execute({handle:input.handle,model:input.model,inputBytes:bytes(wireText),maxOutputTokens:input.maxOutputTokens,operation:{wireText,outputCap:input.maxOutputTokens}});
+   return workspace.execute({handle:input.handle,model:input.model,inputBytes:bytes(wireText),maxOutputTokens:input.maxOutputTokens,operation:{wireText,outputCap:input.maxOutputTokens}},{signal});
   }
  });
 }

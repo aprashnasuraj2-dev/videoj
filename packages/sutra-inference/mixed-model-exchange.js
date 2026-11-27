@@ -21,9 +21,9 @@ export function createMixedModelExchange({connections,deadlineMs,resolveAll,host
   if(local.length)l=createLoopbackModelExchange({routes:local,deadlineMs});
   if(hosted.length)p=createHostedModelExchange({routes:hosted,deadlineMs,resolveAll,io:hostedIO});
  }catch(error){l?.close();p?.close();throw error;}
- return Object.freeze({mode:'explicit-mixed-candidate',async exchange(input){
+ return Object.freeze({mode:'explicit-mixed-candidate',async exchange(input,{signal}={}){
   if(closedHost)fail('CLOSED');
   if(!closed(input,['connectionId','protocol','transportClass','endpoint','model','credential','bodyText','maxOutputTokens'])||classes.get(input.connectionId)!==input.transportClass)fail('ROUTE');
-  return (input.transportClass==='local'?l:p).exchange(input);
+  return (input.transportClass==='local'?l:p).exchange(input,{signal});
  },close(){closedHost=true;l?.close();p?.close();}});
 }

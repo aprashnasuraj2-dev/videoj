@@ -10,7 +10,8 @@ const closed=(x,keys)=>x!==null&&typeof x==='object'&&[Object.prototype,null].in
 export function createLoopbackModelExchange({routes,deadlineMs=10000}={}){
  const approved=admitLoopbackRoutes(routes,deadlineMs);
  let closedHost=false;const pending=new Set();
- async function exchange(input){
+ async function exchange(input,{signal}={}){
+  if(signal?.aborted)fail('CANCELLED');
   if(closedHost)fail('CLOSED');
   if(!closed(input,['connectionId','protocol','transportClass','endpoint','model','credential','bodyText','maxOutputTokens']))fail('REQUEST');
   const route=approved.get(input.connectionId);
@@ -28,11 +29,12 @@ export function createLoopbackModelExchange({routes,deadlineMs=10000}={}){
   return new Promise((resolve,reject)=>{
    let req,res,timer,done=false;
    const finish=(ok,value)=>{
-    if(done)return;done=true;clearTimeout(timer);pending.delete(cancel);
+    if(done)return;done=true;clearTimeout(timer);pending.delete(cancel);signal?.removeEventListener('abort',cancel);
     if(!ok){res?.destroy();req?.destroy();reject(Object.assign(new Error('Local model exchange refused ('+value+').'),{code:value}));}
     else resolve(value);
    };
-   const cancel=()=>finish(false,'CANCELLED');pending.add(cancel);
+   const cancel=()=>finish(false,'CANCELLED');pending.add(cancel);signal?.addEventListener('abort',cancel,{once:true});
+   if(signal?.aborted){cancel();return;}
    timer=setTimeout(()=>finish(false,'TIMEOUT'),deadlineMs);
    try{
     // Literal loopback addresses, explicit family, direct socket; no proxy agent.

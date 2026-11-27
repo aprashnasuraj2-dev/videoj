@@ -58,3 +58,8 @@ test('deadline covers slow DNS and TLS; closed host refuses late dispatch',async
  await assert.rejects(x.exchange(wire()),/TIMEOUT/);release([{address:'8.8.8.8',family:4}]);await new Promise(r=>setImmediate(r));assert.equal(f.sockets.length,0);x.close();
  const g=fixture({hang:true}),y=exchange(g);const p=y.exchange(wire());await new Promise(r=>setImmediate(r));y.close();await assert.rejects(p,/CANCELLED/);assert.equal(g.sockets[0].destroyed,true);assert.equal(g.events.some(e=>e.stage==='request'),false);await assert.rejects(y.exchange(wire()),/CLOSED/);
 });
+
+test('per-task cancellation during DNS never dials a late-resolved address',async()=>{
+ let begin,release;const entered=new Promise(r=>begin=r);const f=fixture({resolveAll:()=>{begin();return new Promise(r=>release=r)}}),x=exchange(f),c=new AbortController();
+ const pending=x.exchange(wire(),{signal:c.signal});await entered;c.abort();await assert.rejects(pending,/CANCELLED/);release([{address:'8.8.8.8',family:4}]);await new Promise(r=>setImmediate(r));assert.equal(f.sockets.length,0);x.close();
+});

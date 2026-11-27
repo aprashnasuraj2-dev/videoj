@@ -19,7 +19,8 @@ export function createHostedModelExchange({routes,resolveAll,deadlineMs=15000,io
  }
  const policy=createPublicRoutePolicy({routes:publicRoutes,resolveAll});
  let closedHost=false;const pending=new Set();
- async function exchange(raw){
+ async function exchange(raw,{signal}={}){
+  if(signal?.aborted)fail('CANCELLED');
   if(closedHost)fail('CLOSED');
   if(!closed(raw,['connectionId','protocol','transportClass','endpoint','model','credential','bodyText','maxOutputTokens']))fail('REQUEST');
   const input=Object.freeze({...raw}),authMode=auth.get(input.connectionId);
@@ -30,11 +31,12 @@ export function createHostedModelExchange({routes,resolveAll,deadlineMs=15000,io
   return new Promise((resolve,reject)=>{
    let active,timer,done=false;
    const finish=(ok,value)=>{
-    if(done)return;done=true;clearTimeout(timer);pending.delete(cancel);
+    if(done)return;done=true;clearTimeout(timer);pending.delete(cancel);signal?.removeEventListener('abort',cancel);
     if(!ok){active?.cancel();reject(Object.assign(new Error('Hosted model exchange refused ('+value+').'),{code:value}));}
     else resolve(value);
    };
-   const cancel=()=>finish(false,'CANCELLED');pending.add(cancel);
+   const cancel=()=>finish(false,'CANCELLED');pending.add(cancel);signal?.addEventListener('abort',cancel,{once:true});
+   if(signal?.aborted){cancel();return;}
    timer=setTimeout(()=>finish(false,'TIMEOUT'),deadlineMs);
    // Even a resolver that ignores cancellation cannot dial after completion.
    (async()=>{

@@ -42,7 +42,7 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
      const publicRoute=Object.freeze({id:route.id,role:route.role});
      const op=operation(publicRoute,round,feedback.map(x=>({...x})));
      const inputBytes=new TextEncoder().encode(JSON.stringify(op)).length;
-     const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:op});
+     const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation:op},{signal:controller.signal});
      if(controller.signal.aborted)councilFail('CANCELLED');
      if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)councilFail('PROPOSAL_REFUSED');
      assertPublication();
