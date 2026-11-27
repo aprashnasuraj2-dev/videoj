@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs
+      - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs deploy/sutra-pages/candidate-fingerprint.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
         run: node services/sutra-api/test-local/quota-runtime.mjs
       - name: Build independent static candidates
@@ -45,6 +45,26 @@ jobs:
           cd deploy/sutra-pages
           npx --yes wrangler@4.166.0 pages functions build functions --outfile "$RUNNER_TEMP/sutra-pages-functions.mjs"
           test -s "$RUNNER_TEMP/sutra-pages-functions.mjs"
+      - name: Record and locally restore candidate artifact identity (no deployment)
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision="$(git rev-parse HEAD)"
+          dir="$RUNNER_TEMP/sutra-retained-candidate"
+          mkdir -p "$dir"
+          node deploy/sutra-pages/candidate-fingerprint.mjs create "$revision" "$dir/fingerprint.json" "$dir/fingerprint.sha256" deploy/sutra-pages/dist apps/sutra-peer/dist "$RUNNER_TEMP/sutra-private-worker" "$RUNNER_TEMP/sutra-pages-functions.mjs" services/sutra-api/wrangler.private.jsonc
+          cp -a deploy/sutra-pages/dist "$dir/pages"
+          cp -a apps/sutra-peer/dist "$dir/guide"
+          cp -a "$RUNNER_TEMP/sutra-private-worker" "$dir/worker"
+          cp "$RUNNER_TEMP/sutra-pages-functions.mjs" "$dir/functions.mjs"
+          cp services/sutra-api/wrangler.private.jsonc "$dir/policy.jsonc"
+          node deploy/sutra-pages/candidate-fingerprint.mjs verify "$revision" "$dir/fingerprint.json" "$dir/fingerprint.sha256" "$dir/pages" "$dir/guide" "$dir/worker" "$dir/functions.mjs" "$dir/policy.jsonc" > "$dir/restoration.json"
+          cat "$dir/restoration.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-retained-candidate
+          path: ${{ runner.temp }}/sutra-retained-candidate/
+          retention-days: 30
       - name: Observe deployed public artifacts without inference or credentials (diagnostic, not promotion)
         run: node deploy/sutra-pages/check-public.mjs --observe > "$RUNNER_TEMP/sutra-public-observation.json" && cat "$RUNNER_TEMP/sutra-public-observation.json"
       - uses: actions/upload-artifact@v4
