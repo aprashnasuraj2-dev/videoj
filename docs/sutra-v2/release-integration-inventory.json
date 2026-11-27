@@ -38,7 +38,7 @@
       "mergeBase": "9bd76ef8bfd05f323592f21fe4b0841188861693",
       "ahead": 198,
       "behind": 651,
-      "disposition": "Path inventory captured; runtime web tool and epistemic answer validator absent from V2 but overlapping research functionality exists. Reconcile current consent, evidence and transport contracts instead of copying legacy learner/worker wholesale.",
+      "disposition": "Selective recovery of reviewed answer admission and provider route measurement; complete implementation-level reconciliation remains open.",
       "changedFiles": 123,
       "paths": [
         {
@@ -779,7 +779,1126 @@
           "additions": 42,
           "deletions": 0
         }
-      ]
+      ],
+      "pathComparison": [
+        {
+          "path": ".github/workflows/sutra-browser-matrix.yml",
+          "baseBlob": "5b2335acaca593892ae9664eedbf268a8d05bcf6",
+          "legacyBlob": "7f4120413a7d738280ce830af05b15ee4382488c",
+          "candidateBlob": "5b2335acaca593892ae9664eedbf268a8d05bcf6",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": ".github/workflows/sutra-device-check.yml",
+          "baseBlob": "8ab306dc5f8a9d5bc329385ddde6aaf3f7ddb573",
+          "legacyBlob": "c63701671bcd79a78376eeded118372de6c6756b",
+          "candidateBlob": "8ab306dc5f8a9d5bc329385ddde6aaf3f7ddb573",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": ".github/workflows/sutra-open-kit.yml",
+          "baseBlob": "f723b0bd94cf1441aed01c187828c3409a3f2db5",
+          "legacyBlob": "acf9710b9c8f7711bd514027f49e8313c13324b6",
+          "candidateBlob": "f723b0bd94cf1441aed01c187828c3409a3f2db5",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "apps/sutra/package.json",
+          "baseBlob": "af2971efa7809b17ae57a0a1bb90b695241ac998",
+          "legacyBlob": "49d5bec165dfef91406b97a35b72d0281a059f3a",
+          "candidateBlob": "af2971efa7809b17ae57a0a1bb90b695241ac998",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/agent-manifest.json",
+          "baseBlob": "b638ea41c82d37cdc0d5880b8467b6461a931c19",
+          "legacyBlob": "8261add450784a2980732a46063e8478400950e3",
+          "candidateBlob": "b638ea41c82d37cdc0d5880b8467b6461a931c19",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/research_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "ff40e39c6877a7d91591010ae8a9125d2bda4804",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/research_peer_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "14c5c880786b47c6634d5ad18fb5eafb8739971f",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/source_learner.network.json",
+          "baseBlob": "08b60445a7e5b5fc7d8dee10bd76883e30c22d84",
+          "legacyBlob": "085a65783ee5badd8464b6dbcfd341f3a02183ab",
+          "candidateBlob": "08b60445a7e5b5fc7d8dee10bd76883e30c22d84",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/source_peer_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "585ad6e003d35773580fa863ef0dd6a9d4783046",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/085a65783ee5badd8464b6dbcfd341f3a02183ab/source_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "085a65783ee5badd8464b6dbcfd341f3a02183ab",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/14c5c880786b47c6634d5ad18fb5eafb8739971f/research_peer_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "14c5c880786b47c6634d5ad18fb5eafb8739971f",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/2b9d212fc1ff233a06cd35e1e571628e4622ee87/research_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "2b9d212fc1ff233a06cd35e1e571628e4622ee87",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/573cc12362d42b41f46de4afc62b757064a597c3/research_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "573cc12362d42b41f46de4afc62b757064a597c3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/585ad6e003d35773580fa863ef0dd6a9d4783046/source_peer_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "585ad6e003d35773580fa863ef0dd6a9d4783046",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/d36734b9a15909190495fcd8a29bf821902bd6dc/source_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "d36734b9a15909190495fcd8a29bf821902bd6dc",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/v/ff40e39c6877a7d91591010ae8a9125d2bda4804/research_learner.network.json",
+          "baseBlob": null,
+          "legacyBlob": "ff40e39c6877a7d91591010ae8a9125d2bda4804",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/comparison-view.js",
+          "baseBlob": "0491ecb28e5398512eeb7d61e34cfa4a4648c1b4",
+          "legacyBlob": "10e83a68da3c67ed21ed9acb52ad0bd4c1209151",
+          "candidateBlob": "0491ecb28e5398512eeb7d61e34cfa4a4648c1b4",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/comparison.js",
+          "baseBlob": "98b08e4e97b53f51583e842953966e494b304649",
+          "legacyBlob": "11ed4da523244fbb50bf3821fc089abd62f214b7",
+          "candidateBlob": "98b08e4e97b53f51583e842953966e494b304649",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/local-answer.js",
+          "baseBlob": "1510df3e3052b7b5002e6d7568162b659c80a1a3",
+          "legacyBlob": "fef7f114385308876476f84c50c9371097bb334b",
+          "candidateBlob": "1510df3e3052b7b5002e6d7568162b659c80a1a3",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/localization.js",
+          "baseBlob": "ba2fbc72a5713f82e979236fd416b9e6a85d0b50",
+          "legacyBlob": "a3fbfe626fba8cc329d195e731da3a6567ee9fb3",
+          "candidateBlob": "ba2fbc72a5713f82e979236fd416b9e6a85d0b50",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/main.js",
+          "baseBlob": "7fcc784c5cba763b52a71672b87976bfa802f5d9",
+          "legacyBlob": "a7c254bf1d31e13f8742c6a10a8dfb46b51fa040",
+          "candidateBlob": "7fcc784c5cba763b52a71672b87976bfa802f5d9",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/provider-panel.js",
+          "baseBlob": "2d84ccd8111b6e5f6106dd1468ca81b5df8c392e",
+          "legacyBlob": "ced3508372e714be2575458046adb764188bd828",
+          "candidateBlob": "2d84ccd8111b6e5f6106dd1468ca81b5df8c392e",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/provider-run.js",
+          "baseBlob": "dd8b3222a537e713482cf9dd97fe733a9107bf4a",
+          "legacyBlob": "ba039824c61cae33981df73b3ad11a6d127709f1",
+          "candidateBlob": "dd8b3222a537e713482cf9dd97fe733a9107bf4a",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/provider-web-tools.js",
+          "baseBlob": null,
+          "legacyBlob": "3a7a954910c4f1170689673d764ff28f34915368",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/status-state.js",
+          "baseBlob": "689c72244b0b15dd3044cc80b326b22701da00be",
+          "legacyBlob": "65112828b78ade14ca8e6f47c320cfe2f9ca28db",
+          "candidateBlob": "689c72244b0b15dd3044cc80b326b22701da00be",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/workspace-integration.js",
+          "baseBlob": null,
+          "legacyBlob": "c7416d4821af2873954b7c00a291c38bff36e89b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/browser.cjs",
+          "baseBlob": "6014fff741edd6c0e6ed084e73955a90c53acc42",
+          "legacyBlob": "88d49d5e47d2af4e972960e73d6c5c96e9d5f295",
+          "candidateBlob": "6014fff741edd6c0e6ed084e73955a90c53acc42",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/build.test.mjs",
+          "baseBlob": "d97abf4dce550e0cb23128275819a5ffadd9a360",
+          "legacyBlob": "ac096815872060edc4b2f1ca0fa49caecd726ffb",
+          "candidateBlob": "9c8d9ffb78a7443b33e870e192fc074b231c08fc",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/comparison.test.mjs",
+          "baseBlob": "fcc89dcd8f6ad9bf6b9861bcd03ef34645a68e28",
+          "legacyBlob": "e984cb6544a389d183ed0c57efdcbf6fd13e2766",
+          "candidateBlob": "fcc89dcd8f6ad9bf6b9861bcd03ef34645a68e28",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/fixtures/synthetic-comparison.mjs",
+          "baseBlob": null,
+          "legacyBlob": "3abf99496eb2228dc780171f8e44983d7536b919",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/hero-browser.cjs",
+          "baseBlob": "2fa223b370c653f2c5fba6ca565f8d7d67cb947f",
+          "legacyBlob": "f0cbc00e6eeaeeebdca71a4e1bd2d82dcbfd0ab5",
+          "candidateBlob": "2fa223b370c653f2c5fba6ca565f8d7d67cb947f",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/local-answer.test.mjs",
+          "baseBlob": "196e8e3b0f5c393741aee2f4ecd104f9582710a6",
+          "legacyBlob": "c9c9f45015ea13ec70a28f3a347096842921b80e",
+          "candidateBlob": "196e8e3b0f5c393741aee2f4ecd104f9582710a6",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provider-browser.cjs",
+          "baseBlob": "20c0c680cb4ee7b7169fea1935cd40bbfe254356",
+          "legacyBlob": "b15e4f02addadc54ad8315ceca4e32c0041dcf52",
+          "candidateBlob": "20c0c680cb4ee7b7169fea1935cd40bbfe254356",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provider-peer-browser.cjs",
+          "baseBlob": null,
+          "legacyBlob": "37227effcecfda61ddf7d6cef52fe28caefe1856",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provider-run.test.mjs",
+          "baseBlob": "0c8c0294521c5fdd152c54544c33a4c94aeb9bd2",
+          "legacyBlob": "8baec97b72aa472497719a1126d90ad1c2089c4e",
+          "candidateBlob": "0c8c0294521c5fdd152c54544c33a4c94aeb9bd2",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provider-telemetry.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "63feb7ec9d6f22d2052ef8e010088e4ab081ca34",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provider-web-tools.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "57788ebb90ec503bdaeb88c442c3606e1f4a56e3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/uncertainty-guidance.test.mjs",
+          "baseBlob": "e29e2c0e85cd7c5c479d8e3cf2358c9b6e647580",
+          "legacyBlob": "4c21f6f4a362e2b76b3daf8938eac755c36691e0",
+          "candidateBlob": "e29e2c0e85cd7c5c479d8e3cf2358c9b6e647580",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/workspace-integration.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "f4e32430b29f9ddeacb9240101d8f3a04e255ced",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "deploy/sutra-pages/ingress.test.mjs",
+          "baseBlob": "fc49c7c6c89f7a099b1332036ae8002ed567b5ef",
+          "legacyBlob": "8d1b52dc85ceb89057c3482727e087c4e4f3bf30",
+          "candidateBlob": "fc49c7c6c89f7a099b1332036ae8002ed567b5ef",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "docs/sutra/CHANGELOG.md",
+          "baseBlob": null,
+          "legacyBlob": "bb0e7e63bcc64abf0f323a09a9180516fc656978",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/COMMUNITY_TOOLS_AND_IMPACT.md",
+          "baseBlob": null,
+          "legacyBlob": "84171aef9b3d1c8c59aec5c65bd097abf098c76c",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/CONTINUE.md",
+          "baseBlob": "0b703d4c1e8a66524a437813fe7f8277ea531948",
+          "legacyBlob": "bdd29defee5c08d300f65d4925de31c54e83b263",
+          "candidateBlob": "12378c99417d1e137aaa01f187130d469d18588b",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/CONTRIBUTING.md",
+          "baseBlob": null,
+          "legacyBlob": "098c5d7a7c45f985485f2d955a2aa4bcb2fc30e4",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/DECISIONS.md",
+          "baseBlob": "070aa5528758ba3469196baf038e8b328a744839",
+          "legacyBlob": "fcd7aee9f71a48f43d4fd4e29f9aef4673cce1d2",
+          "candidateBlob": "070aa5528758ba3469196baf038e8b328a744839",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/JUDGING_AVAILABILITY_RUNBOOK.md",
+          "baseBlob": null,
+          "legacyBlob": "3995743b690dc88d23669ea01da20342ab3c00d9",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/MEASUREMENT_PROTOCOLS.md",
+          "baseBlob": null,
+          "legacyBlob": "f02f38428b64fd0fae30e6f299140d43596cf019",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/OWNERSHIP_BOUNDARY.md",
+          "baseBlob": null,
+          "legacyBlob": "033ac1632a9aeefe34f5a22bd52c3d73ad626ed3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/PARTICIPANT_HANDOFF.md",
+          "baseBlob": null,
+          "legacyBlob": "3317fa14b1df8b0f1ea754ca8eb0907d48c4e65e",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/PERMISSION_ASSET_INVENTORY.md",
+          "baseBlob": null,
+          "legacyBlob": "ad096fd6cae1ff3a54994134f383bcc977259e32",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/PROGRESS.md",
+          "baseBlob": "2d541376187027292c5074b4757497dca7e35329",
+          "legacyBlob": "92fc9ba0c37e3a9c14b80fc95ea99fd683e15c3b",
+          "candidateBlob": "d20a226a3d8c6c60d187ed199d2f5fec871a80f4",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/README.md",
+          "baseBlob": "2497ad5dd6caa25924520d1fd39865b19f4035ca",
+          "legacyBlob": "6c12fc4aff2128f9707dcb2b46892fb63e0d39a2",
+          "candidateBlob": "26a5c371d043652923490a986b6214faa3b8a9f6",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/REMAINING_GATE_MAP.md",
+          "baseBlob": null,
+          "legacyBlob": "025e6e15597f709a702a13c30dc87022892f2c22",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/RULES_ELIGIBILITY_SNAPSHOT.md",
+          "baseBlob": null,
+          "legacyBlob": "327d948f55fcf9d5a8952efbceeae9238a19ef6c",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/SESSIONS.md",
+          "baseBlob": "7f369a4548c778ee4062628dfcbcc0c6a57ac10b",
+          "legacyBlob": "eabcb2cb124b3854cc9be7f5da773b40cf3e100a",
+          "candidateBlob": "7f369a4548c778ee4062628dfcbcc0c6a57ac10b",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/Technical_Report.md",
+          "baseBlob": null,
+          "legacyBlob": "873afe276e2a11ee85959074008bbd3ca1065bed",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/01-strategy.md",
+          "baseBlob": "84b3f2e3f700b1b30970f1d4684abaa142968260",
+          "legacyBlob": "72ec374b95392c5beb7254d291777e5edc4e13eb",
+          "candidateBlob": "15b51858aa587680784cef1a25a06c0774b1f206",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/02-foundations.md",
+          "baseBlob": "4c2b96ad109acdc43d4bee6864d1f2024ab7ace0",
+          "legacyBlob": "67e096115a16e36cc372b3c6b34c295d37cea2c8",
+          "candidateBlob": "baf506862e05a256189ea97723e758c797df3c2d",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/03-browser-runtime.md",
+          "baseBlob": "1e53174129ba84617c57481c8d54ce971ca265dc",
+          "legacyBlob": "822062eb1a039e3af1c35a625be4083ff1c26f84",
+          "candidateBlob": "8f56ce79e04e6c3ecf8cc02f6492261aee8287da",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/05-learner-experience.md",
+          "baseBlob": "98cf1b4623a15eab6fceddfc484e628cf8379468",
+          "legacyBlob": "a00626c86847c616eb7ac32838fd8a7002e68a3f",
+          "candidateBlob": "550f0cc09d72c9823959421c2a3f240d4397867b",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/07-resilience-cost.md",
+          "baseBlob": "089868ebde8f0607f794c19442242f9ba0b6d0e1",
+          "legacyBlob": "6f35b350af442e0fe8747a6757ca698e235ac53f",
+          "candidateBlob": "6a26a4d69b3bf5bf888ce11ed71c73e5a88e4acd",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/08-validation.md",
+          "baseBlob": "c18bc546b9f59b02faee52e3779ee8e7f5f3328c",
+          "legacyBlob": "f83e411a6c1c552893317382857b4adbaa379f11",
+          "candidateBlob": "185ec833110eee15360fee709e2c6050f12d8be2",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/09-public-release.md",
+          "baseBlob": "b58b4765881fd430614e460f546b00515ddb21d7",
+          "legacyBlob": "f419b20b390f6236d6125ff9f65e2344b5862538",
+          "candidateBlob": "3ed2c445659f154fe5d244b598e248e53170c1cb",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/11-added-scope.md",
+          "baseBlob": "40ccd516c000888b0c61a7aa87ca6abe69566740",
+          "legacyBlob": "d642f19b907ffe120384ff667d971105fa2bb5e1",
+          "candidateBlob": "6b8402ac87ec1beeee2e5a146e36bc0c8b66c967",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/PHASE-023-RUNTIME-ENTRY.md",
+          "baseBlob": null,
+          "legacyBlob": "469ff81cb3282030bdf36718bb876b9bff691d3f",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0046.md",
+          "baseBlob": null,
+          "legacyBlob": "30a002fae79708017c57717aebbcf387a0b803e1",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0047.md",
+          "baseBlob": null,
+          "legacyBlob": "ed22f0c2e66c90d63944731f858068112940c4ff",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0048.md",
+          "baseBlob": null,
+          "legacyBlob": "f737384e997febd229d5940ef3a8b635298245c5",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0049.md",
+          "baseBlob": null,
+          "legacyBlob": "93ec0b5b6fa85c4f8c5e5742ecce6ba54298ba3c",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0050.md",
+          "baseBlob": null,
+          "legacyBlob": "3a6a221f9fe1f6e5bbe56e8c7ee19c1f71ba7957",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "baseBlob": null,
+          "legacyBlob": "a5d96d0addfe5ad524a24b99fce6092513260ec3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0052.md",
+          "baseBlob": null,
+          "legacyBlob": "d637dc3e4374e046ff7ccd203533b00cae869b85",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0053.md",
+          "baseBlob": null,
+          "legacyBlob": "07ca32b7317f12af378dc76b8a07f32c7932221d",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0054.md",
+          "baseBlob": null,
+          "legacyBlob": "d00b105c2f163c86a494f4a373d7757e6e2f568b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0055.md",
+          "baseBlob": null,
+          "legacyBlob": "7cb50e121d2e5746572ccbbde0be4fb72fc42953",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0056.md",
+          "baseBlob": null,
+          "legacyBlob": "bda21780802af319cfc0519deb24047de8f60c66",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0057.md",
+          "baseBlob": null,
+          "legacyBlob": "38f9a40dba98bc6f0fc395b6a289944b97fea757",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0058.md",
+          "baseBlob": null,
+          "legacyBlob": "1e674b1c32f6a3ff72036df2d843d7184c234d72",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0059.md",
+          "baseBlob": null,
+          "legacyBlob": "f731589e08bbb32d6b57d14c3ab9b4228c73f268",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/progress.json",
+          "baseBlob": "c26d296a8f8ebc140e3c56dc4755dda3a5eb442a",
+          "legacyBlob": "e248b7166dd87db508914bbfb727e0f8abbf8242",
+          "candidateBlob": "85d9c1916611048150a152b7e3a6283f2fcbf7ba",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/risk-register.json",
+          "baseBlob": "57f951fe9a49818512b74dec9aacf5b3b87d1c0d",
+          "legacyBlob": "015cbbabe2c1d2d91f914824097a0ed696ca2dee",
+          "candidateBlob": "57f951fe9a49818512b74dec9aacf5b3b87d1c0d",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/tools/impact.test.mjs",
+          "baseBlob": "ff19567b167b54470d53e5fa2439721632902e75",
+          "legacyBlob": "fb86fbf0f804aed8858857d7d861fe50e3d8bd9e",
+          "candidateBlob": "2f8c57fdc50b0c5411c9add63fa4fc528dd7f410",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/verification-map.json",
+          "baseBlob": "b91b54c94f8415c0674006550635fb0c31bcc456",
+          "legacyBlob": "2d616c9073b0968799e90ee049a59e6d81a5557d",
+          "candidateBlob": "7bc2eee7ba0c94831bb6ae127adaf46fc5d3ad11",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "packages/sutra-runtime/abortable-operation.js",
+          "baseBlob": null,
+          "legacyBlob": "f36378575541a269ff4b0165be761a9ce5bdd00b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/epistemic-answer.js",
+          "baseBlob": null,
+          "legacyBlob": "5c745d02052bdc39e695051d30eaf7aaf67ad865",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "reviewed_answer_adapted",
+          "evidence": "c6ca32406c1a19c5de98edc49b6ab3271477065e",
+          "review": "one approved span; not full legacy API parity"
+        },
+        {
+          "path": "packages/sutra-runtime/index.js",
+          "baseBlob": "b5da38cc4bb38f8f30c7c4789b409497663f5abe",
+          "legacyBlob": "40d916cb817365cac19ab527f34c35c7a81804a6",
+          "candidateBlob": "62188a0edde0aa247bdcfaa155b902c3c5746fc1",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/abortable-operation.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "d41cc52b3fadd2b7522bf785473befc9f629b22f",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/epistemic-answer.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "3ad8b45f89c10ca779ec5f55629311b6cf660754",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "reviewed_answer_adapted",
+          "evidence": "c6ca32406c1a19c5de98edc49b6ab3271477065e",
+          "review": "one approved span; not full legacy API parity"
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-invocation.test.mjs",
+          "baseBlob": "c61d859cedd37b51b05409955cbe46dadf15ec93",
+          "legacyBlob": "cad768ddebc19c32a9274b33abdd4752ae8da815",
+          "candidateBlob": "c61d859cedd37b51b05409955cbe46dadf15ec93",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/private-context.test.mjs",
+          "baseBlob": "162006c4b675f7d045da724c381978ddf6451d56",
+          "legacyBlob": "393d7ba31c4190add306db2c39cfb286196df290",
+          "candidateBlob": "162006c4b675f7d045da724c381978ddf6451d56",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/runtime.test.mjs",
+          "baseBlob": "16111bf6565e6d454cbe28c7f26a414f7da9fa24",
+          "legacyBlob": "f377463c0c3a8f1029620350b5c1914174847fd1",
+          "candidateBlob": "16111bf6565e6d454cbe28c7f26a414f7da9fa24",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/source-refinement.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "7ea178ea9a427e4329b4e2c4507c7328040b8509",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/web-access.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "79cc0bb1e1d49afce8bf282281693cb6118b2a93",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/web-access.js",
+          "baseBlob": null,
+          "legacyBlob": "2edd7b21c7d2e069d819781177a7c14c1d6fe677",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "services/sutra-api/inference.js",
+          "baseBlob": "bdbe4f3f9d9d38d6cb724b3fc8b678a05a87ac36",
+          "legacyBlob": "678fcdc41d6276102ccff245b42b29300693565d",
+          "candidateBlob": "bdbe4f3f9d9d38d6cb724b3fc8b678a05a87ac36",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/quota-transport.js",
+          "baseBlob": "14f1cdb93b765823e23112620b01d41ed6e34a12",
+          "legacyBlob": "18f8426d3bf48c0e177e51edaddf5269763829a5",
+          "candidateBlob": "14f1cdb93b765823e23112620b01d41ed6e34a12",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/quota.js",
+          "baseBlob": "4a9a0f90d4b16698376a351cf0460e21b7934913",
+          "legacyBlob": "7c232514980cb7fc7da9d9b7e0920b823f64f674",
+          "candidateBlob": "4a9a0f90d4b16698376a351cf0460e21b7934913",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "baseBlob": "10a9a14911f9de434f58f471c4fc8587c1c5b403",
+          "legacyBlob": "d08526cd0f9e925158faf0bf88c7479f89d32301",
+          "candidateBlob": "10a9a14911f9de434f58f471c4fc8587c1c5b403",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/test/status-config.test.mjs",
+          "baseBlob": "1ddd8985ae40bf817bd4660772b2d03a99d191a7",
+          "legacyBlob": "87dd3ab6fedc96b9f70845dc543c6f65ff33c4bd",
+          "candidateBlob": "1ddd8985ae40bf817bd4660772b2d03a99d191a7",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/test/web-research.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "012274578dc6152782edeb47a68f5b9bdf1302f9",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/web-research-config.js",
+          "baseBlob": null,
+          "legacyBlob": "7421393876100c84fc5d65a23a2520a23fe30332",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/web-research.js",
+          "baseBlob": null,
+          "legacyBlob": "cc42cc6274fbc79ce40642fc205b9d200cfe05d3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/worker.js",
+          "baseBlob": "fd6486a9facae7ac0cdb35437d680463046ad048",
+          "legacyBlob": "1ff1346faf8f6638f3ca78f8ecd379cdc1ca69a2",
+          "candidateBlob": "fd6486a9facae7ac0cdb35437d680463046ad048",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "services/sutra-api/wrangler.jsonc",
+          "baseBlob": "2631805ea345f6198722f220bb13f492a608915a",
+          "legacyBlob": "af5abb321660e158e16d1267db7c9708e903c052",
+          "candidateBlob": "2631805ea345f6198722f220bb13f492a608915a",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "tools/sutra-device-check/README.md",
+          "baseBlob": "03ca17f2f96c9d723ba79f22e501b32e0fbf7fda",
+          "legacyBlob": "b1b5adc0b77c7dd32daf74bc0530e7da3e9bd216",
+          "candidateBlob": "03ca17f2f96c9d723ba79f22e501b32e0fbf7fda",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/feedback-endpoint.mjs",
+          "baseBlob": null,
+          "legacyBlob": "be0743a9794c31b4d85ca69f06e6afc642b5e236",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/feedback-endpoint.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "98027a40e3b8d875c0a91e2ac03824220f70a8e2",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/preflight.mjs",
+          "baseBlob": null,
+          "legacyBlob": "e20a092d65d4953e3d81d0878009ddb8ec45b776",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/preflight.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "d16ecc8d4e02352c50af4182ae32b59bcf4c3751",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer-cli.mjs",
+          "baseBlob": null,
+          "legacyBlob": "94c8944b7fe0ed1964601c1f2d05075794423f4b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer-feedback.template.json",
+          "baseBlob": null,
+          "legacyBlob": "ffbefa55e32956a8e96cc74db78087d0200fdad2",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer.mjs",
+          "baseBlob": null,
+          "legacyBlob": "b408dc2cd470092fc5953844b89ec07291e63e55",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-device-check/reviewer.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "1408b661e78322abbfdc419c7ca4147d270cf348",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-evaluation/baseline.mjs",
+          "baseBlob": "8721fd9f0d012a298d3cb683e70e940a9a753e68",
+          "legacyBlob": "fe879e17794e93a0d502ed75c56eefb173936e34",
+          "candidateBlob": "8721fd9f0d012a298d3cb683e70e940a9a753e68",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-evaluation/mapping-harness.mjs",
+          "baseBlob": null,
+          "legacyBlob": "122e47c445f9347b486254fa1f4a08f263f17f56",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-evaluation/mapping-harness.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "e55ae7b50a0156a85a50e7410009bd24c47dcb9b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-open-kit/test.mjs",
+          "baseBlob": "ab57f60977a652eda4c9bd94ff91a3cfffe2622a",
+          "legacyBlob": "7b4b4f8c2ae392c76e46ec577f9804f0e2dc1a7d",
+          "candidateBlob": "da3a65d6b7441cd15e2bec6adffaed7d581981d9",
+          "comparison": "divergent",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "tools/sutra-provider-measurement/README.md",
+          "baseBlob": "8ebca71616ca0aa85f22f6bd52792c294958169a",
+          "legacyBlob": "57a4488ee3e2ebc09063d07c35fea2b4954a72bc",
+          "candidateBlob": "d48d09b0c989e25e9c80147e7499264f7b089f99",
+          "comparison": "divergent",
+          "disposition": "measurement_recovered",
+          "evidence": "5f9c71593d6d4c198eb3f83f97e3a33b4790f045",
+          "review": "selective implementation with current schema compatibility"
+        },
+        {
+          "path": "tools/sutra-provider-measurement/example.synthetic.json",
+          "baseBlob": "1f1ea608ae41f47e500acbcf66ae69f55a592f03",
+          "legacyBlob": "3a0a3f751fb11264a6642a61c89620143960e451",
+          "candidateBlob": "3a0a3f751fb11264a6642a61c89620143960e451",
+          "comparison": "identical_to_legacy",
+          "disposition": "identical_legacy_blob",
+          "review": "exact identity"
+        },
+        {
+          "path": "tools/sutra-provider-measurement/report.mjs",
+          "baseBlob": "0018ad481a82ea074e63d415a6691bc710019612",
+          "legacyBlob": "ba365890bfb269cafbe4ee252c1244c28d971ad2",
+          "candidateBlob": "95d7ecb5e6e11737dace277180354fc3a41b997d",
+          "comparison": "divergent",
+          "disposition": "measurement_recovered",
+          "evidence": "5f9c71593d6d4c198eb3f83f97e3a33b4790f045",
+          "review": "selective implementation with current schema compatibility"
+        },
+        {
+          "path": "tools/sutra-provider-measurement/report.test.mjs",
+          "baseBlob": "b0996be438cf2e97bd16768939403244ca65c12b",
+          "legacyBlob": "a1cc134cbcfe36acbf15e69df53604d464d9464e",
+          "candidateBlob": "a1cc134cbcfe36acbf15e69df53604d464d9464e",
+          "comparison": "identical_to_legacy",
+          "disposition": "identical_legacy_blob",
+          "review": "exact identity"
+        },
+        {
+          "path": "tools/sutra-research/firecrawl.mjs",
+          "baseBlob": null,
+          "legacyBlob": "918815a0e09cbdddaaf688d21175ddb787d65f59",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        },
+        {
+          "path": "tools/sutra-research/run.mjs",
+          "baseBlob": null,
+          "legacyBlob": "b349ff254e7197b9b8ecd23fe4971db1d246824f",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        }
+      ],
+      "comparisonSummary": {
+        "unchanged_from_legacy_base": 37,
+        "absent_from_candidate": 65,
+        "divergent": 19,
+        "identical_to_legacy": 2
+      }
     },
     {
       "number": 48,
@@ -787,7 +1906,7 @@
       "mergeBase": "f4cc6e8d385d7a5e326435630fff6985fdf802cb",
       "ahead": 281,
       "behind": 1326,
-      "disposition": "Path inventory captured; legacy learner/peer graph changes require selective review. Browser-direct OpenRouter-only adapter is absent from V2; do not import old adapter without current route, token, cancellation and CSP review.",
+      "disposition": "Selective recovery of metadata-only execution receipt and catalog-matched media annotation export; complete implementation-level reconciliation remains open.",
       "changedFiles": 87,
       "paths": [
         {
@@ -1312,7 +2431,804 @@
           "additions": 31,
           "deletions": 0
         }
-      ]
+      ],
+      "pathComparison": [
+        {
+          "path": ".github/workflows/sutra-evidence.yml",
+          "baseBlob": "0c83851f3986941fa7253bf4826d4651e7438f7f",
+          "legacyBlob": "79afbc87b989b8241bad337e9ee83451ac4dd680",
+          "candidateBlob": "62206811b4ea7cdd35349174ca46e8526927f27c",
+          "comparison": "divergent",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "apps/sutra-peer/README.md",
+          "baseBlob": "b9457f44dbf47639b4d5d2d47b104ca4c2de1ee5",
+          "legacyBlob": "e7c219cff0377d5fcfcc33cb018c4cc913768b04",
+          "candidateBlob": "fcc649e9657f40befa879b3e89fc3119d2b1cc8b",
+          "comparison": "divergent",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/peer.config.json",
+          "baseBlob": "92a9bf2df337d1d1330765aa7c7d3efa9fc33104",
+          "legacyBlob": "78e13149d6ca8931f89fd1cb91725c4f99638b02",
+          "candidateBlob": "92a9bf2df337d1d1330765aa7c7d3efa9fc33104",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/public/agents/checklist.evidence.json",
+          "baseBlob": null,
+          "legacyBlob": "63f57f27e8f982f604ee32d47079908102a9ed4a",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/scripts/serve.mjs",
+          "baseBlob": "8483f55b604cbd80c59460895584e23515e59bed",
+          "legacyBlob": "53426ad6f94a84c8cdaa8f91d5bd39be7f578929",
+          "candidateBlob": "8483f55b604cbd80c59460895584e23515e59bed",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/src/main.js",
+          "baseBlob": "27a1adeda27521b087ccc8e6584e08ca8a157ff5",
+          "legacyBlob": "3efb04fcc9175f3f889d691f6f4319edf3d397ff",
+          "candidateBlob": "27a1adeda27521b087ccc8e6584e08ca8a157ff5",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/test/preview.test.mjs",
+          "baseBlob": "2fc2fdf8c81f214b42c0b13d164c46b8e0766aea",
+          "legacyBlob": "5aa64f720a504a89fbfb5e033c828a4c45c8475f",
+          "candidateBlob": "2fc2fdf8c81f214b42c0b13d164c46b8e0766aea",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra-peer/test/publication.test.mjs",
+          "baseBlob": "8e46bc54ebc6750f01c4e0cc9ddd0d212ceb052a",
+          "legacyBlob": "7aa6bc1dcf56e371353b88ced5e5d1747bb836de",
+          "candidateBlob": "8ca73f013177bab75393ddd1e56564411eaff578",
+          "comparison": "divergent",
+          "disposition": "guide_review_open",
+          "review": "canonical V2 two-origin browser test passed; individual legacy change review pending"
+        },
+        {
+          "path": "apps/sutra/public/agents/agent-manifest.json",
+          "baseBlob": "5bbde401d797791a15a08e49aba84b2a24fb87f5",
+          "legacyBlob": "558b7f5855b3bf6fa8a1ebe09af2f2a383187c39",
+          "candidateBlob": "b638ea41c82d37cdc0d5880b8467b6461a931c19",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/learner.network.json",
+          "baseBlob": "585c70ba5c6d1ed8d3dd681eae398fe354f909ab",
+          "legacyBlob": "d9f42c4754c1d48169d8fb9ef0ed8f76f22e4d46",
+          "candidateBlob": "585c70ba5c6d1ed8d3dd681eae398fe354f909ab",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/agents/links.json",
+          "baseBlob": "afc64b432f39189b13f1f4fc4810dcca46644cc6",
+          "legacyBlob": "9e27f2e3df3acb56f9e6f6f8e0c213a1e5736dde",
+          "candidateBlob": "4de6cf00b780a4560e8bafbe6562b50d7c96f35b",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/evidence/transcript-v3.vtt",
+          "baseBlob": null,
+          "legacyBlob": "0fc83cc316712daedd4c968b4c37786dfcabfbbe",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/public/media/timing-transcript.vtt",
+          "baseBlob": null,
+          "legacyBlob": "fcbfea3bce4bd08250111c29c7f6557c0838e760",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/fixtures/timing-transcript.json",
+          "baseBlob": null,
+          "legacyBlob": "e288c3b13dc859fe7ba0140771b544de1ea5ed36",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/main.js",
+          "baseBlob": "cb2cf613e2f184045c0bc1388c6abea2406caf3b",
+          "legacyBlob": "c1a2437657dd4927a3c1c39c9706b1465dd9976b",
+          "candidateBlob": "7fcc784c5cba763b52a71672b87976bfa802f5d9",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/player-adapter.js",
+          "baseBlob": "4d71e84731b16803d1059d2c076e7c50bb1e94dd",
+          "legacyBlob": "a63f6a453cdcad70e65c35202577dc4539a78209",
+          "candidateBlob": "0ad320a4a184e0aded2c1527c0a4e9fe052d9107",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/provenance-store.js",
+          "baseBlob": null,
+          "legacyBlob": "050022c118cfe4e65bcfbc4e099cb0b7f184c148",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "metadata_receipt_adapted",
+          "evidence": "d9e1e224251c978f730ecfb726de6c042246f9bb",
+          "review": "not full legacy API parity"
+        },
+        {
+          "path": "apps/sutra/src/review-actions.js",
+          "baseBlob": null,
+          "legacyBlob": "77925257da2f0e440214e9032456f2b8caf86524",
+          "candidateBlob": "1fd32b034c84bfbb6864f13b2f757bea1927a4c4",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/run-lifecycle.js",
+          "baseBlob": null,
+          "legacyBlob": "5dfa32d5250e4ab8eb0d22da8ac3b3b02c3e31f9",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/seek-policy.js",
+          "baseBlob": null,
+          "legacyBlob": "6ad0581178371461af4dd5b9be8e7e8926b49304",
+          "candidateBlob": "f662b84615e396a594be4a4cb8bfb0a7550eb965",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/source-comparison.js",
+          "baseBlob": null,
+          "legacyBlob": "72e840429480b5b30612742819c1d5769c48de33",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/style.css",
+          "baseBlob": "cc04822b9a1fed72d40c4bc0f10f60e7dcbfdbd3",
+          "legacyBlob": "77c90d0f080ceb2426c35cc5c22a0800a6525c77",
+          "candidateBlob": "6ef7c7546bebcf6650d56e4179e78c222d17b580",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/src/transcript-index.js",
+          "baseBlob": null,
+          "legacyBlob": "e7901db41f20fb5d14d57b8aefda599aa1c12950",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/browser.cjs",
+          "baseBlob": "a95061ed6353052cd535733fa0d6ad7f1ac27ae0",
+          "legacyBlob": "7ee02e32d7a42097eff903b76e31c8500c861e3b",
+          "candidateBlob": "6014fff741edd6c0e6ed084e73955a90c53acc42",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/build.test.mjs",
+          "baseBlob": "3bd495fc9bf280758addfc6fa78ffdf9c0d21b15",
+          "legacyBlob": "6b5c983b198bc3897a9d167a100277f86240a052",
+          "candidateBlob": "9c8d9ffb78a7443b33e870e192fc074b231c08fc",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/provenance-store.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "62d7cbd38cbc9dd65d4e859b26ad770c889a60ff",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "metadata_receipt_adapted",
+          "evidence": "d9e1e224251c978f730ecfb726de6c042246f9bb",
+          "review": "not full legacy API parity"
+        },
+        {
+          "path": "apps/sutra/test/review-actions.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "4c2d2a04fde0b276a31085c761ad49db208df2e5",
+          "candidateBlob": "69dc8327236745e1fb379b4a55c743db03d3877d",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/run-lifecycle.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "df4dfd2a738cbc14556cf0c3acff95b7d9b35829",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/seek-policy.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "fa8e66b3d9661a68adc1df5981ad465b2e518d1b",
+          "candidateBlob": "9dcb21e6c776e3a4fc62b8bcbebca271ca712740",
+          "comparison": "divergent",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/source-comparison.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "1bbb9b67d8334c62672a7676dbc3a4d27c00eaed",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/test/transcript-index.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "0a4ff43017ba3607ba3525f57cac644ba58e442c",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "apps/sutra/vite.config.js",
+          "baseBlob": "fbd3dca3109abf2df987aca24fe8ebf23a129a78",
+          "legacyBlob": "d68ed3c39e1d21e2d03f4bdc6e0ffd135bdf949e",
+          "candidateBlob": "fbd3dca3109abf2df987aca24fe8ebf23a129a78",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "legacy_learner_preserve_current",
+          "review": "category triage; V2 replacement is not parity"
+        },
+        {
+          "path": "docs/sutra/CHECKLIST.md",
+          "baseBlob": "be1ba0883d23d9fad05bbd651250282ed42240aa",
+          "legacyBlob": "8f8c62c749209bfb4d3d3172619a12e8d9632cd0",
+          "candidateBlob": "144d38414879d4de500ac7c9adbb12b8701bddcd",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/CONTINUE.md",
+          "baseBlob": "7536cf96eca6c512db4215e23d9392d2fa598a3c",
+          "legacyBlob": "800fca4448c25d8cc501f9353fd3e90391bca59f",
+          "candidateBlob": "12378c99417d1e137aaa01f187130d469d18588b",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/DECISIONS.md",
+          "baseBlob": "8fc4884d48c346f308f783d52f686bd133bee795",
+          "legacyBlob": "0745d34db8c89c3e1c3a61fe89f3c3f591b19219",
+          "candidateBlob": "070aa5528758ba3469196baf038e8b328a744839",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/LEARNER_WORKSPACE.md",
+          "baseBlob": null,
+          "legacyBlob": "3df4a86b6515d0f097bda1e6470f5a487d3e6832",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/PROGRESS.md",
+          "baseBlob": "9ebeb282f010e0eafa54120e5370a54cfb89cc9f",
+          "legacyBlob": "94846ea644c9b2a832895636cfacf331f1b603a6",
+          "candidateBlob": "d20a226a3d8c6c60d187ed199d2f5fec871a80f4",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/PUBLIC_ARTIFACT_INVENTORY.md",
+          "baseBlob": null,
+          "legacyBlob": "ed07b6d67494ae085a9e1fc53791797a8eee60c2",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/README.md",
+          "baseBlob": "2497ad5dd6caa25924520d1fd39865b19f4035ca",
+          "legacyBlob": "8df350b2c53443421b1ee0060eb685d285684385",
+          "candidateBlob": "26a5c371d043652923490a986b6214faa3b8a9f6",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/SESSIONS.md",
+          "baseBlob": "71a14273a89d0516b4b9c9c9bfeb6d8472ad1e4d",
+          "legacyBlob": "dc16a61a2668da3c762155b6622657c1648a4dfd",
+          "candidateBlob": "7f369a4548c778ee4062628dfcbcc0c6a57ac10b",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/02-foundations.md",
+          "baseBlob": "6c7d117f77d10a410fb6fdb8e1d69f06be50dcad",
+          "legacyBlob": "a47054d8b849ee5e08f47730f7925d40057b359c",
+          "candidateBlob": "baf506862e05a256189ea97723e758c797df3c2d",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/03-browser-runtime.md",
+          "baseBlob": "00aef869d228bd5329f00c24c99b548918a215a4",
+          "legacyBlob": "2be5e5fe9be921c2c96af88f30648a4ab4fad64e",
+          "candidateBlob": "8f56ce79e04e6c3ecf8cc02f6492261aee8287da",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/04-peer-trust.md",
+          "baseBlob": "c2330de51dc731e225bb93a1eaa477f0f2af49fe",
+          "legacyBlob": "6982148221418088f0d29ea3e57f8a6df88a7a5e",
+          "candidateBlob": "dc8ae89220ca1c0189d9316a2e034e9596893718",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/05-learner-experience.md",
+          "baseBlob": "e291828edf17cbca655a8e29a9ca461cc50822d5",
+          "legacyBlob": "0dbef18b866784f0df3bc3b3a8fd69879133d13e",
+          "candidateBlob": "550f0cc09d72c9823959421c2a3f240d4397867b",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/06-grounding-community.md",
+          "baseBlob": "61753e4d322f3bfd82071b572d04a037e275fbeb",
+          "legacyBlob": "15938f5d71f85e01f064ec48cb0ce1cfa8776d17",
+          "candidateBlob": "1fd7f0a7b088bbd636569abf208f5187c8b472b0",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/07-resilience-cost.md",
+          "baseBlob": "32e4e6f7878bee730e2a13cbab168c9e15535c66",
+          "legacyBlob": "82954b32be0fa2eed57da18000f1bb267e5558b8",
+          "candidateBlob": "6a26a4d69b3bf5bf888ce11ed71c73e5a88e4acd",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/08-validation.md",
+          "baseBlob": "d1937d75fb71c78f09ea6dc558701d8bd7602641",
+          "legacyBlob": "0612efbd5cbb95bc4347281f66318764f6a61145",
+          "candidateBlob": "185ec833110eee15360fee709e2c6050f12d8be2",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/checklists/09-public-release.md",
+          "baseBlob": "b58b4765881fd430614e460f546b00515ddb21d7",
+          "legacyBlob": "6aa8f0f3e7b6b3b1dc65940eb145b96246a060ba",
+          "candidateBlob": "3ed2c445659f154fe5d244b598e248e53170c1cb",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "baseBlob": null,
+          "legacyBlob": "9e0abf22ac26dc0a5b180c97b7e8332ebd827358",
+          "candidateBlob": "232971cefc48a63fe07e4efd884e20c5677dc847",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "baseBlob": null,
+          "legacyBlob": "21ed9537d6331f59529bba0c27e9cb83a2dde4a6",
+          "candidateBlob": "9acf7db0b640e21775ff8fe83d73c90ae1cf5c5c",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "baseBlob": null,
+          "legacyBlob": "9c37c31bec5bd280aa00186b92c8837513be6b31",
+          "candidateBlob": "b7cda04232eb10bd9a58c63f15ba48660c9a9f94",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "baseBlob": null,
+          "legacyBlob": "f6908c31adc02ff23996ae876619ffb3e336f874",
+          "candidateBlob": "71a99297cf11cd7a40af066db6e0772fb17f34d6",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "baseBlob": null,
+          "legacyBlob": "5509c4b563f9e9d5627695bd2879d339ed0d9e1f",
+          "candidateBlob": "c360c248c89116821eb8bfd1f6a97ee40eaf3e69",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "baseBlob": null,
+          "legacyBlob": "846123aeb5b1614cea75af505d50861bebb9c19e",
+          "candidateBlob": "38f50f3b561c94b2ddc9fcb6fed3570c0e0653fe",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "baseBlob": null,
+          "legacyBlob": "b4d251df526955f5758c68a7c7f2dfb3312083b3",
+          "candidateBlob": "a5f3d8629e0729bbf5ff86138a8ea3d700525ffe",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "baseBlob": null,
+          "legacyBlob": "900ba03eec0c3891d8d1f9c1b22eeadb4e138d51",
+          "candidateBlob": "c6bf142ad543d4133e77bd1c5e246ee26c91dc9e",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "baseBlob": null,
+          "legacyBlob": "9b27fb30a71dad4a9387ce49aff5eff304d8f219",
+          "candidateBlob": "dd7c6310b8481eaf97cde956a4a2d55fac2b2c9e",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "baseBlob": null,
+          "legacyBlob": "a69ff7c319d6b73aa7ccd7b512c7ea2eec2bf1a6",
+          "candidateBlob": "0a686a86a719010f69df497e027b98a0f46db3ea",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "baseBlob": null,
+          "legacyBlob": "4dec72ab97994e9b73bac958f7bddce1c42b648b",
+          "candidateBlob": "e35a9be27cec3be3395f6384ff13b9a340514314",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "baseBlob": null,
+          "legacyBlob": "331db0efba914fc3142a1eb4de5ae34aaef6fc12",
+          "candidateBlob": "f8c2103f209ef0ff7726c1a7bcf41cb819aca522",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "baseBlob": null,
+          "legacyBlob": "79f38dcb7216cb9b4d972c31bb5cd094be051a85",
+          "candidateBlob": "84cbd2a9ba1243be2aa3a7d3770513e8c36c7cc0",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "docs/sutra/progress.json",
+          "baseBlob": "7a1de5a7ae6e881c3ee6aef9b69b64df329e0d20",
+          "legacyBlob": "4e54806d9b049fa9b5674a703e8b6ecfb0c384f3",
+          "candidateBlob": "85d9c1916611048150a152b7e3a6283f2fcbf7ba",
+          "comparison": "divergent",
+          "disposition": "historical_record_preserve_current",
+          "review": "category triage; semantic reconciliation not certified"
+        },
+        {
+          "path": "packages/sutra-consent/index.js",
+          "baseBlob": "a86a6fddd37fe9332d6f67ce258671d61fa495a7",
+          "legacyBlob": "92a0718b6d8b7cdd9f9ae9b83c272f9824ceedf8",
+          "candidateBlob": "faf6471a8f232dfd2e6cdaabd86a310d1b08fcfd",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-consent/test/consent.test.mjs",
+          "baseBlob": "271a84759fcb1843d7658f7fe511e7eeb8b782d0",
+          "legacyBlob": "b866c328f7492ace82c375a08b5693ab16eb5052",
+          "candidateBlob": "d03c88c137e36c4eaab44c135f8321126d64ab77",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-consent/test/redirect.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "bc934a2e0eafc1d9d2d536736cf5da43d558f57b",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-evidence/README.md",
+          "baseBlob": "758e0d0c2cc7571678e4dfbcc6eab23baca90c65",
+          "legacyBlob": "a620e325728a6c785899f9476d08215294ac25b9",
+          "candidateBlob": "b8df9682a7b9ff280e0bd715902c079cac0899bc",
+          "comparison": "divergent",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "packages/sutra-evidence/annotation-cli.mjs",
+          "baseBlob": null,
+          "legacyBlob": "4a3479aaa9a7bf8bd25835788ca5d51ea2941614",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "portable_media_export_adapted",
+          "evidence": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+          "review": "export only; legacy byte verification/import/DOM mounting remain unported"
+        },
+        {
+          "path": "packages/sutra-evidence/annotation.js",
+          "baseBlob": null,
+          "legacyBlob": "6a5b6bc04049c63852b41d6736e3f56cdf0b7a8d",
+          "candidateBlob": "9b196da36af49e7251978d1c898a0dc807bb25c1",
+          "comparison": "divergent",
+          "disposition": "portable_media_export_adapted",
+          "evidence": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+          "review": "export only; legacy byte verification/import/DOM mounting remain unported"
+        },
+        {
+          "path": "packages/sutra-evidence/cue-link.js",
+          "baseBlob": null,
+          "legacyBlob": "0d1a29840fbb1cf39b054704ff8becc78cef6fda",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "portable_media_export_adapted",
+          "evidence": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+          "review": "export only; legacy byte verification/import/DOM mounting remain unported"
+        },
+        {
+          "path": "packages/sutra-evidence/examples/annotation.json",
+          "baseBlob": null,
+          "legacyBlob": "5e99a058687ba5aff4bd52fa518a9ce3c8b92e5a",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "portable_media_export_adapted",
+          "evidence": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+          "review": "export only; legacy byte verification/import/DOM mounting remain unported"
+        },
+        {
+          "path": "packages/sutra-evidence/examples/integrity-manifest.json",
+          "baseBlob": null,
+          "legacyBlob": "ec34d892c6ca2be789d56c531437c59e4bf839fa",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "packages/sutra-evidence/examples/transcript-v3.vtt",
+          "baseBlob": null,
+          "legacyBlob": "0fc83cc316712daedd4c968b4c37786dfcabfbbe",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "packages/sutra-evidence/index.js",
+          "baseBlob": "4f3d311959dc727547ce446ee2b4ff7e82f40308",
+          "legacyBlob": "e53aa1ee0f4167d86103d8041c04519345e52eb0",
+          "candidateBlob": "b067ed2146af7baef9e6d715bbb4092ac9cab61f",
+          "comparison": "divergent",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "packages/sutra-evidence/package.json",
+          "baseBlob": "53227c82e19258ce843abef50b4a3be364f1a0ee",
+          "legacyBlob": "299833895fa06c210f3b58486a5b3da982db175b",
+          "candidateBlob": "a1398791fd368acf88156a1e12af3c49a1ab7cfd",
+          "comparison": "divergent",
+          "disposition": "targeted_review_open",
+          "review": "category triage only"
+        },
+        {
+          "path": "packages/sutra-evidence/test/annotation.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "a54237468f4d1133e6ec567724eaecd9bd2cb3a8",
+          "candidateBlob": "56e989331c444f58f541bb47de949333f5b41753",
+          "comparison": "divergent",
+          "disposition": "portable_media_export_adapted",
+          "evidence": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+          "review": "export only; legacy byte verification/import/DOM mounting remain unported"
+        },
+        {
+          "path": "packages/sutra-inference/README.md",
+          "baseBlob": "ddfdab74efba0f0bbcfbb27707756362c65e18fe",
+          "legacyBlob": "dfed5570789db6c7c0d8741fb9e3e176c6278503",
+          "candidateBlob": "a5a61f026305d661fbd7242461daeb836e5b16d5",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-inference/byok.js",
+          "baseBlob": null,
+          "legacyBlob": "b1156065e9af004aaf25dcf535ac86c58a0b2ce3",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-inference/package.json",
+          "baseBlob": "a985bc7764ffb95f7372116b0c3ee075d558b8de",
+          "legacyBlob": "c8739200c127b9be5b7606276a136ae277abd166",
+          "candidateBlob": "5fe9f2e943de902e280cd47dd85856232079c46d",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-inference/test/byok.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "9eec28db09d628959d78387530f1448125ac12a9",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/examples/learner.network.json",
+          "baseBlob": "585c70ba5c6d1ed8d3dd681eae398fe354f909ab",
+          "legacyBlob": "d9f42c4754c1d48169d8fb9ef0ed8f76f22e4d46",
+          "candidateBlob": "585c70ba5c6d1ed8d3dd681eae398fe354f909ab",
+          "comparison": "unchanged_from_legacy_base",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/index.js",
+          "baseBlob": "ca7d69e33080a95b8df194fd8b9cbf27e19c4f2f",
+          "legacyBlob": "019f5c71eed7853fa9ca6ea3130dfd90d2f80271",
+          "candidateBlob": "62188a0edde0aa247bdcfaa155b902c3c5746fc1",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/source-mcp.js",
+          "baseBlob": "d16fd9a766c1b6727cb543095d6c1360606eaf5b",
+          "legacyBlob": "8d719d7d2661ec7c3fef80bec9b16410e35e3bba",
+          "candidateBlob": "b315caf73eb05bbba17c984fc80f88e66362bba8",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/external.test.mjs",
+          "baseBlob": null,
+          "legacyBlob": "f7fde42b06a36726716838cf016b2dd71d740074",
+          "candidateBlob": null,
+          "comparison": "absent_from_candidate",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/runtime.test.mjs",
+          "baseBlob": "dec628d5e81b0792d1595871f84c7aec1232dc41",
+          "legacyBlob": "370e80b7015f5e4facde423f34f7b4bc9d5f37f5",
+          "candidateBlob": "16111bf6565e6d454cbe28c7f26a414f7da9fa24",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/test/source-tools.test.mjs",
+          "baseBlob": "48201ef85cb870b365e415c7bf9ac6ef444c82ab",
+          "legacyBlob": "68b3ea3809ab926157e97864c4abd3331f507b37",
+          "candidateBlob": "bd8f6f14daa6a88a004c704f98e3480fd00885b7",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "packages/sutra-runtime/testing.js",
+          "baseBlob": "b9bcc3026f2690e81f4232a75f85ac91e592a360",
+          "legacyBlob": "3f010447cc9b031b4d636205d86a3233e6792bea",
+          "candidateBlob": "ce83a20aa597ee2893b760d24750a8e0b00fe873",
+          "comparison": "divergent",
+          "disposition": "current_security_boundary_preserved",
+          "review": "targeted semantic and regression review pending; no wholesale replacement"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "baseBlob": "f7f9dfbf2d86713bb1de7df1324ca6d997f0f4cb",
+          "legacyBlob": "029209f7a4fb4e034f8ff9d52caaa8bca293bad1",
+          "candidateBlob": "10a9a14911f9de434f58f471c4fc8587c1c5b403",
+          "comparison": "divergent",
+          "disposition": "current_host_transport_preserved",
+          "review": "legacy web gateway not copied; overlapping current research functionality not proof of parity"
+        }
+      ],
+      "comparisonSummary": {
+        "divergent": 57,
+        "unchanged_from_legacy_base": 7,
+        "absent_from_candidate": 23
+      }
     }
   ],
   "specification": {
@@ -1356,5 +3272,51 @@
     "packages/sutra-runtime/index.js",
     "packages/sutra-runtime/test/runtime.test.mjs",
     "services/sutra-api/test/inference.test.mjs"
-  ]
+  ],
+  "legacyComparison": {
+    "candidate": "cf0d68b419afc7867e2c198eccbeda357bca5a02",
+    "method": "exact recursive Git blob identity against each legacy head and merge base, then categorical disposition; not exhaustive semantic review",
+    "summaries": [
+      {
+        "pr": 49,
+        "paths": 123,
+        "counts": {
+          "unchanged_from_legacy_base": 37,
+          "absent_from_candidate": 65,
+          "divergent": 19,
+          "identical_to_legacy": 2
+        },
+        "dispositions": {
+          "targeted_review_open": 17,
+          "legacy_learner_preserve_current": 36,
+          "historical_record_preserve_current": 43,
+          "current_security_boundary_preserved": 9,
+          "reviewed_answer_adapted": 2,
+          "current_host_transport_preserved": 12,
+          "measurement_recovered": 2,
+          "identical_legacy_blob": 2
+        }
+      },
+      {
+        "pr": 48,
+        "paths": 87,
+        "counts": {
+          "divergent": 57,
+          "unchanged_from_legacy_base": 7,
+          "absent_from_candidate": 23
+        },
+        "dispositions": {
+          "targeted_review_open": 6,
+          "guide_review_open": 7,
+          "legacy_learner_preserve_current": 22,
+          "metadata_receipt_adapted": 2,
+          "historical_record_preserve_current": 30,
+          "current_security_boundary_preserved": 14,
+          "portable_media_export_adapted": 5,
+          "current_host_transport_preserved": 1
+        }
+      }
+    ],
+    "qualification": "Both PRs remain open. No merge, deletion or full parity claim."
+  }
 }
