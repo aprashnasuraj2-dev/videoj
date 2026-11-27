@@ -21,4 +21,3 @@ The reusable skin is in `src/`, and the preview application is in `apps/preview/
 
 Physical Safari/iPhone/Android and VoiceOver/NVDA are not established by Playwright's desktop WebKit or emulated touch. Unsupported telemetry and absent chapters must be omitted rather than simulated. Use [`NOTICE`](../NOTICE), [`LICENSE`](../LICENSE), [`docs/media.md`](media.md) and [`tests/QA.md`](../tests/QA.md) for rights and verification context.
 
-DETOUR is independently packaged, released and hosted; do not reuse DHAGO's release manifest or media as its publication authority.

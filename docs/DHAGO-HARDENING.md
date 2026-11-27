@@ -1,7 +1,7 @@
 # DHAGO hardening ledger — post-submission enhancement only
 
 Start: `fddbfdbc2ea9f9aa26bf3d72bac88b17a557b560` (remote `main` observed 2026-11-16).
-Work branch: `dhago-hardening-20261116`. Submission entry, submission video and reports are frozen; neither DETOUR nor AFTERIMAGE is in scope.
+Work branch: `dhago-hardening-20261116`. Submission entry, submission video and reports are frozen.
 Statuses: `done`, `in progress`, `blocked`, `open`. A code edit is not a browser pass.
 
 ## Evidence ledger
@@ -12,8 +12,6 @@ Statuses: `done`, `in progress`, `blocked`, `open`. A code edit is not a browser
 | D002 | Identity and architecture: Protected woven timeline remains primary | done | PR #40 diff and main CI 43846940907 retain visible woven timeline. |
 | D003 | Identity and architecture: Actual WebVTT drives chapter cue model | done | WebVTT chapters remain native; live Mux 32s cue selects Where shadows gather. |
 | D004 | Identity and architecture: Real media currentTime drives active stage | done | CI 43846940907 loom browser tests bind progress to media currentTime. |
-| D005 | Identity and architecture: No DETOUR navigation concepts | done | PR #40 changed-files audit excludes DETOUR product files or navigation concepts. |
-| D006 | Identity and architecture: No AFTERIMAGE frame-comparison concepts | done | PR #40 changed-files audit excludes AFTERIMAGE product files or frame-memory concepts. |
 | D007 | Identity and architecture: Normal transport controls retained | done | Live accessibility tree names Play, Seek, Volume, Captions, Settings and Fullscreen; CI 43846940907. |
 | D008 | Identity and architecture: Studies in Thread remains demo-only | open | No current-run executable evidence. |
 | D009 | Identity and architecture: Metadata optionality preserved | open | No current-run executable evidence. |
@@ -136,7 +134,7 @@ No submission assets changed. No public deployment made. Follow each test with a
 
 ## 2026-11-16 release reconciliation
 
-- **Submission:** unchanged. No DETOUR, AFTERIMAGE, Mux management credential or video upload performed.
+- **Submission:** unchanged. No Mux management credential or video upload performed.
 - **Source starting point:** `fddbfdbc2ea9f9aa26bf3d72bac88b17a557b560`.
 - **Promoted source SHA:** `87eaa316ba23fc847bd8509791b5d6fd283914dc` (PR #40 squash merge).
 - **Green main CI:** [Validate DHAGO run 43846940907](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43846940907); Chromium full default suite, Firefox/WebKit browser-proof suites; optional GH Mux probe skipped by its designed workflow condition.

@@ -17,11 +17,3 @@ under this repository's Apache-2.0 license.
 
 See package-lock.json for exact dependency versions and installed package
 license files.
-
-DETOUR — Keep your place
-Copyright 2026 DETOUR contributors
-
-The detour/ directory is an independent Apache-2.0-licensed Video.js v10
-skin. Its generated demonstration media and test fixtures are separate from
-the reusable npm pack. Third-party dependencies retain their own licenses.
-See detour/LICENSE and detour/docs/ENGINEERING.md.
