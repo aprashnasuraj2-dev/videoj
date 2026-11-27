@@ -8,8 +8,8 @@ import {readBoundedResponse,isFullJson} from '../../../packages/sutra-runtime/bo
 import {parseUniqueJson} from '../../../packages/sutra-runtime/strict-json.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const GUIDE_ORIGIN='https://sutra-guide.aafnaipatro.com';
-const peerLimits=Object.freeze({maxDepth:3,maxAgents:3,maxModelCalls:6,maxSteps:3,concurrency:1,timeoutMs:60000,maxOutputChars:12000});
-const defaultLimits=Object.freeze({maxDepth:2,maxAgents:2,maxModelCalls:4,maxSteps:3,concurrency:1,timeoutMs:60000,maxOutputChars:12000});
+const peerLimits=Object.freeze({maxDepth:3,maxAgents:3,maxModelCalls:6,maxSteps:3,concurrency:1,timeoutMs:60000,maxOutputChars:12000,maxToolCalls:6,maxContextBytes:32768});
+const defaultLimits=Object.freeze({maxDepth:2,maxAgents:2,maxModelCalls:4,maxSteps:3,concurrency:1,timeoutMs:60000,maxOutputChars:12000,maxToolCalls:4,maxContextBytes:32768});
 const fail=code=>{throw Error(code);};
 const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
 const digest=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(value)))),b=>b.toString(16).padStart(2,'0')).join('');
