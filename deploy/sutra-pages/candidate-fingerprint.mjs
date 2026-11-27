@@ -9,6 +9,20 @@ const digest=b=>createHash('sha256').update(b).digest('hex');
 const labels=['pages','guide','worker','functions','policy'];
 const forbidden=/(^|\/)(\.env(?:\.|$)|node_modules|\.git|\.wrangler)(\/|$)|\.(pem|key|p12)$/i;
 const maxBytes=128*1024*1024,maxFiles=1024;
+const secretRules=[
+ ['private-key',/-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/],
+ ['provider-token',/(?:sk-(?:proj-|or-v1-|svcacct-)?[A-Za-z0-9_-]{24,}|gsk_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{35})/],
+ ['github-token',/(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})/],
+ ['aws-access-id',/\b(?:AKIA|ASIA)[A-Z0-9]{16}\b/],
+ ['literal-bearer',/\bBearer [A-Za-z0-9._~-]{24,}\b/],
+ ['literal-secret-assignment',/\b(?:SUTRA_PROVIDER_KEY|GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|OPENAI_API_KEY|CLOUDFLARE_API_TOKEN)\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{20,}/i],
+ ['build-canary',/SUTRA_BUILD_SECRET_CANARY_[A-Z0-9]{24,}/]
+];
+export function assertNoSecret(bytes,path){
+ const raw=bytes.toString('latin1');
+ for(const [rule,pattern] of secretRules)if(pattern.test(raw))throw Error('Refused potential embedded credential: '+path+' ('+rule+')');
+}
+
 export async function fingerprint(revision,roots){
  assert.match(revision,/^[a-f0-9]{40}$/);
  assert.deepEqual(Object.keys(roots).sort(),[...labels].sort());
@@ -24,6 +38,7 @@ export async function fingerprint(revision,roots){
     assert.ok(s.isFile(),'Non-regular file refused');
     assert.ok(entries.length<maxFiles&&s.size<=maxBytes-total,'Candidate bound exceeded');
     const bytes=await readFile(p);assert.equal(bytes.length,s.size);
+    assertNoSecret(bytes,label+'/'+(rel||'artifact'));
     total+=bytes.length;entries.push({component:label,path:rel||'artifact',bytes:bytes.length,sha256:digest(bytes)});
    }
   }
