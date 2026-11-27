@@ -27,6 +27,10 @@ Compared the final PR head's blob IDs on every changed path against the recursiv
 | #61 | 76 | 11 | 1 | 0 | 0 |
 | #62 | 0 | 4 | 4 | 135 | 54 |
 
+## Verification on the canonical baseline
+
+The five checks on ad182e8 passed. The original V2-182 combined validation workflow no longer runs. Comparing its jobs with canonical main identified a historical difference: the current workspace toolchain runs the integrated accessibility check and no longer emits the old learner-specific browser export for verify_learner.py. The independent verifier source remains present. Current workspace results do not establish equivalence for that discontinued browser export.
+
 ## Source dispositions
 
 | Workstream | Disposition | Basis |

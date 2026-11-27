@@ -4,7 +4,7 @@ const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:
 const assert=require('node:assert/strict'),{execFileSync}=require('node:child_process');
 (async()=>{
  const root=path.resolve(__dirname,'../../..'),app=path.join(root,'apps/sutra-v2');
- const source=process.argv.includes('--source'),site=source?root:path.join(app,'dist');
+ const site=path.join(app,'dist');
  const url='http://127.0.0.1/',dir=await fs.mkdtemp(path.join(os.tmpdir(),'sutra-two-sessions-'));
  const {attachHistoryHost}=await import('../local-history.mjs');
  const {openDurableInvestigationHistory}=await import('../../../packages/sutra-knowledge/durable-investigation-history.mjs');
@@ -25,13 +25,12 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
    await page.route('**/*',async route=>{
     const address=new URL(route.request().url());
     if(address.origin!==new URL(url).origin){external.push(address.origin);return route.abort();}
-    let name=address.pathname==='/'?(source?'apps/sutra-v2/index.html':'index.html'):address.pathname.slice(1);
+    const name=address.pathname==='/'?'index.html':address.pathname.slice(1);
     const file=path.resolve(site,name);
     if(!file.startsWith(site+path.sep))return route.abort();
     try{
      const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.wasm':'application/wasm'};
-     let body=await fs.readFile(file);
-     if(source&&name.endsWith('index.html'))body=body.toString().replace('./src/main.js','/apps/sutra-v2/src/reviewed-workspace.js').replace('</head>','<link rel="stylesheet" href="/apps/sutra-v2/src/style.css"></head>');
+     const body=await fs.readFile(file);
      await route.fulfill({contentType:types[path.extname(file)]||'application/octet-stream',body});
     }catch{return route.fulfill({status:404,body:''});}
    });
@@ -53,6 +52,11 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
    await page.waitForFunction(pin=>document.querySelector('#review-history-digest').textContent===pin,snapshot.digest);
   }
   const [a,b]=pages;
+  const token='SYNTHETIC_HISTORY_REVOCATION_FIXTURE';
+  await b.locator('#operator-credential').fill(token);
+  await b.locator('#operator-enroll').click();await b.locator('#operator-preview').click();
+  await b.locator('#operator-approve').check();await b.locator('#operator-remove').click();
+  assert.equal(await b.locator('#operator-status').getAttribute('data-state'),'revoked');
   const start=performance.now();await click(a,'durable-initialize');await state(a,'ready');const saveMs=performance.now()-start;
   await b.locator(selector('durable-pin')).fill(snapshot.digest);
   const reading=performance.now();await click(b,'durable-read');await state(b,'ready');const loadMs=performance.now()-reading;
@@ -83,6 +87,10 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
   assert.equal(await b.locator('#review-question').inputValue(),question);
   assert.equal(await b.locator(selector('digest')).innerText(),pinA);
   const download=b.waitForEvent('download');await click(b,'export');const bytes=await fs.readFile(await (await download).path());
+  assert.equal(bytes.includes(Buffer.from(token)),false);
+  assert.equal(await b.locator('#operator-status').getAttribute('data-state'),'revoked');
+  assert.equal(await b.locator('#operator-run').isDisabled(),true);
+  assert.equal(await b.locator('#operator-credential').inputValue(),'');
   const replay=performance.now();
   const result=execFileSync('python3',['-c','import sys; from verify_investigation_history import verify; print(verify(sys.stdin.buffer.read(),sys.argv[1])["status"])',pinA],{cwd:path.join(root,'packages/sutra-knowledge/reference'),input:bytes}).toString().trim();
   assert.equal(result,'VERIFIED');
@@ -93,6 +101,20 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
   assert.deepEqual(await b.evaluate(()=>[localStorage.length,sessionStorage.length]),[0,0]);
   await b.evaluate(()=>document.documentElement.style.fontSize='200%');
   assert.ok(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  // A valid older store can agree with itself while disagreeing with the
+  // retained winning digest. Missing/corrupt bytes must also preserve the draft.
+  const headFile=path.join(dir,'HEAD'),savedFile=path.join(dir,'history-'+pinA.slice(7)+'.json');
+  await fs.writeFile(headFile,snapshot.digest+'\n');
+  await click(b,'durable-read');await state(b,'stale');
+  await fs.writeFile(headFile,pinA+'\n');
+  await fs.rename(savedFile,savedFile+'.held');
+  await click(b,'durable-read');await state(b,'refused');
+  await fs.writeFile(savedFile,'{}');
+  await click(b,'durable-read');await state(b,'refused');
+  assert.equal(await b.locator(selector('digest')).innerText(),pinB);
+  assert.equal(await b.locator('#review-question').inputValue(),question);
+  await fs.rename(savedFile+'.held',savedFile);
+  await click(b,'durable-read');await state(b,'ready');
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   console.log(JSON.stringify({versions:2,branches:2,bytes:bytes.length,saveMs,loadMs,replayMs,heapBytes:await b.evaluate(()=>performance.memory?.usedJSHeapSize??null)}));
  }finally{await browser.close();await fs.rm(dir,{recursive:true,force:true});}
