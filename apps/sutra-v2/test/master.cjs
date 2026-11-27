@@ -5,11 +5,13 @@ async function testMaster(browser,origin,assert){
  try{
  await page.goto(origin);await page.locator('#sutra-orbit').waitFor();
  const first=await page.locator('#orb-play').boundingBox();assert.ok(first&&first.y>=0&&first.y+first.height<=800,'orbital primary action must be in first viewport');
- assert.equal(await page.locator('#orb-map .orb-agent').count(),6);assert.equal(await page.locator('#orb-map .orb-station').count(),12);
+ assert.equal(await page.locator('#orb-map .orb-agent').count(),6);
+ assert.equal(await page.locator('#orb-council-execute').isDisabled(),true);assert.equal(await page.locator('#orb-map .orb-station').count(),12);
  await page.locator('#orb-play').click();await page.locator('#orb-play').click();await page.locator('#orb-step').click();assert.match(await page.locator('#orb-log').innerText(),/SIMULATED/);await page.locator('#orb-stop').click();
  await page.locator('#orb-era').click();assert.equal(await page.locator('#sutra-orbit').getAttribute('data-era'),'1997');await page.locator('#orb-era').click();
  await page.locator('#orb-nav').getByRole('button',{name:'API routes'}).click();assert.equal(await page.locator('.orb-route-grid .orb-route').count(),6);
  await page.locator('#orb-nav').getByRole('button',{name:'Guestbook'}).click();assert.match(await page.locator('#orb-guestbook').innerText(),/No local storage accessed/);
+ await page.locator('#orb-guestbook').getByRole('button',{name:'Enable / open local guestbook'}).click();await page.waitForFunction(()=>!document.querySelector('#orb-guest-note').disabled);await page.locator('#orb-guest-note').fill('Synthetic note');await page.locator('#orb-guestbook').getByRole('button',{name:'Sign and append note'}).click();await page.waitForFunction(()=>document.querySelector('#orb-guestbook').innerText.includes('Signature and chain valid'));assert.match(await page.locator('#orb-guestbook').innerText(),/Synthetic note/);
  await page.locator('#orb-nav').getByRole('button',{name:'Investigation',exact:true}).click();await page.locator('#sutra-master').waitFor();
  assert.match(await page.locator('#sm-question').innerText(),/What are you trying to determine/);
  await page.locator('#sutra-master').getByRole('button',{name:'Network engineering',exact:true}).click();

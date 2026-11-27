@@ -4,7 +4,7 @@ const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),
 const requireToolchain=createRequire(path.resolve(__dirname,'../package.json'));
 const {chromium}=requireToolchain('playwright');
 const dist=path.resolve(__dirname,'../dist');
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'};
 (async()=>{
  const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
  const peer=http.createServer((req,res)=>{
