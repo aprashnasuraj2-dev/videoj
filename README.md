@@ -1,20 +1,27 @@
 # SUTRA — Living, verifiable knowledge
 
-SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge.
 
-SUTRA combines evidence-bound interpretation, deterministic verification, provenance, alternative explanations, counterexamples, investigation planning and revision. It aims to preserve an investigation across model changes and allow people to reproduce historical conclusions. These are product objectives, not claims of universal semantic correctness or proven superiority.
+The product preserves investigations across model changes. It separates source evidence, interpretation, method, deterministic computation, empirical support, freshness, applicability and action authority instead of collapsing them into a single confidence score.
 
-[Product mandate](docs/sutra-v2/LIVING-KNOWLEDGE.md) · [Continuation](docs/sutra-v2/CONTINUE.md) · [Roadmap](docs/sutra-v2/ROADMAP.md) · [Checklist](docs/sutra-v2/CHECKLIST.md) · [Progress](docs/sutra-v2/progress.json) · [Sessions](docs/sutra-v2/SESSIONS.md)
+## Active workspace
 
-## Development workspace
+- `apps/sutra-v2/` — browser investigation workspace.
+- `packages/sutra-knowledge/` — knowledge kernel, revision engine, counterfactuals, evidence economics and independent replay contracts.
+- `packages/sutra-runtime/` — bounded portable-agent runtime.
+- `packages/sutra-inference/` — provider-neutral inference contracts and credential boundaries.
+- `packages/sutra-consent/` — explicit contact and disclosure controls.
+- `services/sutra-api/` — bounded service adapters.
+- `docs/sutra-v2/` — current product mandate, execution contract, roadmap and verification state.
 
-- `apps/sutra-v2/`: current browser investigation laboratory.
-- `packages/sutra-knowledge/`: exact kernel, evidence frontier, compiler and independent reference implementation.
-- `packages/sutra-runtime/`, `packages/sutra-consent/`, `services/sutra-api/`: trust, provider and execution infrastructure.
-- `apps/sutra/` and `docs/sutra/`: SUTRA1 reusable learner/runtime and preserved engineering evidence.
+Run the core knowledge suite with Node 24:
 
-Run the bounded knowledge suite with Node 24: `node --test packages/sutra-knowledge/test/*.test.mjs`. Consult the relevant workflow for full browser, Go, Python and formal verification steps. Passing tests do not authorize release.
+```sh
+node --test packages/sutra-knowledge/test/*.test.mjs
+```
 
-**Continue with SUTRA** resumes the exact remote active draft PR and dependency-ready work under the binding mandate. All unfinished foundation gates remain tracked. This branch is development-only; no public deployment or release is authorized.
+The canonical browser build uses the standalone toolchain in `apps/sutra-v2/`.
 
-[Active repository map](docs/sutra-v2/REPOSITORY_MAP.md). This development tree removes standalone retired products; the inherited learner media implementation is internal and retains original attribution. Exact post-isolation CI is required before accepting the change.
+Passing tests establish only their stated scope. Model output is never verification authority, and deterministic replay is not empirical truth.
+
+[Product mandate](docs/sutra-v2/LIVING-KNOWLEDGE.md) · [Execution contract](docs/sutra-v2/CONTINUE.md) · [Roadmap](docs/sutra-v2/ROADMAP.md) · [Checklist](docs/sutra-v2/CHECKLIST.md)

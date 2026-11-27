@@ -1,7 +1,22 @@
-# Active development tree
+# Active SUTRA V2 repository map
 
-The SUTRA-only draft branch retains apps/sutra-v2, apps/sutra, apps/sutra-peer, SUTRA packages, services, deployment tooling, and all historical SUTRA engineering evidence. The historical standalone product trees, root player build/configuration, demo/test trees and workflows are retired from the active branch. Their prior Git revisions remain intact.
+The active tree contains one product: SUTRA V2.
 
-The learner depended on the historical root media implementation. Sixteen original blobs are relocated under apps/sutra/src/media-player, preserving attribution and exact bytes. Its adapter imports the local implementation. The root npm package is a dependency-free SUTRA command dispatcher; app-scoped lockfiles remain authoritative.
+| Path | Responsibility |
+| --- | --- |
+| `apps/sutra-v2/` | Browser investigation workspace and standalone build |
+| `packages/sutra-knowledge/` | Knowledge representation, revision, computation, counterfactual and replay kernel |
+| `packages/sutra-runtime/` | Bounded portable-agent execution |
+| `packages/sutra-inference/` | Provider-neutral inference and credential/budget contracts |
+| `packages/sutra-consent/` | Contact and disclosure authorization |
+| `packages/sutra-evidence/` | Evidence contracts and validation primitives |
+| `packages/sutra-content-profile/` | Bounded content/source profile primitives |
+| `packages/sutra-source-tools/` | Source capability primitives |
+| `packages/sutra-actions/` | Scoped action contracts |
+| `services/sutra-api/` | Service-side bounded adapters |
+| `docs/sutra-v2/` | Current mandate, roadmap, security and verification documents |
+| `.github/workflows/sutra-v2-*.yml` | Active V2 verification |
 
-This change does not change the default branch, repository name, public deployment or production route. Exact clean build, browser and inherited learner acceptance checks remain required. Historical docs/sutra/REPOSITORY_MAP.md describes the earlier tree, not this candidate.
+The root package is a dependency-free command dispatcher. The browser app owns its pinned Vite/Playwright toolchain.
+
+Removed products and development experiments remain available only through Git history.
