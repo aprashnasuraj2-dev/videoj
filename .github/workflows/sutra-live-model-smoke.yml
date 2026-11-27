@@ -32,7 +32,7 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [ "$EVENT_NAME" = "workflow_dispatch" ] || git log -1 --format=%B | grep -Fxq 'SUTRA_AUTHORIZED_LIVE_SMOKE_20261127_ONCE'; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || git log -1 --format=%B | grep -Fxq 'SUTRA_AUTHORIZED_LIVE_SMOKE_20261127_ALIASES_ONCE'; then
             echo 'approved=true' >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/checkout@v4
@@ -53,10 +53,20 @@ jobs:
         if: steps.gate.outputs.approved == 'true'
         env:
           SUTRA_SMOKE_MODELS_JSON: ${{ inputs.models }}
-          SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI }}
-          SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ }}
-          SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER }}
+          SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI || secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY || secrets.GEMINI_KEY || secrets.GEMINI_API }}
+          SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ || secrets.GROQ_API_KEY || secrets.GROQ_KEY || secrets.GROQ_API }}
+          SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER || secrets.OPENROUTER_API_KEY || secrets.OPENROUTER_KEY || secrets.OPENROUTER_API || secrets.OPEN_ROUTER_API_KEY }}
         run: |
+          if [ -z "$SUTRA_SMOKE_MODELS_JSON" ]; then
+            export SUTRA_SMOKE_MODELS_JSON="$(node --input-type=module -e 'import {SMOKE_MODELS} from "./packages/sutra-research/live-model-smoke.js";const entries=Object.entries(SMOKE_MODELS).filter(([v])=>Boolean(process.env["SUTRA_HOSTED_"+v.toUpperCase()]));console.log(JSON.stringify(Object.fromEntries(entries)))')"
+            node --input-type=module -e 'import {SMOKE_MODELS} from "./packages/sutra-research/live-model-smoke.js";const selected=JSON.parse(process.env.SUTRA_SMOKE_MODELS_JSON);console.log(JSON.stringify({configuredProviders:Object.keys(selected),missingProviders:Object.keys(SMOKE_MODELS).filter(v=>!Object.hasOwn(selected,v))}))'
+            if [ "$SUTRA_SMOKE_MODELS_JSON" = "{}" ]; then
+              echo '{"status":"REFUSED","reason":"NO_CONFIGURED_MODEL_CREDENTIALS"}' > /tmp/sutra-model-smoke.json
+              cat /tmp/sutra-model-smoke.json
+              exit 1
+            fi
+          fi
+          node apps/sutra-v2/live-model-smoke.mjs --plan > /tmp/sutra-model-plan.json
           PIN="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/sutra-model-plan.json")).planPin')"
           set +e
           node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-provider-contact --approve-estimated-cost --approve-plan "$PIN" > /tmp/sutra-model-smoke.json
