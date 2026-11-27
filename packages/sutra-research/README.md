@@ -65,7 +65,7 @@ No automatic replay or crash recovery is provided for unknown remote dispatches.
 
 ### Credentialed model smoke (Gemini, Groq, OpenRouter)
 
-Store rotated credentials outside the repository in the operator's secret manager, or in protected GitHub Actions environment `sutra-live-research` as `SUTRA_HOSTED_GEMINI`, `SUTRA_HOSTED_GROQ`, and `SUTRA_HOSTED_OPENROUTER`. Never pass secrets in arguments, manifests, logs or source files. The manual main-branch workflow performs one bounded synthetic challenge per provider. A successful report must explicitly say `credentialed_live_transport` and contain three passed checks. Fixture CI is not live evidence. OpenRouter free routing may vary its underlying model; different transport vendors do not prove independent model families. These credentials do not authorize Brave or Tavily web search.
+Store rotated credentials outside the repository in the operator's secret manager, or in protected GitHub Actions environment `sutra-live-research` as `SUTRA_HOSTED_GEMINI`, `SUTRA_HOSTED_GROQ`, and `SUTRA_HOSTED_OPENROUTER`. Never pass secrets in arguments, manifests, logs or source files. The manual main-branch workflow performs one bounded synthetic challenge per provider. A successful report must explicitly say `credentialed_live_transport` and contain a passed check for every tester-selected route. Fixture CI is not live evidence. OpenRouter free routing may vary its underlying model; different transport vendors do not prove independent model families. These credentials do not authorize Brave or Tavily web search.
 
 ```sh
 node apps/sutra-v2/live-model-smoke.mjs --plan
@@ -76,3 +76,5 @@ node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-pro
 ### Model selection and on-demand web access
 
 The public configuration is one ordered `modelPolicy.models` pool (one to three selected model descriptors) and `allowPublicEvidenceDisclosure: true`. Each descriptor supplies `vendor`, `model`, `maxInputBytes`, `maxOutputTokens`, and `estimatedMaxCostMicros`. The first is preferred. The runtime schedules planning, synthesis, and critique internally; avatars are not model connections. One model can perform all operations; two or three can supply another perspective. Different models or vendors do not prove independence. The default `webAccess` is `on_demand`: the model can answer without web, request bounded host searches, or request synthesis after acquiring evidence. An empty provider list is valid; unavailable web requests are explicitly reported, not simulated. Previously exported role-specific manifests remain compatible but are not the public configuration.
+
+Smoke tests accept `SUTRA_SMOKE_MODELS_JSON` as a nonsecret JSON object, e.g. `{"groq":"openai/gpt-oss-20b"}`. The selected model IDs are part of the approval pin; a single configured credential is sufficient when only one route is selected. These are test inputs, not orbital role mappings.

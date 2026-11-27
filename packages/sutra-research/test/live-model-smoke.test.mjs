@@ -23,3 +23,10 @@ test('credentials and exact approval fail before transport creation',async()=>{
  await assert.rejects(runModelSmoke({...grant,approvedPlanPin:'wrong',exchangeFactory:f.exchangeFactory}),/APPROVAL/);assert.equal(f.calls.length,0);
  assert.ok(secretLike('gsk_abcdefghijklmnop'));assert.ok(secretLike('AQ.abcdefghijklmnop'));
 });
+
+test('tester-selected single model needs only its own credential and exact pin',async()=>{
+ const selection={groq:'tester-selected-model'},plan=previewModelSmoke(selection),f=fixture();
+ const r=await runModelSmoke({...grant,selection,approvedPlanPin:plan.planPin,credentials:{groq:'fixture-groq-key'},exchangeFactory:f.exchangeFactory});
+ assert.equal(r.status,'passed');assert.equal(f.calls.length,1);assert.equal(f.calls[0].model,'tester-selected-model');
+ await assert.rejects(runModelSmoke({...grant,selection,exchangeFactory:f.exchangeFactory}),/APPROVAL/);
+});
