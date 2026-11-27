@@ -3,6 +3,7 @@ import {resolve,relative,dirname,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {assertNoSecret} from './candidate-fingerprint.mjs';
 import {securityHeaders} from '../../services/sutra-api/worker.js';
 import {guideCandidateHeaders,assertV2StaticHeaders,rootStaticPolicy,V2_STATIC_CSP,GUIDE_ORIGIN} from '../../apps/sutra-v2/static-headers.mjs';
 const root=dirname(fileURLToPath(import.meta.url)),original=resolve(root,'../../apps/sutra-v2/dist'),candidate=resolve(root,'dist'),guide=resolve(root,'../../apps/sutra-peer/dist');
@@ -59,19 +60,6 @@ for(const path of ['extra.json','assets/secret.txt','assets/another.js','agents/
 assert.throws(()=>exactInventory(dst.filter(p=>p!=='offline.html'),callerFixed,true));
 // Bounded, value-redacting defense against accidental embedded credentials.
 // This does not read actual secrets or claim to detect arbitrary encodings.
-const secretRules=[
- ['private-key',/-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/],
- ['provider-token',/(?:sk-(?:proj-|or-v1-|svcacct-)?[A-Za-z0-9_-]{24,}|gsk_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{35})/],
- ['github-token',/(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})/],
- ['aws-access-id',/\b(?:AKIA|ASIA)[A-Z0-9]{16}\b/],
- ['literal-bearer',/\bBearer [A-Za-z0-9._~-]{24,}\b/],
- ['literal-secret-assignment',/\b(?:SUTRA_PROVIDER_KEY|GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|OPENAI_API_KEY|CLOUDFLARE_API_TOKEN)\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{20,}/i],
- ['build-canary',/SUTRA_BUILD_SECRET_CANARY_[A-Z0-9]{24,}/]
-];
-function assertNoSecret(bytes,path){
- const raw=bytes.toString('latin1');
- for(const [rule,pattern] of secretRules)if(pattern.test(raw))throw Error('Refused potential embedded credential: '+path+' ('+rule+')');
-}
 for(const token of ['-----BEGIN PRIVATE KEY-----','sk-'+'a'.repeat(32),'gsk_'+'a'.repeat(40),'AIza'+'a'.repeat(35),'ghp_'+'a'.repeat(36),'AKIA'+'A'.repeat(16),'Bearer '+'A'.repeat(32),'SUTRA_PROVIDER_KEY="'+'A'.repeat(32)+'"','SUTRA_BUILD_SECRET_CANARY_'+'A'.repeat(32)]){
  assert.throws(()=>assertNoSecret(Buffer.from('prefix '+token+' suffix'),'synthetic.txt'),e=>e.message.includes('Refused potential embedded credential')&&!e.message.includes(token));
 }
