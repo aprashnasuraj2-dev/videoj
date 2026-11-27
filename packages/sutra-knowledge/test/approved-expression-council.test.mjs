@@ -62,3 +62,24 @@ test('route invalidation after consent preview cannot dispatch under the old app
  assert.equal(decisions,1);assert.equal(s.calls(),0);
  await assert.rejects(approval.execute({consentInspector:consent,approvedPlanPin:approval.planPin}),/COUNCIL_APPROVAL_CONSUMED/);
 });
+
+
+test('approved council plan pins generic capability requirements and host declaration before consent',async()=>{
+ const f=await compilerFinanceFixture(),limits={maxCalls:2,maxInputBytes:100000,maxOutputTokens:2048,maxConcurrent:1};let seed=120,calls=0;
+ const workspace=createProviderWorkspace({
+  catalog:[{id:'capable-host',label:'Capable host',models:['capable/model'],capabilities:{'capable/model':['text.generate','structured.output']}}],
+  globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,
+  transports:[{providerId:'capable-host',send:async()=>{calls++;return {actualInputBytes:1,actualOutputTokens:1,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};}}]
+ });
+ const p=workspace.addProfile({providerId:'capable-host',label:'Capable',credential:'CAPABILITY_PLAN_SECRET_123'});
+ const route={id:'reviewer',role:'Propose one comparison',handle:p.handle,model:'capable/model',shareScope:scope,requires:['text.generate']};
+ const approval=await prepareApprovedExpressionCouncil({contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:[route],workspace,maxRounds:1});
+ assert.deepEqual(approval.plan.agents[0].requires,['text.generate']);
+ assert.deepEqual(approval.plan.agents[0].declaredCapabilities,['text.generate','structured.output']);
+ assert.equal(approval.plan.agents[0].capabilityAuthority,'HOST_DECLARED_UNVERIFIED');
+ assert.equal(calls,0);assert.equal(workspace.budgetSnapshot().global.used.calls,0);
+ route.requires.push('tool.call');
+ const consent=createDisclosureConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await approval.execute({consentInspector:consent,approvedPlanPin:approval.planPin});
+ assert.equal(calls,1);assert.equal(result.decisionAuthority,'NONE');
+});

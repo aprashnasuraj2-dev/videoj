@@ -12,7 +12,7 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
  const assertPublication=workspace.capturePublicationFence();
  const ids=new Set(),profiles=workspace.list();
  const team=routes.map(r=>{
-  const routeKeys=Object.hasOwn(r,'requires')?['id','role','handle','model','shareScope','requires']:['id','role','handle','model','shareScope'];
+  const routeKeys=r!==null&&typeof r==='object'&&Object.hasOwn(r,'requires')?['id','role','handle','model','shareScope','requires']:['id','role','handle','model','shareScope'];
   if(!councilClosed(r,routeKeys)||typeof r.id!=='string'||!ID.test(r.id)||ids.has(r.id)||!councilText(r.role,200)||typeof r.model!=='string'||r.shareScope!==shareScope)councilFail('ROUTE');
   const profile=profiles.find(p=>p.profileId===r.handle?.profileId);
   if(!profile||!profile.models.includes(r.model))councilFail('ROUTE');

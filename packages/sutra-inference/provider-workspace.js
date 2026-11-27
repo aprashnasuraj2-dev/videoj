@@ -31,6 +31,7 @@ function normalizeCapabilityCatalog(catalog){
   const descriptors=Object.getOwnPropertyDescriptors(entry),keys=Reflect.ownKeys(entry);
   if(keys.some(k=>typeof k!=='string')||!(keys.length===3||keys.length===4)||!['id','label','models'].every(k=>keys.includes(k))||keys.some(k=>!['id','label','models','capabilities'].includes(k))||Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'||!d.enumerable||!Object.hasOwn(d,'value')))stop('CONFIG');
   const id=descriptors.id.value,label=descriptors.label.value,models=descriptors.models.value;
+  if(!dense(models))stop('CONFIG');
   const declared=Object.create(null);
   if(keys.includes('capabilities')){
    const raw=descriptors.capabilities.value;
