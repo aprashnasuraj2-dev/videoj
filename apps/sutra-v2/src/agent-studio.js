@@ -22,7 +22,7 @@ const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-r
 let active=null,activeTelemetry=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null,reviewEpoch=0,reviewExport=null;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
 function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-offer-version').disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
-function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;if(value)exportButton.disabled=true;}
+function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;by('studio-export-hybrid-plan').disabled=value||!hybridVersionHandoff.read();if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;by('studio-hybrid-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
 function invalidate(){epoch++;active?.abort();activeTelemetry?.finish('cancelled');clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
@@ -146,7 +146,7 @@ form.addEventListener('input',event=>{
   // values or peer feedback in customized mode.
   for(const slot of ['a','b'])if(!by('studio-scope-'+slot).value.trim())by('studio-scope-'+slot).value=by('studio-bindings').value;
  }
- if(!['studio-share','studio-expression-share','studio-local-export-approve'].includes(event.target.id))revoke();
+ if(!['studio-share','studio-expression-share','studio-local-export-approve','studio-hybrid-export-approve'].includes(event.target.id))revoke();
  showMode();showScopes();invalidate();
 });
 by('studio-reset-case').addEventListener('click',()=>{by('studio-case').value=fixture();revoke();invalidate();});
