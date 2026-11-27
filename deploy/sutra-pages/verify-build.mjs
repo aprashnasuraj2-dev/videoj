@@ -9,8 +9,9 @@ const root=dirname(fileURLToPath(import.meta.url)),original=resolve(root,'../../
 const read=(dir,name)=>readFile(resolve(dir,name));
 const digest=b=>createHash('sha256').update(b).digest('hex');
 async function inventory(dir){
- const paths=[];
- async function walk(d){for(const entry of await readdir(d)){const p=resolve(d,entry),s=await lstat(p);if(s.isSymbolicLink())throw Error('Unexpected symbolic link');if(s.isDirectory())await walk(p);else if(s.isFile())paths.push(relative(dir,p).split(sep).join('/'));else throw Error('Unexpected build entry');}}
+ const paths=[];let total=0;
+ const base=await lstat(dir);assert.ok(base.isDirectory()&&!base.isSymbolicLink(),'Artifact root must be a real directory');
+ async function walk(d){for(const entry of await readdir(d)){const p=resolve(d,entry),s=await lstat(p);if(s.isSymbolicLink())throw Error('Unexpected symbolic link');if(s.isDirectory())await walk(p);else if(s.isFile()){total+=s.size;assert.ok(paths.length<128&&total<=32*1024*1024,'Static artifact size/count bound exceeded');paths.push(relative(dir,p).split(sep).join('/'));}else throw Error('Unexpected build entry');}}
  await walk(dir);return paths.sort();
 }
 const src=await inventory(original),dst=await inventory(candidate),peer=await inventory(guide);
@@ -42,6 +43,42 @@ function requirePublication(files,manifest,expected,html,caller){
   assert.doesNotMatch(name,/(^|\/)(?:\.env(?:\.[^/]*)?|\.git|node_modules|functions|\.wrangler|dhago|detour|afterimage|transcripts|media|content)(?:\/|$)|\.(?:pem|key|p12|map)$/i,'Forbidden publication path: '+name);
  }
 }
+// Static publication is deliberately closed to an exact inventory plus the
+// two generated Vite entry assets. Unknown payloads cannot ride along with
+// byte-identical copying from a compromised or stale source directory.
+const callerFixed=['index.html','_headers','_routes.json','agents/agent-manifest.json','agents/links.json',...callerNetworks.map(n=>'agents/'+n[2].slice(2)),'support-lattice.wasm','sutra-proof-verifier.pyz','sutra-proof-verifier.pyz.sha256','offline.html','orbit-sw.js','orbit.webmanifest','sutra-orbit.svg'];
+const guideFixed=['index.html','_headers','agents/agent-manifest.json','agents/checklist.network.json','agents/links.json','peer.config.json','src/main.js','src/style.css'];
+function exactInventory(files,fixed,caller){
+ const assets=files.filter(p=>/^assets\/[A-Za-z0-9_-]+\.(?:js|css)$/.test(p));
+ if(caller)assert.deepEqual(assets.map(p=>p.slice(p.lastIndexOf('.'))).sort(),['.css','.js'],'Unexpected generated runtime assets');
+ else assert.equal(assets.length,0);
+ assert.deepEqual([...files].sort(),[...fixed,...assets].sort(),'Unexpected or missing static artifact');
+}
+exactInventory(dst,callerFixed,true);exactInventory(peer,guideFixed,false);
+for(const path of ['extra.json','assets/secret.txt','assets/another.js','agents/extra.network.json','retired/index.html'])assert.throws(()=>exactInventory([...dst,path],callerFixed,true));
+assert.throws(()=>exactInventory(dst.filter(p=>p!=='offline.html'),callerFixed,true));
+// Bounded, value-redacting defense against accidental embedded credentials.
+// This does not read actual secrets or claim to detect arbitrary encodings.
+const secretRules=[
+ ['private-key',/-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/],
+ ['provider-token',/(?:sk-(?:proj-|or-v1-|svcacct-)?[A-Za-z0-9_-]{24,}|gsk_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{35})/],
+ ['github-token',/(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})/],
+ ['aws-access-id',/\b(?:AKIA|ASIA)[A-Z0-9]{16}\b/],
+ ['literal-bearer',/\bBearer [A-Za-z0-9._~-]{24,}\b/],
+ ['literal-secret-assignment',/\b(?:SUTRA_PROVIDER_KEY|GEMINI_API_KEY|GROQ_API_KEY|OPENROUTER_API_KEY|OPENAI_API_KEY|CLOUDFLARE_API_TOKEN)\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{20,}/i],
+ ['build-canary',/SUTRA_BUILD_SECRET_CANARY_[A-Z0-9]{24,}/]
+];
+function assertNoSecret(bytes,path){
+ const raw=bytes.toString('latin1');
+ for(const [rule,pattern] of secretRules)if(pattern.test(raw))throw Error('Refused potential embedded credential: '+path+' ('+rule+')');
+}
+for(const token of ['-----BEGIN PRIVATE KEY-----','sk-'+'a'.repeat(32),'gsk_'+'a'.repeat(40),'AIza'+'a'.repeat(35),'ghp_'+'a'.repeat(36),'AKIA'+'A'.repeat(16),'Bearer '+'A'.repeat(32),'SUTRA_PROVIDER_KEY="'+'A'.repeat(32)+'"','SUTRA_BUILD_SECRET_CANARY_'+'A'.repeat(32)]){
+ assert.throws(()=>assertNoSecret(Buffer.from('prefix '+token+' suffix'),'synthetic.txt'),e=>e.message.includes('Refused potential embedded credential')&&!e.message.includes(token));
+}
+for(const [dir,files] of [[candidate,dst],[guide,peer]])for(const path of files)assertNoSecret(await read(dir,path),path);
+assert.match((await read(guide,'index.html')).toString(),/Engineering fixture\./);
+assert.equal((await json(guide,'peer.config.json')).production_status,'proposed_not_deployed');
+console.log('PASS: closed public file inventory, bounded file/byte count, nine redacted credential-canary controls, and explicit fixture qualification.');
 const callerManifest=await json(candidate,'agents/agent-manifest.json'),guideManifest=await json(guide,'agents/agent-manifest.json');
 requirePublication(dst,callerManifest,callerNetworks,index,true);
 requirePublication(peer,guideManifest,guideNetworks,(await read(guide,'index.html')).toString(),false);
