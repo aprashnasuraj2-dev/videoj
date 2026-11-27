@@ -8,7 +8,7 @@ import {parseUniqueJson} from '../../packages/sutra-consent/strict-json.js';
 const digest=b=>createHash('sha256').update(b).digest('hex');
 const labels=['pages','guide','worker','functions','policy'];
 const forbidden=/(^|\/)(\.env(?:\.|$)|node_modules|\.git|\.wrangler)(\/|$)|\.(pem|key|p12)$/i;
-const maxBytes=128*1024*1024,maxFiles=4096;
+const maxBytes=128*1024*1024,maxFiles=1024;
 export async function fingerprint(revision,roots){
  assert.match(revision,/^[a-f0-9]{40}$/);
  assert.deepEqual(Object.keys(roots).sort(),[...labels].sort());
@@ -31,10 +31,10 @@ export async function fingerprint(revision,roots){
  }
  return {schema:'sutra-candidate-fingerprint/v1',revision,entries,totalBytes:total,authority:'NONE'};
 }
-export const encode=record=>Buffer.from(JSON.stringify(record,null,2)+'\n');
+export const encode=record=>{const bytes=Buffer.from(JSON.stringify(record,null,2)+'\n');assert.ok(bytes.length<=262144,'Manifest bound exceeded');return bytes;};
 export async function verifyFingerprint({manifest,pin,revision,roots}){
  assert.match(pin,/^[a-f0-9]{64}$/);assert.equal(digest(manifest),pin,'Manifest digest mismatch');
- const stored=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(manifest),{maxChars:2*1024*1024,maxDepth:12});
+ const stored=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(manifest),{maxChars:262144,maxDepth:12});
  assert.equal(stored.revision,revision,'Revision mismatch');
  const actual=await fingerprint(revision,roots);
  assert.deepEqual(stored,actual,'Candidate bytes or inventory changed');
