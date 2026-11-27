@@ -34,12 +34,15 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
  let consumed=false;
  return Object.freeze({preview,async run({signal,onEvent,decidePeer}={}){
   if(consumed)fail('BROWSER_PLAN_CONSUMED');consumed=true;
-  const adapter=createProviderAdapter({origin,model,fetchImpl:(url,init)=>{if(url!==origin+'/api/v1/chat/completions')fail('BROWSER_ROUTER');return fetchImpl(url,{...init,headers:{...init.headers,'X-Sutra-Inference-Contract':contract}});}});
-  if(!current())fail('EVIDENCE_STALE');
+  const assertCurrent=()=>{if(signal?.aborted)fail('CANCELLED');if(!current())fail('EVIDENCE_STALE');};
+  assertCurrent();
+  const provider=createProviderAdapter({origin,model,fetchImpl:(url,init)=>{assertCurrent();if(url!==origin+'/api/v1/chat/completions')fail('BROWSER_ROUTER');return fetchImpl(url,{...init,headers:{...init.headers,'X-Sutra-Inference-Contract':contract}});}});
+  const adapter=Object.freeze({...provider,async chat(input){assertCurrent();try{const response=await provider.chat(input);assertCurrent();return response;}catch(error){assertCurrent();throw error;}}});
   const request=evidence?objective+'\nApproved evidence coordinates: '+JSON.stringify({sourceId:evidence.sourceId,start:evidence.start,end:evidence.end}):objective;
   let inspector;
   if(peerUrl){if(typeof decidePeer!=='function')fail('BROWSER_PEER_CONSENT');const peerOrigin=new URL(peerUrl).origin;inspector=createConsentInspector({decide(contact,options){const expected=contact.kind==='peer_manifest'?'/agents/agent-manifest.json':contact.kind==='peer_graph'?'/agents/checklist.network.json':null;if(!expected||contact.origin!==peerOrigin||contact.resource!==peerOrigin+expected||contact.network!=='checklist')return 'deny';return decidePeer(contact,options);},onEvent:e=>onEvent?.({kind:'peer_consent',phase:e.type,status:e.decision??e.status,origin:e.origin})});}
   const result=await runNetwork({definition,name:network.name,frontMan:network.frontMan,request,model:adapter,limits,signal,onEvent,...(evidence?{workspaceEvidence:{selection:selected,assertCurrent:current}}:{}),...(inspector?{peerRuntime:{inspector,fetchImpl}}:{})});
+  assertCurrent();
   if(evidence&&!result.events.some(e=>e.kind==='tool'&&e.phase==='end'&&e.tool==='mcp_inspect_evidence'&&e.status==='ok'))fail('BROWSER_EVIDENCE_MISSING');
   if(peerUrl){const origin=new URL(peerUrl).origin;if(!['checklist','source_select'].every(agent=>result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent===agent&&e.origin===origin&&e.status==='ok')))fail('BROWSER_PEER_DELEGATION_MISSING');}
   else if(!result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent==='critic'&&e.status==='ok'))fail('BROWSER_DELEGATION_MISSING');
