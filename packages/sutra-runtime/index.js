@@ -215,7 +215,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // them. This catches accessors, shared expansion and sparse tool arrays.
    let response;try{response=snapshotJsonData(candidate,131072,'MODEL_RESPONSE');}catch{fail('MODEL_RESPONSE','Malformed or excessive model result.');}
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
-   assertPublicText(response.content);
+   // Peer terminal envelopes are projected below; unknown metadata is discarded.
+   // Any nonterminal assistant content is history and must be safe to redispatch.
+   if(args.origin==='sutra-local'||response.toolCalls.length)assertPublicText(response.content);
    totalOutput+=response.content.length;
    if(totalOutput>bounds.maxOutputChars)fail('OUTPUT_LIMIT','Model output budget exceeded.');
    if(response.finishReason!==undefined&&response.finishReason!==(response.toolCalls.length?'tool_calls':'stop'))fail('MODEL_RESPONSE','Model did not report a complete result consistent with its tool calls.');
@@ -286,6 +288,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // remain authoritative even if the peer instructions try to contradict it.
    const hostPrompt=peerSecurityPrompt+contextText;
    const peerLlm={...ctx.llm,chat:args=>{
+    // Check the runner's ordinary history before adding the sole approved
+    // host-context block. A child cannot smuggle private values back via text.
+    for(const message of args.messages)assertPublicText(JSON.stringify(message));
     const messages=args.messages.map((message,index)=>index===0&&message.role==='system'?
      {...message,content:String(message.content??'')+hostPrompt}:message);
     return ctx.llm.chat({...args,messages});
@@ -316,6 +321,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
+  assertPublicText(result.text);
   return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
  }catch(error){
   // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
