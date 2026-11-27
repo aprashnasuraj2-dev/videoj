@@ -23,3 +23,19 @@ test('retained candidate verifies after local restoration; fails on missing, cha
   await writeFile(join(restored.worker,'content'),'worker');await symlink(join(restored.worker,'content'),join(restored.worker,'link'));await assert.rejects(verifyFingerprint(input),/Symbolic link/);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
+
+test('credential content in any retained component refuses before fingerprint or restore without echoing value',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'sutra-content-'));const revision='a'.repeat(40);
+ try{
+  const roots={};for(const name of ['pages','guide','worker','functions','policy']){roots[name]=join(dir,name);await mkdir(roots[name]);await writeFile(join(roots[name],'ordinary.txt'),'ordinary nonsecret fixture');}
+  const baseline=encode(await fingerprint(revision,roots)),pin=createHash('sha256').update(baseline).digest('hex');
+  const token='SUTRA_BUILD_SECRET_CANARY_'+'Z'.repeat(32);
+  for(const [name,root] of Object.entries(roots)){
+   const file=join(root,'ordinary.txt');await writeFile(file,Buffer.concat([Buffer.from([0,255,1]),Buffer.from(token)]));
+   const safe=e=>e.message.includes('potential embedded credential')&&e.message.includes(name)&&!e.message.includes(token);
+   await assert.rejects(fingerprint(revision,roots),safe);await assert.rejects(verifyFingerprint({manifest:baseline,pin,revision,roots}),safe);
+   await writeFile(file,'ordinary nonsecret fixture');
+  }
+  assert.equal((await verifyFingerprint({manifest:baseline,pin,revision,roots})).status,'matched');
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
