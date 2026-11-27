@@ -4,7 +4,7 @@ import {admitManifest,authorizeResearch,digest} from '../research-session.js';
 import {createResearchModelBroker} from '../model-broker.js';
 import {runAutonomousResearch} from '../research-supervisor.js';
 const defaultModel={vendor:'groq',model:'fixture-model',maxInputBytes:16384,maxOutputTokens:1024,estimatedMaxCostMicros:1000};
-const manifest=(providers=[],overrides=[])=>({schema:'sutra-autonomous-research/v1',objective:'Explain battery storage costs',scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false},budget:{maxSearches:3,maxDocuments:6,maxLinkDepth:0,maxDurationSeconds:60,maxDownloadBytes:8388608,maxCostMicros:20000,maxModelCalls:3},providers,modelPolicy:{allowPublicEvidenceDisclosure:true,defaultModel,roles:overrides}});
+const manifest=(providers=[],overrides=[])=>({schema:'sutra-autonomous-research/v1',objective:'Explain battery storage costs',scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false},budget:{maxSearches:3,maxDocuments:6,maxLinkDepth:0,maxDurationSeconds:60,maxDownloadBytes:8388608,maxCostMicros:20000,maxModelCalls:3},providers,modelPolicy:{allowPublicEvidenceDisclosure:true,models:[defaultModel,...overrides]}});
 function setup(p,answer){
  const raw=JSON.stringify(p),a=authorizeResearch(raw,{approvedPlanPin:admitManifest(raw).planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true});
  const requests=[],calls=[];
@@ -16,10 +16,10 @@ function setup(p,answer){
  const run=(providers={})=>runAutonomousResearch({authorization:a,modelBroker,providers,readDocument:async url=>{calls.push(url);a.reserve('document',{bytes:262144});const text='Battery storage costs were USD 100 million in 2025.';return {url,text,textDigest:digest(text),rawDigest:digest(text),links:[],mediaType:'text/plain'};}});
  return {a,requests,calls,run,close(){modelBroker.close();a.close();}};
 }
-test('one selected model resolves all roles; optional second-model overrides are explicit and pinned',()=>{
+test('one selected model resolves all roles; optional second model is selected from the shared pool',()=>{
  const p=admitManifest(JSON.stringify(manifest())).plan;
  assert.equal(p.modelPolicy.webAccess,'on_demand');assert.equal(p.modelPolicy.reviewMode,'same_configured_model_self_review');assert.equal(new Set(p.modelPolicy.roles.map(r=>r.model)).size,1);
- const p2=admitManifest(JSON.stringify(manifest([],[{...defaultModel,role:'spark',vendor:'gemini',model:'other-model'}]))).plan;
+ const p2=admitManifest(JSON.stringify(manifest([],[{...defaultModel,vendor:'gemini',model:'other-model'}]))).plan;
  assert.equal(p2.modelPolicy.roles.find(r=>r.role==='spark').vendor,'gemini');assert.equal(p2.modelPolicy.reviewMode,'different_configured_models_independence_unproven');
 });
 test('simple model task runs with no search key or provider, no fictitious citations',async()=>{
@@ -37,4 +37,11 @@ test('same single model executes planning, acquisition-directed synthesis and se
   const c=input.claims[0],e=input.evidence[0];return {reviews:[{claimId:c.claimId,verdict:'supported',reason:'The excerpt reports the figure.',citations:[{passageId:e.passageId,quote:e.quote}]}],conflicts:[]};
  });
  try{const r=await f.run({brave:{search:async q=>{assert.match(q,/annual data/);return [{url:'https://public.org/report'}];}}});assert.equal(r.usage.searches,1);assert.equal(r.usage.modelCalls,3);assert.equal(r.intelligence.reviewMode,'same_configured_model_self_review');assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');assert.equal(r.modelOnlyAnswer,null);assert.equal(new Set(f.requests.map(x=>x.req.model)).size,1);}finally{f.close();}
+});
+
+test('pool rejects duplicate routes and mixed avatar assignment fields',()=>{
+ const p=manifest([],[defaultModel]);assert.throws(()=>admitManifest(JSON.stringify(p)),/MODEL_POOL/);
+ const q=manifest();q.modelPolicy.roles=[];assert.throws(()=>admitManifest(JSON.stringify(q)),/MODEL_POLICY/);
+ const three=admitManifest(JSON.stringify(manifest([],[{...defaultModel,vendor:'gemini',model:'second'},{...defaultModel,vendor:'openrouter',model:'third'}]))).plan;
+ assert.deepEqual(three.modelPolicy.roles.map(r=>r.model),['fixture-model','second','third']);
 });

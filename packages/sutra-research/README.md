@@ -72,3 +72,7 @@ node apps/sutra-v2/live-model-smoke.mjs --plan
 # After checking the displayed plan and setting environment variables securely:
 node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-provider-contact --approve-estimated-cost --approve-plan "$PLAN_PIN"
 ```
+
+### Model selection and on-demand web access
+
+The public configuration is one ordered `modelPolicy.models` pool (one to three selected model descriptors) and `allowPublicEvidenceDisclosure: true`. Each descriptor supplies `vendor`, `model`, `maxInputBytes`, `maxOutputTokens`, and `estimatedMaxCostMicros`. The first is preferred. The runtime schedules planning, synthesis, and critique internally; avatars are not model connections. One model can perform all operations; two or three can supply another perspective. Different models or vendors do not prove independence. The default `webAccess` is `on_demand`: the model can answer without web, request bounded host searches, or request synthesis after acquiring evidence. An empty provider list is valid; unavailable web requests are explicitly reported, not simulated. Previously exported role-specific manifests remain compatible but are not the public configuration.
