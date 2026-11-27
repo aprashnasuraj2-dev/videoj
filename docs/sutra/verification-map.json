@@ -383,7 +383,9 @@
         "apps/sutra-v2/autonomous-research.mjs",
         ".github/workflows/sutra-autonomous-research.yml",
         "apps/sutra-v2/live-search-smoke.mjs",
-        ".github/workflows/sutra-live-search-smoke.yml"
+        ".github/workflows/sutra-live-search-smoke.yml",
+        "apps/sutra-v2/live-model-smoke.mjs",
+        ".github/workflows/sutra-live-model-smoke.yml"
       ],
       "requiredWorkflows": [
         "SUTRA autonomous research"

@@ -1,0 +1,38 @@
+name: SUTRA credentialed live model smoke
+on:
+  workflow_dispatch:
+    inputs:
+      approve:
+        description: 'Approve one bounded inference per configured provider; billing may apply'
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  live-model:
+    if: github.ref == 'refs/heads/main' && inputs.approve == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    environment: sutra-live-research
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preview fixed model challenge
+        run: node apps/sutra-v2/live-model-smoke.mjs --plan > /tmp/sutra-model-plan.json
+      - name: Credentialed inference challenges
+        env:
+          SUTRA_HOSTED_GEMINI: ${{ secrets.SUTRA_HOSTED_GEMINI }}
+          SUTRA_HOSTED_GROQ: ${{ secrets.SUTRA_HOSTED_GROQ }}
+          SUTRA_HOSTED_OPENROUTER: ${{ secrets.SUTRA_HOSTED_OPENROUTER }}
+        run: |
+          PIN="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/sutra-model-plan.json")).planPin')"
+          node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-provider-contact --approve-estimated-cost --approve-plan "$PIN" > /tmp/sutra-model-smoke.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-live-model-smoke
+          path: /tmp/sutra-model-smoke.json
+          retention-days: 7

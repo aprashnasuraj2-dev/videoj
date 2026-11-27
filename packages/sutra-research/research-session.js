@@ -11,7 +11,7 @@ const grants=new WeakSet(),restored=new WeakMap(),claimed=new WeakSet();
 export function claimResearchRun(a){assertResearchAuthorization(a);if(claimed.has(a))fail('CONSUMED');claimed.add(a);}
 export function researchResumeState(a){assertResearchAuthorization(a);return restored.has(a)?structuredClone(restored.get(a)):null;}
 export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHORIZATION');a.assertActive();}
-export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
+export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gsk_|AQ\.|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
 export function admitManifest(text){
  if(typeof text!=='string'||Buffer.byteLength(text)>16384)fail('MANIFEST');
  let p;try{p=parseUniqueJson(text,{maxChars:16384,maxDepth:8});}catch{fail('MANIFEST');}
@@ -32,7 +32,7 @@ export function admitManifest(text){
   if(!exact(m,['roles','allowPublicEvidenceDisclosure'])||m.allowPublicEvidenceDisclosure!==true||!Array.isArray(m.roles)||m.roles.length!==3)fail('MODEL_POLICY');
   const roles=new Set();
   for(const r of m.roles){
-   if(!exact(r,['role','vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'])||!['bot','orb','spark'].includes(r.role)||roles.has(r.role)||!['openai','anthropic','gemini'].includes(r.vendor)||typeof r.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)||!bounded(r.maxInputBytes,4096,65536)||!bounded(r.maxOutputTokens,128,4096)||!bounded(r.estimatedMaxCostMicros,1,1000000))fail('MODEL_ROLE');
+   if(!exact(r,['role','vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'])||!['bot','orb','spark'].includes(r.role)||roles.has(r.role)||!['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)||typeof r.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)||!bounded(r.maxInputBytes,4096,65536)||!bounded(r.maxOutputTokens,128,4096)||!bounded(r.estimatedMaxCostMicros,1,1000000))fail('MODEL_ROLE');
    roles.add(r.role);
   }
   if(m.roles.find(r=>r.role==='orb').vendor===m.roles.find(r=>r.role==='spark').vendor)fail('CRITIC_VENDOR');

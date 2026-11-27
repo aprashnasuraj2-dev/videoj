@@ -8,7 +8,9 @@ const fail=code=>{throw Object.assign(Error('Research model refused: '+code),{co
 export const MODEL_PROFILES=Object.freeze({
  openai:Object.freeze({endpoint:'https://api.openai.com/v1/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',env:'SUTRA_HOSTED_OPENAI'}),
  anthropic:Object.freeze({endpoint:'https://api.anthropic.com/v1/messages',protocol:'anthropic-messages-json',authMode:'anthropic-key',env:'SUTRA_HOSTED_ANTHROPIC'}),
- gemini:Object.freeze({endpoint:'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',env:'SUTRA_HOSTED_GEMINI'})
+ gemini:Object.freeze({endpoint:'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',env:'SUTRA_HOSTED_GEMINI'}),
+ groq:Object.freeze({endpoint:'https://api.groq.com/openai/v1/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',env:'SUTRA_HOSTED_GROQ'}),
+ openrouter:Object.freeze({endpoint:'https://openrouter.ai/api/v1/chat/completions',protocol:'openai-compatible-json',authMode:'bearer',env:'SUTRA_HOSTED_OPENROUTER'})
 });
 const prompts=Object.freeze({
  bot:'You are the research planner. Return only JSON {"queries":[{"suffix":"short public search refinement","questionId":"primary|counterevidence|comparability|gaps"}]}. At most four queries. Use only the objective and non-sensitive coverage counts. Never propose URLs, commands, credentials, or personal data.',
