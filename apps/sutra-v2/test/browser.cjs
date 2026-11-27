@@ -1033,12 +1033,17 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const durableDir=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'sutra-browser-durable-'));cleanupDirs.push(durableDir);
    const {openDurableInvestigationHistory}=await import('../../../packages/sutra-knowledge/durable-investigation-history.mjs'),durableHistory=await openDurableInvestigationHistory(durableDir);
    const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   let initializationWrites=0,appendWrites=0,historyReads=0;
    await samplePage.exposeFunction('__sutraHistoryHostCall',async ({operation,payload})=>{
     try{
      let snapshot;
-     if(operation==='initialize_snapshot')snapshot=await durableHistory.initializeSnapshot(payload);
-     else if(operation==='append_snapshot')snapshot=await durableHistory.appendSnapshot(payload);
-     else if(operation==='read_snapshot')snapshot=await durableHistory.read(payload.expectedHistoryPin);
+     if(operation==='initialize_snapshot'){
+      initializationWrites++;snapshot=await durableHistory.initializeSnapshot(payload);
+      // The actual filesystem commit succeeded, but its acknowledgement was lost.
+      if(initializationWrites===1)return null;
+     }
+     else if(operation==='append_snapshot'){appendWrites++;snapshot=await durableHistory.appendSnapshot(payload);}
+     else if(operation==='read_snapshot'){historyReads++;snapshot=await durableHistory.read(payload.expectedHistoryPin);}
      else throw Error('HISTORY_HOST_OPERATION');
      return {ok:true,snapshot};
     }catch(e){return {ok:false,error:String(e?.message??'HISTORY_HOST_FAILURE')};}
@@ -1076,8 +1081,19 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
      rootHistoryPin=await samplePage.locator('#review-history-digest').innerText();
      await samplePage.locator('#review-history-durable-panel > summary').click();
-     await samplePage.locator('#review-history-durable-initialize').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
-     assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/initialized/);
+     await samplePage.locator('#review-history-durable-initialize').click();await sampleState('refused');
+     const durableStatus=samplePage.locator('#review-history-durable-status'),durablePin=samplePage.locator('#review-history-durable-pin');
+     assert.equal(await durableStatus.getAttribute('data-state'),'unknown');assert.match(await durableStatus.innerText(),/Save outcome unknown/);
+     assert.equal(await durablePin.inputValue(),rootHistoryPin);assert.equal((await durableHistory.read(rootHistoryPin)).digest,rootHistoryPin);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),rootHistoryPin);
+     assert.equal(initializationWrites,1);assert.equal(appendWrites,0);
+     await durablePin.fill('');assert.equal(await samplePage.locator('#review-history-durable-initialize').isDisabled(),true);
+     await durablePin.fill('sha256:'+'0'.repeat(64));assert.equal(await samplePage.locator('#review-history-durable-append').isDisabled(),true);
+     await samplePage.locator('#review-history-durable-read').click();await sampleState('refused');assert.equal(await durableStatus.getAttribute('data-state'),'unknown');
+     assert.equal(await samplePage.locator('#review-history-durable-append').isDisabled(),true);
+     await durablePin.fill(rootHistoryPin);await samplePage.locator('#review-history-durable-read').click();await sampleState('history_durable_ready');
+     assert.equal(await durableStatus.getAttribute('data-state'),'ready');assert.match(await durableStatus.innerText(),/In-memory history matches it/);
+     assert.equal(historyReads,2);assert.equal(initializationWrites,1);assert.equal(appendWrites,0);
     }
     await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
     assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
@@ -1116,7 +1132,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      await samplePage.locator('#review-history-durable-append').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='stale');
      assert.equal(await samplePage.locator('#review-history-digest').innerText(),localBeforeStale);assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/No retry/);
      await samplePage.locator('#review-history-durable-pin').fill(historyPin);await samplePage.locator('#review-history-durable-read').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
-     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);assert.equal(initializationWrites,1);assert.equal(appendWrites,1);assert.equal(historyReads,3);
      await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
      await samplePage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
      await samplePage.locator('#review-history-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-history-import').click();await sampleState('refused');assert.match(await samplePage.locator('#review-history-digest').innerText(),/No history/);

@@ -327,3 +327,8 @@ For every material task:
 **inspect → implement → adversarially challenge → verify exact source → update this checklist + machine registers + session/decision evidence → commit → re-read remote → continue**
 
 A continuation session should keep executing dependency-ready items while safe and authorized work remains. Stop dependent work only for a genuine external/user-owned input, safety issue or explicit user instruction.
+
+
+## 2026-11-27 — pre-release reconciliation evidence
+
+See [pre-release checkpoint](DEVPOST-PRE-RELEASE.md#2026-11-27--incremental-integration-checkpoint) and [machine-readable inventory](release-integration-inventory.json). V2-ORCH-002 has exact integration CI at `02a2367e4ab1b05a768ae0738cc5d175e80fb5bb` (13/13 workflows successful); preserve host-declared versus verified capability distinction. V2-HIST-010 receives partial #63 recovery hardening at `12478b8824345c483ba96536dd452e412a027bea`; earlier completed evidence is not a substitute for new exact-revision verification. Lost-ack filesystem/browser regression is included in the next candidate; full #63 branch reconciliation remains open under REL-B03. Existing task states are retained deliberately until their complete acceptance evidence is reviewed. No external release authority granted.

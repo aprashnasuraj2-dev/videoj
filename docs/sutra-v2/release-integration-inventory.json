@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-27T12:15:37Z",
+  "repository": "aprashnasuraj2-dev/videoj",
+  "branch": "sutra/master-investigation-ui",
+  "main": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+  "initialCandidate": "70d8f0fef0a57b65034a900afb224ec68f1fa03a",
+  "comparedAgainst": "70d8f0fef0a57b65034a900afb224ec68f1fa03a",
+  "pullRequests": [
+    {
+      "number": 66,
+      "head": "70d8f0fef0a57b65034a900afb224ec68f1fa03a",
+      "status": "integration candidate"
+    },
+    {
+      "number": 65,
+      "head": "4d66414683f7c31a199fa4c4a27257c12d06ae55",
+      "mergeBase": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+      "ahead": 2,
+      "behind": 94,
+      "changedFiles": 8,
+      "disposition": "selective integration; exact CI green",
+      "integratedAt": "02a2367e4ab1b05a768ae0738cc5d175e80fb5bb"
+    },
+    {
+      "number": 63,
+      "head": "cd0c931d437f1fa3f6def66255fb618ed6f81e6a",
+      "mergeBase": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
+      "ahead": 3,
+      "behind": 105,
+      "changedFiles": 16,
+      "disposition": "partial selective integration: lost acknowledgement, host replay and write recovery; full reconciliation open",
+      "integratedAt": "12478b8824345c483ba96536dd452e412a027bea"
+    },
+    {
+      "number": 49,
+      "head": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+      "mergeBase": "9bd76ef8bfd05f323592f21fe4b0841188861693",
+      "ahead": 198,
+      "behind": 651,
+      "disposition": "not merged; path overlap review pending"
+    },
+    {
+      "number": 48,
+      "head": "61a575449c7266aad3b731468c900927a8ba5bc9",
+      "mergeBase": "f4cc6e8d385d7a5e326435630fff6985fdf802cb",
+      "ahead": 281,
+      "behind": 1326,
+      "disposition": "not merged; path overlap review pending"
+    }
+  ],
+  "specification": {
+    "path": "docs/worldwide_agentic_web_mvp_spec.md",
+    "submissionStartUTC": "2026-11-12T04:00:00Z",
+    "atStart": {
+      "profile": "0.2",
+      "commit": "fd872b9221aeb8ff762b75a5badbf84b23c133cc",
+      "blob": "7a09be795cc3eee47f601f1a6bc7dc26d408f7a9"
+    },
+    "current": {
+      "profile": "0.3",
+      "commit": "a0ceda34e4f2e653223e13e63282abc9b60eaf7c",
+      "blob": "b72fcdf433e323e30a6052e9e0c0718b835672c1"
+    },
+    "delta": "Direct file diff changes profile heading, two reference links and typos; no changed normative clauses in this file. External references not frozen by this comparison."
+  },
+  "limits": [
+    "Historical release tags and production deployed SHA not independently verified.",
+    "PR #48/#49 full path-by-path overlap and extraction not finished.",
+    "No live provider calls, external peer, public release or deployment in this checkpoint.",
+    "Release gates remain open until acceptance evidence."
+  ]
+}
