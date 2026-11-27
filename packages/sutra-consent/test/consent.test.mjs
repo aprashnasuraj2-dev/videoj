@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {ConsentError,createConsentInspector,fetchJsonWithConsent,normalizeContact} from '../index.js';
+import {ConsentError,createConsentInspector,createDisclosureConsentInspector,fetchJsonWithConsent,normalizeContact,normalizeDisclosureIntent} from '../index.js';
 const contact=(kind='peer_manifest',extra={})=>({origin:'https://peer.example/',kind,purpose:'Load a declared public peer artifact',disclosure:['network name','requested capability'],network:'checklist',...extra});
 const jsonResponse=(body,url='https://peer.example/agent-manifest.json')=>new Response(JSON.stringify(body),{status:200,headers:{'Content-Type':'application/json'},url});
 test('normalizes only bounded public contact metadata',()=>{
@@ -138,4 +138,28 @@ test('approved JSON contact rejects duplicate decoded field names and records fa
  let calls=0;
  await assert.rejects(fetchJsonWithConsent({inspector,contact:contact(),url:'https://peer.example/agent-manifest.json',fetchImpl:async()=>{calls++;return new Response('{"networks":[],"networ\\u006bs":[{}]}',{headers:{'Content-Type':'application/json'}});}}),e=>e.code==='CONTACT_JSON');
  assert.equal(calls,1);assert.equal(inspector.exportEvents().at(-1).status,'failed');
+});
+
+
+test('one-shot disclosure intent binds exact destination, labels and plan pin without exporting preview values',async()=>{
+ const pin='sha256:'+'a'.repeat(64),intent=normalizeDisclosureIntent({operation:'model_inference',destination:'provider-a/profile-1/model-a',purpose:'Generate one reviewed conditional proposal',disclosure:['ocf25','ocf26'],planPin:pin,preview:{ocf25:'136162',ocf26:'182935'}});
+ assert.equal(intent.planPin,pin);assert.deepEqual(intent.disclosure,['ocf25','ocf26']);assert.equal(intent.preview.ocf25,'136162');
+ for(const bad of [
+  {...intent,planPin:'sha256:'+'0'.repeat(63)},
+  {...intent,disclosure:['ocf25','ocf25']},
+  {...intent,scope:'session'},
+  {...intent,preview:{ocf25:'136162'}}
+ ])assert.throws(()=>normalizeDisclosureIntent(bad),ConsentError);
+ let effects=0;const seen=[];const inspector=createDisclosureConsentInspector({decide:async x=>{seen.push(x);return {decision:'allow',scope:'once'};}});
+ const value=await inspector.perform(intent,async()=>{effects++;return 'ok';});
+ assert.equal(value,'ok');assert.equal(effects,1);assert.equal(seen[0].planPin,pin);assert.equal(seen[0].preview.ocf26,'182935');
+ const exported=JSON.stringify(inspector.exportEvents());assert.doesNotMatch(exported,/136162|182935/);assert.deepEqual(inspector.exportEvents().map(e=>e.type),['intent','decision','outcome']);
+});
+test('one-shot disclosure denial and cancellation prevent the effect',async()=>{
+ const intent={operation:'model_inference',destination:'provider-a/profile-1/model-a',purpose:'Generate one reviewed conditional proposal',disclosure:['ocf25'],planPin:'sha256:'+'b'.repeat(64)};
+ let effects=0;const denied=createDisclosureConsentInspector({decide:async()=>({decision:'deny',scope:'once'})});
+ await assert.rejects(denied.perform(intent,async()=>{effects++;}),e=>e.code==='CONSENT_DENIED');assert.equal(effects,0);
+ let release;const pendingInspector=createDisclosureConsentInspector({decide:async()=>new Promise(resolve=>{release=resolve;})});
+ const pending=pendingInspector.perform(intent,async()=>{effects++;});await new Promise(resolve=>setTimeout(resolve,0));pendingInspector.clearSession();
+ await assert.rejects(pending,e=>e.code==='CANCELLED');release({decision:'allow',scope:'once'});await new Promise(resolve=>setTimeout(resolve,0));assert.equal(effects,0);
 });

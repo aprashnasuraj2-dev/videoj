@@ -1,5 +1,6 @@
 import {createProviderWorkspace} from '../../../packages/sutra-inference/provider-workspace.js';
 import {prepareApprovedExpressionCouncil} from '../../../packages/sutra-knowledge/approved-expression-council.js';
+import {createDisclosureConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
 const by=id=>document.getElementById(id);
 const scope='reviewed-question-bindings-and-conditional-feedback';
@@ -13,11 +14,15 @@ const workspace=createProviderWorkspace({
   return {actualInputBytes:1,actualOutputTokens:8,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};
  }}))
 });
-let enrolled=null,preview=null,busy=false,epoch=0;
+let enrolled=null,preview=null,busy=false,epoch=0,pendingApprovedPin=null;
+const consentInspector=createDisclosureConsentInspector({decide:async intent=>{
+ const allowed=!!preview&&pendingApprovedPin===intent.planPin&&preview.approval.planPin===intent.planPin&&by('operator-approve').checked;
+ return {decision:allowed?'allow':'deny',scope:'once'};
+}});
 const provider=by('operator-provider'),model=by('operator-model'),credential=by('operator-credential'),values=by('operator-values');
 const state=(name,text)=>{by('operator-status').dataset.state=name;by('operator-status').textContent=text;};
 function invalidate(text='Configuration changed. Create a new exact approval preview.'){
- epoch++;preview=null;by('operator-plan').textContent='No approval preview.';by('operator-pin').textContent='';by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;by('operator-result').textContent='';if(enrolled)state('staged',text);else state('idle','No model authority granted.');
+ consentInspector.clearSession();pendingApprovedPin=null;epoch++;preview=null;by('operator-plan').textContent='No approval preview.';by('operator-pin').textContent='';by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;by('operator-result').textContent='';if(enrolled)state('staged',text);else state('idle','No model authority granted.');
 }
 function syncModel(){
  const wanted=provider.value==='local-a'?'local/model-a':'local/model-b';
@@ -63,9 +68,11 @@ by('operator-preview').addEventListener('click',()=>work(async ticket=>{
 }));
 by('operator-run').addEventListener('click',()=>work(async ticket=>{
  if(!preview||!enrolled||!by('operator-approve').checked||preview.profileId!==enrolled.profile.profileId)return;
- const approval=preview.approval,pin=approval.planPin;preview=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;
- const result=await approval.execute({approveDisclosure:true,approvedPlanPin:pin});
- if(ticket!==epoch)return;by('operator-result').textContent='Conditional result: '+(result.candidates[0]?.target.status??'NO_ADMITTED_PROPOSAL')+' · local scripted calls '+calls.length+' · authority '+result.decisionAuthority;
- state('consumed','One-shot approval consumed. Create a new preview before any further run.');controls();
+ const approval=preview.approval,pin=approval.planPin;pendingApprovedPin=pin;
+ const result=await approval.execute({consentInspector,approvedPlanPin:pin});
+ if(ticket!==epoch)return;preview=null;pendingApprovedPin=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;
+ const consentEvents=consentInspector.exportEvents().slice(-3);
+ by('operator-result').textContent='Conditional result: '+(result.candidates[0]?.target.status??'NO_ADMITTED_PROPOSAL')+' · local scripted calls '+calls.length+' · common consent '+(consentEvents.some(x=>x.type==='decision'&&x.decision==='allow')?'once':'missing')+' · authority '+result.decisionAuthority;
+ state('consumed','Common one-shot disclosure consent and model approval consumed. Create a new preview before any further run.');controls();
 }));
 syncModel();controls();

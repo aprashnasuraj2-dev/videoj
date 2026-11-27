@@ -31,11 +31,16 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
   workspace.admitOperation(plan);
  };
  revalidate();
- return Object.freeze({plan,planPin,async execute({approveDisclosure,approvedPlanPin}={}){
-  if(used)fail('CONSUMED');if(approveDisclosure!==true||approvedPlanPin!==planPin)fail('PIN');
-  // Consume even on failure; no retry or substitution under old approval.
+ const destination=config.team.map(x=>x.providerId+'/'+x.profileId+'/'+x.model).join(' | ');
+ const visible=projectCouncilBindings(c,{bindingIds:admitted.bindingIds,includeValues:admitted.includeValues});
+ const consentIntent=freeze({operation:'model_inference',destination,purpose:'Generate conditional proposals from the displayed reviewed binding scope.',disclosure:[...admitted.bindingIds],planPin,...(admitted.includeValues?{preview:Object.fromEntries(visible.map(x=>[x.id,x.valueLexeme]))}:{})});
+ return Object.freeze({plan,planPin,consentIntent,async execute({consentInspector,approvedPlanPin}={}){
+  if(used)fail('CONSUMED');if(approvedPlanPin!==planPin)fail('PIN');if(!consentInspector||typeof consentInspector.perform!=='function')fail('CONSENT');
+  // Consume even on denial/failure; no retry or substitution under old approval.
   used=true;
-  revalidate();
-  return runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal,roundPolicy});
+  return consentInspector.perform(consentIntent,async()=>{
+   revalidate();
+   return runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal,roundPolicy});
+  },{signal});
  }});
 }
