@@ -2346,7 +2346,7 @@
         {
           "sourceRevision": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45567774777/job/139046680946",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, legacy release 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, release-materializer 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
         }
       ]
     },
@@ -2361,7 +2361,7 @@
         {
           "sourceRevision": "0d6305526d28df4064360162f1125835ca8f9962",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569144216/job/139051201292",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, legacy release 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, release-materializer 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
         }
       ]
     },
@@ -2389,7 +2389,7 @@
           "id": "V2-D03-DIAGNOSIS",
           "sourceRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45570334106 and push 45570324195, ingress 45570334100, impact 45570334101, evaluation 45570334144, Open Kit 45570334105, legacy release 45570334117, publisher 45570334103, browser matrix 45570334116. Both browser jobs passed; independent Python accepted four actual diagnosis exports and rejected 28 mutations (7+8+7+6). Both knowledge jobs passed exhaustive 108-configuration direct oracle. Separate contexts preserved six original attack exports, two capsule/pin pairs, and four diagnosis exports. Scoped synthetic model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570334106 and push 45570324195, ingress 45570334100, impact 45570334101, evaluation 45570334144, Open Kit 45570334105, release-materializer 45570334117, publisher 45570334103, browser matrix 45570334116. Both browser jobs passed; independent Python accepted four actual diagnosis exports and rejected 28 mutations (7+8+7+6). Both knowledge jobs passed exhaustive 108-configuration direct oracle. Separate contexts preserved six original attack exports, two capsule/pin pairs, and four diagnosis exports. Scoped synthetic model."
         }
       ]
     },
@@ -2406,7 +2406,7 @@
           "id": "V2-D04-GUIDE",
           "sourceRevision": "793187573699da06e16bd5b337349007158abdb6",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570855086/job/139056839918",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45570855086 and push 45570848503, ingress 45570855153, impact 45570855061, evaluation 45570855254, Open Kit 45570855237, legacy release 45570855300, publisher 45570855074, browser matrix 45570855215. Actual 12-action guided route passed keyboard start, first-viewport checks at 360x800 and 1440x900, exact guided capsule equality to independently verified current bytes, pin mismatch, exact restoration, zero external requests. PR browser artifact 15001768812 SHA-256 2d54dc4a85610950e04a07af46a642c4e5b6fe6fec99d39e939a71fe96952699 verified locally; actual mobile and desktop screenshots inspected; elapsed 891 ms is automated Chromium timing, not a human usability study. No deployment."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570855086 and push 45570848503, ingress 45570855153, impact 45570855061, evaluation 45570855254, Open Kit 45570855237, release-materializer 45570855300, publisher 45570855074, browser matrix 45570855215. Actual 12-action guided route passed keyboard start, first-viewport checks at 360x800 and 1440x900, exact guided capsule equality to independently verified current bytes, pin mismatch, exact restoration, zero external requests. PR browser artifact 15001768812 SHA-256 2d54dc4a85610950e04a07af46a642c4e5b6fe6fec99d39e939a71fe96952699 verified locally; actual mobile and desktop screenshots inspected; elapsed 891 ms is automated Chromium timing, not a human usability study. No deployment."
         }
       ]
     },
@@ -2423,7 +2423,7 @@
           "id": "V2-D05-WORLD-TRACE",
           "sourceRevision": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45571528317/job/139059084388",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, legacy release 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, release-materializer 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
         }
       ]
     },
@@ -2440,7 +2440,7 @@
           "id": "V2-D06-ASSUMPTIONS",
           "sourceRevision": "c42248a63399263f9cb4651024df9422d3d440c6",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572062202/job/139060857950",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, legacy release 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, release-materializer 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
         }
       ]
     },
@@ -2457,7 +2457,7 @@
           "id": "V2-D07-OFFLINE",
           "sourceRevision": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572793560/job/139063288670",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, legacy release 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, release-materializer 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
         }
       ]
     },
@@ -2475,7 +2475,7 @@
           "id": "V2-D08-ROOT-IMPACT",
           "sourceRevision": "58e133202fa83765ee79ee6d8a18697999e47fb5",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573411050/job/139065329647",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, legacy release 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, release-materializer 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
         }
       ]
     },
@@ -2493,7 +2493,7 @@
           "id": "V2-D09-WIRE-PARITY",
           "sourceRevision": "91092e8415debce567e1676405d0afecc6ef855b",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573886268/job/139066915828",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45573886268 and push 45573875402, ingress 45573886271, impact 45573886357, evaluation 45573886529, Open Kit 45573886298, legacy release 45573886479, publisher 45573886242, browser matrix 45573886261. Actual Chromium-exported current/old capsules and downloaded independent Python verifier passed 77 explicit differential controls: 13 accepted, 64 refused; both verifiers agreed on every refusal reason and all accepted identities. Not universal parser equivalence."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573886268 and push 45573875402, ingress 45573886271, impact 45573886357, evaluation 45573886529, Open Kit 45573886298, release-materializer 45573886479, publisher 45573886242, browser matrix 45573886261. Actual Chromium-exported current/old capsules and downloaded independent Python verifier passed 77 explicit differential controls: 13 accepted, 64 refused; both verifiers agreed on every refusal reason and all accepted identities. Not universal parser equivalence."
         }
       ]
     },
@@ -2511,7 +2511,7 @@
           "id": "V2-D10-PINNED-CASE",
           "sourceRevision": "43070237e15343d75f3db1a9be19c33342ca2326",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45574455950/job/139068811666",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, legacy release 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, release-materializer 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
         }
       ]
     },
@@ -2527,7 +2527,7 @@
           "id": "V2-D11-ALIGNED-CASE",
           "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45575004185/job/139070646626",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, legacy release 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, release-materializer 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
         }
       ]
     },
@@ -2565,7 +2565,7 @@
           "id": "V2-D12-ALIGNED-CAPSULE",
           "sourceRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567",
-          "description": "All nine exact-source workflows succeeded: knowledge PR 45577083295 and push 45577073214, ingress 45577083241, impact 45577083299, evaluation 45577083367, Open Kit 45577083228, legacy release 45577083254, publisher 45577083528, browser matrix 45577083252. Both knowledge jobs passed 61 tests, including maximum eight-observation path and 256 KiB aggregate refusal. Actual Chromium current/old aligned capsules and independent snapshot pins verified in a fresh tab, one-byte tamper refused, exact restore, stale pin and case pin mismatch refused. Both browser jobs passed 27 explicit aligned parity controls (4 accepted, 23 refused), including both profile directions and exact expected refusal reasons. Actual downloaded 68379-byte independent verifier SHA-256 f68e9b9fe9ca0a67d26cb953c6169c3a2f5e5894e2ab42559dcb69769476f3da matched deterministic local rebuild. Failed revisions 12e2d7b and 88f9446 each had seven passing auxiliary workflows and both knowledge workflows failed. Scoped exact aligned snapshot with two caller-held pins, not authenticity or freshness."
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45577083295 and push 45577073214, ingress 45577083241, impact 45577083299, evaluation 45577083367, Open Kit 45577083228, release-materializer 45577083254, publisher 45577083528, browser matrix 45577083252. Both knowledge jobs passed 61 tests, including maximum eight-observation path and 256 KiB aggregate refusal. Actual Chromium current/old aligned capsules and independent snapshot pins verified in a fresh tab, one-byte tamper refused, exact restore, stale pin and case pin mismatch refused. Both browser jobs passed 27 explicit aligned parity controls (4 accepted, 23 refused), including both profile directions and exact expected refusal reasons. Actual downloaded 68379-byte independent verifier SHA-256 f68e9b9fe9ca0a67d26cb953c6169c3a2f5e5894e2ab42559dcb69769476f3da matched deterministic local rebuild. Failed revisions 12e2d7b and 88f9446 each had seven passing auxiliary workflows and both knowledge workflows failed. Scoped exact aligned snapshot with two caller-held pins, not authenticity or freshness."
         }
       ]
     },
@@ -2583,7 +2583,7 @@
           "id": "V2-D13-MEASUREMENT-RANGE",
           "sourceRevision": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577758522/job/139079802299",
-          "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, legacy release 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
+          "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, release-materializer 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
         }
       ]
     },
@@ -2600,7 +2600,7 @@
           "id": "V2-D14-WORLD-COVERAGE",
           "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45578490574/job/139082271228",
-          "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, legacy release 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
+          "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, release-materializer 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
         }
       ]
     },
@@ -2628,7 +2628,7 @@
           "id": "V2-D15-COMPETING-PROPOSAL",
           "sourceRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592",
-          "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, legacy release 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
+          "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, release-materializer 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
         }
       ]
     },
@@ -2645,7 +2645,7 @@
           "id": "V2-D16-CROSS-BRANCH-CLASH",
           "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45580198159/job/139088020789",
-          "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, legacy release 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
+          "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, release-materializer 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
         }
       ]
     },
