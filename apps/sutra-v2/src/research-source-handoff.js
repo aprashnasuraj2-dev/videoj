@@ -31,6 +31,9 @@ export async function prepareAutonomousSourceCandidate({report,reportPin,sourceI
   if(candidates.length!==1||!Number.isSafeInteger(selected.index)||selected.index<0)fail('CLAIM');
   const cite=candidates[0].citations?.[selected.index],l=cite?.locator;
   if(!cite||cite.sourceId!==sourceId||cite.sourceDigest!==d.textDigest||l?.coordinateSystem!=='utf16-extracted-text'||!Number.isSafeInteger(l.startOffset)||!Number.isSafeInteger(l.endOffset)||l.startOffset<0||l.endOffset<=l.startOffset||l.endOffset>text.length||text.slice(l.startOffset,l.endOffset)!==cite.quote||!passages.some(p=>p.start<=l.startOffset&&p.end>=l.endOffset&&p.page===(l.page??null)))fail('CITATION');
+  const matching=passages.filter(p=>p.start<=l.startOffset&&p.end>=l.endOffset&&p.page===(l.page??null));
+  const passageIds=await Promise.all(matching.map(async p=>'passage_'+(await digest(JSON.stringify([sourceId,d.textDigest,p.start,p.end]))).slice(7,31)));
+  if(!passageIds.includes(cite.passageId)||cite.verification!=='exact_span_only'||candidates[0].truthStatus!=='UNVERIFIED'||!['candidate_reviewed','candidate_qualified'].includes(candidates[0].publicationStatus))fail('CITATION');
   selection=Object.freeze({start:l.startOffset,end:l.endOffset,quote:cite.quote,claimId:selected.claimId});
  }
  Object.freeze(provenance);for(const row of [...provenance.pages,...provenance.passages])Object.freeze(row);Object.freeze(provenance.pages);Object.freeze(provenance.passages);
