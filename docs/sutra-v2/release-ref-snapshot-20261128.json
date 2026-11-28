@@ -673,7 +673,65 @@
           "changes": 48
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": ".github/workflows/sutra-v2-operator-browser.yml",
+          "source": "2cf72e4ad546deb9f1d237a2e35304ad0adc15bc",
+          "main": "eb675deb2c0f84aa737d09c44d4bdb0c225e898e",
+          "candidate": "eb675deb2c0f84aa737d09c44d4bdb0c225e898e",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/index.html",
+          "source": "6138f2a5eb1a77d0eb668a1bb416520472f1f817",
+          "main": "47cddd80fb2eb7a0195da0645867751a69b7a831",
+          "candidate": "f0d32214b84d8bd9ad750670244991fe419e378b",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/src/main.js",
+          "source": "10aaa3af6a9109f685311a3a48289f0ce8b54fad",
+          "main": "10aaa3af6a9109f685311a3a48289f0ce8b54fad",
+          "candidate": "10aaa3af6a9109f685311a3a48289f0ce8b54fad",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "apps/sutra-v2/src/operator-model-console.js",
+          "source": "3d8f71e97a3b8cba16ad26f2b67ed837947cd5b9",
+          "main": "ca35ddbfa7886404460d5857d33dba5d4dbfa67e",
+          "candidate": "307916dcbe4745307dfe55030bfe90db6618ff53",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/test/model-approval-browser.cjs",
+          "source": "6280c9373da58e39d1d5ed19b70a9c5ed3a45c65",
+          "main": "ff21dc41809c8efcb4dc78fa756496bcf85ea709",
+          "candidate": "0f604f1ccdc7567677a4fb3617b286e2326e0c98",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/01-model-orchestration.md",
+          "source": "d9185e559ae944bb2e1bc87991842a289a18be9b",
+          "main": "d9185e559ae944bb2e1bc87991842a289a18be9b",
+          "candidate": "d9185e559ae944bb2e1bc87991842a289a18be9b",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/approved-expression-council.js",
+          "source": "6eb9ec84eece734b00721303e7b0cd79626dbec1",
+          "main": "0911c6036d165f6e95cc1ff599f8b68b8657baa1",
+          "candidate": "f24059719f1b71ad085f5f43fbb5a914d5e5a6da",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/model-substitution.test.mjs",
+          "source": "6a19468a191771d056ae32df8e5d1a77b4f85e80",
+          "main": "3607f5293f3f789e196abb5a75e970a25a056928",
+          "candidate": "3607f5293f3f789e196abb5a75e970a25a056928",
+          "disposition": "newer-or-divergent"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/02-persistent-knowledge",
@@ -730,7 +788,72 @@
           "changes": 53
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/02-persistent-knowledge.md",
+          "source": "b1eb3d8ff5d1ed408ef29b14e07ececd8e747e6f",
+          "main": "b7443eefd3bb1f7d96d3b59823f51a6a1ee0fc2b",
+          "candidate": "b7443eefd3bb1f7d96d3b59823f51a6a1ee0fc2b",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "packages/sutra-knowledge/history-extension.js",
+          "source": "9658486570f2cd3ba840c7de38ed7db292b8e7d8",
+          "main": "9658486570f2cd3ba840c7de38ed7db292b8e7d8",
+          "candidate": "9658486570f2cd3ba840c7de38ed7db292b8e7d8",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/history-witness-client.js",
+          "source": "f1b3484b427acd1141e01b96edf917965a77f6ec",
+          "main": "f1b3484b427acd1141e01b96edf917965a77f6ec",
+          "candidate": "f1b3484b427acd1141e01b96edf917965a77f6ec",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/index.js",
+          "source": "d60cd96c8ac6f24b8fed8c875b63ef865d6a0b7c",
+          "main": "d60cd96c8ac6f24b8fed8c875b63ef865d6a0b7c",
+          "candidate": "d60cd96c8ac6f24b8fed8c875b63ef865d6a0b7c",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/local-history-store.mjs",
+          "source": "f0fcc54d167ebfd8120af16e91ae67b2f99d9c7a",
+          "main": "a0ab68a9e41825e86317f4a05cd3d6ff7ef37846",
+          "candidate": "a0ab68a9e41825e86317f4a05cd3d6ff7ef37846",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/history-extension.test.mjs",
+          "source": "cb34391a55998850a825fe54f4ba694ead4ede93",
+          "main": "cb34391a55998850a825fe54f4ba694ead4ede93",
+          "candidate": "cb34391a55998850a825fe54f4ba694ead4ede93",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/history-witness-client.test.mjs",
+          "source": "584de8449cf9e89df28d8a6dea4ff232e6fe5a09",
+          "main": "584de8449cf9e89df28d8a6dea4ff232e6fe5a09",
+          "candidate": "584de8449cf9e89df28d8a6dea4ff232e6fe5a09",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/local-history-store.test.mjs",
+          "source": "5c536f70064082d8075e3cca005d8e8d5486f7be",
+          "main": "5c536f70064082d8075e3cca005d8e8d5486f7be",
+          "candidate": "5c536f70064082d8075e3cca005d8e8d5486f7be",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/revision-dependency-closure.test.mjs",
+          "source": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b",
+          "main": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b",
+          "candidate": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/03-semantic-compilation",
@@ -802,7 +925,93 @@
           "changes": 57
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-ATTRIBUTION.md",
+          "source": "5d7a7c7516faa8540b0025262165e920b76cbdbe",
+          "main": "5d7a7c7516faa8540b0025262165e920b76cbdbe",
+          "candidate": "5d7a7c7516faa8540b0025262165e920b76cbdbe",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt",
+          "source": "fb3b513238ba5ec7e0799cb1190ff30c759a5bdf",
+          "main": "fb3b513238ba5ec7e0799cb1190ff30c759a5bdf",
+          "candidate": "fb3b513238ba5ec7e0799cb1190ff30c759a5bdf",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/03-semantic-compilation.md",
+          "source": "ac11cec30e6dbef25155e54edd95e0172cc8aaeb",
+          "main": "ac11cec30e6dbef25155e54edd95e0172cc8aaeb",
+          "candidate": "ac11cec30e6dbef25155e54edd95e0172cc8aaeb",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "docs/sutra/tools/impact.test.mjs",
+          "source": "12c206fab449359d00c6ed6098fd75fab15e4f6f",
+          "main": "574853fe970c99bdd0d2cecf05114cb0e4391458",
+          "candidate": "2f8c57fdc50b0c5411c9add63fa4fc528dd7f410",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "docs/sutra/verification-map.json",
+          "source": "b7a9152e5c39f304c9ec763c1daf11d99378b7c3",
+          "main": "47deb459d6adee18a3e5dbde1e89219d4b67b643",
+          "candidate": "7bc2eee7ba0c94831bb6ae127adaf46fc5d3ad11",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/finqa-public-test-semantic.json",
+          "source": "ae412f1d598a108c26d4cfe5221bb1b7ff603191",
+          "main": "ae412f1d598a108c26d4cfe5221bb1b7ff603191",
+          "candidate": "ae412f1d598a108c26d4cfe5221bb1b7ff603191",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/finqa-semantic-profile.js",
+          "source": "3b0ebb9a36f3e8db079b9fd0dfd785cf35495061",
+          "main": "3b0ebb9a36f3e8db079b9fd0dfd785cf35495061",
+          "candidate": "3b0ebb9a36f3e8db079b9fd0dfd785cf35495061",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/question-mapping-review.js",
+          "source": "8a52d0ea5227a69ef68706cdb7ae965d5905b5f3",
+          "main": "8a52d0ea5227a69ef68706cdb7ae965d5905b5f3",
+          "candidate": "8a52d0ea5227a69ef68706cdb7ae965d5905b5f3",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_finqa_semantic.py",
+          "source": "f1a934d31542763ef6c45918f2d3bedb078ed9ec",
+          "main": "f1a934d31542763ef6c45918f2d3bedb078ed9ec",
+          "candidate": "f1a934d31542763ef6c45918f2d3bedb078ed9ec",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_question_mapping_review.py",
+          "source": "14d7983dec072ad17a78321b75731b2899055855",
+          "main": "14d7983dec072ad17a78321b75731b2899055855",
+          "candidate": "14d7983dec072ad17a78321b75731b2899055855",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/finqa-semantic-profile.test.mjs",
+          "source": "8315c57207bddb6e05e8f3dd94934341fd576612",
+          "main": "8315c57207bddb6e05e8f3dd94934341fd576612",
+          "candidate": "8315c57207bddb6e05e8f3dd94934341fd576612",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/question-mapping-review.test.mjs",
+          "source": "d9d16d4758a30cc48b053c396bce6d37b6163618",
+          "main": "d9d16d4758a30cc48b053c396bce6d37b6163618",
+          "candidate": "d9d16d4758a30cc48b053c396bce6d37b6163618",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/04-evidence-acquisition",
@@ -839,7 +1048,44 @@
           "changes": 20
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/04-evidence-acquisition.md",
+          "source": "2a5eb507ce96d76247507333155e127407a492ed",
+          "main": "2a5eb507ce96d76247507333155e127407a492ed",
+          "candidate": "2a5eb507ce96d76247507333155e127407a492ed",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/acquisition-path.js",
+          "source": "9e84166ef1ffb06d74fbecfa87d704cd35580bc7",
+          "main": "9e84166ef1ffb06d74fbecfa87d704cd35580bc7",
+          "candidate": "9e84166ef1ffb06d74fbecfa87d704cd35580bc7",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/authenticated-acquisition.js",
+          "source": "940a0cdbe6743df8dbdc09b009a509ac9bfb6c53",
+          "main": "940a0cdbe6743df8dbdc09b009a509ac9bfb6c53",
+          "candidate": "940a0cdbe6743df8dbdc09b009a509ac9bfb6c53",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/authenticated-acquisition.test.mjs",
+          "source": "fcf284075c53a46a46459f1dbdac46a5a718bbfe",
+          "main": "fcf284075c53a46a46459f1dbdac46a5a718bbfe",
+          "candidate": "fcf284075c53a46a46459f1dbdac46a5a718bbfe",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/robust-acquisition.test.mjs",
+          "source": "a98f5e19dbcef936519bb5b27d2fbdf5c33e1c1e",
+          "main": "a98f5e19dbcef936519bb5b27d2fbdf5c33e1c1e",
+          "candidate": "a98f5e19dbcef936519bb5b27d2fbdf5c33e1c1e",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/05-independent-verification",
@@ -866,7 +1112,30 @@
           "changes": 45
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/05-independent-verification.md",
+          "source": "e71fe31a3c5d3967521485a79e2d061aa192facd",
+          "main": "e71fe31a3c5d3967521485a79e2d061aa192facd",
+          "candidate": "e71fe31a3c5d3967521485a79e2d061aa192facd",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/independent-generated-replay.test.mjs",
+          "source": "f1a31f76881e10d7f5f336bcaa98148e1042c1da",
+          "main": "f1a31f76881e10d7f5f336bcaa98148e1042c1da",
+          "candidate": "f1a31f76881e10d7f5f336bcaa98148e1042c1da",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/reviewed-interval.test.mjs",
+          "source": "6c4e9b1285b1ad12ea58e90dd31b687c95b62045",
+          "main": "6c4e9b1285b1ad12ea58e90dd31b687c95b62045",
+          "candidate": "6c4e9b1285b1ad12ea58e90dd31b687c95b62045",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/06-counterfactuals",
@@ -903,7 +1172,44 @@
           "changes": 17
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/06-counterfactuals.md",
+          "source": "4c9a24b5fe0e5cbeaeb57b1e1ef4529359a6bd1a",
+          "main": "4c9a24b5fe0e5cbeaeb57b1e1ef4529359a6bd1a",
+          "candidate": "4c9a24b5fe0e5cbeaeb57b1e1ef4529359a6bd1a",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/grid-expansion-audit.js",
+          "source": "01b58297fa307546fa442976a80b3c04aed1adc3",
+          "main": "01b58297fa307546fa442976a80b3c04aed1adc3",
+          "candidate": "01b58297fa307546fa442976a80b3c04aed1adc3",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/streaming-counterfactual-search.js",
+          "source": "f711a103b0de670b82cbc67c7f17ab3bc24f8355",
+          "main": "f711a103b0de670b82cbc67c7f17ab3bc24f8355",
+          "candidate": "f711a103b0de670b82cbc67c7f17ab3bc24f8355",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/semantic-probe-suite.test.mjs",
+          "source": "c59ddb20ef4da7a4d87122a384bc2dfac900e9fe",
+          "main": "c59ddb20ef4da7a4d87122a384bc2dfac900e9fe",
+          "candidate": "c59ddb20ef4da7a4d87122a384bc2dfac900e9fe",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/streaming-counterfactual-search.test.mjs",
+          "source": "fcb4f76fa42ebb25ac1c55d9f5e9d9ba0f570951",
+          "main": "fcb4f76fa42ebb25ac1c55d9f5e9d9ba0f570951",
+          "candidate": "fcb4f76fa42ebb25ac1c55d9f5e9d9ba0f570951",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/07-security-recovery",
@@ -970,7 +1276,86 @@
           "changes": 9
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/07-security-recovery.md",
+          "source": "6c4127847ef908c81faad06feeece2cf51125b4f",
+          "main": "6c4127847ef908c81faad06feeece2cf51125b4f",
+          "candidate": "6c4127847ef908c81faad06feeece2cf51125b4f",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-inference/protocol-workspace.js",
+          "source": "b094518d57a403945358da9aaa3b51e16eea9153",
+          "main": "b094518d57a403945358da9aaa3b51e16eea9153",
+          "candidate": "bb23145a126683fc41c4be03d94dbfcf863181a3",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-inference/provider-workspace.js",
+          "source": "8ffb9445ab29057b14e5b83209050e28ba069b60",
+          "main": "8ffb9445ab29057b14e5b83209050e28ba069b60",
+          "candidate": "23447dc51265b2c01e41181cc399c5fcec26a4ce",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-inference/test/encoded-wire-boundary.test.mjs",
+          "source": "eee67d04ccde87b685ea3aaeb812f4c866fbaf4c",
+          "main": "eee67d04ccde87b685ea3aaeb812f4c866fbaf4c",
+          "candidate": "eee67d04ccde87b685ea3aaeb812f4c866fbaf4c",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "source": "10a3643129dc8f47d20faea96b85379c324753d1",
+          "main": "10a3643129dc8f47d20faea96b85379c324753d1",
+          "candidate": "bd583f9644bc198c8032be6ead2a6d064fdd5c72",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-inference/test/route-credential-boundary.test.mjs",
+          "source": "804008143b8de1bd47228e44fa45abf9e6f5b646",
+          "main": "804008143b8de1bd47228e44fa45abf9e6f5b646",
+          "candidate": "804008143b8de1bd47228e44fa45abf9e6f5b646",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/agent-council.js",
+          "source": "7e812a8aacc44dd669b115fd258d7476f3193a36",
+          "main": "7e812a8aacc44dd669b115fd258d7476f3193a36",
+          "candidate": "7e812a8aacc44dd669b115fd258d7476f3193a36",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/binding-suggestion-request.js",
+          "source": "e18858f7f9277b8db142a83986d7e1dc6d8a7f7a",
+          "main": "e18858f7f9277b8db142a83986d7e1dc6d8a7f7a",
+          "candidate": "e18858f7f9277b8db142a83986d7e1dc6d8a7f7a",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/council-scheduler.js",
+          "source": "8881eadb32e14b35138d68a0c350a03f5ae42d7a",
+          "main": "8881eadb32e14b35138d68a0c350a03f5ae42d7a",
+          "candidate": "2ffb36915d437e0b64550c6ad75180535df9fd5b",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/expression-council.js",
+          "source": "ef746d63ffa0046098f81b45261b16a94114f57b",
+          "main": "ef746d63ffa0046098f81b45261b16a94114f57b",
+          "candidate": "47dfa0cdf73b8519f897cd416022114a692accf5",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/expression-council.test.mjs",
+          "source": "c036c066c0b3f322f3d095ba19618f58f2a5e0a7",
+          "main": "c036c066c0b3f322f3d095ba19618f58f2a5e0a7",
+          "candidate": "f88aaeb02abdf4f907a3e5a20a26bd64bfec09a7",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/08-unified-workspace",
@@ -1042,7 +1427,93 @@
           "changes": 24
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": ".github/workflows/sutra-v2-workspace-browser.yml",
+          "source": "8a070cc163ade2deb6ed2aaa62686c9223d086b7",
+          "main": "16bf10f849213c1c18d643768d9bb81ae4f74311",
+          "candidate": "6c3b71de767f16289a10d282a8d8381880ae0a43",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/index.html",
+          "source": "454e12f2873c4e7e8aa1e9256c7878cd7b914ebe",
+          "main": "47cddd80fb2eb7a0195da0645867751a69b7a831",
+          "candidate": "f0d32214b84d8bd9ad750670244991fe419e378b",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/src/reviewed-workspace.js",
+          "source": "ea200442dc15f44ef6a113e4b148cab67104bca5",
+          "main": "ab2e6a38766e9ff74da000004461b8129e19e220",
+          "candidate": "abd429e344eab1848826ee04495565450b816df9",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/src/style.css",
+          "source": "099334b25bce582a5f4f8782e24ebc90903d94bc",
+          "main": "d058720925954c0ba73e6dbaa91dffc20b2a9d9f",
+          "candidate": "d058720925954c0ba73e6dbaa91dffc20b2a9d9f",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/test/browser.cjs",
+          "source": "02166353e1002b79e31c97d91c2c35268c50be72",
+          "main": "217db1623d5ec6d46beba75a4f7fdf1357d3c3bb",
+          "candidate": "1328dfddfdb11b9a44217f57d668807d25519480",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "apps/sutra-v2/test/workspace-accessibility.cjs",
+          "source": "7ab3b898cd4fcbb558909af05e00a14aa46dac3d",
+          "main": "b2611c3d2d3a11952bef94afcf0a78e11c1bcbbd",
+          "candidate": "b2611c3d2d3a11952bef94afcf0a78e11c1bcbbd",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/08-unified-workspace.md",
+          "source": "f8cd677149dad69a9cc6db7a73cdd0eef50b21ef",
+          "main": "f8cd677149dad69a9cc6db7a73cdd0eef50b21ef",
+          "candidate": "f8cd677149dad69a9cc6db7a73cdd0eef50b21ef",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/draft-checkpoint.js",
+          "source": "03b8c470eaf2e39facaef2f868b0a6dc1834f359",
+          "main": "03b8c470eaf2e39facaef2f868b0a6dc1834f359",
+          "candidate": "03b8c470eaf2e39facaef2f868b0a6dc1834f359",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_workspace_checkpoint.py",
+          "source": "2c93bdf9a5c50a027d41295d55458fb33dffa12d",
+          "main": "2c93bdf9a5c50a027d41295d55458fb33dffa12d",
+          "candidate": "2c93bdf9a5c50a027d41295d55458fb33dffa12d",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/draft-checkpoint.test.mjs",
+          "source": "b622f9604a851e2c9b6e74c5fcc742cdd50f43ec",
+          "main": "b622f9604a851e2c9b6e74c5fcc742cdd50f43ec",
+          "candidate": "b622f9604a851e2c9b6e74c5fcc742cdd50f43ec",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/workspace-checkpoint.test.mjs",
+          "source": "aca61ce986f5c2ed282d188d81c6a8f691222451",
+          "main": "aca61ce986f5c2ed282d188d81c6a8f691222451",
+          "candidate": "aca61ce986f5c2ed282d188d81c6a8f691222451",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/workspace-checkpoint.js",
+          "source": "92b8184acdbe30c63667c54f2ff005aac9ec2a96",
+          "main": "92b8184acdbe30c63667c54f2ff005aac9ec2a96",
+          "candidate": "92b8184acdbe30c63667c54f2ff005aac9ec2a96",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/09-specialist-domains",
@@ -1079,7 +1550,44 @@
           "changes": 30
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": "docs/sutra-v2/workstreams/09-specialist-domains.md",
+          "source": "3b5006779a3284b9d99ecdb217aed8a7452a582a",
+          "main": "3b5006779a3284b9d99ecdb217aed8a7452a582a",
+          "candidate": "3b5006779a3284b9d99ecdb217aed8a7452a582a",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/examples/public-source-specialists.mjs",
+          "source": "13f66cb767edfcf939b7d8daeecda8a6805ed6c6",
+          "main": "13f66cb767edfcf939b7d8daeecda8a6805ed6c6",
+          "candidate": "13f66cb767edfcf939b7d8daeecda8a6805ed6c6",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_public_source_specialists.py",
+          "source": "c17a4c43fd7801a20e787dd4da2f050bb6680d6c",
+          "main": "c17a4c43fd7801a20e787dd4da2f050bb6680d6c",
+          "candidate": "c17a4c43fd7801a20e787dd4da2f050bb6680d6c",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/public-source-specialists.test.mjs",
+          "source": "04c30e955100ad0241c29d2d134bfb815440d05f",
+          "main": "04c30e955100ad0241c29d2d134bfb815440d05f",
+          "candidate": "04c30e955100ad0241c29d2d134bfb815440d05f",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/specialist-revision-journey.test.mjs",
+          "source": "16f6ca9d8f35af80fc1bce1c1eae47fb256a453c",
+          "main": "16f6ca9d8f35af80fc1bce1c1eae47fb256a453c",
+          "candidate": "16f6ca9d8f35af80fc1bce1c1eae47fb256a453c",
+          "disposition": "main-identical"
+        }
+      ]
     },
     {
       "branch": "sutra/v2-parallel/10-benchmark",
@@ -1156,7 +1664,100 @@
           "changes": 5
         }
       ],
-      "tooLarge": false
+      "tooLarge": false,
+      "pathBlobs": [
+        {
+          "path": ".github/workflows/sutra-v2-finqa-benchmark.yml",
+          "source": "21bab37aa904831557c6076ac822500f2ee04e49",
+          "main": "bdbaac3d41a9ce8120fcbc86a25eaabd3fbb56d2",
+          "candidate": "bdbaac3d41a9ce8120fcbc86a25eaabd3fbb56d2",
+          "disposition": "newer-or-divergent"
+        },
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md",
+          "source": "79323b6f07495d0d1bb57241a94e9de6684c7e07",
+          "main": "79323b6f07495d0d1bb57241a94e9de6684c7e07",
+          "candidate": "79323b6f07495d0d1bb57241a94e9de6684c7e07",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/10-benchmark.md",
+          "source": "3bbecd536ff104eab090ab4626813d768331acaa",
+          "main": "3bbecd536ff104eab090ab4626813d768331acaa",
+          "candidate": "3bbecd536ff104eab090ab4626813d768331acaa",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-budget-admission.js",
+          "source": "77a45077cfaf87acc21040a1b4fccecf6223248d",
+          "main": "77a45077cfaf87acc21040a1b4fccecf6223248d",
+          "candidate": "77a45077cfaf87acc21040a1b4fccecf6223248d",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-paired-score.js",
+          "source": "0c45524fd1dc90419ba2edf4e8dd3bd21679fd18",
+          "main": "0c45524fd1dc90419ba2edf4e8dd3bd21679fd18",
+          "candidate": "0c45524fd1dc90419ba2edf4e8dd3bd21679fd18",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-split-audit.js",
+          "source": "20fe49ef3d15360416e76c3c223deab185b464f0",
+          "main": "20fe49ef3d15360416e76c3c223deab185b464f0",
+          "candidate": "20fe49ef3d15360416e76c3c223deab185b464f0",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/finqa-public-test-heldout.json",
+          "source": "b30efaa1d9f64aea80794c129d3dcf58ff0e2518",
+          "main": "b30efaa1d9f64aea80794c129d3dcf58ff0e2518",
+          "candidate": "b30efaa1d9f64aea80794c129d3dcf58ff0e2518",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/run-finqa-heldout.mjs",
+          "source": "0fd6680ab5647233b7bf1a90fedd9dad12b57972",
+          "main": "0fd6680ab5647233b7bf1a90fedd9dad12b57972",
+          "candidate": "0fd6680ab5647233b7bf1a90fedd9dad12b57972",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/finqa-heldout-benchmark.js",
+          "source": "810e889afaf468b56f3db64266e5ca0b2d40e660",
+          "main": "810e889afaf468b56f3db64266e5ca0b2d40e660",
+          "candidate": "810e889afaf468b56f3db64266e5ca0b2d40e660",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/score_finqa_heldout.py",
+          "source": "31a98c42f8969c3e1fc003689221163e14177d49",
+          "main": "31a98c42f8969c3e1fc003689221163e14177d49",
+          "candidate": "31a98c42f8969c3e1fc003689221163e14177d49",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/benchmark-budget-admission.test.mjs",
+          "source": "4e43c85d9bc5a7ff0f8baf95893044a8aacb3397",
+          "main": "4e43c85d9bc5a7ff0f8baf95893044a8aacb3397",
+          "candidate": "4e43c85d9bc5a7ff0f8baf95893044a8aacb3397",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/benchmark-paired-score.test.mjs",
+          "source": "f925f72a578dbf930c7c9849e8abfe64e0947d2f",
+          "main": "f925f72a578dbf930c7c9849e8abfe64e0947d2f",
+          "candidate": "f925f72a578dbf930c7c9849e8abfe64e0947d2f",
+          "disposition": "main-identical"
+        },
+        {
+          "path": "packages/sutra-knowledge/test/finqa-heldout-benchmark.test.mjs",
+          "source": "90dace82d09bb102a560401a4252eaf1f5898834",
+          "main": "90dace82d09bb102a560401a4252eaf1f5898834",
+          "candidate": "90dace82d09bb102a560401a4252eaf1f5898834",
+          "disposition": "main-identical"
+        }
+      ]
     }
   ],
   "cloudflare": {
@@ -1195,5 +1796,20 @@
     },
     "qualification": "Read-only configuration observation. Deployment commit is platform-reported metadata, not independently verified artifact bytes. No secret values collected. No deployment, DNS or rollback performed."
   },
-  "qualification": "All returned branch pages (100 + final page), tag matching refs and releases; historical source comparisons, not blanket semantic equivalence. Refresh immediately before merge."
+  "qualification": "All returned branch pages (100 + final page), tag matching refs and releases; historical source comparisons, not blanket semantic equivalence. Refresh immediately before merge.",
+  "activeTree": {
+    "mainBlobs": 1035,
+    "candidateBlobs": 1179,
+    "retiredPathMatches": [
+      "apps/sutra/src/media-player/video/dhago.css"
+    ],
+    "rootBuildPaths": [
+      "apps/sutra-peer/package.json",
+      "apps/sutra-v2/build.mjs",
+      "apps/sutra-v2/package.json",
+      "apps/sutra/package.json",
+      "deploy/sutra-pages/prepare.mjs",
+      "deploy/sutra-pages/wrangler.jsonc"
+    ]
+  }
 }
