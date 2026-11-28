@@ -90,7 +90,7 @@ export function createObscuraEnhancedReader({authorization,renderer,readDocument
    const extracted=extractDocument(Buffer.from(page.html,'utf8'),'text/html',page.url,{allowCrossOriginLinks:true,allowQuery:authorization.plan.scope.allowPublicQueryParameters===true});
    if(extracted.text.length<=result.text.length&&extracted.links.every(link=>result.links.includes(link)))
     return Object.freeze({...result,render:Object.freeze({status:'no_material_gain',engine:'obscura',durationMs:page.durationMs??null,secondNavigation:true,subresourceBytesMetered:false})});
-   return Object.freeze({...result,text:extracted.text,textDigest:extracted.textDigest,links:extracted.links,metadata:extracted.metadata,parser:'obscura-dom/v1+bounded-html/v2',
+   return Object.freeze({...result,text:extracted.text,textDigest:extracted.textDigest,links:extracted.links,metadata:extracted.metadata,parser:'obscura-dom/v1',
     render:Object.freeze({status:'rendered_unverified',engine:'obscura',upstreamCommit:page.upstreamCommit,renderedDomDigest:page.renderedDomDigest,staticTextDigest:result.textDigest,binaryAttestation:page.binaryAttestation??'not_verified',durationMs:page.durationMs??null,secondNavigation:true,subresourceBytesMetered:false,retrievedAt:page.retrievedAt})});
   }catch(e){
    if(signal.aborted){throw error('CANCELLED');}
