@@ -30,7 +30,7 @@ export async function prepareHybridSemantic(input,{sourceIds=[]}={}){
  const bindings=c.bindings.filter(b=>sourceIds.includes(b.span.sourceId)).map(b=>{const bytes=bySource.get(b.span.sourceId),start=dec.decode(bytes.subarray(0,b.span.start)).length,end=start+dec.decode(bytes.subarray(b.span.start,b.span.end)).length;return {id:b.id,sourceId:b.span.sourceId,start,end,quote:b.span.quote,type:b.type};});
  const question=c.question.text;
  const packet={version:VERSION,contractDigest:input.contractPin,question,coordinateSystem:'utf16',sources,bindings,families:AMBIGUITY_FAMILIES,operations:SEMANTIC_OPERATIONS,sumRoleRule:'item0 through itemN-1, 2 to 8 distinct summands, plus limit',operators:SEMANTIC_OPERATORS,instructions:HYBRID_INTERPRETATION_INSTRUCTIONS,responseShape};
- const packetText=JSON.stringify(packet);if(enc.encode(packetText).length>32768||sensitive(packetText))fail('DISCLOSURE_BOUND');
+ const packetText=JSON.stringify(packet);if(enc.encode(packetText).length>32768||sensitive.test(packetText))fail('DISCLOSURE_BOUND');
  const packetPin=await casePin(packetText);
  return freeze({version:VERSION,packet,packetText,packetPin,previewPin:preview.previewPin,selectedSourceIds:selected.map(s=>s.id),decisionAuthority:'NONE',qualification:'Local disclosure preview only. The caller must approve the exact packet before any external model contact.'});
 }
@@ -48,7 +48,7 @@ function operation(o,ids){
  return {mode:o.mode,operator:o.operator,roles,expression};
 }
 export function admitHybridResponse(raw,packet,packetPin){
- if(typeof raw!=='string'||enc.encode(raw).length>65536||sensitive(raw)||typeof packetPin!=='string'||!pin.test(packetPin))fail('RESPONSE');
+ if(typeof raw!=='string'||enc.encode(raw).length>65536||sensitive.test(raw)||typeof packetPin!=='string'||!pin.test(packetPin))fail('RESPONSE');
  const r=parse(raw),docs=new Map(packet.sources.map(s=>[s.id,s.text])),ids=new Set(packet.bindings.map(b=>b.id));
  if(!exact(r,['version','packetDigest','disposition','alternatives','clarifications'])||r.version!==1||r.packetDigest!==packetPin||!['ALTERNATIVES','ABSTAIN'].includes(r.disposition)||!Array.isArray(r.alternatives)||r.alternatives.length>8||(r.disposition==='ABSTAIN')!==(r.alternatives.length===0))fail('SCHEMA');
  boundedList(r.clarifications,8,x=>text(x,500));
