@@ -1,10 +1,14 @@
 # SUTRA — EVENT HORIZON V2: adaptive frontend enhancement register
 
-**Created:** 2026-11-28. **Integration baseline:** PR #66, `2dfd08284d101ea809facef065672729ad1851a3` (not released). **Status:** 100 new enhancement gates remaining; zero claimed accepted. **Production decision:** unchanged NO-GO.
+**Created:** 2026-11-28. **Integration baseline:** PR #66, `2dfd08284d101ea809facef065672729ad1851a3` (not released). **Status:** 100 enhancement gates remain open; 55 carry scoped partial implementation evidence; zero formally accepted. **Production decision:** unchanged NO-GO.
 
 **Mandate:** Intelligence takes the shape of the problem. The objective selects required capabilities; agents, tools, roles, models, publishers, task graphs and views remain independent. Zero, one, six or ten participants are valid when the admitted plan warrants them. No global cast, fixed station count or forced planner. Preserve and enhance inherited engineering rather than rebuild SUTRA from zero.
 
 This is the authoritative *frontend enhancement detail* for the existing [engineering checklist](CHECKLIST.md) and [release overlay](DEVPOST-PRE-RELEASE.md), not a competing general continuation queue. The user's explicit Event Horizon work follows dependency-ready gates below; general continuation remains governed by CHECKLIST.md. [Machine-readable register](event-horizon-register.json) is the structured mirror; update both atomically. Do not change historical gate status or release totals just because an enhancement is planned. No deployment, DNS change, paid model inference or merge is authorized here.
+
+## Implementation checkpoint — 2026-11-28
+
+[Implementation journal](EVENT-HORIZON-IMPLEMENTATION.md) · [workspace browser pass](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774) · [latest implementation CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298). Five implementation commits through `9255a1d33d3763f9c5a1bb81f51ea94c923b10cb`: +1,432/−14 lines across 26 files, including tests and documentation. This does not reach the requested 20,000 lines; no padded code or fictional progress. Partial evidence is mapped per gate in the JSON mirror. No gate is accepted just because a component exists or a prior revision passed.
 
 ## Existing assets to preserve
 
@@ -82,73 +86,73 @@ Reuse areas: `orbit.js; research-activity.js; execution-channel.js; packages/sut
   - **Depends on:** none.
   - **Enhance/reuse:** existing ROLE/STATIONS, DOM IDs, commands and tests.
   - **Acceptance:** Enumerate every fixed-slot assumption, dependent consumer and migration adapter; record exact source revision and existing screenshots; no lost feature.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Migration inventory and preserved original paths; comprehensive control inventory still open. Full acceptance remains open.
 
 - [ ] **EH-A02 — Participant identity contract** (P0; milestone 1)
   - **Depends on:** EH-A01.
   - **Enhance/reuse:** execution journal run.open and task manifest.
   - **Acceptance:** Validate run-scoped stable IDs, definition IDs, invocation IDs, origin and entity kinds independently; reject collisions and malformed records.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Stable run-scoped task and trace keys; not every actor definition/instance contract tested. Full acceptance remains open.
 
 - [ ] **EH-A03 — Generic task projection** (P0; milestone 1)
   - **Depends on:** EH-A02.
   - **Enhance/reuse:** execution-events.js snapshot.
   - **Acceptance:** Render arbitrary manifest agent IDs and dependencies; exercise 0 (tool-only path), 1, 2, 6, 10 and 12 participants without synthetic activity.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Actual 10 deterministic owners via scheduler, 0 local tool path and 1/2/6/10/12 manifest projection; new browser journey pending. Full acceptance remains open.
 
 - [ ] **EH-A04 — Browser ancestry projection** (P0; milestone 1)
   - **Depends on:** EH-A02.
   - **Enhance/reuse:** browser runtime trace spans and research-activity.js.
   - **Acceptance:** Resolve recorded parent/child spans for unknown valid agent names; distinguish definition, invocation and task; never guess missing ancestry.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Recorded browser invocation ancestry with unknown names; no inferred root. Full acceptance remains open.
 
 - [ ] **EH-A05 — Host research projection** (P0; milestone 1)
   - **Depends on:** EH-A02.
   - **Enhance/reuse:** research-activity.js and autonomous research panel.
   - **Acceptance:** Map real search/document/model/evidence events to their recorded actors or operation-only nodes; remove invented role-to-role handoffs.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Host operation/evidence projection and unknown outcomes; no role-as-agent fabrication. Full acceptance remains open.
 
 - [ ] **EH-A06 — Concurrent invocation aggregation** (P0; milestone 1)
   - **Depends on:** EH-A03, EH-A04.
   - **Enhance/reuse:** execution journal and task scheduler.
   - **Acceptance:** Two concurrent tasks on one participant preserve independent states; finish one without falsely setting the other idle; count invocations separately.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Concurrent task aggregation for shared logical owner and distinct invocation spans. Full acceptance remains open.
 
 - [ ] **EH-A07 — Unknown and terminal events** (P0; milestone 1)
   - **Depends on:** EH-A03, EH-A04, EH-A05.
   - **Enhance/reuse:** execution event validator and journal.
   - **Acceptance:** Duplicate, stale, out-of-order, invalid-origin and late-after-close events cannot mutate admitted state; present missing data as unknown.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Duplicate/late event and missing parent negative fixtures; full transition stress remains. Full acceptance remains open.
 
 - [ ] **EH-A08 — Legacy compatibility adapter** (P0; milestone 1)
   - **Depends on:** EH-A03.
   - **Enhance/reuse:** investigation-role-review.js and recovery profile.
   - **Acceptance:** Six-role review and hybrid fixtures run with original manifests, pins, recovery and exported bytes; old names are optional labels only.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Legacy Ring map and existing deterministic review/recovery journey passed. Full acceptance remains open.
 
 - [ ] **EH-A09 — Selection and identity persistence** (P0; milestone 1)
   - **Depends on:** EH-A03, EH-A06.
   - **Enhance/reuse:** orbit.js, master.js, investigation-graph.js.
   - **Acceptance:** Selection uses stable typed keys across rerender, zoom, reorder and revision; deleted selection resets with explicit reason.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Stable selected keys, page/filter navigation; latest integrated keyboard test pending. Full acceptance remains open.
 
 - [ ] **EH-A10 — Actor types and counters** (P0; milestone 1)
   - **Depends on:** EH-A03, EH-A04, EH-A05.
   - **Enhance/reuse:** existing execution feeds and receipts.
   - **Acceptance:** Distinguish agents, tools, humans, publishers, evidence and operations; zero-agent case reports zero agents; 10 shared-model agents do not imply ten models.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Task/agent/tool/invocation/evidence distinctions and zero model local operation. Full acceptance remains open.
 
 - [ ] **EH-A11 — Run isolation and replay labeling** (P0; milestone 1)
   - **Depends on:** EH-A07, EH-A08.
   - **Enhance/reuse:** execution checkpoints and browser receipts.
   - **Acceptance:** Two retained runs with same agent names remain separate; fixture, local deterministic, host, authorized inference and historical replay are unmistakable.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Run isolation and read-only retained prefix replay; integrated browser replay pending. Full acceptance remains open.
 
 - [ ] **EH-A12 — Remove global fixed cast from primary UX** (P0; milestone 1)
   - **Depends on:** EH-A08, EH-A09, EH-A10, EH-A11.
   - **Enhance/reuse:** orbit.js and master.js.
   - **Acceptance:** No required six roles, twelve stations or named coordinator in default workspace; all existing reachable controls survive; run browser acceptance and compare inventory.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Adaptive universe default with original Ring map explicitly accessible; complete feature parity not yet accepted. Full acceptance remains open.
 
 ### B. Capability registry and composition (12)
 
@@ -158,37 +162,37 @@ Reuse areas: `packages/sutra-runtime/index.js; investigation-tasks.js; public/ag
   - **Depends on:** EH-A02.
   - **Enhance/reuse:** existing registered tools and network descriptors.
   - **Acceptance:** Versioned closed schema for capability, inputs, outputs, constraints, publisher claims and execution kind; malformed or unsupported descriptor refused.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Nine explicit capability requirements and nine existing workflow entrypoints. Full acceptance remains open.
 
 - [ ] **EH-B02 — Definition and instance separation** (P1; milestone 3)
   - **Depends on:** EH-B01, EH-A02.
   - **Enhance/reuse:** existing manifests, graph pins, route descriptors.
   - **Acceptance:** Same definition instantiated twice has distinct instance identity; same display name or model route does not merge participants.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Ten portable definitions inspectable without running instances. Full acceptance remains open.
 
 - [ ] **EH-B03 — Objective and requirement projection** (P1; milestone 3)
   - **Depends on:** EH-B01.
   - **Enhance/reuse:** semantic-intake.js and existing objective composer.
   - **Acceptance:** Extract proposed requirements with evidence and unresolved ambiguity; untrusted model proposals remain unadmitted; manual override available.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Manual requirements selection; automatic objective inference not implemented. Full acceptance remains open.
 
 - [ ] **EH-B04 — Deterministic-first routing** (P1; milestone 3)
   - **Depends on:** EH-B03.
   - **Enhance/reuse:** existing local kernel and exact quantity lab.
   - **Acceptance:** Known unit conversion succeeds with zero model, peer or search calls; unsupported objective remains explicit, never silently routed to inference.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Exact conversion through existing verifier, zero model/peer calls. Full acceptance remains open.
 
 - [ ] **EH-B05 — Capability matching** (P1; milestone 3)
   - **Depends on:** EH-B01, EH-B03.
   - **Enhance/reuse:** existing validated tool registry and compiled networks.
   - **Acceptance:** Match input/output compatibility and actual allowed tools; reject incompatible units, unsupported handlers, missing capability and claimed-but-unavailable execution.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Bounded inclusion-minimal coverage of selected capabilities; runtime availability not guaranteed. Full acceptance remains open.
 
 - [ ] **EH-B06 — Alternative team generation** (P1; milestone 3)
   - **Depends on:** EH-B02, EH-B05.
   - **Enhance/reuse:** bounded DAG compiler and published graph templates.
   - **Acceptance:** Produce minimal, specialist, deterministic-first and optional peer alternatives only where feasible; fixtures use materially different topology, not fixed roles.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Advisory alternatives and conditions, not live agent assignment. Full acceptance remains open.
 
 - [ ] **EH-B07 — Feasibility and resource estimator** (P1; milestone 3)
   - **Depends on:** EH-B06.
@@ -200,13 +204,13 @@ Reuse areas: `packages/sutra-runtime/index.js; investigation-tasks.js; public/ag
   - **Depends on:** EH-B07.
   - **Enhance/reuse:** admitted resource policies.
   - **Acceptance:** Choose smallest feasible composition according to explicit policy; compare tradeoffs; demonstrate case where cheaper composition is rejected due to required independent evidence.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Deterministic preference, gaps and explanatory conditions; cost estimates remain unknown. Full acceptance remains open.
 
 - [ ] **EH-B09 — User composition editing** (P1; milestone 3)
   - **Depends on:** EH-B06, EH-B07.
   - **Enhance/reuse:** agent-studio.js and existing validation.
   - **Acceptance:** Change task assignment or choose alternative, validate draft DAG and show missing requirements; editing never dispatches.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Editable local deterministic DAG with review invalidation; broader model plan editing pending. Full acceptance remains open.
 
 - [ ] **EH-B10 — Exact plan handoff** (P0; milestone 3)
   - **Depends on:** EH-B09.
@@ -218,13 +222,13 @@ Reuse areas: `packages/sutra-runtime/index.js; investigation-tasks.js; public/ag
   - **Depends on:** EH-B10.
   - **Enhance/reuse:** existing runtime and browser-investigation limits.
   - **Acceptance:** Do not raise runtime bounds to match renderer; unsupported composition remains draft/refused, including ten-agent live request beyond current path caps.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Closed local batch validation, units, dependencies, cycle and bounds; broader runtime admission remains unchanged. Full acceptance remains open.
 
 - [ ] **EH-B12 — Composition evaluation corpus** (P1; milestone 3)
   - **Depends on:** EH-B04, EH-B08, EH-B11.
   - **Enhance/reuse:** existing semantic fixtures and research acceptance cases.
   - **Acceptance:** Test at least 24 held-out scenario families/cases with direct, one-agent, multi-agent, insufficient capability and denial; record coverage, unnecessary work and reviewer disagreements.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. 512 capability subsets exhaustively tested; independent held-out scenario corpus not completed. Full acceptance remains open.
 
 ### C. Adaptive topology and visual rendering (12)
 
@@ -234,25 +238,25 @@ Reuse areas: `orbit.js; orbit.css; master.css; frame-driver.js; investigation-gr
   - **Depends on:** EH-A01.
   - **Enhance/reuse:** existing paper/phosphor, dark and retro CSS.
   - **Acceptance:** Consolidate typography, spacing, borders, contrast, focus, state and motion tokens; no remote font or tracking dependency.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Self-contained workspace CSS and responsive system-font primitives. Full acceptance remains open.
 
 - [ ] **EH-C02 — Procedural identities** (P1; milestone 2)
   - **Depends on:** EH-A02, EH-C01.
   - **Enhance/reuse:** existing SVG icon machinery.
   - **Acceptance:** Stable digest-derived appearance, instance distinction and typed glyphs; unknown capability gets neutral fallback; no competence/trust implied.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Deterministic identity glyphs by entity kind; no complete visual identity system. Full acceptance remains open.
 
 - [ ] **EH-C03 — Graph projection contract** (P0; milestone 2)
   - **Depends on:** EH-A03, EH-A04.
   - **Enhance/reuse:** existing dependency graph and task manifests.
   - **Acceptance:** Typed nodes and edges with provenance (planned, observed, declared, replayed); validate endpoints and never infer observed communications from layout.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Read-only graph projection grounded in task manifests and trace spans. Full acceptance remains open.
 
 - [ ] **EH-C04 — Adaptive layout selection** (P1; milestone 2)
   - **Depends on:** EH-C03.
   - **Enhance/reuse:** existing orbit geometry.
   - **Acceptance:** Radial only for real hub, pipeline for chain, hierarchy for DAG, mesh for peer links, adversarial for competing branches, matrix/list alternatives; same data in each.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Adaptive radial/layered/grid/list and clustered layouts; full layout matrix not complete. Full acceptance remains open.
 
 - [ ] **EH-C05 — Stable incremental layout** (P1; milestone 2)
   - **Depends on:** EH-C02, EH-C04.
@@ -264,7 +268,7 @@ Reuse areas: `orbit.js; orbit.css; master.css; frame-driver.js; investigation-gr
   - **Depends on:** EH-C05.
   - **Enhance/reuse:** existing drag, wheel and zoom controls.
   - **Acceptance:** Fit, zoom, pan, reset, keyboard traversal and focus restoration; browser scroll not trapped; touch and pointer equivalent.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Bounded viewport pan/zoom/fit and controls; touch and keyboard full acceptance pending. Full acceptance remains open.
 
 - [ ] **EH-C07 — Event-driven motion** (P1; milestone 2)
   - **Depends on:** EH-A07, EH-C05.
@@ -276,13 +280,13 @@ Reuse areas: `orbit.js; orbit.css; master.css; frame-driver.js; investigation-gr
   - **Depends on:** EH-A09, EH-C03.
   - **Enhance/reuse:** existing orbit and master inspectors.
   - **Acceptance:** Show typed selected participant/task/tool/source, actual status, permissions, dependencies and evidence; arbitrary valid names supported; empty state clear.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Participant, task, invocation, evidence and relationship inspector. Full acceptance remains open.
 
 - [ ] **EH-C09 — Graph scaling and virtualization** (P1; milestone 2)
   - **Depends on:** EH-C04, EH-C06.
   - **Enhance/reuse:** SVG renderer and local layout.
   - **Acceptance:** Measure 13–64 nodes and 65–500 displayed entities via aggregation/virtualization; no new execution implied; retain selectable list parity.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. 500-entity pagination coverage; large graph rendering performance not measured. Full acceptance remains open.
 
 - [ ] **EH-C10 — Semantic zoom** (P1; milestone 2)
   - **Depends on:** EH-C06, EH-C08.
@@ -300,7 +304,7 @@ Reuse areas: `orbit.js; orbit.css; master.css; frame-driver.js; investigation-gr
   - **Depends on:** EH-C08, EH-C09, EH-C10, EH-C11.
   - **Enhance/reuse:** existing orbital screenshot CI and browser tests.
   - **Acceptance:** Capture 320/390/768/1440 widths, empty/active/failed/denied/replay and 0/1/10 participants; inspect real screenshots, baseline diff and approve changes.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. 12 retained screenshots across four viewport widths and three screens. Full acceptance remains open.
 
 ### D. Objective-specific workspace and navigation (10)
 
@@ -310,13 +314,13 @@ Reuse areas: `main.js; master.js; reviewed-workspace.js; index.html; autonomous-
   - **Depends on:** EH-A01, EH-A12, EH-C01.
   - **Enhance/reuse:** existing navigation, commands, lab details and objective entry.
   - **Acceptance:** One coherent shell, primary investigate/open web/knowledge/studio/verify paths; map every old control and retain explicit advanced/legacy access.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Existing workspace mounted inside adaptive default; compatibility workflow passed. Full acceptance remains open.
 
 - [ ] **EH-D02 — Universal objective composer** (P1; milestone 4)
   - **Depends on:** EH-D01, EH-B03.
   - **Enhance/reuse:** current autonomous research objective and worked example.
   - **Acceptance:** Enter, edit, attach/select evidence and choose supported intent; default view presents objective and local example above fold at 390px; no hidden provider contact.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Existing objective and primary prepare controls reparented; 390px first-viewport issue seen, compacting tested on next revision. Full acceptance remains open.
 
 - [ ] **EH-D03 — Trusted workspace component registry** (P0; milestone 4)
   - **Depends on:** EH-D01, EH-B01.
@@ -334,13 +338,13 @@ Reuse areas: `main.js; master.js; reviewed-workspace.js; index.html; autonomous-
   - **Depends on:** EH-A09, EH-C03, EH-D03.
   - **Enhance/reuse:** existing execution feed, investigationGraph and workspace snapshots.
   - **Acceptance:** Spatial, task DAG, notebook, evidence graph and timeline consume same run/version and selected typed key; edit goes through existing controller only.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Runtime selection and knowledge graph read model; full shared state across views pending. Full acceptance remains open.
 
 - [ ] **EH-D06 — Live research canvas** (P1; milestone 4)
   - **Depends on:** EH-A05, EH-D05.
   - **Enhance/reuse:** autonomous-research-panel and browser-research-orchestration.
   - **Acceptance:** Actual query, retrieval, failed/denied, admission, gaps and cancellation; distinguish host-mediated from browser-native and fixture from live.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Actual research bridge and event projection; no fabricated activity. Full acceptance remains open.
 
 - [ ] **EH-D07 — Research notebook** (P1; milestone 4)
   - **Depends on:** EH-D05, EH-D06.
@@ -374,25 +378,25 @@ Reuse areas: `public/agents; peer/agents; browser-investigation.js; packages/sut
   - **Depends on:** EH-A01, EH-B01.
   - **Enhance/reuse:** existing caller, guide, manifest and links files.
   - **Acceptance:** List exact origins, versions and artifact digests; distinguish bundled, loopback, publicly observed and unverified candidate; no invented directory.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Same-origin static manifest and link inspection. Full acceptance remains open.
 
 - [ ] **EH-E02 — User-controlled discovery** (P1; milestone 5)
   - **Depends on:** EH-E01.
   - **Enhance/reuse:** existing loadLocalNetwork and bounded fetch.
   - **Acceptance:** Explicit origin/URL selection, validate scheme/origin/manifest limits before contact; denied or malformed input zero unauthorized traffic.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Explicit credentialless bounded discovery; arbitrary cross-origin discovery not enabled. Full acceptance remains open.
 
 - [ ] **EH-E03 — Agent passport** (P1; milestone 5)
   - **Depends on:** EH-E01, EH-E02.
   - **Enhance/reuse:** existing artifact digests and runtime compatibility.
   - **Acceptance:** Show publisher claims, supported schema, tools, limits, disclosure, integrity, availability and unknown independence; no visual trust certification.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Passport inspection, exact digest and compiler result; full disclosure and availability UX pending. Full acceptance remains open.
 
 - [ ] **EH-E04 — Capability directory and comparison** (P1; milestone 5)
   - **Depends on:** EH-B05, EH-E03.
   - **Enhance/reuse:** registry and user-authored/imported manifests.
   - **Acceptance:** Search/filter candidate definitions by capability; alternatives local/peer/model; distinguish absent, incompatible and unavailable; no silent crawling.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Capability registry and comparison screen. Full acceptance remains open.
 
 - [ ] **EH-E05 — Visual network composer** (P1; milestone 5)
   - **Depends on:** EH-B09, EH-E03.
@@ -410,7 +414,7 @@ Reuse areas: `public/agents; peer/agents; browser-investigation.js; packages/sut
   - **Depends on:** EH-E06.
   - **Enhance/reuse:** existing network artifacts, proof capsule and pins.
   - **Acceptance:** Round-trip supported artifacts byte-exact or explicitly canonicalized; reject tamper and unsupported fields; import never auto-executes.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Strict bounded local network import for inspection only; export/publish workflow not implemented. Full acceptance remains open.
 
 - [ ] **EH-E08 — Consent cockpit** (P0; milestone 5)
   - **Depends on:** EH-B10, EH-E02.
@@ -450,7 +454,7 @@ Reuse areas: `execution-events.js; execution-recovery.js; role-review-checkpoint
   - **Depends on:** EH-A07.
   - **Enhance/reuse:** execution-events.js and browser receipts.
   - **Acceptance:** Proposed/admitted/queued/executing/validating/terminal states derive from authority; unknown dispatch outcome not success; malformed transition refused.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Existing closed execution journal projection and explicit research terminal state. Full acceptance remains open.
 
 - [ ] **EH-F02 — Resource accounting view** (P0; milestone 6)
   - **Depends on:** EH-B07, EH-F01.
@@ -480,7 +484,7 @@ Reuse areas: `execution-events.js; execution-recovery.js; role-review-checkpoint
   - **Depends on:** EH-F01, EH-D09.
   - **Enhance/reuse:** existing AbortController and assertCurrent.
   - **Acceptance:** Stop disables new dispatch; late completion cannot publish; unknown external outcome stays unknown; cancellation visible across views.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Pre-aborted local scheduler test with no admitted artifact; broader cancellation regression pending. Full acceptance remains open.
 
 - [ ] **EH-F07 — Artifact reuse and provenance** (P0; milestone 6)
   - **Depends on:** EH-F03, EH-F04.
@@ -498,7 +502,7 @@ Reuse areas: `execution-events.js; execution-recovery.js; role-review-checkpoint
   - **Depends on:** EH-F01, EH-F07.
   - **Enhance/reuse:** existing checkpoint timeline and journal.
   - **Acceptance:** Scrub exact retained events, distinguish gaps/truncation, no credentials or network on playback; original run immutable.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128941298](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128941298), `9255a1d`. Validated exact journal-prefix replay and negative reordered history; browser replay pending. Full acceptance remains open.
 
 - [ ] **EH-F10 — Integrated adaptive journey** (P0; milestone 6)
   - **Depends on:** EH-F05, EH-F06, EH-F08, EH-F09.
@@ -514,19 +518,19 @@ Reuse areas: `investigation-graph.js; impact-projection.js; pinned-workspace.js;
   - **Depends on:** EH-C03, EH-D05.
   - **Enhance/reuse:** existing investigationGraph and admitted source records.
   - **Acceptance:** Show declared lineage, digest, reported claim and dependency edge; copied sources cluster, do not assert independence; exact provenance inspectable.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Canonical dependency projection and source/quantity/candidate grouping. Full acceptance remains open.
 
 - [ ] **EH-G02 — Source microscope** (P1; milestone 7)
   - **Depends on:** EH-G01, EH-D07.
   - **Enhance/reuse:** existing reviewed source spans and source handoff.
   - **Acceptance:** Jump from claim to exact offsets/text/digest, date/freshness, unit/scope and unknowns; preserve raw bytes and safe rendering.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Exact span text and offsets; date/freshness display still pending. Full acceptance remains open.
 
 - [ ] **EH-G03 — Semantic multiverse** (P1; milestone 7)
   - **Depends on:** EH-G02.
   - **Enhance/reuse:** semantic-intake and candidate comparison.
   - **Acceptance:** Branch alternative meanings and coverage, show unresolved and conditional status; no generated meaning treated as verified truth.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Competing interpretation display; full semantic multiverse not implemented. Full acceptance remains open.
 
 - [ ] **EH-G04 — Competing conclusions** (P1; milestone 7)
   - **Depends on:** EH-G03.
@@ -538,7 +542,7 @@ Reuse areas: `investigation-graph.js; impact-projection.js; pinned-workspace.js;
   - **Depends on:** EH-G01, EH-F07.
   - **Enhance/reuse:** impact-projection and withdrawal preview.
   - **Acceptance:** Select source, preview affected/retained/refused candidates and reasons; no mutation before explicit apply; stale preview refused.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Upstream/downstream links and existing authoritative revision entrypoint. Full acceptance remains open.
 
 - [ ] **EH-G06 — Scenario and uncertainty visualization** (P1; milestone 7)
   - **Depends on:** EH-G03, EH-G04.
@@ -556,7 +560,7 @@ Reuse areas: `investigation-graph.js; impact-projection.js; pinned-workspace.js;
   - **Depends on:** EH-G02, EH-G07.
   - **Enhance/reuse:** existing capsule, roundtrip and Python verifier.
   - **Acceptance:** Show exact artifact/digest, what local replay verifies vs independent Python replay; wrong pin/tamper fails; no truth claim.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Exact local computation graph/report export and existing verifier route. Full acceptance remains open.
 
 - [ ] **EH-G09 — Portable knowledge exchange** (P1; milestone 7)
   - **Depends on:** EH-G07, EH-G08.
@@ -578,7 +582,7 @@ Reuse areas: `workspace-accessibility.cjs; orbit.css; master.css; style.css; exi
   - **Depends on:** EH-D01, EH-C12.
   - **Enhance/reuse:** existing 320px reflow checks.
   - **Acceptance:** 320/360/390/768/1440 widths, portrait/landscape and 200% text; no document overflow, clipped labels or hidden primary action.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. 320/390/768/1440 Chromium no document overflow; first viewport compacting and full landscape/200% acceptance pending. Full acceptance remains open.
 
 - [ ] **EH-H02 — Touch-first navigation and graph** (P1; milestone 8)
   - **Depends on:** EH-C06, EH-H01.
@@ -590,7 +594,7 @@ Reuse areas: `workspace-accessibility.cjs; orbit.css; master.css; style.css; exi
   - **Depends on:** EH-D08, EH-H01.
   - **Enhance/reuse:** existing keyboard journey.
   - **Acceptance:** All primary flows reachable without pointer; modal focus restored, no trap, visible focus, command shortcuts scoped, selection retained.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Existing keyboard contract passed, focus retention added; new paths still require full keyboard audit. Full acceptance remains open.
 
 - [ ] **EH-H04 — Screen reader semantics** (P1; milestone 8)
   - **Depends on:** EH-C08, EH-H03.
@@ -602,13 +606,13 @@ Reuse areas: `workspace-accessibility.cjs; orbit.css; master.css; style.css; exi
   - **Depends on:** EH-C11, EH-H01.
   - **Enhance/reuse:** existing theme and frame tests.
   - **Acceptance:** WCAG 2.2 AA target, verify normal text/state contrast across all themes, reduced motion parity and no idle frames; no color-only status.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Reduced-motion Chromium tests and static renderer; full contrast and device study pending. Full acceptance remains open.
 
 - [ ] **EH-H06 — Plain-language empty and failure states** (P1; milestone 8)
   - **Depends on:** EH-D06, EH-D09.
   - **Enhance/reuse:** existing refusal/cancel paths.
   - **Acceptance:** Explain what is unavailable, why, next safe action and no misleading completion; display no-model offline path without setup.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Empty/unknown/denial/refusal states and explicit capability gaps. Full acceptance remains open.
 
 - [ ] **EH-H07 — Human usability study** (P1; milestone 8)
   - **Depends on:** EH-D10, EH-G10, EH-H03, EH-H04, EH-H06.
@@ -630,7 +634,7 @@ Reuse areas: `workspace-performance.cjs; build.mjs; Vite config; frame-driver.js
   - **Depends on:** EH-A01.
   - **Enhance/reuse:** existing CI performance report.
   - **Acceptance:** Measure exact-head cold desktop and emulated phone, 4x CPU/1Mbps/150ms; compare existing 310537-byte historical baseline; target initial compressed transfer <500KB, define included resources.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Cold desktop/mobile emulation performance artifact retained; targets not yet certified. Full acceptance remains open.
 
 - [ ] **EH-I02 — Progressive loading** (P1; milestone 8)
   - **Depends on:** EH-D01, EH-I01.
@@ -676,7 +680,7 @@ Reuse areas: `sutra-consent; existing build-contract, browser, knowledge, worksp
   - **Depends on:** EH-D03, EH-J01.
   - **Enhance/reuse:** strict-json, existing safe DOM rendering and component registry.
   - **Acceptance:** Reject prototype keys, executable HTML/JS, unsafe URL and oversized input; test malicious names/labels/source content; no network or script execution.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Static artifact URL/credentials and strict import negative tests; full malicious input suite remains. Full acceptance remains open.
 
 - [ ] **EH-J03 — Secret and privacy regression** (P0; milestone 8)
   - **Depends on:** EH-E08, EH-J01.
@@ -694,13 +698,13 @@ Reuse areas: `sutra-consent; existing build-contract, browser, knowledge, worksp
   - **Depends on:** EH-A12, EH-G10, EH-J02.
   - **Enhance/reuse:** existing browser.cjs, master.cjs, research-revision, durable-recovery, build-contract and verifier.
   - **Acceptance:** Run original suites unweakened, migration inventory every original user path; old exports/pins and separate-origin fixtures pass or block.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Original full browser, recovery, Python replay and research revision workflow passed on recorded revision. Full acceptance remains open.
 
 - [ ] **EH-J06 — Integrated browser matrix** (P0; milestone 8)
   - **Depends on:** EH-C12, EH-H05, EH-J03, EH-J04, EH-J05.
   - **Enhance/reuse:** existing workspace/knowledge/operator/browser-matrix CI.
   - **Acceptance:** Exact-head Chromium plus supported Firefox/WebKit where applicable; retain screenshots, events, network canaries, performance and test outputs; no skipped-as-pass.
-  - **Evidence:** none for this new gate. Exact-head engineering evidence required.
+  - **Evidence:** partial implementation only; [run 46128578774](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46128578774), `45a0e12`. Scoped workspace and independent-origin acceptance on earlier revision; full latest-head matrix pending. Full acceptance remains open.
 
 - [ ] **EH-J07 — Release crosswalk and independent review** (P0; milestone 8)
   - **Depends on:** EH-J06, EH-H07, EH-H08, EH-I03.

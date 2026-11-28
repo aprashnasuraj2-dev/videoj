@@ -5,7 +5,7 @@
   "branch": "sutra/master-investigation-ui",
   "pullRequest": 66,
   "scope": "Enhancement overlay; does not supersede CHECKLIST.md, DEVPOST-PRE-RELEASE.md or canonical main authority.",
-  "statusPolicy": "All new enhancement gates remaining; existing historical evidence reused as input only. No automatic promotion. External acceptance stays open until observed.",
+  "statusPolicy": "All 100 new enhancement gates remain open until dependency and full acceptance evidence is present. Partial implementation observations are recorded without promotion. Existing release totals remain unchanged.",
   "counts": {
     "total": 100,
     "remaining": 100,
@@ -132,7 +132,16 @@
       "dependencies": [],
       "reuse": "existing ROLE/STATIONS, DOM IDs, commands and tests",
       "acceptance": "Enumerate every fixed-slot assumption, dependent consumer and migration adapter; record exact source revision and existing screenshots; no lost feature.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Migration inventory and preserved original paths; comprehensive control inventory still open.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -148,7 +157,16 @@
       ],
       "reuse": "execution journal run.open and task manifest",
       "acceptance": "Validate run-scoped stable IDs, definition IDs, invocation IDs, origin and entity kinds independently; reject collisions and malformed records.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Stable run-scoped task and trace keys; not every actor definition/instance contract tested.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -164,7 +182,16 @@
       ],
       "reuse": "execution-events.js snapshot",
       "acceptance": "Render arbitrary manifest agent IDs and dependencies; exercise 0 (tool-only path), 1, 2, 6, 10 and 12 participants without synthetic activity.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Actual 10 deterministic owners via scheduler, 0 local tool path and 1/2/6/10/12 manifest projection; new browser journey pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -180,7 +207,16 @@
       ],
       "reuse": "browser runtime trace spans and research-activity.js",
       "acceptance": "Resolve recorded parent/child spans for unknown valid agent names; distinguish definition, invocation and task; never guess missing ancestry.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Recorded browser invocation ancestry with unknown names; no inferred root.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -196,7 +232,16 @@
       ],
       "reuse": "research-activity.js and autonomous research panel",
       "acceptance": "Map real search/document/model/evidence events to their recorded actors or operation-only nodes; remove invented role-to-role handoffs.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Host operation/evidence projection and unknown outcomes; no role-as-agent fabrication.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -213,7 +258,16 @@
       ],
       "reuse": "execution journal and task scheduler",
       "acceptance": "Two concurrent tasks on one participant preserve independent states; finish one without falsely setting the other idle; count invocations separately.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Concurrent task aggregation for shared logical owner and distinct invocation spans.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -231,7 +285,16 @@
       ],
       "reuse": "execution event validator and journal",
       "acceptance": "Duplicate, stale, out-of-order, invalid-origin and late-after-close events cannot mutate admitted state; present missing data as unknown.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Duplicate/late event and missing parent negative fixtures; full transition stress remains.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -247,7 +310,16 @@
       ],
       "reuse": "investigation-role-review.js and recovery profile",
       "acceptance": "Six-role review and hybrid fixtures run with original manifests, pins, recovery and exported bytes; old names are optional labels only.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Legacy Ring map and existing deterministic review/recovery journey passed.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -264,7 +336,16 @@
       ],
       "reuse": "orbit.js, master.js, investigation-graph.js",
       "acceptance": "Selection uses stable typed keys across rerender, zoom, reorder and revision; deleted selection resets with explicit reason.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Stable selected keys, page/filter navigation; latest integrated keyboard test pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -282,7 +363,16 @@
       ],
       "reuse": "existing execution feeds and receipts",
       "acceptance": "Distinguish agents, tools, humans, publishers, evidence and operations; zero-agent case reports zero agents; 10 shared-model agents do not imply ten models.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Task/agent/tool/invocation/evidence distinctions and zero model local operation.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -299,7 +389,16 @@
       ],
       "reuse": "execution checkpoints and browser receipts",
       "acceptance": "Two retained runs with same agent names remain separate; fixture, local deterministic, host, authorized inference and historical replay are unmistakable.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Run isolation and read-only retained prefix replay; integrated browser replay pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -318,7 +417,16 @@
       ],
       "reuse": "orbit.js and master.js",
       "acceptance": "No required six roles, twelve stations or named coordinator in default workspace; all existing reachable controls survive; run browser acceptance and compare inventory.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Adaptive universe default with original Ring map explicitly accessible; complete feature parity not yet accepted.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -334,7 +442,16 @@
       ],
       "reuse": "existing registered tools and network descriptors",
       "acceptance": "Versioned closed schema for capability, inputs, outputs, constraints, publisher claims and execution kind; malformed or unsupported descriptor refused.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Nine explicit capability requirements and nine existing workflow entrypoints.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -351,7 +468,16 @@
       ],
       "reuse": "existing manifests, graph pins, route descriptors",
       "acceptance": "Same definition instantiated twice has distinct instance identity; same display name or model route does not merge participants.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Ten portable definitions inspectable without running instances.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -367,7 +493,16 @@
       ],
       "reuse": "semantic-intake.js and existing objective composer",
       "acceptance": "Extract proposed requirements with evidence and unresolved ambiguity; untrusted model proposals remain unadmitted; manual override available.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Manual requirements selection; automatic objective inference not implemented.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -383,7 +518,16 @@
       ],
       "reuse": "existing local kernel and exact quantity lab",
       "acceptance": "Known unit conversion succeeds with zero model, peer or search calls; unsupported objective remains explicit, never silently routed to inference.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Exact conversion through existing verifier, zero model/peer calls.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -400,7 +544,16 @@
       ],
       "reuse": "existing validated tool registry and compiled networks",
       "acceptance": "Match input/output compatibility and actual allowed tools; reject incompatible units, unsupported handlers, missing capability and claimed-but-unavailable execution.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Bounded inclusion-minimal coverage of selected capabilities; runtime availability not guaranteed.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -417,7 +570,16 @@
       ],
       "reuse": "bounded DAG compiler and published graph templates",
       "acceptance": "Produce minimal, specialist, deterministic-first and optional peer alternatives only where feasible; fixtures use materially different topology, not fixed roles.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Advisory alternatives and conditions, not live agent assignment.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -449,7 +611,16 @@
       ],
       "reuse": "admitted resource policies",
       "acceptance": "Choose smallest feasible composition according to explicit policy; compare tradeoffs; demonstrate case where cheaper composition is rejected due to required independent evidence.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Deterministic preference, gaps and explanatory conditions; cost estimates remain unknown.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -466,7 +637,16 @@
       ],
       "reuse": "agent-studio.js and existing validation",
       "acceptance": "Change task assignment or choose alternative, validate draft DAG and show missing requirements; editing never dispatches.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Editable local deterministic DAG with review invalidation; broader model plan editing pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -498,7 +678,16 @@
       ],
       "reuse": "existing runtime and browser-investigation limits",
       "acceptance": "Do not raise runtime bounds to match renderer; unsupported composition remains draft/refused, including ten-agent live request beyond current path caps.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Closed local batch validation, units, dependencies, cycle and bounds; broader runtime admission remains unchanged.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -516,7 +705,16 @@
       ],
       "reuse": "existing semantic fixtures and research acceptance cases",
       "acceptance": "Test at least 24 held-out scenario families/cases with direct, one-agent, multi-agent, insufficient capability and denial; record coverage, unnecessary work and reviewer disagreements.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "512 capability subsets exhaustively tested; independent held-out scenario corpus not completed.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -532,7 +730,16 @@
       ],
       "reuse": "existing paper/phosphor, dark and retro CSS",
       "acceptance": "Consolidate typography, spacing, borders, contrast, focus, state and motion tokens; no remote font or tracking dependency.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Self-contained workspace CSS and responsive system-font primitives.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -549,7 +756,16 @@
       ],
       "reuse": "existing SVG icon machinery",
       "acceptance": "Stable digest-derived appearance, instance distinction and typed glyphs; unknown capability gets neutral fallback; no competence/trust implied.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Deterministic identity glyphs by entity kind; no complete visual identity system.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -566,7 +782,16 @@
       ],
       "reuse": "existing dependency graph and task manifests",
       "acceptance": "Typed nodes and edges with provenance (planned, observed, declared, replayed); validate endpoints and never infer observed communications from layout.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Read-only graph projection grounded in task manifests and trace spans.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -582,7 +807,16 @@
       ],
       "reuse": "existing orbit geometry",
       "acceptance": "Radial only for real hub, pipeline for chain, hierarchy for DAG, mesh for peer links, adversarial for competing branches, matrix/list alternatives; same data in each.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Adaptive radial/layered/grid/list and clustered layouts; full layout matrix not complete.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -615,7 +849,16 @@
       ],
       "reuse": "existing drag, wheel and zoom controls",
       "acceptance": "Fit, zoom, pan, reset, keyboard traversal and focus restoration; browser scroll not trapped; touch and pointer equivalent.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Bounded viewport pan/zoom/fit and controls; touch and keyboard full acceptance pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -649,7 +892,16 @@
       ],
       "reuse": "existing orbit and master inspectors",
       "acceptance": "Show typed selected participant/task/tool/source, actual status, permissions, dependencies and evidence; arbitrary valid names supported; empty state clear.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Participant, task, invocation, evidence and relationship inspector.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -666,7 +918,16 @@
       ],
       "reuse": "SVG renderer and local layout",
       "acceptance": "Measure 13–64 nodes and 65–500 displayed entities via aggregation/virtualization; no new execution implied; retain selectable list parity.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "500-entity pagination coverage; large graph rendering performance not measured.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -719,7 +980,16 @@
       ],
       "reuse": "existing orbital screenshot CI and browser tests",
       "acceptance": "Capture 320/390/768/1440 widths, empty/active/failed/denied/replay and 0/1/10 participants; inspect real screenshots, baseline diff and approve changes.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "12 retained screenshots across four viewport widths and three screens.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -737,7 +1007,16 @@
       ],
       "reuse": "existing navigation, commands, lab details and objective entry",
       "acceptance": "One coherent shell, primary investigate/open web/knowledge/studio/verify paths; map every old control and retain explicit advanced/legacy access.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Existing workspace mounted inside adaptive default; compatibility workflow passed.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -754,7 +1033,16 @@
       ],
       "reuse": "current autonomous research objective and worked example",
       "acceptance": "Enter, edit, attach/select evidence and choose supported intent; default view presents objective and local example above fold at 390px; no hidden provider contact.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Existing objective and primary prepare controls reparented; 390px first-viewport issue seen, compacting tested on next revision.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -805,7 +1093,16 @@
       ],
       "reuse": "existing execution feed, investigationGraph and workspace snapshots",
       "acceptance": "Spatial, task DAG, notebook, evidence graph and timeline consume same run/version and selected typed key; edit goes through existing controller only.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Runtime selection and knowledge graph read model; full shared state across views pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -822,7 +1119,16 @@
       ],
       "reuse": "autonomous-research-panel and browser-research-orchestration",
       "acceptance": "Actual query, retrieval, failed/denied, admission, gaps and cancellation; distinguish host-mediated from browser-native and fixture from live.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Actual research bridge and event projection; no fabricated activity.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -908,7 +1214,16 @@
       ],
       "reuse": "existing caller, guide, manifest and links files",
       "acceptance": "List exact origins, versions and artifact digests; distinguish bundled, loopback, publicly observed and unverified candidate; no invented directory.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Same-origin static manifest and link inspection.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -924,7 +1239,16 @@
       ],
       "reuse": "existing loadLocalNetwork and bounded fetch",
       "acceptance": "Explicit origin/URL selection, validate scheme/origin/manifest limits before contact; denied or malformed input zero unauthorized traffic.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Explicit credentialless bounded discovery; arbitrary cross-origin discovery not enabled.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -941,7 +1265,16 @@
       ],
       "reuse": "existing artifact digests and runtime compatibility",
       "acceptance": "Show publisher claims, supported schema, tools, limits, disclosure, integrity, availability and unknown independence; no visual trust certification.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Passport inspection, exact digest and compiler result; full disclosure and availability UX pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -958,7 +1291,16 @@
       ],
       "reuse": "registry and user-authored/imported manifests",
       "acceptance": "Search/filter candidate definitions by capability; alternatives local/peer/model; distinguish absent, incompatible and unavailable; no silent crawling.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Capability registry and comparison screen.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1007,7 +1349,16 @@
       ],
       "reuse": "existing network artifacts, proof capsule and pins",
       "acceptance": "Round-trip supported artifacts byte-exact or explicitly canonicalized; reject tamper and unsupported fields; import never auto-executes.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Strict bounded local network import for inspection only; export/publish workflow not implemented.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1108,7 +1459,16 @@
       ],
       "reuse": "execution-events.js and browser receipts",
       "acceptance": "Proposed/admitted/queued/executing/validating/terminal states derive from authority; unknown dispatch outcome not success; malformed transition refused.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Existing closed execution journal projection and explicit research terminal state.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1192,7 +1552,16 @@
       ],
       "reuse": "existing AbortController and assertCurrent",
       "acceptance": "Stop disables new dispatch; late completion cannot publish; unknown external outcome stays unknown; cancellation visible across views.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Pre-aborted local scheduler test with no admitted artifact; broader cancellation regression pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1244,7 +1613,16 @@
       ],
       "reuse": "existing checkpoint timeline and journal",
       "acceptance": "Scrub exact retained events, distinguish gaps/truncation, no credentials or network on playback; original run immutable.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+          "runId": 46128941298,
+          "jobId": 140929649057,
+          "scope": "Validated exact journal-prefix replay and negative reordered history; browser replay pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1280,7 +1658,16 @@
       ],
       "reuse": "existing investigationGraph and admitted source records",
       "acceptance": "Show declared lineage, digest, reported claim and dependency edge; copied sources cluster, do not assert independence; exact provenance inspectable.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Canonical dependency projection and source/quantity/candidate grouping.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1297,7 +1684,16 @@
       ],
       "reuse": "existing reviewed source spans and source handoff",
       "acceptance": "Jump from claim to exact offsets/text/digest, date/freshness, unit/scope and unknowns; preserve raw bytes and safe rendering.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Exact span text and offsets; date/freshness display still pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1313,7 +1709,16 @@
       ],
       "reuse": "semantic-intake and candidate comparison",
       "acceptance": "Branch alternative meanings and coverage, show unresolved and conditional status; no generated meaning treated as verified truth.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Competing interpretation display; full semantic multiverse not implemented.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1346,7 +1751,16 @@
       ],
       "reuse": "impact-projection and withdrawal preview",
       "acceptance": "Select source, preview affected/retained/refused candidates and reasons; no mutation before explicit apply; stale preview refused.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Upstream/downstream links and existing authoritative revision entrypoint.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1397,7 +1811,16 @@
       ],
       "reuse": "existing capsule, roundtrip and Python verifier",
       "acceptance": "Show exact artifact/digest, what local replay verifies vs independent Python replay; wrong pin/tamper fails; no truth claim.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Exact local computation graph/report export and existing verifier route.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1449,7 +1872,16 @@
       ],
       "reuse": "existing 320px reflow checks",
       "acceptance": "320/360/390/768/1440 widths, portrait/landscape and 200% text; no document overflow, clipped labels or hidden primary action.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "320/390/768/1440 Chromium no document overflow; first viewport compacting and full landscape/200% acceptance pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1483,7 +1915,16 @@
       ],
       "reuse": "existing keyboard journey",
       "acceptance": "All primary flows reachable without pointer; modal focus restored, no trap, visible focus, command shortcuts scoped, selection retained.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Existing keyboard contract passed, focus retention added; new paths still require full keyboard audit.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1517,7 +1958,16 @@
       ],
       "reuse": "existing theme and frame tests",
       "acceptance": "WCAG 2.2 AA target, verify normal text/state contrast across all themes, reduced motion parity and no idle frames; no color-only status.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Reduced-motion Chromium tests and static renderer; full contrast and device study pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1534,7 +1984,16 @@
       ],
       "reuse": "existing refusal/cancel paths",
       "acceptance": "Explain what is unavailable, why, next safe action and no misleading completion; display no-model offline path without setup.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Empty/unknown/denial/refusal states and explicit capability gaps.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1589,7 +2048,16 @@
       ],
       "reuse": "existing CI performance report",
       "acceptance": "Measure exact-head cold desktop and emulated phone, 4x CPU/1Mbps/150ms; compare existing 310537-byte historical baseline; target initial compressed transfer <500KB, define included resources.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Cold desktop/mobile emulation performance artifact retained; targets not yet certified.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1711,7 +2179,16 @@
       ],
       "reuse": "strict-json, existing safe DOM rendering and component registry",
       "acceptance": "Reject prototype keys, executable HTML/JS, unsafe URL and oversized input; test malicious names/labels/source content; no network or script execution.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Static artifact URL/credentials and strict import negative tests; full malicious input suite remains.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1764,7 +2241,16 @@
       ],
       "reuse": "existing browser.cjs, master.cjs, research-revision, durable-recovery, build-contract and verifier",
       "acceptance": "Run original suites unweakened, migration inventory every original user path; old exports/pins and separate-origin fixtures pass or block.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Original full browser, recovery, Python replay and research revision workflow passed on recorded revision.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1784,7 +2270,16 @@
       ],
       "reuse": "existing workspace/knowledge/operator/browser-matrix CI",
       "acceptance": "Exact-head Chromium plus supported Firefox/WebKit where applicable; retain screenshots, events, network canaries, performance and test outputs; no skipped-as-pass.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+          "runId": 46128578774,
+          "jobId": 140928547824,
+          "scope": "Scoped workspace and independent-origin acceptance on earlier revision; full latest-head matrix pending.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1826,5 +2321,35 @@
       "evidence": [],
       "limitations": "Existing components are starting points, not acceptance credit."
     }
-  ]
+  ],
+  "implementation": {
+    "asOf": "2026-11-28",
+    "implementationHead": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+    "scope": "Five incremental implementation commits; evidence is scoped to recorded revisions, not final current-head acceptance.",
+    "observations": [
+      {
+        "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
+        "runId": 46128578774,
+        "jobId": 140928547824,
+        "result": "passed",
+        "scope": "Complete workspace Chromium, unit, existing compatibility, isolated Python replay, research revision, independent browser conformance and accessibility/performance workflow."
+      },
+      {
+        "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+        "runId": 46128941298,
+        "jobId": 140929649057,
+        "result": "partial",
+        "scope": "Event Horizon Node suite (including actual ten-owner DAG and chained result), prior unit suite and canonical artifact build passed; new browser and integrated acceptance pending at observation."
+      },
+      {
+        "commit": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
+        "runId": 46128941238,
+        "result": "passed",
+        "scope": "Exact verification impact classifier; new register path mapped, no wildcard waiver."
+      }
+    ],
+    "partialGates": 55,
+    "formalAccepted": 0,
+    "journal": "EVENT-HORIZON-IMPLEMENTATION.md"
+  }
 }

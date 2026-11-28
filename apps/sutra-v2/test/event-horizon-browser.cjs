@@ -7,7 +7,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
  const browser=await chromium.launch({headless:true});
  try{for(const width of [320,390,768,1440]){
-  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',serviceWorkers:'block'}),page=await context.newPage(),errors=[],external=[];
+  const context=await browser.newContext({viewport:{width,height:width===390?844:900},reducedMotion:'reduce',serviceWorkers:'block'}),page=await context.newPage(),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
   await page.goto(origin);await page.locator('#eh-workspace').waitFor();
   assert.equal(await page.locator('#sutra-orbit').getAttribute('data-mode'),'universe');
@@ -15,6 +15,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.match(await page.locator('#eh-status').innerText(),/No recorded execution/);
   assert.equal(await page.locator('#eh-workspace .eh-entity').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  if(width===390)assert.ok(await page.locator('#orb-autonomous-objective').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight),'objective visible within 390 × 844 viewport');
   await page.screenshot({path:path.join(out,'event-horizon-'+width+'.png'),fullPage:false});
   await page.locator('#orb-nav').getByRole('button',{name:'Ring map',exact:true}).click();
   assert.equal(await page.locator('#orb-map').isVisible(),true);

@@ -59,7 +59,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const tabs=E('nav',undefined,'eh-tabs');tabs.setAttribute('aria-label','Adaptive workspace views');
  const runtime=E('div');runtime.id='eh-runtime';runtime.append(controls,counters,status,qualification,split,timeline,footer);
  section.append(head,objectiveSlot,tabs,runtime);root.prepend(section);
- let selection=null,selectedRun='empty',autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
+ let selection=null,selectedRun='empty',latestObservedId=null,autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
  const localRuns=new Map(),placements=[];
  let pageIndex=0,viewport=null,currentSvg=null,viewportKey=null,currentPositions=new Map(),drag=null,replaySequence=null,replayEvents=[],liveGraph=emptyGraph();
  const research=createResearchProjection();
@@ -91,7 +91,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  function choose(id,focus=false){
   if(!graph.nodes.some(n=>n.key===id))return;selection=id;
   let view=visibleGraph(),index=view.nodes.findIndex(n=>n.key===id);
-  if(index<0&&focus){filter.value='';kindFilter.value='all';view=visibleGraph();index=view.nodes.findIndex(n=>n.key===id);}
+  if(index<0&&focus){filter.value='';kindFilter.value='all';view=visibleGraph();index=view.nodes.findIndex(n=>n.key===id);pageIndex=Math.floor(index/32);render();}
   if(index>=0&&Math.floor(index/32)!==pageIndex){pageIndex=Math.floor(index/32);render();}
   if(focus&&viewport&&currentPositions.has(id)&&viewport.zoom>1){const p=currentPositions.get(id);viewport=centerViewport(viewport,p.x,p.y);applyViewport();}
   for(const b of roster.querySelectorAll('button[data-entity]'))b.setAttribute('aria-pressed',String(b.dataset.entity===id));
@@ -126,7 +126,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   qualification.textContent=graph.qualification;
   if(selection&&!graph.nodes.some(n=>n.key===selection))selection=null;
   draw(view);roster.replaceChildren();
-  const page=entityPage(view.nodes,pageIndex);pageIndex=page.index;pageControls.hidden=page.pages<=1;prevPage.disabled=page.index===0;nextPage.disabled=page.index===page.pages-1;pageText.textContent=(page.start+1)+'–'+page.end+' of '+page.total;
+  const page=entityPage(view.nodes,pageIndex);pageIndex=page.index;pageControls.hidden=page.pages<=1;prevPage.disabled=page.index===0;nextPage.disabled=page.index===page.pages-1;pageText.textContent=page.total?(page.start+1)+'–'+page.end+' of '+page.total:'0 entities';
   for(const n of page.nodes){
    const b=button('',()=>choose(n.key));b.className='eh-entity';b.dataset.entity=n.key;b.setAttribute('aria-pressed',String(n.key===selection));
    b.append(E('strong',n.label),E('small',label(n.kind)+' · '+label(n.status)));roster.append(b);
@@ -139,6 +139,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   if(focused)[...roster.querySelectorAll('button[data-entity]')].find(b=>b.dataset.entity===focused)?.focus({preventScroll:true});
  }
  function refresh(preferred){
+  if(preferred)latestObservedId=preferred;
   if(autoFollow&&preferred){if(selectedRun!==preferred){selection=null;pageIndex=0;replaySequence=null;}selectedRun=preferred;}
   if(!active)return;
   const all=snapshots(),options=[emptyGraph(),...all];
@@ -152,7 +153,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  }
  runSelect.addEventListener('change',()=>{autoFollow=false;selectedRun=runSelect.value;selection=null;pageIndex=0;replaySequence=null;refresh();});
  layoutSelect.addEventListener('change',()=>{viewportKey=null;render();});filter.addEventListener('input',()=>{pageIndex=0;render();});for(const select of [kindFilter,relationFilter])select.addEventListener('change',()=>{pageIndex=0;viewportKey=null;render();});
- const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;pageIndex=0;replaySequence=null;const list=snapshots();selectedRun=list.at(-1)?.id??'empty';refresh();});controls.append(follow);
+ const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;pageIndex=0;replaySequence=null;const list=snapshots();selectedRun=list.some(g=>g.id===latestObservedId)?latestObservedId:list.at(-1)?.id??'empty';refresh();});controls.append(follow);
  const knowledge=mountKnowledgeView(section,{openTool});
  const computation=mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}});
  const composition=mountCompositionView(section,{openWorkflow(id){if(id==='direct_compute')switchView('computation');else openWorkflow(id);}});

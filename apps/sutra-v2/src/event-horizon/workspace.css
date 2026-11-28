@@ -113,3 +113,36 @@
 #eh-workspace .eh-batch-row,#eh-workspace .eh-batch-result{border:1px solid var(--eh-line);padding:12px;border-radius:8px;background:var(--eh-panel)}
 #eh-workspace .eh-batch-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:8px;margin:8px 0}
 #eh-workspace .eh-batch-result{overflow-wrap:anywhere}
+
+/* Mobile-first objective entry: retain every navigation control, but stop the
+   introductory text and legacy chrome consuming the entire first viewport. */
+@media(max-width:600px){
+ #sutra-orbit[data-mode=universe] .orb-mast{padding:10px;gap:8px}
+ #sutra-orbit[data-mode=universe] .orb-mast h1{font-size:clamp(1.42rem,6.3vw,1.85rem)!important;line-height:1.08}
+ #sutra-orbit[data-mode=universe] .orb-mast .orb-lede{font-size:.76rem;line-height:1.35;margin:5px 0}
+ #sutra-orbit[data-mode=universe] .orb-mast .orb-kicker{font-size:.62rem!important;margin:0 0 5px}
+ #sutra-orbit[data-mode=universe] .orb-entry-actions{margin-top:6px;gap:4px}
+ #sutra-orbit[data-mode=universe] .orb-entry-actions #orb-explore{font-size:.76rem;padding:7px 8px;flex:1 1 145px}
+ #sutra-orbit[data-mode=universe] .orb-entry-actions #orb-worked-example{font-size:.7rem;padding:4px;flex:1 1 100px;text-align:center}
+ #sutra-orbit[data-mode=universe] .orb-top-actions{margin-top:3px}
+ #sutra-orbit[data-mode=universe] #orb-preferences summary{font-size:.76rem;padding:6px 0;min-height:32px}
+ #sutra-orbit[data-mode=universe] #orb-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:5px 8px}
+ #sutra-orbit[data-mode=universe] #orb-nav>.orb-nav-button{font-size:.72rem;padding:5px!important;min-height:40px!important;overflow-wrap:normal}
+ #sutra-orbit[data-mode=universe] #orb-more-spaces{grid-column:1/-1}
+ #sutra-orbit[data-mode=universe] #orb-more-spaces summary{font-size:.74rem;padding:3px 5px;min-height:28px}
+ #sutra-orbit[data-mode=universe] .orb-question-band{grid-template-columns:minmax(0,1fr) auto;gap:4px;padding:5px 8px}
+ #sutra-orbit[data-mode=universe] .orb-question-band .orb-kicker{font-size:.6rem!important;margin:0}
+ #sutra-orbit[data-mode=universe] #orb-question{font-size:.78rem;line-height:1.3}
+ #sutra-orbit[data-mode=universe] #orb-state{font-size:.66rem;grid-column:1;grid-row:2}
+ #sutra-orbit[data-mode=universe] #orb-edit{grid-column:2;grid-row:1/3;min-height:44px!important;max-width:96px;font-size:.7rem}
+ #sutra-orbit[data-mode=universe] .orb-visual{padding:7px}
+ #eh-workspace{padding:10px}
+ #eh-workspace .eh-head{gap:3px}
+ #eh-workspace .eh-head h2{font-size:1.15rem;line-height:1.2;margin:2px 0 5px}
+ #eh-workspace .eh-head .eh-copy{font-size:.74rem;line-height:1.35;margin:3px 0}
+ #eh-workspace .eh-head .eh-mark{font-size:.65rem;padding:4px 6px}
+ #eh-workspace .eh-objective-slot{margin-top:8px;padding:8px;gap:5px}
+ #eh-workspace .eh-objective-slot textarea{font-size:.8rem;min-height:68px}
+ #eh-workspace .eh-objective-slot button{font-size:.76rem}
+ #eh-workspace .eh-tabs button{font-size:.75rem;flex-basis:86px}
+}
