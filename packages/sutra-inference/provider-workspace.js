@@ -109,7 +109,9 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
   if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
   const declared=capabilitiesByProvider.get(profile.providerId)?.[model]??Object.freeze([]);
   if(required.some(x=>!declared.includes(x)))stop('CAPABILITY_MISSING');
-  if([...required,...declared].some(vault.containsSecret))stop('SECRET_ECHO');
+  // Match PR #65's full exported-record canary boundary, including the model.
+  // Local declaration matching must not disclose any live credential.
+  admitOperation({model,required,declared});
   return Object.freeze({version:'sutra-model-capabilities/v1',profileId:profile.profileId,providerId:profile.providerId,model,required,declared,authority:'HOST_DECLARED_UNVERIFIED'});
  };
  // All live credentials participate in the canary check. A credential-set
