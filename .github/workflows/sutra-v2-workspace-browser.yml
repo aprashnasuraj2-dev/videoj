@@ -30,6 +30,8 @@ jobs:
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
+      - name: Verify actual offline history capability and recovery boundary
+        run: node apps/sutra-v2/test/durable-recovery.cjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
       - name: Independently replay actual browser downloads in isolated Python
