@@ -48,3 +48,18 @@ test('implicit temporal state and source contrasts enter bounded semantic review
 });
 
 test('unrelated catalog alias collisions do not contaminate question-specific semantic review',async()=>{const x=await fixture('Is now greater than prior?',[['prior','100',['prior'],money],['now','120',['now'],money]]),c=JSON.parse(x.catalogText);c.aliases.push({alias:'unrelated revenue',bindingIds:['prior','now']});x.catalogText=JSON.stringify(c);x.catalogPin=await casePin(x.catalogText);const p=await previewSemanticQuestion(x);assert.equal(p.candidates.length,1);assert.equal(p.ambiguities.find(a=>a.family==='entity_identity').state,'NO_SIGNAL');assert.equal(p.decisionAuthority,'NONE');});
+
+test('source-linked year suggestions remain unadmitted until a reviewed catalog explicitly maps them',async()=>{
+ const text='Café revenue in 2024 was 100 ; revenue in 2025 was 120 ; limit 3/20';
+ const rows=[['r24','100',money],['r25','120',money],['limit','3/20',ratio]];
+ const sealed=await sealReviewedDraft(JSON.stringify({version:1,question:'Is the percentage change in revenue from 2024 to 2025 greater than limit?',sources:[{id:'record',text,lineage:'synthetic'}],bindings:rows.map(([id,q,type])=>({id,sourceId:'record',start:text.indexOf(q),end:text.indexOf(q)+q.length,type}))}));
+ const aliases=[{alias:'revenue',bindingIds:['r24','r25']},{alias:'limit',bindingIds:['limit']}];
+ const build=async a=>{const catalogText=JSON.stringify({version:1,contractDigest:sealed.pin,aliases:a});return {contractText:sealed.contractText,contractPin:sealed.pin,catalogText,catalogPin:await casePin(catalogText)};};
+ const p=await previewSemanticQuestion(await build(aliases));
+ assert.equal(p.state,'UNRESOLVED_BINDINGS');assert.equal(p.candidates.length,0);assert.deepEqual(p.unresolved,['revenue 2024','revenue 2025']);
+ assert.deepEqual(p.temporalAliasSuggestions.map(x=>[x.alias,x.matches.map(y=>y.bindingId)]),[['revenue 2024',['r24']],['revenue 2025',['r25']]]);
+ for(const a of p.temporalAliasSuggestions){assert.equal(a.decisionAuthority,'NONE');const s=a.matches[0].yearSpan;assert.equal(new TextDecoder().decode(new TextEncoder().encode(text).slice(s.start,s.end)),s.quote);}
+ const admitted=await build([...aliases,{alias:'revenue 2024',bindingIds:['r24']},{alias:'revenue 2025',bindingIds:['r25']}]);
+ const next=await previewSemanticQuestion(admitted);assert.equal(next.candidates.length,1);assert.equal(next.temporalAliasSuggestions.length,0);
+ const r=await compileSemanticCandidate(admitted,next.candidates[0].id,next.previewPin);assert.equal(r.compiled.target.status,'CONDITIONALLY_SATISFIED');assert.equal(r.decisionAuthority,'NONE');
+});

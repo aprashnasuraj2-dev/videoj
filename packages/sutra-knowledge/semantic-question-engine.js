@@ -5,6 +5,7 @@ import {casePin} from './pinned-investigation.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
 import {analyzeSemanticContext} from './semantic-context-analyzer.js';
+import {suggestTemporalAliases} from './semantic-binding-context.js';
 
 export const VERSION='sutra-semantic-question-engine/v1';
 export const AMBIGUITY_FAMILIES=Object.freeze(['entity_identity','metric_definition','numerator','denominator','reporting_period','population','geography','units','scaling','sign','absolute_vs_relative','percentage_vs_percentage_point','aggregation','negation_scope','quantifier_scope','conditional_scope','baseline_selection','measurement_assumptions','modality','causal_vs_observational']);
@@ -31,7 +32,7 @@ function catalog(raw,contractPin,ids){
 function relation(text){for(const [phrase,op] of REL){const marker=' '+phrase+' ',i=text.lastIndexOf(marker);if(i>=0)return {phrase,op,index:i,after:i+marker.length};}return null;}
 function product(options){return options.reduce((n,x)=>n*x.length,1);}
 function mappings(parts,lookup,limit=64){
- const options=[];for(const part of parts){const ids=lookup.get(part.alias);if(!ids)return {missing:[part.alias],rows:[]};options.push({role:part.role,alias:part.alias,ids});}
+ const options=[],missing=[];for(const part of parts){const ids=lookup.get(part.alias);if(!ids){missing.push(part.alias);continue;}options.push({role:part.role,alias:part.alias,ids});}if(missing.length)return {missing:[...new Set(missing)],rows:[]};
  const count=product(options.map(x=>x.ids));if(count>limit)return {missing:[],rows:[],count,truncated:true};
  const rows=[];function walk(i,row){if(i===options.length){rows.push(row);return;}const o=options[i];for(const id of o.ids)walk(i+1,{...row,[o.role]:id});}walk(0,{});
  return {missing:[],rows,count,truncated:false};
@@ -70,7 +71,7 @@ export async function previewSemanticQuestion({contractText,contractPin,catalogT
  const context=analyzeSemanticContext({question:c.question.text,sources:c.sources,aliasCollisions,typeCollisions});
  for(const p of context.admission==='REFUSE'?[]:parses){const resolved=mappings(p.parts,lookup,64);if(resolved.missing.length){unresolved.push(...resolved.missing);continue;}if(resolved.truncated){unresolved.push('CANDIDATE_LIMIT:'+resolved.count);continue;}if(p.portableOnly){candidates.push({id:'portable_'+(candidates.length+1),mode:p.mode,status:'PORTABLE_ONLY',reason:p.portableOnly,expression:null,mapping:null,decisionAuthority:'NONE'});continue;}for(const mapping of resolved.rows)candidates.push({id:'candidate_'+(candidates.length+1),mode:p.mode,status:'KERNEL_READY',expression:p.build(mapping),mapping,decisionAuthority:'NONE'});}
  const diagnostics=context.diagnostics,state=context.admission==='REFUSE'?'UNSUPPORTED_GRAMMAR':!parses.length?'SEMANTIC_REVIEW':candidates.length?'UNREVIEWED_CANDIDATES':'UNRESOLVED_BINDINGS';
- const preview={version:VERSION,contractDigest:contractPin,catalogDigest:catalogPin,question:c.question.text,state,candidates,unresolved:[...new Set(unresolved)].sort(),ambiguities:diagnostics,contextProfile:context.profile,reviewPrompts:context.reviewPrompts,reviewPriority:context.reviewPriority,refusalReason:context.refusalReason,reviewRequired:true,decisionAuthority:'NONE',qualification:'Bounded structural/contextual semantic review plus a closed executable grammar. Review-only language is never promoted to computation; kernel-ready candidates still require reviewed computation. Unsupported hostile or semantically hidden suffixes fail closed.'};
+ const preview={version:VERSION,contractDigest:contractPin,catalogDigest:catalogPin,question:c.question.text,state,candidates,unresolved:[...new Set(unresolved)].sort(),ambiguities:diagnostics,contextProfile:context.profile,reviewPrompts:context.reviewPrompts,reviewPriority:context.reviewPriority,...(context.admission==='REFUSE'?{}:{temporalAliasSuggestions:suggestTemporalAliases(c,lookup,parses)}),refusalReason:context.refusalReason,reviewRequired:true,decisionAuthority:'NONE',qualification:'Bounded structural/contextual semantic review plus a closed executable grammar. Review-only language is never promoted to computation; kernel-ready candidates still require reviewed computation. Unsupported hostile or semantically hidden suffixes fail closed.'};
  const previewText=JSON.stringify(preview),previewPin=await casePin(previewText);return freeze({...preview,previewText,previewPin});
 }
 export async function compileSemanticCandidate(input,candidateId,expectedPreviewPin){
