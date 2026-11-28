@@ -25,6 +25,23 @@ printf '%s  %s\n' 936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e
 printf '%s  %s\n' bee4a54f3ee3d4afc347c3240ec2d9e93b075104 "$JAR" | sha1sum -c -
 printf 'Verified stable TLC v1.7.4, %s bytes\n' "$actual_size"
 java -version
+expect_liveness_failure() {
+ module="$1"; config="$2"; property="$3"; log="$4"; meta="$5"
+ awk -v expected="$property" '
+  /^[[:space:]]*PROPERT(Y|IES)[[:space:]]/ {
+   count++; if ($1 != "PROPERTY" || NF != 2 || $2 != expected) bad=1
+  }
+  END { exit !(count == 1 && !bad) }
+ ' "$config" || { echo "Expected sole property $property in $config" >&2; exit 1; }
+ status=0
+ java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$meta" -config "$config" "$module" > "$log" 2>&1 || status=$?
+ cat "$log"
+ [ "$status" -eq 13 ] || { echo "Expected TLC liveness exit 13 for $property; got $status" >&2; exit 1; }
+ grep -F 'Error: Temporal properties were violated.' "$log"
+ grep -F 'Error: The following behavior constitutes a counter-example:' "$log"
+ grep -E '^State [0-9]+:|^Back to state' "$log"
+ printf 'Verified negative control: %s (sole property, TLC exit 13)\n' "$property"
+}
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/safe" -config Safe.cfg Recovery.tla > "$WORK/safe.log" 2>&1 || { cat "$WORK/safe.log"; exit 1; }
 cat "$WORK/safe.log"
 grep -F 'No error has been found' "$WORK/safe.log"
@@ -53,11 +70,7 @@ python3 anchored_model.py
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-fair" -config AnchoredFair.cfg AnchoredRecovery.tla > "$WORK/anchored-fair.log" 2>&1 || { cat "$WORK/anchored-fair.log"; exit 1; }
 cat "$WORK/anchored-fair.log"
 grep -F 'No error has been found' "$WORK/anchored-fair.log"
-if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-unfair" -config AnchoredUnfair.cfg AnchoredRecovery.tla > "$WORK/anchored-unfair.log" 2>&1; then
- cat "$WORK/anchored-unfair.log"; echo 'unfair model unexpectedly satisfied liveness' >&2; exit 1
-fi
-cat "$WORK/anchored-unfair.log"
-grep -F 'Temporal property ConditionalRecovery was violated' "$WORK/anchored-unfair.log"
+expect_liveness_failure AnchoredRecovery.tla AnchoredUnfair.cfg ConditionalRecovery "$WORK/anchored-unfair.log" "$WORK/anchored-unfair"
 
 
 # Separate two-domain authority/witness crash bridge abstraction.
@@ -78,11 +91,7 @@ python3 witness_bridge_model.py
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-fair" -config WitnessBridgeFair.cfg WitnessBridge.tla > "$WORK/witness-bridge-fair.log" 2>&1 || { cat "$WORK/witness-bridge-fair.log"; exit 1; }
 cat "$WORK/witness-bridge-fair.log"
 grep -F 'No error has been found' "$WORK/witness-bridge-fair.log"
-if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-unfair" -config WitnessBridgeUnfair.cfg WitnessBridge.tla > "$WORK/witness-bridge-unfair.log" 2>&1; then
- cat "$WORK/witness-bridge-unfair.log"; echo 'unfair witness bridge unexpectedly satisfied liveness' >&2; exit 1
-fi
-cat "$WORK/witness-bridge-unfair.log"
-grep -F 'Temporal property PreparedEventuallySettles was violated' "$WORK/witness-bridge-unfair.log"
+expect_liveness_failure WitnessBridge.tla WitnessBridgeUnfair.cfg PreparedEventuallySettles "$WORK/witness-bridge-unfair.log" "$WORK/witness-bridge-unfair"
 
 
 # Exact-consent grant lifecycle: active window, durable admission, revocation and
@@ -109,11 +118,7 @@ for entry in 'Safe' 'Fair'; do
 done
 for entry in 'UnconditionalAck SettledEventuallyAcknowledged' 'UnfairAck QuiescentEventuallyAcknowledged'; do
  set -- $entry
- if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-lossy-$1" -config "WitnessBridgeLossy$1.cfg" WitnessBridgeLossy.tla > "$WORK/witness-lossy-$1.log" 2>&1; then
-  cat "$WORK/witness-lossy-$1.log"; echo "lossy witness negative control $1 unexpectedly succeeded" >&2; exit 1
- fi
- cat "$WORK/witness-lossy-$1.log"
- grep -F "Temporal property $2 was violated" "$WORK/witness-lossy-$1.log"
+ expect_liveness_failure WitnessBridgeLossy.tla "WitnessBridgeLossy$1.cfg" "$2" "$WORK/witness-lossy-$1.log" "$WORK/witness-lossy-$1"
 done
 
 
@@ -135,11 +140,7 @@ cat "$WORK/fence-fair.log"
 grep -F 'No error has been found' "$WORK/fence-fair.log"
 for entry in 'Unfair PreparedEventuallySettles' 'UnconditionalAck SettledEventuallyAcknowledged'; do
  set -- $entry
- if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-$1" -config "FenceAdmission$1.cfg" FenceAdmission.tla > "$WORK/fence-$1.log" 2>&1; then
-  cat "$WORK/fence-$1.log"; echo "fence liveness negative control $1 unexpectedly succeeded" >&2; exit 1
- fi
- cat "$WORK/fence-$1.log"
- grep -F "Temporal property $2 was violated" "$WORK/fence-$1.log"
+ expect_liveness_failure FenceAdmission.tla "FenceAdmission$1.cfg" "$2" "$WORK/fence-$1.log" "$WORK/fence-$1"
 done
 
 # Two cloned authorities share one independent admission owner. Safe admission
@@ -202,11 +203,7 @@ python3 client_policy_ancestry.py
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-safe" -config FenceAvailabilitySafe.cfg FenceAvailability.tla > "$WORK/fence-availability-safe.log" 2>&1 || { cat "$WORK/fence-availability-safe.log"; exit 1; }
 cat "$WORK/fence-availability-safe.log"
 grep -F 'No error has been found' "$WORK/fence-availability-safe.log"
-if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-orphan" -config FenceAvailabilityOrphan.cfg FenceAvailability.tla > "$WORK/fence-availability-orphan.log" 2>&1; then
- cat "$WORK/fence-availability-orphan.log"; echo 'orphaned admission unexpectedly satisfied liveness' >&2; exit 1
-fi
-cat "$WORK/fence-availability-orphan.log"
-grep -F 'Temporal property PendingEventuallySettles was violated' "$WORK/fence-availability-orphan.log"
+expect_liveness_failure FenceAvailability.tla FenceAvailabilityOrphan.cfg PendingEventuallySettles "$WORK/fence-availability-orphan.log" "$WORK/fence-availability-orphan"
 if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-steal" -config FenceAvailabilitySteal.cfg FenceAvailability.tla > "$WORK/fence-availability-steal.log" 2>&1; then
  cat "$WORK/fence-availability-steal.log"; echo 'steal-orphan mutant unexpectedly preserved one effect' >&2; exit 1
 fi
