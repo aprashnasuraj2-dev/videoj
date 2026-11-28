@@ -79,12 +79,17 @@ jobs:
         env:
           SUTRA_SEMANTIC_CORPUS_REPORT: sutra-semantic-corpus-execution.json
           SUTRA_SEMANTIC_CONTRAST_REPORT: sutra-semantic-contrast-execution.json
+          SUTRA_TEMPORAL_CORPUS_REPORT: sutra-temporal-corpus-execution.json
         run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Independently verify semantic corpus report and test pinned acquisition offline
         run: |
           python3 packages/sutra-knowledge/reference/verify-semantic-corpus-report.py sutra-semantic-corpus-execution.json sutra-semantic-contrast-execution.json > sutra-semantic-corpus-independent.json
           cat sutra-semantic-corpus-independent.json
           python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --self-test
+          python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --verify-local packages/sutra-knowledge/evaluation/tempambiqa-human-full-v1.json
+          python3 packages/sutra-knowledge/reference/verify-temporal-corpus-report.py sutra-temporal-corpus-execution.json > sutra-temporal-corpus-independent.json
+          cat sutra-temporal-corpus-independent.json
+          python3 packages/sutra-knowledge/evaluation/semantic-human-review.py --self-test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -93,6 +98,8 @@ jobs:
             sutra-semantic-corpus-execution.json
             sutra-semantic-contrast-execution.json
             sutra-semantic-corpus-independent.json
+            sutra-temporal-corpus-execution.json
+            sutra-temporal-corpus-independent.json
           if-no-files-found: ignore
       - name: Bounded recovery state model and unsafe counterexample
         run: sh packages/sutra-knowledge/action-protocol/formal/check.sh

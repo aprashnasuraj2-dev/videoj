@@ -20,6 +20,9 @@ REV = "ba7839ca206d7b68d4d5322e8c286b649d8da587"
 FILE = "TempAmbiQA.json"
 MAX = 2 * 1024 * 1024
 EXPECTED = {True: 3879, False: 4283}
+EXPECTED_SHA256 = "e71fa96f389e45d73c61915461f9b0b3f6207e956fd5b3eb72d19c66cfee9942"
+EXPECTED_GIT_BLOB = "b9432856685169dd40e884570ab511b1c129ba12"
+EXPECTED_BYTES = 937488
 
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
@@ -69,6 +72,14 @@ def git(cwd, *args):
                            "protocol.ext.allow=never", *args], cwd=cwd, env=env,
                           check=True, timeout=120, stdout=subprocess.PIPE).stdout
 
+def verify_local(data):
+    if len(data) != EXPECTED_BYTES or sha256(data) != EXPECTED_SHA256 or git_blob(data) != EXPECTED_GIT_BLOB:
+        raise ValueError("pinned upstream bytes do not match")
+    stats = validate(data)
+    if stats["distinctQuestionStrings"] != 8161 or stats["conflictingQuestionStrings"] != 0:
+        raise ValueError("unexpected distinct-question statistics")
+    return stats
+
 def acquire():
     with tempfile.TemporaryDirectory(prefix="sutra-tempambiqa-") as tmp:
         git(tmp, "init", "--quiet")
@@ -100,7 +111,7 @@ def acquire():
 
 def install(output):
     data, blob, mode = acquire()
-    stats = validate(data)
+    stats = verify_local(data)
     record = {"schema": "sutra-external-human-temporal/v1", "source": REPO,
               "revision": REV, "upstreamPath": FILE, "upstreamGitBlob": blob,
               "integrityMode": mode, "sha256": sha256(data), "bytes": len(data),
@@ -142,14 +153,16 @@ class OfflineTests(unittest.TestCase):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--self-test", action="store_true")
-    parser.add_argument("--output", type=Path, help="new directory for verified raw data and manifest")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--self-test", action="store_true")
+    mode.add_argument("--output", type=Path, help="new directory for verified raw data and manifest")
+    mode.add_argument("--verify-local", type=Path, help="verify vendored or separately acquired raw bytes offline")
     args = parser.parse_args()
     if args.self_test:
-        if args.output:
-            parser.error("--self-test and --output are mutually exclusive")
         unittest.main(argv=[__file__])
     elif args.output:
         print(json.dumps(install(args.output), indent=2))
     else:
-        parser.error("specify --self-test or --output")
+        with args.verify_local.open("rb") as source:
+            data = source.read(MAX + 1)
+        print(json.dumps(verify_local(data), indent=2))
