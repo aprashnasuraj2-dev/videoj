@@ -3581,5 +3581,230 @@
     "closures": [],
     "next": "Resolve independently trusted reproducible TLC artifact identity without changing acceptance gates; verify final exact CI, then complete divergent two-session recovery and launcher integration.",
     "limitation": "Full legacy branch semantic reconciliation, all normative acceptance, real provider/public hosting and release proof remain open; canonical progress/roadmap completion states unchanged."
+  },
+  "releaseTranche8": {
+    "candidate": "08162ee5048bee14addf6a1d9a1b7b80ae41c348",
+    "scope": "Historical disposition review; does not establish semantic equivalence, production deployment or rights clearance.",
+    "reviewedPaths": [
+      {
+        "pr": 49,
+        "path": ".github/workflows/sutra-browser-matrix.yml",
+        "legacyBlob": "7f4120413a7d738280ce830af05b15ee4382488c",
+        "candidateBlob": "8cc75f60a6c1908d02bb9f701f778f3351256829",
+        "decision": "Retain exact head, freshness check, Chromium/Firefox/WebKit; recover legacy 20-minute timeout for slow runners. V2 performance remains separately measured."
+      },
+      {
+        "pr": 49,
+        "path": ".github/workflows/sutra-device-check.yml",
+        "legacyBlob": "c63701671bcd79a78376eeded118372de6c6756b",
+        "candidateBlob": "8ab306dc5f8a9d5bc329385ddde6aaf3f7ddb573",
+        "decision": "Keep validator-only legacy workflow; old build preflight targets apps/sutra and does not establish physical acceptance of V2. Separate actual device evidence required under U07."
+      },
+      {
+        "pr": 49,
+        "path": ".github/workflows/sutra-open-kit.yml",
+        "legacyBlob": "acf9710b9c8f7711bd514027f49e8313c13324b6",
+        "candidateBlob": "f723b0bd94cf1441aed01c187828c3409a3f2db5",
+        "decision": "Keep current candidate rebuild, tar roundtrip, integrity and offline consumer checks; do not replace with old packaging checks."
+      },
+      {
+        "pr": 49,
+        "path": "deploy/sutra-pages/ingress.test.mjs",
+        "legacyBlob": "8d1b52dc85ceb89057c3482727e087c4e4f3bf30",
+        "candidateBlob": "c56aeb66eb0125efe29ec5152bde5e7ea95b12d6",
+        "decision": "Keep canonical V2 ingress tests, route and credential deny boundaries; actual clean rebuild and isolated peer tests are exercised by current ingress workflow."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/README.md",
+        "legacyBlob": "b1b5adc0b77c7dd32daf74bc0530e7da3e9bd216",
+        "candidateBlob": "03ca17f2f96c9d723ba79f22e501b32e0fbf7fda",
+        "decision": "Keep actual physical observation requirement and no fabricated records; legacy reviewer workflow is not proof of V2 use."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/feedback-endpoint.mjs",
+        "legacyBlob": "be0743a9794c31b4d85ca69f06e6afc642b5e236",
+        "candidateBlob": null,
+        "decision": "Not imported: unauthenticated writable feedback endpoint and whole body read before size check conflict with current no-public-write scope. Preserve historical source, not production dependency."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/feedback-endpoint.test.mjs",
+        "legacyBlob": "98027a40e3b8d875c0a91e2ac03824220f70a8e2",
+        "candidateBlob": null,
+        "decision": "Not imported with deliberately excluded feedback endpoint; no new unauthenticated write route."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/preflight.mjs",
+        "legacyBlob": "e20a092d65d4953e3d81d0878009ddb8ec45b776",
+        "candidateBlob": null,
+        "decision": "Superseded for V2: old required content/profile and learner media layout are not the canonical V2 artifact; candidate fingerprint, independent consumer and build contract cover current artifact."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/preflight.test.mjs",
+        "legacyBlob": "d16ecc8d4e02352c50af4182ae32b59bcf4c3751",
+        "candidateBlob": null,
+        "decision": "Keep legacy test in immutable PR; current canonical artifact build tests have different contract."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/reviewer-cli.mjs",
+        "legacyBlob": "94c8944b7fe0ed1964601c1f2d05075794423f4b",
+        "candidateBlob": null,
+        "decision": "Optional offline legacy reviewer utility, tied to legacy physical-device schema; no production dependency. Future actual V2 human spot review needs a revision-bound record."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/reviewer-feedback.template.json",
+        "legacyBlob": "ffbefa55e32956a8e96cc74db78087d0200fdad2",
+        "candidateBlob": null,
+        "decision": "Legacy device/learner steps not applicable to V2 without adaptation; no fabricated human observation."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/reviewer.mjs",
+        "legacyBlob": "b408dc2cd470092fc5953844b89ec07291e63e55",
+        "candidateBlob": null,
+        "decision": "Legacy reviewer validator records find/compare/save/consent observations and expressly does not prove identity or factual truth; preserve source and defer V2-specific human observation contract."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-device-check/reviewer.test.mjs",
+        "legacyBlob": "1408b661e78322abbfdc419c7ca4147d270cf348",
+        "candidateBlob": null,
+        "decision": "Preserve alongside excluded legacy reviewer schema; not treated as V2 human acceptance."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-evaluation/baseline.mjs",
+        "legacyBlob": "fe879e17794e93a0d502ed75c56eefb173936e34",
+        "candidateBlob": "8721fd9f0d012a298d3cb683e70e940a9a753e68",
+        "decision": "Retain current two-agent implementation. Frozen old revision fails 50 vs 90 model calls; unchanged baseline tests pass candidate."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-evaluation/mapping-harness.mjs",
+        "legacyBlob": "122e47c445f9347b486254fa1f4a08f263f17f56",
+        "candidateBlob": null,
+        "decision": "Legacy lexical cue-ranking harness depends on apps/sutra/local-answer and catalog receipt API; not a V2 investigation correctness metric. Preserve historical implementation; current knowledge benchmark independent."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-evaluation/mapping-harness.test.mjs",
+        "legacyBlob": "e55ae7b50a0156a85a50e7410009bd24c47dcb9b",
+        "candidateBlob": null,
+        "decision": "Legacy ranking test remains with immutable harness; no conflation with V2 empirical accuracy."
+      },
+      {
+        "pr": 49,
+        "path": "tools/sutra-open-kit/test.mjs",
+        "legacyBlob": "7b4b4f8c2ae392c76e46ec577f9804f0e2dc1a7d",
+        "candidateBlob": "6e9c1e7885910ce0d692abb508f30bbbfd81afd8",
+        "decision": "Retain current reproducible package and independent consumer contracts, no regression to old open-kit content."
+      },
+      {
+        "pr": 48,
+        "path": ".github/workflows/sutra-evidence.yml",
+        "legacyBlob": "79afbc87b989b8241bad337e9ee83451ac4dd680",
+        "candidateBlob": "d7879f01c1d29302f036232766600133588a378f",
+        "decision": "Retain exact head Node 24 evidence package tests and current browser-compatible exports; old annotation CLI layout not required by V2."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/README.md",
+        "legacyBlob": "e7c219cff0377d5fcfcc33cb018c4cc913768b04",
+        "candidateBlob": "caa051686460a2dd9d6a7d4bb2c4e9e572737768",
+        "decision": "Keep explicit same-owner synthetic fixture and unverified production origins; update local preview method/CORS boundary."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/peer.config.json",
+        "legacyBlob": "78e13149d6ca8931f89fd1cb91725c4f99638b02",
+        "candidateBlob": "92a9bf2df337d1d1330765aa7c7d3efa9fc33104",
+        "decision": "Retain proposed_not_deployed, same_project_owner and explicit caller origin. Do not resurrect legacy production status."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/public/agents/checklist.evidence.json",
+        "legacyBlob": "63f57f27e8f982f604ee32d47079908102a9ed4a",
+        "candidateBlob": null,
+        "decision": "Do not publish deliberately conflicting synthetic timing marker as real guide content. Historical project-owned fixture remains accessible at immutable source revision; rights-cleared source corpus still open."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/scripts/serve.mjs",
+        "legacyBlob": "53426ad6f94a84c8cdaa8f91d5bd39be7f578929",
+        "candidateBlob": "7a1e8e9e7d92dba63525d5fcbf9b1cf7030b6934",
+        "decision": "Recover GET/HEAD/OPTIONS boundary from old source and strengthen exact three-artifact CORS, preflight authorization, realpath and symlink refusal."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/src/main.js",
+        "legacyBlob": "3efb04fcc9175f3f889d691f6f4319edf3d397ff",
+        "candidateBlob": "27a1adeda27521b087ccc8e6584e08ca8a157ff5",
+        "decision": "Keep proposed-not-deployed status text and no independent owner claim."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/test/preview.test.mjs",
+        "legacyBlob": "5aa64f720a504a89fbfb5e033c828a4c45c8475f",
+        "candidateBlob": "94a3528d0cf9081e627eddacdbf81e6f3d61b4fb",
+        "decision": "Extend current real loopback consumer/consent regression with denied methods, scoped preflight, no unknown artifact CORS and symlink rejection."
+      },
+      {
+        "pr": 48,
+        "path": "apps/sutra-peer/test/publication.test.mjs",
+        "legacyBlob": "7aa6bc1dcf56e371353b88ced5e5d1747bb836de",
+        "candidateBlob": "8ca73f013177bab75393ddd1e56564411eaff578",
+        "decision": "Keep current exact checklist+source_select declarative network and static no-functions checks; old timing fixture excluded."
+      },
+      {
+        "pr": 48,
+        "path": "packages/sutra-evidence/README.md",
+        "legacyBlob": "a620e325728a6c785899f9476d08215294ac25b9",
+        "candidateBlob": "b8df9682a7b9ff280e0bd715902c079cac0899bc",
+        "decision": "Retain current receipt validation plus portable Web Annotation export and explicit no truth or media byte claim; no incompatible package version reset."
+      },
+      {
+        "pr": 48,
+        "path": "packages/sutra-evidence/examples/integrity-manifest.json",
+        "legacyBlob": "ec34d892c6ca2be789d56c531437c59e4bf839fa",
+        "candidateBlob": null,
+        "decision": "Historical synthetic example contains example.invalid media/transcript identities; no actual source bytes or rights proof. Not a production dependency."
+      },
+      {
+        "pr": 48,
+        "path": "packages/sutra-evidence/examples/transcript-v3.vtt",
+        "legacyBlob": "0fc83cc316712daedd4c968b4c37786dfcabfbbe",
+        "candidateBlob": null,
+        "decision": "Historical synthetic handover cue is not V2 source evidence. Retain immutable fixture rather than republish."
+      },
+      {
+        "pr": 48,
+        "path": "packages/sutra-evidence/index.js",
+        "legacyBlob": "e53aa1ee0f4167d86103d8041c04519345e52eb0",
+        "candidateBlob": "b067ed2146af7baef9e6d715bbb4092ac9cab61f",
+        "decision": "Retain current descriptor-based data snapshot validation and catalog receipt checks; current portable annotation module is separate export."
+      },
+      {
+        "pr": 48,
+        "path": "packages/sutra-evidence/package.json",
+        "legacyBlob": "299833895fa06c210f3b58486a5b3da982db175b",
+        "candidateBlob": "a1398791fd368acf88156a1e12af3c49a1ab7cfd",
+        "decision": "Keep existing compatible receipt CLI/export names and annotation subpath; do not silently switch legacy default CLI to annotation or change version."
+      }
+    ],
+    "oldRevisionReproduction": {
+      "source": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+      "job": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46107182824/job/140862441928",
+      "result": "passed: historical failures reproduced and identical candidate tests passed",
+      "testSource": "packages/sutra-runtime/test/source-tools.test.mjs",
+      "testBaseline": "tools/sutra-evaluation/baseline.test.mjs"
+    },
+    "previewBoundaryCommit": "e696ea4cccb7993d2c15cee2fb83a8d4014a2781",
+    "qualification": "Current preview boundary regression requires successful integrated CI; physical acceptance, actual rights clearance and full final revision remain separately open."
   }
 }
