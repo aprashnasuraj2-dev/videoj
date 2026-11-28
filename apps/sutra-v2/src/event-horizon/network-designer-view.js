@@ -327,9 +327,12 @@ export function mountNetworkDesigner(root){
   inspect.disabled=busy;
   use.disabled=busy||!imported;
   file.disabled=busy;
-  if(busy){
-   for(const e of inspector.querySelectorAll('button,input,select,textarea'))e.disabled=true;
-  }
+  profile.disabled=busy;
+  count.disabled=busy||profile.value==='single';
+  networkDescription.disabled=busy;
+  networkSteps.disabled=busy;
+  nameInput.disabled=busy;
+  inspector.inert=busy;
  }
  function render(){
   const state=designer.snapshot();

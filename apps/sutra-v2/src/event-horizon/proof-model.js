@@ -2,7 +2,7 @@ import {createVerifier,replayReport,revisionDependencyClosure} from '../../../..
 import {parseUniqueJson} from '../../../../packages/sutra-consent/strict-json.js';
 import {exactMagnitude} from './local-computation.js';
 
-export const PROOF_LIMITS=Object.freeze({nodes:256,graph:65536,report:262144,archive:524288,history:8});
+export const PROOF_LIMITS=Object.freeze({nodes:256,graph:65536,report:262144,archive:262144,history:8});
 export const arithmetic=Object.freeze(['add','sub','mul','div']);
 export const comparisons=Object.freeze(['eq','le','lt','ge','gt']);
 const identifier=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;

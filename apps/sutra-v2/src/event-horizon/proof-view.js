@@ -125,7 +125,7 @@ export function mountProofView(root){
  });
  const download=button('Download replayable proof',()=>{
   const state=session.snapshot();
-  if(state.current)save('sutra-proof.json',exportProof(state.current));
+  if(state.current){try{save('sutra-proof.json',exportProof(state.current));}catch(e){status.textContent='Export refused: '+displayError(e);}}
  });
  const graphDownload=button('Download graph JSON',()=>{
   save('sutra-graph.json',JSON.stringify({schemaVersion:1,nodes:session.snapshot().nodes},null,2));
@@ -205,6 +205,9 @@ export function mountProofView(root){
   nodeId.value=n.id;
   nodeId.disabled=true;
   nodeKind.value=n.kind;
+  const quantities=session.snapshot().nodes.filter(q=>q.kind!=='constraint'&&q.id!==editing).map(q=>q.id);
+  optionList(leftArg,quantities,n.args?.[0]);
+  optionList(rightArg,quantities,n.args?.[1]);
   setKind();
   if(n.kind==='input'){
    magnitude.value=n.value;
@@ -258,7 +261,7 @@ export function mountProofView(root){
   importResult.replaceChildren();
   const chosen=file.files?.[0];
   if(!chosen||!chosen.size||chosen.size>PROOF_LIMITS.archive){
-   importStatus.textContent='File refused: missing or larger than 512 KiB.';
+   importStatus.textContent='File refused: missing or larger than 256 KiB.';
    sync();
    return;
   }

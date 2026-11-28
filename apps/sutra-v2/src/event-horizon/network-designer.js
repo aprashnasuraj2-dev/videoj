@@ -1,4 +1,4 @@
-import {compileNetwork,executionLimits} from '../../../../packages/sutra-runtime/index.js';
+import {compileNetwork} from '../../../../packages/sutra-runtime/index.js';
 import {parseUniqueJson} from '../../../../packages/sutra-runtime/strict-json.js';
 
 export const DESIGN_LIMITS=Object.freeze({agents:32,edgesPerAgent:16,bytes:65536,history:24});
@@ -51,11 +51,13 @@ export function networkText(definition){
 export function admitDesign(definition,{name='custom_network',limits={}}={}){
  if(!validId(name))fail('DESIGN_NAME');
  // Closed local-only compiler; arbitrary peer/MCP references cannot pass.
+ const frontDescriptor=Object.getOwnPropertyDescriptor(definition??{},'tools');
+ const first=Array.isArray(frontDescriptor?.value)?Object.getOwnPropertyDescriptor(frontDescriptor.value,'0')?.value:null;
+ const front=Object.getOwnPropertyDescriptor(first??{},'name')?.value;
+ if(!validId(front))fail('DESIGN_FRONT');
+ const compiled=compileNetwork(definition,{name,frontMan:front,limits});
  const text=networkText(definition);
  const data=parseUniqueJson(text,{maxChars:DESIGN_LIMITS.bytes,maxDepth:32});
- const front=data?.tools?.[0]?.name;
- if(!validId(front))fail('DESIGN_FRONT');
- const compiled=compileNetwork(data,{name,frontMan:front,limits});
  return freeze({definition:data,name,front,limits:compiled.limits,text});
 }
 export function parseDesign(text,{name='custom_network'}={}){
