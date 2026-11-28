@@ -135,3 +135,52 @@ test('search result provider/rank/title spoofing cannot alter the approved provi
   assert.deepEqual(r.report.results.map(x=>x.rank),[1,2]);assert.equal(r.report.results[0].title,'');
  }finally{g.close();}
 });
+
+test('trusted agent and deterministic engine autonomously dispatch without per-tool human approvals',async()=>{
+ const {gateway:g,contacts}=fixture();
+ try{
+  const agent=g.autoStart(fetchRequest,{actor:'agent'});
+  const a=await terminal(g,agent.sessionId);
+  assert.equal(a.state,'closed');assert.equal(a.report.actor,'agent');
+  const engine=g.autoStart({...searchRequest,backend:'brave'},{actor:'engine'});
+  const b=await terminal(g,engine.sessionId);
+  assert.equal(b.state,'closed');assert.equal(b.report.actor,'engine');
+  assert.equal(contacts.length,2);
+  assert.equal(b.report.results[0].url,URL1);
+ }finally{g.close();}
+});
+test('federated automatic discovery spans unrelated scholarly indexes with explicit provider outages',async()=>{
+ const used=[];
+ const results={
+  openalex:[{url:'https://www.nature.com/articles/abc',title:'Nature research'}],
+  crossref:[{url:'https://www.science.org/doi/10.1000/def',title:'Science research'}],
+  europepmc:[{url:'https://journals.plos.org/plosone/article?id=10.1371/test',title:'Biomedical research'}],
+  semanticscholar:[{url:'https://dl.acm.org/doi/10.1145/abc',title:'ACM research'}],
+  arxiv:[{url:'https://arxiv.org/abs/2401.00001',title:'Preprint'}]
+ };
+ const providers=Object.fromEntries(Object.entries(results).map(([id,rows])=>[id,{async search(){
+  used.push(id);if(id==='semanticscholar')throw Object.assign(Error('provider down'),{code:'RATE_LIMITED'});
+  return rows;
+ }}]));
+ const g=createOnDemandWebAccess({makeProviders:()=>providers});
+ try{
+  const run=g.autoStart({operation:'search',resource:'quantum research journal publication',backend:'auto',render:false},{actor:'agent'});
+  const r=await terminal(g,run.sessionId);
+  assert.equal(r.state,'closed');assert.ok(used.length>=4);
+  assert.ok(r.report.results.length>=3);
+  assert.ok(r.report.providerFailures.some(x=>x.provider==='semanticscholar'&&x.code==='RATE_LIMITED'));
+  assert.ok(r.report.results.some(x=>x.url.includes('nature.com')));
+  assert.ok(r.report.results.some(x=>x.url.includes('science.org')));
+  assert.ok(r.report.searchedBackends.includes('openalex'));
+  assert.equal(r.report.qualification.includes('Federated'),true);
+ }finally{g.close();}
+});
+test('public ResearchGate and SciELO pages can be requested without being in a publisher allowlist',async()=>{
+ const {gateway:g}=fixture();
+ try{
+  for(const url of ['https://www.researchgate.net/publication/123456_Academic_Research','https://www.scielo.br/j/test/a/123']){
+   const p=g.preview({...fetchRequest,resource:url});
+   assert.equal(p.request.resource,url);
+  }
+ }finally{g.close();}
+});
