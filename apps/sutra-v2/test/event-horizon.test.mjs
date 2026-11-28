@@ -424,3 +424,37 @@ test('scenario exact numeric range, budgets, refusal and cancellation',async()=>
  const stopped=await runScenarios(plan,{signal:controller.signal,onProgress:()=>controller.abort()});
  assert.equal(stopped.status,'cancelled');assert.equal(stopped.outcomes.length,1);
 });
+
+import {sealRunArchive,readRunArchive,eventAccounting,compareRunRecords,inspectRunEvents,createRunLibrary} from '../src/event-horizon/run-archive.js';
+test('run archive validates metadata digest and exact historical transitions',async()=>{
+ const {journal,emitter}=journalRun(1);
+ for(const status of ['executing','validating','completed'])emitter.emit('task.state',{taskId:'task_0',agentId:'specialist_0',kind:'compute',status});
+ emitter.emit('run.close',{status:'completed'});
+ const archive=await sealRunArchive(journal.events('dynamic_run'));
+ const recovered=await readRunArchive(archive.text);
+ assert.equal(recovered.digest,archive.digest);
+ assert.equal(recovered.snapshot.status,'completed');
+ assert.equal(eventAccounting(recovered.events).taskCompleted,1);
+ const altered=JSON.parse(archive.text);altered.events[1].payload.status='failed';
+ await assert.rejects(readRunArchive(JSON.stringify(altered)));
+ assert.throws(()=>inspectRunEvents([archive.events[0],archive.events[2]]));
+ const lib=createRunLibrary();lib.add(archive,'local_feed');lib.add(recovered,'imported_file');assert.equal(lib.list().length,1);
+ lib.remove(archive.digest);assert.equal(lib.list().length,0);
+});
+test('archive comparison distinguishes status and unknown post-dispatch outcome',async()=>{
+ const j=createExecutionJournal(),e=createExecutionEmitter({runId:'provider_test',version:'v1',origin:'authorized-provider',publish:j.accept});
+ e.emit('run.open',{tasks:[{id:'task',kind:'model',agentId:'owner',dependsOn:[]}]});
+ e.emit('task.state',{taskId:'task',kind:'model',agentId:'owner',status:'executing'});
+ const p={taskId:'task',kind:'model',agentId:'owner',routeId:'route',planPin:'sha256:'+'0'.repeat(64)};
+ for(const phase of ['consent-requested','consent-granted','dispatch-attempt'])assert.equal(e.emit('provider.phase',{...p,phase}),true);
+ const before=await sealRunArchive(j.events('provider_test'));
+ assert.equal(eventAccounting(before.events).providerUnknown,1);
+ assert.equal(e.emit('provider.phase',{...p,phase:'cancelled'}),true);
+ assert.equal(e.emit('task.state',{taskId:'task',kind:'model',agentId:'owner',status:'cancelled'}),true);
+ assert.equal(e.emit('run.close',{status:'cancelled'}),true);
+ const after=await sealRunArchive(j.events('provider_test'));
+ const counts=eventAccounting(after.events);
+ assert.equal(counts.providerDispatchAttempts,1);assert.equal(counts.providerResponses,0);assert.equal(counts.providerUnknown,1);
+ const diff=compareRunRecords(before,after);
+ assert.equal(diff.tasks[0].relation,'status_changed');assert.equal(diff.sameVersion,true);
+});

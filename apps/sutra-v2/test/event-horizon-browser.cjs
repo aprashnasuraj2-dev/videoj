@@ -14,7 +14,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.equal(await page.locator('#orb-map').isVisible(),false);
   assert.match(await page.locator('#eh-status').innerText(),/No recorded execution/);
   assert.equal(await page.locator('#eh-workspace .eh-entity').count(),0);
-  assert.equal(await page.locator('#eh-workspace [data-lazy-view=pending]').count(),9);
+  assert.equal(await page.locator('#eh-workspace [data-lazy-view=pending]').count(),10);
   assert.equal(await page.locator('#eh-proof-evaluate').count(),0);
   assert.equal(await page.locator('#eh-notebook-save').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -87,6 +87,14 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    assert.match(await page.locator('#eh-status').innerText(),/Local deterministic task graph · completed/);
    assert.equal(await page.locator('#eh-workspace .eh-entity').count(),20);
    await page.screenshot({path:path.join(out,'event-horizon-ten-owners.png'),fullPage:false});
+   await page.locator('.eh-tabs').getByRole('button',{name:'Run archive',exact:true}).click();
+   await page.locator('#eh-run-archive').getByLabel('Retained runtime run').selectOption('eh_batch_1');
+   await page.locator('#eh-run-archive').getByRole('button',{name:'Capture selected run',exact:true}).click();
+   await page.waitForFunction(()=>document.querySelector('#eh-run-archive-status').textContent.includes('validated metadata events'));
+   assert.equal(await page.locator('#eh-run-archive .eh-archive-state-row').count(),20);
+   await page.locator('#eh-run-archive').getByLabel('Historical sequence').fill('0');
+   assert.equal(await page.locator('#eh-run-archive .eh-archive-state-row').count(),0);
+   await page.screenshot({path:path.join(out,'event-horizon-run-archive.png'),fullPage:false});
   }
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await context.close();
  }}finally{await browser.close();await new Promise(r=>server.close(r));}

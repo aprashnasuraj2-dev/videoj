@@ -12,6 +12,7 @@ import {mountNetworkDesigner} from './network-designer-view.js';
 import {mountNotebook} from './notebook-view.js';
 import {createLazyViews,createCoalescedRefresh} from './view-lifecycle.js';
 import {mountScenarioView} from './scenario-view.js';
+import {mountRunArchive} from './run-archive-view.js';
 import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -170,6 +171,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   {id:'proof',name:'Proof workbench',panelId:'eh-proof',mount:()=>mountProofView(section,{onScenario(nodes){const v=registry.ensure('scenarios');if(v?.stage(nodes,'Current proof workbench declarations'))switchView('scenarios');}})},
   {id:'designer',name:'Network designer',panelId:'eh-network-designer',mount:()=>mountNetworkDesigner(section)},
   {id:'scenarios',name:'Scenario matrix',panelId:'eh-scenarios',mount:()=>mountScenarioView(section)},
+  {id:'archive',name:'Run archive',panelId:'eh-run-archive',mount:()=>mountRunArchive(section,{feed})},
   {id:'notebook',name:'Notebook',panelId:'eh-notebook',mount:()=>{const instance=mountNotebook(section);if(latestKnowledge)instance.update(latestKnowledge);return instance;}}
  ];
  const viewError=E('p','','eh-state');viewError.hidden=true;viewError.setAttribute('role','status');tabs.after(viewError);
