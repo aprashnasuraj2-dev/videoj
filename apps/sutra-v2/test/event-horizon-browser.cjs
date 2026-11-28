@@ -21,6 +21,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.equal(await page.locator('#orb-map .orb-agent').count(),6);
   await page.locator('#orb-nav').getByRole('button',{name:'Adaptive universe',exact:true}).click();
   await page.locator('#orb-explore').click();assert.equal(await page.locator('#orb-autonomous-objective').evaluate(e=>document.activeElement===e),true);
+  assert.equal(await page.locator('#eh-objective-slot #orb-autonomous-objective').count(),1);
+  await page.locator('.eh-tabs').getByRole('button',{name:'Direct compute'}).click();await page.locator('#eh-compute-run').click();await page.waitForFunction(()=>document.querySelector('#eh-compute-value'));assert.equal(await page.locator('#eh-compute-value').innerText(),'1 m');
+  await page.screenshot({path:path.join(out,'event-horizon-compute-'+width+'.png'),fullPage:false});
+  await page.locator('.eh-tabs').getByRole('button',{name:'Runtime'}).click();assert.match(await page.locator('#eh-status').innerText(),/Direct local computation · completed/);assert.equal(await page.locator('#eh-workspace .eh-entity').count(),1);assert.match(await page.locator('#eh-workspace .eh-entity').first().innerText(),/tool · completed/);
+  await page.locator('.eh-tabs').getByRole('button',{name:'Knowledge'}).click();assert.ok(await page.locator('#eh-knowledge').isVisible());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await context.close();
  }}finally{await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

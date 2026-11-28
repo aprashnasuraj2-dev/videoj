@@ -4,7 +4,7 @@ const ID=/^[A-Za-z0-9_.:/-]{1,160}$/;
 const valid=x=>typeof x==='string'&&ID.test(x);
 const safe=(x,fallback='Unknown')=>valid(x)?x:fallback;
 const terminal=new Set(['completed','failed','blocked','cancelled','refused','stopped','unknown']);
-const states=new Set(['queued','executing','validating','completed','failed','blocked','cancelled','waiting','refused','idle','stopped','unknown','running','paused']);
+const states=new Set(['queued','executing','validating','completed','failed','blocked','cancelled','waiting','refused','idle','stopped','unknown','running','paused','working','not-run','incomplete','unadmitted']);
 const state=x=>states.has(x)?x:'unknown';
 const key=(...parts)=>parts.map(x=>encodeURIComponent(String(x))).join('/');
 const entity=(run,kind,id,label,status,extra={})=>Object.freeze({key:key(run,kind,id),kind,id,label,status:state(status),...extra});
@@ -121,8 +121,8 @@ export function createResearchProjection({maxNodes=512,maxEvents=120}={}){
   if(transport&&transport!==mode)return false;
   transport=mode;return mode==='browser_runtime'?browser(e):host(e);
  }
- function end(){
-  active=false;runStatus='stopped';
+ function end(status='unknown'){
+  active=false;runStatus=['completed','cancelled','refused','failed','paused'].includes(status)?status:'unknown';
   for(const n of nodes.values())if(!terminal.has(n.status))update(n,'unknown');
   pending=null;
  }
@@ -135,4 +135,10 @@ export function createResearchProjection({maxNodes=512,maxEvents=120}={}){
 }
 export function emptyGraph(){
  return freezeGraph({id:'empty',label:'No recorded execution',runId:null,status:'idle',nodes:[],edges:[],events:[],agentCount:0,invocationCount:0,qualification:'Choose an objective or a local worked example. No agents have been instantiated by this view.'});
+}
+
+export function localToolGraph({id,label,status}){
+ if(!valid(id)||typeof label!=='string'||label.length>120||!['executing','completed','refused'].includes(status))return null;
+ const n=entity(id,'tool','exact_quantity',label,status);
+ return freezeGraph({id:key('local-tool',id),runId:id,label:'Direct local computation',status,nodes:[n],edges:[],events:[],agentCount:0,invocationCount:0,qualification:'Actual local tool operation; no AI agent, model request or external contact. Exact proof is available in the computation view; this display is not itself a proof receipt.'});
 }

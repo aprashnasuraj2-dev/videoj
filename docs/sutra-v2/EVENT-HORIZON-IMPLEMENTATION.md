@@ -25,3 +25,10 @@
 - New unit and actual browser tests wired into workspace CI. V8 precommit pure-module smoke: 45 assertions passed. Node/Chromium exact-head CI pending. No gate formally accepted before relevant exact-head acceptance, and no 20,000-line claim.
 
 Next: verify actual CI; expand legacy inventory, active-run selection semantics, browser trace contract, event burst batching, accessibility and real browser multi-agent fixtures. Then scope EH-A01/A02/A03/A04/A05 closure based on observed evidence.
+
+## Second slice — direct computation and knowledge workspace
+- First slice exact-head workspace run 46128111610, job 140927118752: unit suite, canonical build, four-width Chromium adaptive/default and legacy test, existing full browser journey, durable recovery, independent Python replay, and research bridge passed. Browser-research-orchestration failed on an existing assertion translating select_query to query rather than search. Corrected the expected operation mapping and strengthened adjacent sequence check; 10 actual contacts and per-permit checks unchanged. Later checks were skipped, not passed.
+- Reparent existing objective field and primary prepare actions, preserving their real handlers and restoring the original location in legacy mode. Compact primary mast. No duplicated disclosure controls.
+- Introduce actual zero-agent exact local unit conversion: 8 closed quantity kinds, integer/decimal/rational input, existing scope compiler SI factors and kernel division, same-kernel replay, exact graph/report download; operation projects as one tool, zero agent instances and zero observed invocations.
+- Add knowledge inspector over existing workspace snapshot and canonical dependency graph, exact source spans, declared lineages, competing interpretations, upstream/downstream highlighting, and links to authoritative revision/export controls.
+- Explicit research terminal state from existing controller; unknown dispatch outcome remains unknown. Skip expensive hidden-view rerenders. New acceptance in existing Node and Chromium suites; new head must pass. No formal gate closed yet.

@@ -68,3 +68,32 @@ test('layout deterministic, preserves graph, contains every small graph node',()
  assert.equal(JSON.stringify(g),original);assert.deepEqual(identityStyle(g.nodes[0]),identityStyle(g.nodes[0]));
 });
 test('large graph falls back to accessible list',()=>{const {journal}=journalRun(64);assert.equal(layoutGraph(projectTaskRun(journal.snapshot('dynamic_run')),'radial').mode,'list');});
+
+import {exactMagnitude,conversionGraph,convertQuantity} from '../src/event-horizon/local-computation.js';
+import {knowledgeProjection,knowledgeRelations,declaredLineageGroups} from '../src/event-horizon/knowledge-model.js';
+import {localToolGraph} from '../src/event-horizon/projection.js';
+test('exact input normalization without floating point',()=>{
+ for(const [value,expected] of [['1000','1000'],['0.25','1/4'],['-0.5','-1/2'],['4/8','1/2'],['-0','0']])assert.equal(exactMagnitude(value),expected);
+ for(const invalid of ['Infinity','NaN','1e5','1/0','1.','1/02','1+2','01','<script>','1'.repeat(51)])assert.throws(()=>exactMagnitude(invalid));
+});
+test('closed quantity graph rejects kind/unit mismatch',()=>{
+ assert.throws(()=>conversionGraph({kind:'torque',value:'1',from:'J',to:'N*m'}));
+ assert.throws(()=>conversionGraph({kind:'__proto__',value:'1',from:'m',to:'mm'}));
+ assert.throws(()=>conversionGraph({kind:'length',value:'1',from:'cm',to:'kg'}));
+ const graph=JSON.parse(conversionGraph({kind:'length',value:'1000',from:'mm',to:'m'}));assert.equal(graph.nodes.at(-1).op,'div');
+});
+for(const [kind,value,from,to,expected] of [
+ ['length','1000','mm','m','1'],['length','-0.5','m','mm','-500'],['mass','250','g','kg','1/4'],
+ ['duration','1','min','s','60'],['force','2.5','kN','N','2500'],['pressure','1000','kPa','MPa','1'],
+ ['energy','1/2','kJ','J','500'],['torque','2','kN*m','N*m','2000'],['stress','2','GPa','MPa','2000']
+])test('kernel conversion '+kind+' '+from+' → '+to,async()=>{
+ const r=await convertQuantity({kind,value,from,to});assert.equal(r.value,expected);assert.match(r.digest,/^sha256:[a-f0-9]{64}$/);assert.ok(r.reportText.length>0);
+});
+test('local tool projection has no synthetic AI participant',()=>{
+ const g=localToolGraph({id:'local_1',label:'Exact conversion',status:'completed'});assert.equal(g.agentCount,0);assert.equal(g.invocationCount,0);assert.equal(g.nodes.length,1);assert.equal(g.nodes[0].kind,'tool');
+ assert.equal(localToolGraph({id:'local_1',label:'x',status:'fabricated'}),null);
+});
+test('knowledge projection preserves exact source spans and declared lineage',()=>{
+ const workspace={question:'Compare quantities',sources:[{id:'a',lineage:'shared',text:'Value: 100'},{id:'b',lineage:'shared',text:'Copy: 100'}],bindings:[{id:'q1',sourceId:'a',start:7,end:10,type:{kind:'length',unit:'m',scope:'same'}}]};
+ const model=knowledgeProjection(workspace);assert.equal(model.nodes.find(n=>n.key==='binding:q1').binding.quote,'100');assert.deepEqual(declaredLineageGroups(model),[{lineage:'shared',sources:['a','b']}]);const rel=knowledgeRelations(model,'source:a');assert.ok(rel.upstream.has('lineage:shared'));assert.ok(rel.downstream.has('binding:q1'));assert.equal(model.version,null);
+});

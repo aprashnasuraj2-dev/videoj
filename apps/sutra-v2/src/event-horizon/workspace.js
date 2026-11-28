@@ -1,6 +1,7 @@
-import {emptyGraph,projectTaskRun,createResearchProjection} from './projection.js';
+import {emptyGraph,projectTaskRun,createResearchProjection,localToolGraph} from './projection.js';
 import {identityStyle,layoutGraph,layouts} from './layout.js';
 import './workspace.css';
+import {mountKnowledgeView,mountComputationView} from './explorers.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
 const label=s=>String(s??'Unknown').replaceAll('_',' ');
@@ -24,7 +25,7 @@ function glyph(n,p){
  const status=S('text',{y:58,'text-anchor':'middle',fill:'#B2C7CC','font-size':10});status.textContent=label(n.status);
  g.append(name,status);return g;
 }
-export function mountAdaptiveWorkspace(root,{feed}){
+export function mountAdaptiveWorkspace(root,{feed,openTool}){
  const section=E('section',undefined,'eh-shell');section.id='eh-workspace';section.setAttribute('aria-labelledby','eh-title');
  const head=E('div',undefined,'eh-head'),heading=E('h2','Intelligence takes the shape of the problem.');heading.id='eh-title';
  const lead=E('div');lead.append(E('p','EVENT HORIZON / ADAPTIVE WORKSPACE','eh-kicker'),heading,E('p','Observe the actual task graph and research activity. Participants appear only from recorded runtime state.','eh-copy'));
@@ -44,10 +45,14 @@ export function mountAdaptiveWorkspace(root,{feed}){
  left.append(canvas,rosterTitle,roster);split.append(left,right);
  const timeline=E('details',undefined,'eh-timeline');timeline.append(E('summary','Recorded event timeline'));const eventList=E('ol');timeline.append(eventList);
  const footer=E('p','Visualization does not execute agents, grant consent, or verify factual truth. Use the existing research, review and proof controls to perform operations.','eh-copy');
- section.append(head,controls,counters,status,qualification,split,timeline,footer);root.prepend(section);
- let selection=null,selectedRun='empty',autoFollow=true,graph=emptyGraph(),destroyed=false;
+ const objectiveSlot=E('div',undefined,'eh-objective-slot');objectiveSlot.id='eh-objective-slot';objectiveSlot.hidden=true;
+ const tabs=E('nav',undefined,'eh-tabs');tabs.setAttribute('aria-label','Adaptive workspace views');
+ const runtime=E('div');runtime.id='eh-runtime';runtime.append(controls,counters,status,qualification,split,timeline,footer);
+ section.append(head,objectiveSlot,tabs,runtime);root.prepend(section);
+ let selection=null,selectedRun='empty',autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
+ const localRuns=new Map(),placements=[];
  const research=createResearchProjection();
- const snapshots=()=>{const list=feed.runs().map(r=>projectTaskRun(r,feed.events(r.runId))).filter(Boolean);const trace=research.snapshot();if(trace)list.push(trace);return list;};
+ const snapshots=()=>{const list=feed.runs().map(r=>projectTaskRun(r,feed.events(r.runId))).filter(Boolean);const trace=research.snapshot();if(trace)list.push(trace);list.push(...localRuns.values());return list;};
  function visibleGraph(){
   const q=filter.value.trim().toLowerCase();
   if(!q)return graph;
@@ -84,7 +89,7 @@ export function mountAdaptiveWorkspace(root,{feed}){
   canvas.append(svg);
  }
  function render(){
-  if(destroyed)return;
+  if(destroyed||!active||viewMode!=='runtime')return;
   const view=visibleGraph(),focused=document.activeElement?.dataset?.entity;
   agents.value.textContent=graph.agentCount===null?'Unknown':String(graph.agentCount);
   invocations.value.textContent=graph.invocationCount===null?'Unknown':String(graph.invocationCount);
@@ -105,8 +110,9 @@ export function mountAdaptiveWorkspace(root,{feed}){
   if(focused)[...roster.querySelectorAll('button[data-entity]')].find(b=>b.dataset.entity===focused)?.focus({preventScroll:true});
  }
  function refresh(preferred){
-  const all=snapshots(),options=[emptyGraph(),...all];
   if(autoFollow&&preferred)selectedRun=preferred;
+  if(!active)return;
+  const all=snapshots(),options=[emptyGraph(),...all];
   if(!options.some(g=>g.id===selectedRun))selectedRun=all.at(-1)?.id??'empty';
   graph=options.find(g=>g.id===selectedRun)??options[0];
   const signature=options.map(g=>g.id+' '+g.label).join('|');
@@ -116,12 +122,20 @@ export function mountAdaptiveWorkspace(root,{feed}){
  runSelect.addEventListener('change',()=>{autoFollow=false;selectedRun=runSelect.value;selection=null;refresh();});
  layoutSelect.addEventListener('change',render);filter.addEventListener('input',render);
  const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;const list=snapshots();selectedRun=list.at(-1)?.id??'empty';refresh();});controls.append(follow);
+ const knowledge=mountKnowledgeView(section,{openTool});
+ const computation=mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}});
+ const views=[['runtime','Runtime',runtime],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation]];
+ function switchView(next){viewMode=next;for(const [id,,panel] of views)panel.hidden=id!==next;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));knowledge.setActive(active&&next==='knowledge');if(next==='runtime')refresh();}
+ for(const [id,name,panel] of views){const b=button(name,()=>switchView(id));b.dataset.view=id;b.setAttribute('aria-controls',panel.id);tabs.append(b);}
+ function setActive(value){active=!!value;for(const {node,marker} of placements){if(active)objectiveSlot.append(node);else marker.after(node);}objectiveSlot.hidden=!active||!placements.length;knowledge.setActive(active&&viewMode==='knowledge');if(active)refresh();}
+ function attachObjective(elements){for(const node of elements){if(!node||placements.some(p=>p.node===node))continue;const marker=document.createComment('Original objective control position');node.before(marker);placements.push({node,marker});}setActive(active);}
  const unsubscribe=feed.subscribe((event,snapshot)=>{const p=projectTaskRun(snapshot);if(p)refresh(p.id);});
- refresh();
+ switchView('runtime');
  return Object.freeze({
   startResearch(){research.begin();refresh(research.snapshot().id);},
   observeResearch(e,mode){if(research.accept(e,mode))refresh(research.snapshot().id);},
-  endResearch(){research.end();refresh(research.snapshot()?.id);},
+  endResearch(status){research.end(status);refresh(research.snapshot()?.id);},
+  setActive,attachObjective,updateKnowledge(state){knowledge.update(state);},
   destroy(){destroyed=true;unsubscribe();section.remove();}
  });
 }

@@ -44,3 +44,39 @@
 #sutra-orbit:not([data-mode=universe]) #eh-workspace{display:none}
 @media(max-width:760px){#eh-workspace .eh-split{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-head{flex-direction:column}#eh-workspace .eh-mark{max-width:100%}#eh-workspace .eh-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-controls .eh-field:first-child{grid-column:1/-1}}
 @media(max-width:390px){#eh-workspace .eh-controls,#eh-workspace .eh-metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-canvas svg{min-width:0}#eh-workspace .eh-details{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-head{gap:5px}}
+
+#sutra-orbit[data-mode=universe] .orb-mast{padding:clamp(12px,2vw,24px);align-items:center}
+#sutra-orbit[data-mode=universe] .orb-mast h1{font-size:clamp(1.65rem,4vw,3.25rem);line-height:1.07}
+#sutra-orbit[data-mode=universe] .orb-mast .orb-lede{font-size:.89rem;max-width:800px}
+#sutra-orbit[data-mode=universe] .orb-question-band{padding:8px 16px}
+#sutra-orbit[data-mode=universe] .orb-question-band p{margin:2px 0}
+#eh-workspace [hidden]{display:none!important}
+#eh-workspace .eh-tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--eh-line);padding:10px 0;margin:0 0 12px}
+#eh-workspace .eh-tabs button{flex:1 1 92px}
+#eh-workspace .eh-tabs button[aria-pressed=true]{background:#244139;color:#d5f7c8}
+#eh-workspace .eh-objective-slot{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end;border:1px solid var(--eh-line);background:#0d1921;border-radius:8px;padding:10px;margin:12px 0 0}
+#eh-workspace .eh-objective-slot .orb-field{color:var(--eh-muted);margin:0}
+#eh-workspace .eh-objective-slot textarea{width:100%;max-width:100%;min-height:68px;resize:vertical;background:var(--eh-panel);color:var(--eh-ink);border:1px solid var(--eh-line);border-radius:5px;font:inherit;padding:8px}
+#eh-workspace .eh-objective-slot button.orb-primary{background:#21634c;border-color:#548770;color:#f0f9f3}
+#eh-workspace .eh-objective-slot button:disabled{opacity:.55;cursor:not-allowed}
+#eh-workspace .eh-actions{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+#eh-workspace .eh-actions button{flex:1 1 130px}
+#eh-workspace .eh-knowledge-band{display:grid;gap:3px;padding:12px;background:var(--eh-panel);border:1px solid var(--eh-line);border-radius:7px}
+#eh-workspace .eh-knowledge-band strong{font-size:1.06rem}
+#eh-workspace .eh-knowledge-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px}
+#eh-workspace .eh-knowledge-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:start}
+#eh-workspace .eh-knowledge-col{border:1px solid var(--eh-line);border-radius:7px;padding:8px}
+#eh-workspace .eh-knowledge-col h3{font-size:.9rem}
+#eh-workspace .eh-knowledge-node{display:grid;gap:4px;text-align:left;width:100%;margin:5px 0;border-left:3px solid var(--eh-line)}
+#eh-workspace .eh-knowledge-node strong{font-size:.83rem;overflow-wrap:anywhere}
+#eh-workspace .eh-knowledge-node span{font-size:.72rem;color:var(--eh-muted)}
+#eh-workspace .eh-knowledge-node[data-relation=selected]{border-color:var(--eh-accent)}
+#eh-workspace .eh-knowledge-node[data-relation=upstream]{border-left-color:#87C9EA}
+#eh-workspace .eh-knowledge-node[data-relation=downstream]{border-left-color:#F2BD7C}
+#eh-workspace .eh-rel{color:#d7e7d6}
+#eh-workspace .eh-quote{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;background:#0c161e;color:#e3ecea;border:1px solid var(--eh-line);padding:10px;border-radius:5px;font-size:.79rem}
+#eh-workspace .eh-compute-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+#eh-workspace .eh-compute-value{display:block;font:700 clamp(1.4rem,4vw,2.3rem) ui-monospace,monospace;color:var(--eh-accent);overflow-wrap:anywhere}
+#eh-workspace .eh-compute-result:not(:empty){padding:14px;border:1px solid var(--eh-line);border-radius:7px;background:var(--eh-panel)}
+@media(max-width:760px){#eh-workspace .eh-objective-slot{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-objective-slot .orb-field{grid-column:1/-1}#eh-workspace .eh-knowledge-grid,#eh-workspace .eh-knowledge-columns{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:390px){#eh-workspace .eh-objective-slot,#eh-workspace .eh-compute-fields{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-objective-slot .orb-field{grid-column:auto}}
