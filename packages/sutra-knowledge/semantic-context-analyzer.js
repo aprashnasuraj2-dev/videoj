@@ -14,8 +14,10 @@ const SUPERLATIVE=/\b(?:most|least|highest|lowest|largest|smallest|fastest|best|
 const CHANGE=/\b(?:change|changed|difference|increase|increased|decrease|decreased|growth|grew|fell|rose|improve|improved|decline|declined)\b/i;
 const RATIO=/\b(?:ratio|proportion|rate|percent|percentage|share)\b/i;
 const QUANT=/\b(?:all|any|each|every|exactly|some|none|both|either|neither|at\s+least|at\s+most)\b/i;
-const INDEFINITE=/\b(?:a|an|some|a\s+few|few|several)\b/i;
-const CARDINAL=/\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|both|all|each|every|exactly\s+(?:one|two|three|four|five|six|seven|eight|nine|ten|\d+)|\d+)\b/i;
+const INDEFINITE=/\b(?:a|an|a\s+few|few|several)\b/i;
+const EXISTENTIAL=/\b(?:some|any)\b/i;
+const UNIVERSAL=/\b(?:all|each|every|both)\b/i;
+const NUMBER_TOKEN=/\b(?:(?:exactly|at\s+least|at\s+most|more\s+than|less\s+than)\s+)?(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|\d+)(?:\s+thousand)?\b/ig;
 const QADV=/\b(?:always|usually|sometimes|frequently|often|occasionally|rarely|never)\b/i;
 const NEG=/\b(?:not|no|none|without|except|neither|didn't|doesn't|don't|wasn't|weren't|isn't|aren't|cannot|can't)\b/i;
 const CONDITIONAL=/\b(?:if|unless|when|assuming|provided|only\s+if|as\s+long\s+as)\b/i;
@@ -60,7 +62,7 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const implicitDynamic=!absolute.length&&!relative&&(dynamicRole||dynamicQuantity||superlative);
  const temporalAnchor=absolute.length&&relative?'MIXED_ABSOLUTE_RELATIVE':absolute.length?'EXPLICIT_ABSOLUTE':relative?'EXPLICIT_RELATIVE':implicitDynamic?'IMPLICIT_DYNAMIC':'UNSPECIFIED';
  const contextPairs=pairSignals(sourceLower),contextFamilies=new Set(contextPairs.map(x=>x.family));
- const ratio=RATIO.test(lower),change=CHANGE.test(lower),quantifier=QUANT.test(lower),indefinite=INDEFINITE.test(lower),cardinal=CARDINAL.test(lower),quantificationalAdverb=QADV.test(lower),negation=NEG.test(lower),conditional=CONDITIONAL.test(lower),geo=GEO.test(lower),scopeInteraction=(indefinite&&(cardinal||quantificationalAdverb||negation))||(negation&&quantifier);
+ const ratio=RATIO.test(lower),change=CHANGE.test(lower),quantifier=QUANT.test(lower),indefinite=INDEFINITE.test(lower),existential=EXISTENTIAL.test(lower),universal=UNIVERSAL.test(lower),numberCount=(lower.match(NUMBER_TOKEN)||[]).length,cardinal=numberCount>0,quantificationalAdverb=QADV.test(lower),negation=NEG.test(lower),conditional=CONDITIONAL.test(lower),geo=GEO.test(lower),scopeInteraction=(numberCount>=2)||(cardinal&&(universal||indefinite||existential||negation))||(universal&&(indefinite||existential||negation))||(negation&&(indefinite||existential||universal||cardinal))||(quantificationalAdverb&&(indefinite||existential||cardinal));
  const numeric=/\b\d+(?:\.\d+)?\b/.test(lower),unit=UNIT.test(lower),aggregate=AGG.test(lower);
  const diagnostics=[];
  diagnostics.push(signal('entity_identity',aliasCollisions.length||contextFamilies.has('entity_identity')||/\b(?:he|she|they|it|former|latter|this\s+(?:person|company|group)|that\s+(?:person|company|group))\b/i.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL',aliasCollisions.length?'Declared alias has multiple bindings.':contextFamilies.has('entity_identity')?'Source context contains contrasting entity qualifiers.':'No structural entity-identity conflict detected.'));
@@ -87,5 +89,5 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const reviewPrompts=diagnostics.filter(x=>reviewState(x.state)).map(x=>x.family).map(f=>({
   family:f,prompt:f==='reporting_period'?'Which time point or reporting period applies?':f==='entity_identity'?'Which entity does the reference denote?':f==='metric_definition'?'Which metric definition applies?':f==='population'?'Which population is included?':f==='baseline_selection'?'Which baseline is authoritative?':f==='causal_vs_observational'?'Is the claim observational or causal?':'Confirm '+f.replaceAll('_',' ')+' before adopting a meaning.'
  }));
- return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile:{temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs},diagnostics,reviewPrompts,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
+ return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile:{temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,existential,universal,numberCount,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs},diagnostics,reviewPrompts,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
 }
