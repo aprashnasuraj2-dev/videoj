@@ -1,6 +1,7 @@
 // Semantic review burden, unresolved rate and residual error; no probability or truth-confidence claims.
 import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import path from 'node:path';
 import {classifySemanticOperation} from '../semantic-operation-classifier.js';
 import {sealReviewedDraft} from '../reviewed-draft.js';
 import {casePin} from '../pinned-investigation.js';
@@ -45,4 +46,4 @@ export async function runSemanticReviewMeasurement(){
   humanElapsedReviewTime:'NOT_MEASURED',truthProbability:'NOT_COMPUTED',decisionAuthority:'NONE'
  };
 }
-if(import.meta.url===new URL('file://'+process.argv[1]).href||fileURLToPath(import.meta.url)===process.argv[1])console.log(JSON.stringify(await runSemanticReviewMeasurement(),null,2));
+if(fileURLToPath(import.meta.url)===path.resolve(process.argv[1]??''))console.log(JSON.stringify(await runSemanticReviewMeasurement(),null,2));

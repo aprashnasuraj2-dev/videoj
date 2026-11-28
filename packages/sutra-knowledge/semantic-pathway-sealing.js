@@ -19,6 +19,11 @@ function canonicalEvidenceDraft(d){
  const bindings=d.bindings.map(b=>{if(!keys(b,['id','sourceId','start','end','type']))fail('BINDING');return {id:b.id,sourceId:b.sourceId,start:b.start,end:b.end,type:stable(b.type)}}).sort((a,b)=>sort(a.id,b.id));
  return {version:1,question:d.question,sources,bindings};
 }
+function roleRows(rows){
+ if(!Array.isArray(rows))fail('ROLE_ROWS');const out={};
+ for(const row of rows){if(!Array.isArray(row)||row.length!==2||typeof row[0]!=='string'||Object.hasOwn(out,row[0]))fail('ROLE_ROW');out[row[0]]=row[1];}
+ return out;
+}
 function normalizeRoles(raw,ids){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('ROLES');const out={};
  for(const [k,v] of Object.entries(raw).sort(([a],[b])=>sort(a,b))){if(!/^[A-Za-z][A-Za-z0-9_-]{0,31}$/.test(k)||typeof v!=='string'||!ids.has(v))fail('ROLE_BINDING');out[k]=v}return out;
@@ -37,7 +42,7 @@ function prepare(pathway,p){
  if(pathway==='structured_table'){
   if(!keys(p,['version','question','source','bindingColumns','bindingRows','mode','operator','columns','rows'])||p.version!==2||JSON.stringify(p.bindingColumns)!==JSON.stringify(['id','sourceId','start','end','type'])||JSON.stringify(p.columns)!==JSON.stringify(['role','bindingId'])||!Array.isArray(p.bindingRows)||!Array.isArray(p.rows))fail('TABLE');
   const bindings=p.bindingRows.map(row=>{if(!Array.isArray(row)||row.length!==5)fail('TABLE_BINDING_ROW');return {id:row[0],sourceId:row[1],start:row[2],end:row[3],type:row[4]}});
-  return {draft:canonicalEvidenceDraft({version:1,question:p.question,sources:[p.source],bindings}),mode:p.mode,operator:p.operator,roles:Object.fromEntries(p.rows),supplied:null};
+  return {draft:canonicalEvidenceDraft({version:1,question:p.question,sources:[p.source],bindings}),mode:p.mode,operator:p.operator,roles:roleRows(p.rows),supplied:null};
  }
  if(pathway==='template_rule'){if(!keys(p,['version','evidence','template','operator','arguments'])||p.version!==2)fail('TEMPLATE');return {draft:canonicalEvidenceDraft(p.evidence),mode:p.template,operator:p.operator,roles:p.arguments,supplied:null}}
  if(pathway==='user_expression'){if(!keys(p,['version','evidence','declaredMode','operator','roles','expression'])||p.version!==2||typeof p.expression!=='string')fail('EXPRESSION');return {draft:canonicalEvidenceDraft(p.evidence),mode:p.declaredMode,operator:p.operator,roles:p.roles,supplied:p.expression}}
