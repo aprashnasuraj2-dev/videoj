@@ -5,7 +5,7 @@ import {parseUniqueJson} from '../../packages/sutra-consent/strict-json.js';
 import {createProtocolWorkspace} from '../../packages/sutra-inference/protocol-workspace.js';
 import {createLoopbackModelExchange} from '../../packages/sutra-inference/loopback-model-exchange.js';
 const fail=c=>{throw Object.assign(Error('Local semantic refused: '+c),{code:c});};
-async function input(){const chunks=[];let size=0;for await(const b of process.stdin){size+=b.length;if(size>524288)fail('CONFIG_SIZE');chunks.push(b);}return new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(Buffer.concat(chunks,size));}
+async function input(){const chunks=[];let size=0;for await(const b of process.stdin){size+=b.length;if(size>262144)fail('CONFIG_SIZE');chunks.push(b);}return new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(Buffer.concat(chunks,size));}
 async function main(){
  const args=process.argv.slice(2),preview=!args.length||args.length===1&&args[0]==='--plan',execute=args.length===4&&args[0]==='--execute-local'&&args[1]==='--approve-local-disclosure'&&args[2]==='--approve-plan'&&/^sha256:[a-f0-9]{64}$/.test(args[3]);
  if(!preview&&!execute)fail('APPROVAL_REQUIRED');
@@ -31,4 +31,4 @@ async function main(){
   process.stderr.write(JSON.stringify({status:'UNTRUSTED_MEANINGS_REVIEW_REQUIRED',packetPin:p.prepared.packetPin,responsePin:await casePin(responseText),reportPin:evaluated.reportPin,disposition:evaluated.disposition,authority:'NONE'})+'\n');
  }finally{clearTimeout(timer);process.removeListener('SIGINT',cancel);process.removeListener('SIGTERM',cancel);transport.close();}
 }
-main().catch(e=>{const known=['CONFIG_SIZE','CONFIG','CONNECTION','ENDPOINT','ROUTE','APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','CREDENTIAL_REQUIRED','CANCELLED','SECRET_ECHO'];process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(e?.code)?e.code:'LOCAL_SEMANTIC_REFUSED'})+'\n');process.exitCode=1;});
+main().catch(e=>{const known=['CONFIG_SIZE','CONFIG','CONNECTION','ENDPOINT','ROUTE','APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','CREDENTIAL_REQUIRED','CANCELLED','SECRET_ECHO'];process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(e?.code)?e.code:typeof e?.message==='string'&&/^(?:HYBRID_SEMANTIC|SEMANTIC_ENGINE|COMPILER|CASE)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'LOCAL_SEMANTIC_REFUSED'})+'\n');process.exitCode=1;});

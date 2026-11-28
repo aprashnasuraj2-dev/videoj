@@ -8,8 +8,8 @@ const fail=c=>{throw Object.assign(Error('Local semantic refused: '+c),{code:c})
 const exact=(x,k)=>x&&typeof x==='object'&&!Array.isArray(x)&&Object.keys(x).length===k.length&&k.every(y=>Object.hasOwn(x,y));
 const int=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 export async function admitLocalSemanticConfig(configText){
- if(typeof configText!=='string'||new TextEncoder().encode(configText).length>524288)fail('CONFIG_SIZE');
- const c=parseUniqueJson(configText,{maxChars:524288,maxDepth:8});
+ if(typeof configText!=='string'||new TextEncoder().encode(configText).length>262144)fail('CONFIG_SIZE');
+ const c=parseUniqueJson(configText,{maxChars:262144,maxDepth:8});
  if(!exact(c,['version','contractText','contractPin','sourceIds','connection','maxOutputTokens','timeoutMs'])||c.version!==VERSION||!int(c.maxOutputTokens,128,4096)||!int(c.timeoutMs,100,30000))fail('CONFIG');
  const x=c.connection;
  if(!exact(x,['id','label','protocol','endpoint','model','authMode','credentialEnv'])||typeof x.label!=='string'||!x.label.trim()||x.label.length>64||!['none','bearer','anthropic-key'].includes(x.authMode)||(x.authMode==='none'?x.credentialEnv!==null:typeof x.credentialEnv!=='string'||!/^SUTRA_LOCAL_[A-Z0-9_]{1,64}$/.test(x.credentialEnv)))fail('CONNECTION');
