@@ -63,6 +63,7 @@ jobs:
             packages/sutra-knowledge/test/semantic-operation-schema.test.mjs \
             packages/sutra-knowledge/test/semantic-hybrid.test.mjs \
             packages/sutra-knowledge/test/semantic-conversation.test.mjs \
+            packages/sutra-knowledge/test/semantic-calibration.test.mjs \
             packages/sutra-knowledge/test/semantic-readiness.test.mjs \
             packages/sutra-knowledge/test/local-semantic-runner.test.mjs \
             packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
@@ -105,6 +106,7 @@ jobs:
           node --test packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs packages/sutra-knowledge/test/semantic-split-v2.test.mjs packages/sutra-knowledge/test/semantic-temporal-selector-v3.test.mjs
           node packages/sutra-knowledge/evaluation/semantic-scenario-v2.mjs > sutra-scenario-split.json
           node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
+          node packages/sutra-knowledge/evaluation/semantic-calibration-pilot.mjs sutra-scenario-assignments.json sutra-semantic-calibration.json > sutra-semantic-calibration-summary.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
