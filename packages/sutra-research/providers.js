@@ -27,12 +27,13 @@ const fromCrossref=(rows,id)=>rows.slice(0,10).map((x,i)=>{
   {doi:DOI(x?.DOI),publisher:trim(x?.publisher,120),publicationYear:year(x?.published?.['date-parts']?.[0]?.[0]),sourceFamily:'scholarly_metadata'});
 }).filter(Boolean);
 const fromOpenAlex=(rows,id)=>rows.slice(0,10).map((x,i)=>{
- const preferred=x?.primary_location?.landing_page_url||x?.best_oa_location?.landing_page_url||x?.doi||x?.id;
+ const preferred=safeLink(x?.best_oa_location?.landing_page_url)||safeLink(x?.primary_location?.landing_page_url)||safeLink(x?.doi)||safeLink(x?.id);
  return record(preferred,x?.title||x?.display_name,id,i+1,
   {doi:DOI(typeof x?.doi==='string'?x.doi.replace(/^https?:\/\/doi\.org\//i,''):null),publisher:trim(x?.primary_location?.source?.display_name,120),publicationYear:year(x?.publication_year),sourceFamily:'scholarly_index',openAccessReported:x?.open_access?.is_oa===true});
 }).filter(Boolean);
 const fromEuropePmc=(rows,id)=>rows.slice(0,10).map((x,i)=>{
- const link=doiLink(x?.doi)||('https://europepmc.org/article/'+encodeURIComponent(x?.source??'MED')+'/'+encodeURIComponent(x?.id??''));
+ const free=x?.id&&x?.isOpenAccess==='Y'?'https://europepmc.org/article/'+encodeURIComponent(x.source??'MED')+'/'+encodeURIComponent(x.id):null;
+ const link=free||doiLink(x?.doi)||(x?.id?'https://europepmc.org/article/'+encodeURIComponent(x.source??'MED')+'/'+encodeURIComponent(x.id):null);
  return record(link,x?.title,id,i+1,{doi:DOI(x?.doi),publisher:trim(x?.journalTitle,120),publicationYear:year(Number(x?.pubYear)),sourceFamily:'biomedical_index',openAccessReported:x?.isOpenAccess==='Y'});
 }).filter(Boolean);
 const fromSemanticScholar=(rows,id)=>rows.slice(0,10).map((x,i)=>record(x?.url||doiLink(x?.externalIds?.DOI),x?.title,id,i+1,
@@ -83,7 +84,7 @@ export function createSearchProviders({credentials={},transport=pinnedPublicHttp
     }else if(id==='crossref'){
      options={url:urlFor('https://api.crossref.org','/works',{'query.bibliographic':query,rows:8,select:'DOI,title,URL,publisher,issued,published'}),headers:{Accept:'application/json'}};
     }else if(id==='openalex'){
-     options={url:urlFor('https://api.openalex.org','/works',{search:query,per_page:8,select:'id,title,display_name,doi,primary_location,publication_year,open_access',...(key?{api_key:key}:{})}),headers:{Accept:'application/json'}};
+     options={url:urlFor('https://api.openalex.org','/works',{search:query,per_page:8,select:'id,title,doi,primary_location,best_oa_location,publication_year,open_access',...(key?{api_key:key}:{})}),headers:{Accept:'application/json'}};
     }else if(id==='europepmc'){
      options={url:urlFor('https://www.ebi.ac.uk','/europepmc/webservices/rest/search',{query,format:'json',pageSize:8,resultType:'lite'}),headers:{Accept:'application/json'}};
     }else if(id==='semanticscholar'){
