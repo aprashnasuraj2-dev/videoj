@@ -24,11 +24,11 @@ async function main(){
   const result=await prepared.execute({signal:controller.signal});
   if(controller.signal.aborted)fail('CANCELLED');
   const responseText=result.value.text;workspace.admitOperation(parseUniqueJson(responseText,{maxChars:65536,maxDepth:12}));
-  const evaluated=await evaluateHybridSemantic(p.input,{sourceIds:p.c.sourceIds,approvedPacketPin:p.prepared.packetPin,responseText});
+  const evaluated=await evaluateHybridSemantic(p.input,{sourceIds:p.c.sourceIds,conversation:p.c.conversation??null,approvedPacketPin:p.prepared.packetPin,responseText});
   if(controller.signal.aborted)fail('CANCELLED');
   workspace.admitOperation(evaluated.reportText);
   process.stdout.write(responseText);
   process.stderr.write(JSON.stringify({status:'UNTRUSTED_MEANINGS_REVIEW_REQUIRED',packetPin:p.prepared.packetPin,responsePin:await casePin(responseText),reportPin:evaluated.reportPin,disposition:evaluated.disposition,authority:'NONE'})+'\n');
  }finally{clearTimeout(timer);process.removeListener('SIGINT',cancel);process.removeListener('SIGTERM',cancel);transport.close();}
 }
-main().catch(e=>{const known=['CONFIG_SIZE','CONFIG','CONNECTION','ENDPOINT','ROUTE','APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','CREDENTIAL_REQUIRED','CANCELLED','SECRET_ECHO'];process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(e?.code)?e.code:typeof e?.message==='string'&&/^(?:HYBRID_SEMANTIC|SEMANTIC_ENGINE|COMPILER|CASE)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'LOCAL_SEMANTIC_REFUSED'})+'\n');process.exitCode=1;});
+main().catch(e=>{const known=['CONFIG_SIZE','CONFIG','CONNECTION','ENDPOINT','ROUTE','APPROVAL_REQUIRED','PLAN_PIN_MISMATCH','CREDENTIAL_REQUIRED','CANCELLED','SECRET_ECHO','CONVERSATION'];process.stderr.write(JSON.stringify({status:'REFUSED',reason:known.includes(e?.code)?e.code:typeof e?.message==='string'&&/^(?:HYBRID_SEMANTIC|SEMANTIC_ENGINE|SEMANTIC_CONVERSATION|COMPILER|CASE)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'LOCAL_SEMANTIC_REFUSED'})+'\n');process.exitCode=1;});
