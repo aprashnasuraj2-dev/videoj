@@ -1,7 +1,7 @@
 // PostgreSQL persistence with server-owned principals, tenant cost reservations
 // and fenced worker leases. The injected pool is a trusted pg-compatible pool.
 import {randomUUID} from 'node:crypto';
-import {admitManifest,digest,secretLike} from './research-session.js';
+import {admitManifest,digest,secretLike} from '../research-session.js';
 const fail=code=>{throw Object.assign(Error('Research store refused: '+code),{code});};
 const ID=/^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/,SESSION=/^research_[0-9a-f-]{36}$/,PIN=/^sha256:[0-9a-f]{64}$/;
 const int=(x,a,b)=>Number.isSafeInteger(x)&&x>=a&&x<=b;
