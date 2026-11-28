@@ -18,3 +18,16 @@ test('near identical content is not treated as independent evidence',()=>{
  const docs=[doc('a',text,'https://same.org/a'),doc('b',text+' suffix','https://same.org/b'),doc('c',text,'https://different.org/c')];
  const x=compareSourceLineage(docs);assert.equal(x.sameHostGroups.length,1);assert.ok(x.nearDuplicates.length>=2);assert.equal(x.independenceStatus,'NOT_ESTABLISHED');
 });
+
+test('refuse split Unicode, stale source digest, unknown source, duplicate spans and fabricated page numbers',()=>{
+ const d=doc('a','Evidence 😀 reports costs.'),p=passage(d);
+ assert.equal(verifyEvidence([d],[p]).passageCount,1);
+ const split=d.text.indexOf('😀')+1;
+ const bad=[{...p,locator:{...p.locator,startOffset:split},supportingText:d.text.slice(split)},{...p,sourceId:'unknown'},{...p,sourceDigest:digest('stale')},{...p,locator:{...p.locator,page:1}}];
+ for(const x of bad)assert.throws(()=>verifyEvidence([d],[x]),/PASSAGE_INTEGRITY/);
+ assert.throws(()=>verifyEvidence([d],[p,p]),/PASSAGE_DUPLICATE/);
+ const pdf={...d,mediaType:'application/pdf',pageMap:[{page:1,startOffset:0,endOffset:d.text.length}]},pp={...p,locator:{...p.locator,page:1}};
+ assert.equal(verifyEvidence([pdf],[pp]).passageCount,1);
+ assert.throws(()=>verifyEvidence([{...pdf,pageMap:[...pdf.pageMap,...pdf.pageMap]}],[pp]),/PASSAGE_INTEGRITY/);
+ assert.throws(()=>verifyEvidence([pdf],[{...pp,locator:{...pp.locator,page:2}}]),/PASSAGE_INTEGRITY/);
+});
