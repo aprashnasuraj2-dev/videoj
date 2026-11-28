@@ -1455,6 +1455,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await click('transaction-preview');await state('transaction_preview');
    assert.match(await loc('transaction-result').innerText(),/operating_cash · TARGET_INPUT_RESELECTED.*CONDITIONALLY_REFUTED/);
    assert.match(await loc('transaction-result').innerText(),/after_capital · TARGET_INPUT_MISSING.*BLOCKED_MISSING_INPUT/);
+   assert.match(await loc('transaction-result').innerText(),/Independent full child replay agrees/);assert.match(await loc('transaction-result').innerText(),/\d+ arithmetic operations executed · \d+ outcomes reused/);
    assert.equal(await loc('semantic-pin').innerText(),parentPin);assert.equal(await loc('transaction-export').isDisabled(),true);
    await loc('transaction-source').selectOption('cash_report');assert.equal(await loc('transaction-apply').isDisabled(),true);
    await click('transaction-preview');await state('transaction_preview');const planPin=await loc('transaction-plan-pin').innerText();
