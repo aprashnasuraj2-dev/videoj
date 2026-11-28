@@ -72,3 +72,32 @@ test('reopen exact portable transaction using independently retained snapshot, a
  await assert.rejects(openEvidenceRevision('x'.repeat(262145),...pins),/IMPORT_SIZE/);
  assert.deepEqual(await replayInvestigationVersion(v.versionText,v.digest),v.report);
 });
+
+test('actual cached arithmetic: corrected source reexecutes only affected candidate nodes; unrelated correction reuses all; no-savings control',async()=>{
+ const parent=await livingFixture(),base=createInvestigationReplaySession();const first=await base.replay(parent.versionText,parent.digest);
+ assert.equal(first.stats.totals.executed,6);assert.equal(first.stats.totals.reusedOutcomes,0);
+ async function check(ops){
+  const r=await prepareEvidenceRevision(...await plan(parent,ops)),session=base.fork();
+  const next=await session.replay(r.child.versionText,r.child.digest);
+  assert.deepEqual(next.report,await replayInvestigationVersion(r.child.versionText,r.child.digest));
+  assert.deepEqual(next.report,r.child.report);assert.equal(base.head(),parent.digest);
+  return {r,next};
+ }
+ const primary=await replacement(parent,'primary','Revenue before: 100; revenue after: 90',[['first','90'],['baseline','100']]);
+ const secondary=await replacement(parent,'secondary','Cash before: 30; cash after: 20',[['second','20'],['other','30']]);
+ const single=await check([primary]),rows=single.next.stats.candidates;
+ assert.equal(rows.find(x=>x.id==='primary_view').executed.length,3);
+ assert.equal(rows.find(x=>x.id==='secondary_view').executed.length,0);
+ assert.equal(rows.find(x=>x.id==='secondary_view').reusedOutcomes.length,3);
+ assert.equal(single.next.stats.totals.executed,3);
+ const irrelevant=await check([await replacement(parent,'context','Context revised; no input binding')]);
+ assert.equal(irrelevant.next.stats.totals.executed,0);assert.equal(irrelevant.next.stats.totals.reusedOutcomes,6);
+ assert.ok(irrelevant.r.impact.candidates.every(x=>!x.dependencyAffected&&!x.reviewRequired));
+ const all=await check([primary,secondary]);
+ assert.equal(all.next.stats.totals.executed,6);assert.equal(all.next.stats.totals.reusedOutcomes,0);
+ assert.ok(all.r.impact.candidates.every(x=>x.dependencyAffected));
+ const removed=await check([withdraw(parent,'secondary')]);
+ assert.equal(removed.next.stats.candidates.find(x=>x.id==='primary_view').executed.length,0);
+ assert.equal(removed.next.stats.candidates.find(x=>x.id==='primary_view').reusedOutcomes.length,3);
+ assert.equal(removed.r.changes.find(x=>x.id==='secondary_view').after,'BLOCKED_MISSING_INPUT');
+});
