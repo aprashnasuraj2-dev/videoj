@@ -474,6 +474,7 @@ by('source-add').onclick=()=>work(async ticket=>{
  const next=[...sources,row];
  await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;researchSourceHandoff.clear();
  invalidate(row.provenance?'Exact research provenance retained in the source contract; no source truth established.':'Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
+ if(offer?.selection){const {start,end,quote}=offer.selection,field=by('select-text');if(field.value.slice(start,end)===quote){field.setSelectionRange(start,end);field.focus();status('draft','Exact candidate citation selected. Review meaning and units before adding a binding. No claim adopted.');}}
  for(const id of ['source-id','lineage','source-text'])by(id).value='';
 });
 for(const id of ['source-id','source-text'])by(id).addEventListener('input',()=>{if(researchSourceHandoff.read()){researchSourceHandoff.clear();status('draft','Edited research offer: acquisition provenance is not carried to manual text. Re-stage the original to retain it.');}});
