@@ -56,9 +56,9 @@ export function admitWebDecision(value,objective,history,{allowPublicUrls=false,
 export function makeEvidencePacket(documents,passages,{maxPassages=24,maxTextBytes=16000}={}){
  if(!Number.isSafeInteger(maxPassages)||maxPassages<1||maxPassages>48||!Number.isSafeInteger(maxTextBytes)||maxTextBytes<256||maxTextBytes>48000)fail('PACKET_LIMIT');
  // Verify the same detached data used for subsequent model/reviewer admission.
- const v=verifyEvidence(documents,passages);
+ if(!Array.isArray(documents)||documents.length>60||!Array.isArray(passages)||passages.length>480)fail('PACKET_LIMIT');
  documents=structuredClone(documents);passages=structuredClone(passages);
- const byDoc=new Map(documents.map(d=>[d.id,freeze(d)]));
+ const v=verifyEvidence(documents,passages),byDoc=new Map(documents.map(d=>[d.id,freeze(d)]));
  // Round-robin over sources to avoid filling context with one source.
  const groups=new Map();for(let i=0;i<passages.length;i++){const p=passages[i];if(secretLike(p.supportingText))continue;if(!groups.has(p.sourceId))groups.set(p.sourceId,[]);groups.get(p.sourceId).push({ref:v.refs[i],p});}
  const excerpts=[],map=new Map();let bytes=0;
