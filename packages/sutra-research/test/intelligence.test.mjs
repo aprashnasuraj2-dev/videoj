@@ -31,3 +31,23 @@ test('numeric and semantic conflict assessments require exact evidence on both s
  assert.throws(()=>admitConflictReviews({conflicts:[{...entry,citations:[entry.citations[0]]}]},candidates,packet),/CITATION_COUNT/);
  assert.throws(()=>admitConflictReviews({conflicts:[{...entry,candidateId:'invented'}]},candidates,packet),/CONFLICT_CANDIDATE/);
 });
+
+test('evidence packet pins acquisition identity without model disclosure and is immutable across review',()=>{
+ const sources=structuredClone(docs),passages=structuredClone(ps),d=sources[0];
+ Object.assign(d,{rawDigest:digest(d.text),finalUrl:'https://primary.org/final',retrievedAt:'2026-11-27T12:00:00.000Z',mediaType:'text/plain',parser:'bounded-text/v1'});
+ const pin=digest(JSON.stringify([d.id,d.textDigest,d.rawDigest,d.url,d.finalUrl,d.retrievedAt,d.mediaType,d.parser,false,[]]));
+ const packet=makeEvidencePacket(sources,passages),excerpt=packet.excerpts[0];
+ assert.doesNotMatch(JSON.stringify(packet.excerpts),/primary.org|2026-11-27|acquisitionPin/);
+ sources[0].text='Fabricated';sources[0].retrievedAt='2026-11-27T12:01:00.000Z';passages[0].supportingText='Invented';
+ assert.equal(packet.map.set,undefined);assert.ok(Object.isFrozen(packet.map.get(excerpt.passageId).d));assert.ok(Object.isFrozen(excerpt.locator));
+ const admitted=admitSynthesis({claims:[{statement:'A candidate finding.',kind:'reported',citations:[{passageId:excerpt.passageId,quote:'USD 100 million'}]}],gaps:[]},packet);
+ assert.equal(admitted.claims[0].citations[0].acquisitionPin,pin);
+ assert.equal(admitted.claims[0].truthStatus,'UNVERIFIED');
+});
+test('overlapping distinct passages cannot count the same absolute citation twice',()=>{
+ const d=docs[0],start=d.text.indexOf('USD'),p={...ps[0],supportingText:d.text.slice(start),locator:{...ps[0].locator,startOffset:start}};
+ const packet=makeEvidencePacket([d],[ps[0],p]);
+ assert.equal(packet.excerpts.length,2);
+ const citations=packet.excerpts.map(e=>({passageId:e.passageId,quote:'USD 100 million'}));
+ assert.throws(()=>admitSynthesis({claims:[{statement:'One absolute span.',kind:'reported',citations}],gaps:[]},packet),/CITATION_DUPLICATE/);
+});
