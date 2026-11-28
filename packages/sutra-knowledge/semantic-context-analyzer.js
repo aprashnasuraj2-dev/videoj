@@ -2,7 +2,7 @@
 export const VERSION='sutra-semantic-context-analyzer/v1';
 export const FAMILIES=Object.freeze(['entity_identity','metric_definition','numerator','denominator','reporting_period','population','geography','units','scaling','sign','absolute_vs_relative','percentage_vs_percentage_point','aggregation','negation_scope','quantifier_scope','conditional_scope','baseline_selection','measurement_assumptions','modality','causal_vs_observational']);
 const INVISIBLE=/[\u200b\u200c\u200d\u2060\ufeff]/u;
-const INJECTION=/\b(?:ignore|disregard|override|bypass)\b.{0,32}\b(?:instruction|rule|policy|prompt|guard|system|developer)\b|\b(?:system|developer)\s+(?:prompt|message)\b/i;
+const INJECTION=/\b(?:ignore|disregard|override|bypass)\b.{0,32}\b(?:instructions?|rules?|polic(?:y|ies)|prompts?|guards?|system|developer)\b|\b(?:system|developer)\s+(?:prompt|message)\b/i;
 const RELATION='(?:not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to)';
 const COMPUTATIONAL_TRAILING=new RegExp('^is\\s+.+?\\s+'+RELATION+'\\s+.+?\\s+(?:because|if|unless|provided|while|although|but)\\b','i');
 const MONTH='(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
