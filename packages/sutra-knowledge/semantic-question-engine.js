@@ -39,7 +39,7 @@ function parseQuestion(q){
  if(typeof q!=='string'||q.length>2048||!q.endsWith('?')||/[\u200b\u200c\u200d\u2060\ufeff]/u.test(q))return [];
  const out=[];
  let m=/^Is (.+) (not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to) (.+)\?$/.exec(q);
- if(m&&safe(m[1])&&safe(m[3]))out.push({mode:'DIRECT_COMPARISON',parts:[{role:'left',alias:m[1]},{role:'right',alias:m[3]}],build:x=>'['+x.left+']'+REL.find(r=>r[0]===m[2])[1]+'['+x.right+']'});
+ if(m&&safe(m[1])&&safe(m[3])){const op=REL.find(r=>r[0]===m[2])[1];out.push({mode:'DIRECT_COMPARISON',parts:[{role:'left',alias:m[1]},{role:'right',alias:m[3]}],build:x=>'['+x.left+']'+op+'['+x.right+']'});}
  m=/^Is the (signed difference|signed relative change|change) from (.+) to (.+) (not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to) (.+)\?$/.exec(q);
  if(m&&safe(m[2])&&safe(m[3])&&safe(m[5])){const op=REL.find(r=>r[0]===m[4])[1],parts=[{role:'prior',alias:m[2]},{role:'now',alias:m[3]},{role:'limit',alias:m[5]}];if(m[1]!=='signed relative change')out.push({mode:'SIGNED_DIFFERENCE',parts,build:x=>'(['+x.now+']-['+x.prior+'])'+op+'['+x.limit+']'});if(m[1]!=='signed difference')out.push({mode:'SIGNED_RELATIVE_CHANGE',parts,build:x=>'((['+x.now+']-['+x.prior+'])/['+x.prior+'])'+op+'['+x.limit+']'});}
  m=/^Is the (ratio|proportion|rate) of (.+) to (.+) (not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to) (.+)\?$/.exec(q);
