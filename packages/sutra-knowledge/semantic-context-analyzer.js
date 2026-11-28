@@ -14,7 +14,10 @@ const SUPERLATIVE=/\b(?:most|least|highest|lowest|largest|smallest|fastest|best|
 const CHANGE=/\b(?:change|changed|difference|increase|increased|decrease|decreased|growth|grew|fell|rose|improve|improved|decline|declined)\b/i;
 const RATIO=/\b(?:ratio|proportion|rate|percent|percentage|share)\b/i;
 const QUANT=/\b(?:all|any|each|every|exactly|some|none|both|either|neither|at\s+least|at\s+most)\b/i;
-const NEG=/\b(?:not|no|none|without|except|neither)\b/i;
+const INDEFINITE=/\b(?:a|an|some|a\s+few|few|several)\b/i;
+const CARDINAL=/\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|both|all|each|every|exactly\s+(?:one|two|three|four|five|six|seven|eight|nine|ten|\d+)|\d+)\b/i;
+const QADV=/\b(?:always|usually|sometimes|frequently|often|occasionally|rarely|never)\b/i;
+const NEG=/\b(?:not|no|none|without|except|neither|didn't|doesn't|don't|wasn't|weren't|isn't|aren't|cannot|can't)\b/i;
 const CONDITIONAL=/\b(?:if|unless|when|assuming|provided|only\s+if|as\s+long\s+as)\b/i;
 const GEO=/\b(?:global|world|country|region|province|district|state|city|municipality|metro|metropolitan|rural|urban|market|facility|site|upstream|downstream)\b/i;
 const SCALE=/\b(?:thousand|million|billion|trillion|mn|bn)\b/i;
@@ -57,7 +60,7 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const implicitDynamic=!absolute.length&&!relative&&(dynamicRole||dynamicQuantity||superlative);
  const temporalAnchor=absolute.length&&relative?'MIXED_ABSOLUTE_RELATIVE':absolute.length?'EXPLICIT_ABSOLUTE':relative?'EXPLICIT_RELATIVE':implicitDynamic?'IMPLICIT_DYNAMIC':'UNSPECIFIED';
  const contextPairs=pairSignals(sourceLower),contextFamilies=new Set(contextPairs.map(x=>x.family));
- const ratio=RATIO.test(lower),change=CHANGE.test(lower),quantifier=QUANT.test(lower),negation=NEG.test(lower),conditional=CONDITIONAL.test(lower),geo=GEO.test(lower);
+ const ratio=RATIO.test(lower),change=CHANGE.test(lower),quantifier=QUANT.test(lower),indefinite=INDEFINITE.test(lower),cardinal=CARDINAL.test(lower),quantificationalAdverb=QADV.test(lower),negation=NEG.test(lower),conditional=CONDITIONAL.test(lower),geo=GEO.test(lower),scopeInteraction=(indefinite&&(cardinal||quantificationalAdverb||negation))||(negation&&quantifier);
  const numeric=/\b\d+(?:\.\d+)?\b/.test(lower),unit=UNIT.test(lower),aggregate=AGG.test(lower);
  const diagnostics=[];
  diagnostics.push(signal('entity_identity',aliasCollisions.length||contextFamilies.has('entity_identity')||/\b(?:he|she|they|it|former|latter|this\s+(?:person|company|group)|that\s+(?:person|company|group))\b/i.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL',aliasCollisions.length?'Declared alias has multiple bindings.':contextFamilies.has('entity_identity')?'Source context contains contrasting entity qualifiers.':'No structural entity-identity conflict detected.'));
@@ -74,8 +77,8 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  diagnostics.push(signal('absolute_vs_relative',change&&!/\b(?:percent|percentage|relative|point|absolute|magnitude|signed)\b/i.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL','Unqualified change can denote absolute difference or relative change.'));
  diagnostics.push(signal('percentage_vs_percentage_point',/percentage\s+points?|\bpp\b/i.test(lower)?'EXPLICIT_POINTS':/\b(?:percent|percentage)\b/i.test(lower)?'EXPLICIT_RELATIVE':'NO_SIGNAL','Percent and percentage-point change remain distinct.'));
  diagnostics.push(signal('aggregation',aggregate||contextFamilies.has('aggregation')?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',contextFamilies.has('aggregation')?'Source context contrasts aggregation rules.':'Aggregation method and weighting remain explicit.'));
- diagnostics.push(signal('negation_scope',negation&&(quantifier||/\b(?:and|or)\b/i.test(lower))?'REVIEW_REQUIRED':negation?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Negation is reviewed compositionally with quantifiers and conjunctions.'));
- diagnostics.push(signal('quantifier_scope',quantifier?'REVIEW_REQUIRED':'NO_SIGNAL','Quantifier scope is separated from arithmetic and entity resolution.'));
+ diagnostics.push(signal('negation_scope',negation&&(quantifier||indefinite||/\b(?:and|or)\b/i.test(lower))?'REVIEW_REQUIRED':negation?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Negation is reviewed compositionally with quantifiers, indefinites and conjunctions.'));
+ diagnostics.push(signal('quantifier_scope',quantifier||scopeInteraction?'REVIEW_REQUIRED':'NO_SIGNAL',scopeInteraction?'Multiple scope-bearing operators overlap in the utterance.':'Quantifier scope is separated from arithmetic and entity resolution.'));
  diagnostics.push(signal('conditional_scope',conditional?'REVIEW_REQUIRED':'NO_SIGNAL','Conditional clauses define applicability and scope.'));
  diagnostics.push(signal('baseline_selection',change||/\b(?:from|versus|vs\.?|compared\s+with|relative\s+to)\b/i.test(lower)||contextFamilies.has('baseline_selection')?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',contextFamilies.has('baseline_selection')?'Source context presents competing baselines.':'Change/comparison wording requires an explicit baseline.'));
  diagnostics.push(signal('measurement_assumptions',MEASURE.test(lower)||contextFamilies.has('measurement_assumptions')?'REVIEW_REQUIRED':'NO_SIGNAL',contextFamilies.has('measurement_assumptions')?'Source context contrasts measurement conventions.':'Measurement qualifiers remain obligations.'));
@@ -84,5 +87,5 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const reviewPrompts=diagnostics.filter(x=>reviewState(x.state)).map(x=>x.family).map(f=>({
   family:f,prompt:f==='reporting_period'?'Which time point or reporting period applies?':f==='entity_identity'?'Which entity does the reference denote?':f==='metric_definition'?'Which metric definition applies?':f==='population'?'Which population is included?':f==='baseline_selection'?'Which baseline is authoritative?':f==='causal_vs_observational'?'Is the claim observational or causal?':'Confirm '+f.replaceAll('_',' ')+' before adopting a meaning.'
  }));
- return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile:{temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs},diagnostics,reviewPrompts,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
+ return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile:{temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs},diagnostics,reviewPrompts,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
 }
