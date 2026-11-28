@@ -37,7 +37,6 @@ async function runInferenceFixture(request,env,url){
  const config={...env,SUTRA_ENABLE_INFERENCE:scenario==='disabled'?'false':'true',SUTRA_INFERENCE_BACKEND:'hosted',
   SUTRA_PROVIDER_KEY:key,SUTRA_CLIENT_HASH_SECRET:'f'.repeat(32),SUTRA_ALLOWED_ORIGIN:origin,
   SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'64',
-  ...(scenario==='load'?{SUTRA_MAX_DAILY_CALLS:'4',SUTRA_MAX_CLIENT_CALLS:'1',SUTRA_MAX_CONCURRENT:'4'}:{}),
   SUTRA_QUOTA:{idFromName:()=>env.TEST_QUOTA.idFromName(scenario==='load'?'local-inference-load':'local-inference'),get:id=>env.TEST_QUOTA.get(id)}
  };
  const original=await request.json();
