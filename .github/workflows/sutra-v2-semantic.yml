@@ -4,6 +4,9 @@ on:
     branches: ['main']
     paths:
       - 'packages/sutra-knowledge/semantic-*.js'
+      - 'packages/sutra-knowledge/local-semantic-config.js'
+      - 'packages/sutra-knowledge/test/local-semantic-runner.test.mjs'
+      - 'apps/sutra-v2/local-semantic.mjs'
       - 'packages/sutra-knowledge/controlled-intent-roundtrip.js'
       - 'packages/sutra-knowledge/clarification-*.js'
       - 'packages/sutra-knowledge/evaluation/ambient-*.jsonl'
@@ -21,6 +24,9 @@ on:
     branches: ['main']
     paths:
       - 'packages/sutra-knowledge/semantic-*.js'
+      - 'packages/sutra-knowledge/local-semantic-config.js'
+      - 'packages/sutra-knowledge/test/local-semantic-runner.test.mjs'
+      - 'apps/sutra-v2/local-semantic.mjs'
       - 'packages/sutra-knowledge/controlled-intent-roundtrip.js'
       - 'packages/sutra-knowledge/clarification-*.js'
       - 'packages/sutra-knowledge/evaluation/ambient-*.jsonl'
@@ -57,6 +63,7 @@ jobs:
             packages/sutra-knowledge/test/semantic-operation-schema.test.mjs \
             packages/sutra-knowledge/test/semantic-hybrid.test.mjs \
             packages/sutra-knowledge/test/semantic-readiness.test.mjs \
+            packages/sutra-knowledge/test/local-semantic-runner.test.mjs \
             packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
             packages/sutra-knowledge/test/semantic-question-engine.test.mjs \
             packages/sutra-knowledge/test/semantic-intent-ir.test.mjs \
