@@ -2,10 +2,10 @@ name: Validate SUTRA workspace browser
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**', 'apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-research/**', 'tools/sutra-neutral-consumer/**', 'services/sutra-api/**', 'deploy/sutra-pages/**', '.github/workflows/sutra-v2-workspace-browser.yml']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**', 'apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-research/**', 'tools/sutra-neutral-consumer/**', 'services/sutra-api/**', 'deploy/sutra-pages/**', '.github/workflows/sutra-v2-workspace-browser.yml']
 permissions:
   contents: read
 jobs:
