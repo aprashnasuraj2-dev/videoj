@@ -2,13 +2,37 @@ name: Validate SUTRA knowledge kernel
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'apps/sutra/package.json', 'apps/sutra/package-lock.json', 'apps/sutra-peer/package-lock.json', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'apps/sutra/package.json', 'apps/sutra/package-lock.json', 'apps/sutra-peer/package-lock.json', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact candidate revision
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Audit exact npm locks against registry (no install scripts)
+        run: node packages/sutra-knowledge/npm-advisory-audit.mjs "$RUNNER_TEMP/sutra-npm-audit"
+      - name: Retain audit receipt including refusals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-npm-advisory-audit
+          path: ${{ runner.temp }}/sutra-npm-audit
+          if-no-files-found: warn
   knowledge:
     runs-on: ubuntu-latest
     # V2-013: the preserved formal suite grew beyond the historical five-minute

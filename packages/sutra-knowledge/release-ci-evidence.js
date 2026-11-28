@@ -1,8 +1,9 @@
 /** Structural validation only: trusted CI receipts and license/security review remain external. */
-export const RELEASE_REQUIRED_JOBS=Object.freeze({
+const requiredJobs={
   "Validate SUTRA knowledge kernel": [
     "browser",
-    "knowledge"
+    "knowledge",
+    "dependency-audit"
   ],
   "Validate SUTRA publisher starter": [
     "standalone"
@@ -48,24 +49,33 @@ export const RELEASE_REQUIRED_JOBS=Object.freeze({
   ],
   "Validate SUTRA neutral consumer": [
     "neutral"
-  ]
-});
-export function validateReleaseCi(head,runs,required=RELEASE_REQUIRED_JOBS){
+  ],
+  "Validate SUTRA semantic acceptance": ["semantic"]
+};
+for(const jobs of Object.values(requiredJobs))Object.freeze(jobs);
+export const RELEASE_REQUIRED_JOBS=Object.freeze(requiredJobs);
+export function validateReleaseCi(head,runs){
+ const required=RELEASE_REQUIRED_JOBS;
  if(typeof head!=='string'||!/^[0-9a-f]{40}$/.test(head)||!Array.isArray(runs))throw Error('RELEASE_CI_INPUT');
- const failures=[],accepted=[];
+ const failures=[],accepted=[],runIds=new Set(),jobIds=new Set();
+ for(const r of runs.filter(x=>x?.head_sha===head))if(!Object.hasOwn(required,r.name))failures.push({workflow:r.name,reason:'UNREVIEWED_EXACT_RUN'});
  for(const [name,jobNames] of Object.entries(required)){
   const matching=runs.filter(r=>r?.name===name&&r.head_sha===head);
   if(matching.length!==1){failures.push({workflow:name,reason:matching.length?'DUPLICATE_EXACT_RUN':'MISSING_EXACT_RUN'});continue;}
   const r=matching[0];
   if(!Number.isSafeInteger(r.id)||r.id<=0||r.status!=='completed'||r.conclusion!=='success'){failures.push({workflow:name,reason:'RUN_NOT_SUCCESS'});continue;}
+  if(runIds.has(r.id)){failures.push({workflow:name,reason:'DUPLICATE_RUN_ID'});continue;}
+  runIds.add(r.id);
   if(!Array.isArray(r.jobs)){failures.push({workflow:name,reason:'MISSING_JOB_RECEIPTS'});continue;}
   const found=[];
+  if(r.jobs.some(j=>!jobNames.includes(j?.name)))failures.push({workflow:name,reason:'UNREVIEWED_JOB'});
   for(const job of jobNames){
    const ms=r.jobs.filter(j=>j?.name===job);
-   if(ms.length!==1||ms[0].status!=='completed'||ms[0].conclusion!=='success'||!Number.isSafeInteger(ms[0].id)||ms[0].id<=0||(ms[0].run_id!==undefined&&ms[0].run_id!==r.id)||(ms[0].head_sha!==undefined&&ms[0].head_sha!==head)){
+   if(ms.length!==1||ms[0].status!=='completed'||ms[0].conclusion!=='success'||!Number.isSafeInteger(ms[0].id)||ms[0].id<=0||ms[0].run_id!==r.id||(ms[0].head_sha!==undefined&&ms[0].head_sha!==head)){
     failures.push({workflow:name,job,reason:'REQUIRED_JOB_NOT_SUCCESS'});continue;
    }
-   found.push({name:job,id:ms[0].id});
+   if(jobIds.has(ms[0].id)){failures.push({workflow:name,job,reason:'DUPLICATE_JOB_ID'});continue;}
+   jobIds.add(ms[0].id);found.push({name:job,id:ms[0].id});
   }
   if(found.length===jobNames.length)accepted.push({name,id:r.id,jobs:found});
  }
