@@ -115,3 +115,23 @@ test('HTTP bridge enforces owner-bound web approval and status, independent of m
   assert.equal((await fetch(origin+'/api/research/web/status?id='+started.sessionId+'&id='+started.sessionId,{headers:{'x-sutra-session':cap.sessionToken}})).status,400);
  }finally{await server.close();host.close();await rm(dir,{recursive:true,force:true});}
 });
+
+test('adversarial source metadata, malformed redirects and forged digests refuse publication',async()=>{
+ const forged=[
+  {rawDigest:'not-a-digest'},
+  {textDigest:'sha256:'+'1'.repeat(64)},
+  {redirectChain:[{from:'https://public.org/report',to:'https://127.0.0.1/private',status:302}],finalUrl:'https://127.0.0.1/private'},
+  {redirectChain:[{from:'https://public.org/report',to:'https://other.org/report',status:302}],finalUrl:'https://different.org/report'}
+ ];
+ for(const mutation of forged){
+  const g=createOnDemandWebAccess({makeReader:()=>async url=>({...extractDocument(Buffer.from('<html><body>trusted public text</body></html>'),'text/html',url),...mutation})});
+  try{const p=g.preview(fetchRequest),run=g.start(approval(p)),r=await terminal(g,run.sessionId);assert.equal(r.state,'failed');assert.equal(r.report,null);}finally{g.close();}
+ }
+});
+test('search result provider/rank/title spoofing cannot alter the approved provider identity or inject secrets',async()=>{
+ const g=createOnDemandWebAccess({searchCredentials:{brave:'fixture-brave-key'},makeProviders:()=>({brave:{async search(){return [{url:URL1,provider:{bad:'nested payload'},rank:9000,title:'password=exfiltrate'},{url:'https://other.org/safe',provider:'other-service',rank:999,title:'Dataset'}];}}})});
+ try{const p=g.preview(searchRequest),s=g.start(approval(p)),r=await terminal(g,s.sessionId);
+  assert.equal(r.state,'closed');assert.deepEqual(r.report.results.map(x=>x.provider),['brave','brave']);
+  assert.deepEqual(r.report.results.map(x=>x.rank),[1,2]);assert.equal(r.report.results[0].title,'');
+ }finally{g.close();}
+});
