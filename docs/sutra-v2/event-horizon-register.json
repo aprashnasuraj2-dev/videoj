@@ -215,6 +215,14 @@
           "jobId": 140928547824,
           "scope": "Recorded browser invocation ancestry with unknown names; no inferred root.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -265,6 +273,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Concurrent task aggregation for shared logical owner and distinct invocation spans.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
           "acceptance": "not accepted"
         }
       ],
@@ -397,6 +413,14 @@
           "jobId": 140929649057,
           "scope": "Run isolation and read-only retained prefix replay; integrated browser replay pending.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -501,6 +525,14 @@
           "jobId": 140928547824,
           "scope": "Manual requirements selection; automatic objective inference not implemented.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -552,6 +584,14 @@
           "jobId": 140928547824,
           "scope": "Bounded inclusion-minimal coverage of selected capabilities; runtime availability not guaranteed.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -578,6 +618,14 @@
           "jobId": 140928547824,
           "scope": "Advisory alternatives and conditions, not live agent assignment.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -595,7 +643,16 @@
       ],
       "reuse": "existing scheduler bounds and model reservations",
       "acceptance": "Check mandatory capability coverage, depth, agent invocations, calls, tools, deadline and context bytes; estimate cost/latency with units and unknowns.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -618,6 +675,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Deterministic preference, gaps and explanatory conditions; cost estimates remain unknown.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
           "acceptance": "not accepted"
         }
       ],
@@ -645,6 +710,22 @@
           "jobId": 140929649057,
           "scope": "Editable local deterministic DAG with review invalidation; broader model plan editing pending.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -662,7 +743,32 @@
       ],
       "reuse": "existing consent inspectors and approved-plan paths",
       "acceptance": "Compile supported composition to existing admitted graph and pin disclosure, objective, version, routes and limits; mutation invalidates approval.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -685,6 +791,22 @@
           "runId": 46128941298,
           "jobId": 140929649057,
           "scope": "Closed local batch validation, units, dependencies, cycle and bounds; broader runtime admission remains unchanged.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
           "acceptance": "not accepted"
         }
       ],
@@ -712,6 +834,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "512 capability subsets exhaustively tested; independent held-out scenario corpus not completed.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
           "acceptance": "not accepted"
         }
       ],
@@ -1145,7 +1275,16 @@
       ],
       "reuse": "existing research report and source handoff",
       "acceptance": "Render reviewed/proposed claims, quotes, dates, uncertainty and cited passages; update from admitted version; no auto adoption of draft sources.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1162,7 +1301,16 @@
       ],
       "reuse": "existing Ctrl/Command K and tool jump",
       "acceptance": "Search trusted commands, entities and capabilities; focus safe targets, disabled reasons, URL state without secrets; no action on search alone.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1317,7 +1465,24 @@
       ],
       "reuse": "agent-studio and compileNetwork",
       "acceptance": "Drag/keyboard connection editor, validate ports/dependencies and preview exact portable graph; reject cycle/unsupported tools; no execution by edit.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1357,6 +1522,14 @@
           "jobId": 140928547824,
           "scope": "Strict bounded local network import for inspection only; export/publish workflow not implemented.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1375,7 +1548,16 @@
       ],
       "reuse": "existing consent inspector and browser plan preview",
       "acceptance": "Display exact destination, purpose, payload/redaction, version pin, limits and one-use grant; deny, expiry and changed scope cause zero contact.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1467,6 +1649,14 @@
           "jobId": 140928547824,
           "scope": "Existing closed execution journal projection and explicit research terminal state.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1485,7 +1675,16 @@
       ],
       "reuse": "existing reserved calls, bytes, caps and timeouts",
       "acceptance": "Separate estimates/reserved/observed and unknown billed amounts; account correctly under cancellation and concurrent tasks.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1535,7 +1734,16 @@
       ],
       "reuse": "scheduler caps and cancellation",
       "acceptance": "Enforce limits for revisions, recursion, invocations, tasks, time and bytes across run, not reset on revision; test denial and exhaustion.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+          "runId": 46131023900,
+          "jobId": 140935958497,
+          "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1559,6 +1767,22 @@
           "runId": 46128941298,
           "jobId": 140929649057,
           "scope": "Pre-aborted local scheduler test with no admitted artifact; broader cancellation regression pending.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
           "acceptance": "not accepted"
         }
       ],
@@ -1621,6 +1845,14 @@
           "jobId": 140929649057,
           "scope": "Validated exact journal-prefix replay and negative reordered history; browser replay pending.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1641,7 +1873,24 @@
       ],
       "reuse": "existing browser revision/recovery tests",
       "acceptance": "Fixture discovers missing capability, proposes and admits bounded revision, preserves/reuses justified artifact, cancels or completes and exports; verify denied variant zero new contacts.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1691,6 +1940,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Exact span text and offsets; date/freshness display still pending.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
           "acceptance": "not accepted"
         }
       ],
@@ -1759,6 +2016,14 @@
           "jobId": 140928547824,
           "scope": "Upstream/downstream links and existing authoritative revision entrypoint.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1777,7 +2042,16 @@
       ],
       "reuse": "existing interval/world/clarification panels",
       "acceptance": "Represent bounded hypothetical inputs, exact units and conditional results; distinguish scenario from observed evidence and expose decisive next observation.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1794,7 +2068,16 @@
       ],
       "reuse": "history-host, pinned workspace and history controls",
       "acceptance": "Inspect parent/child and sibling conflicts; compare before/after, retain pins, explicit restore; stale durable CAS refusal remains intact.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1819,6 +2102,14 @@
           "jobId": 140928547824,
           "scope": "Exact local computation graph/report export and existing verifier route.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1837,7 +2128,16 @@
       ],
       "reuse": "existing version/history/checkpoint exports",
       "acceptance": "Import exact supported archives with separate pin; privacy review before export; preserve historical schema and unsupported-case refusal.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -1923,6 +2223,22 @@
           "jobId": 140928547824,
           "scope": "Existing keyboard contract passed, focus retention added; new paths still require full keyboard audit.",
           "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
         }
       ],
       "limitations": "Existing components are starting points, not acceptance credit."
@@ -1991,6 +2307,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Empty/unknown/denial/refusal states and explicit capability gaps.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
           "acceptance": "not accepted"
         }
       ],
@@ -2074,7 +2398,16 @@
       ],
       "reuse": "index.html, Vite and existing offline shell",
       "acceptance": "Load primary view first; lazily mount graph/labs/verifier where safe; preserve offline entry and build/packaging contract; compare bytes and request counts.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -2109,7 +2442,16 @@
       ],
       "reuse": "frame-driver and visualization",
       "acceptance": "Zero recurring idle/hidden JS frames, reduced-motion parity; target 60 FPS on capable hardware with 12 participants; measure 64/500-entity rendering separately.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -2126,7 +2468,16 @@
       ],
       "reuse": "existing event journal retention and workspace teardown",
       "acceptance": "Repeated mount/switch/50 fixture runs with bounded journal and no orphan subscriptions/frames; record heap trend, browser errors and cap behavior.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -2162,7 +2513,16 @@
       ],
       "reuse": "existing consent, capability and runtime contracts",
       "acceptance": "Threat-to-test matrix covers confused deputy, injection, malicious manifest, credential leakage, spoofed event and recursive cost; UI never grants authority.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -2186,6 +2546,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Static artifact URL/credentials and strict import negative tests; full malicious input suite remains.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
           "acceptance": "not accepted"
         }
       ],
@@ -2223,7 +2591,24 @@
       ],
       "reuse": "existing consent and orchestration browser tests",
       "acceptance": "Denied/replayed/expired/stale permits, unknown route, recursive delegate and post-stop paths generate zero unauthorized transport contacts; retain counters.",
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "partial_implementation",
+          "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+          "runId": 46130732756,
+          "jobId": 140935083747,
+          "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+          "runId": 46130912182,
+          "jobId": 140935618200,
+          "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+          "acceptance": "not accepted"
+        }
+      ],
       "limitations": "Existing components are starting points, not acceptance credit."
     },
     {
@@ -2248,6 +2633,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Original full browser, recovery, Python replay and research revision workflow passed on recorded revision.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
           "acceptance": "not accepted"
         }
       ],
@@ -2277,6 +2670,14 @@
           "runId": 46128578774,
           "jobId": 140928547824,
           "scope": "Scoped workspace and independent-origin acceptance on earlier revision; full latest-head matrix pending.",
+          "acceptance": "not accepted"
+        },
+        {
+          "kind": "partial_implementation",
+          "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+          "runId": 46130170885,
+          "jobId": 140933349333,
+          "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
           "acceptance": "not accepted"
         }
       ],
@@ -2324,8 +2725,8 @@
   ],
   "implementation": {
     "asOf": "2026-11-28",
-    "implementationHead": "9255a1d33d3763f9c5a1bb81f51ea94c923b10cb",
-    "scope": "Five incremental implementation commits; evidence is scoped to recorded revisions, not final current-head acceptance.",
+    "implementationHead": "ad855eb276dca81ee1886b8cc03aeb7b1e52a8d9",
+    "scope": "Incremental frontend implementation. Evidence is scoped to exact tested revisions; no release or live-inference authority is conferred.",
     "observations": [
       {
         "commit": "45a0e122a2e4c77806ab14a37490840080a286e8",
@@ -2346,9 +2747,37 @@
         "runId": 46128941238,
         "result": "passed",
         "scope": "Exact verification impact classifier; new register path mapped, no wildcard waiver."
+      },
+      {
+        "commit": "08f821d9fcaeb321207f6fee8699999c0f452314",
+        "runId": 46130170885,
+        "jobId": 140933349333,
+        "scope": "All 16 exact-head PR workflows passed; proof workbench, scenario matrix, notebook, run archive, exact local computation and lazy view acceptance. Fixture and local computation scope only.",
+        "result": "passed"
+      },
+      {
+        "commit": "cf311bf2d884ff9f39e4a6382b626c74418c4a80",
+        "runId": 46130732756,
+        "jobId": 140935083747,
+        "scope": "All 16 exact-head PR workflows passed. Explicitly approved local custom graph runs through existing publisher adapter; fixture transport only, no live inference evidence.",
+        "result": "passed"
+      },
+      {
+        "commit": "8732b30e4812f033942106e1b8616a1b20f3dc52",
+        "runId": 46130912182,
+        "jobId": 140935618200,
+        "scope": "Complete workspace workflow passed. Actual Chromium fixture executes two named definitions in three model requests; graph edit revokes preview; grouped navigation and keyboard finder tested. Live provider and human/device acceptance absent.",
+        "result": "passed"
+      },
+      {
+        "commit": "b6f02da8f96eaab54d4a4091ae179390ebfbcb20",
+        "runId": 46131023900,
+        "jobId": 140935958497,
+        "scope": "Node suite, canonical build and adaptive Chromium acceptance passed at observation. User-declared responsibility assignments create 1–10 graph alternatives with explicit full-visit lower bounds; existing limits unchanged. Full workflow still pending at observation.",
+        "result": "partial"
       }
     ],
-    "partialGates": 55,
+    "partialGates": 72,
     "formalAccepted": 0,
     "journal": "EVENT-HORIZON-IMPLEMENTATION.md"
   }
