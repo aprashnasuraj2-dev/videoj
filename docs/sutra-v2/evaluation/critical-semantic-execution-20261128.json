@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "sourceRevision": "42d87320779518259edad44cddc3bfeff4f6a1f8",
+  "observedDate": "2026-11-28",
+  "scope": "Actual repository semantic engine modules executed with adapted module loader, SHA-256 and UTF-8 interfaces; not native Node CI. Public corpus exposure. No semantic authority or human sign-off.",
+  "total": {
+    "records": 15452,
+    "invariantChecks": 100030,
+    "exceptions": 0,
+    "elapsedMs": 172012
+  },
+  "batches": [
+    {
+      "dataset": "SUTRA model-authored",
+      "records": 4000,
+      "uniqueQuestions": 2860,
+      "invariantChecks": 20027,
+      "exceptions": 0,
+      "elapsedMs": 35858,
+      "latencyMs": {
+        "p50": 12,
+        "p95": 16,
+        "p99": 17
+      },
+      "targetCueHits": 2940,
+      "executableCandidates": 0,
+      "targetHitsByFamily": {
+        "entity_identity": 0,
+        "metric_definition": 0,
+        "numerator": 200,
+        "denominator": 200,
+        "reporting_period": 200,
+        "population": 60,
+        "geography": 140,
+        "units": 140,
+        "scaling": 0,
+        "sign": 200,
+        "absolute_vs_relative": 200,
+        "percentage_vs_percentage_point": 0,
+        "aggregation": 200,
+        "negation_scope": 200,
+        "quantifier_scope": 200,
+        "conditional_scope": 200,
+        "baseline_selection": 200,
+        "measurement_assumptions": 200,
+        "modality": 200,
+        "causal_vs_observational": 200
+      },
+      "casesPerFamily": 200,
+      "rowReceiptSha256": "af0eb735ae5ffd53085b202bfb69f92d7a9625796dea3b2a2686cde4c05d3ac2"
+    },
+    {
+      "dataset": "AmbiEnt",
+      "sourceItems": 1645,
+      "records": 3290,
+      "uniqueStatements": 3268,
+      "invariantChecks": 22876,
+      "exceptions": 0,
+      "elapsedMs": 37346,
+      "latencyMs": {
+        "p50": 11,
+        "p95": 15,
+        "p99": 16
+      },
+      "broadCue": {
+        "tp": 464,
+        "tn": 753,
+        "fp": 1918,
+        "fn": 155
+      },
+      "premise": {
+        "tp": 332,
+        "tn": 302,
+        "fp": 913,
+        "fn": 98
+      },
+      "hypothesis": {
+        "tp": 132,
+        "tn": 451,
+        "fp": 1005,
+        "fn": 57
+      },
+      "rowReceiptSha256": "7099546fd3ba6d6b097a2bf076caca4b2df165e3c60c7388853124017cccd81f"
+    },
+    {
+      "dataset": "TempAmbiQA",
+      "range": [
+        0,
+        4081
+      ],
+      "records": 4081,
+      "uniqueQuestions": 4081,
+      "invariantChecks": 28567,
+      "exceptions": 0,
+      "elapsedMs": 50033,
+      "latencyMs": {
+        "p50": 12,
+        "p95": 15,
+        "p99": 16
+      },
+      "strictReviewCue": {
+        "tp": 779,
+        "tn": 1707,
+        "fp": 429,
+        "fn": 1166
+      },
+      "rowReceiptSha256": "98a09bdc1d3d2666c4d1c20aa21da61e375c75e782ac6381776671c40e148972"
+    },
+    {
+      "dataset": "TempAmbiQA",
+      "range": [
+        4081,
+        8162
+      ],
+      "records": 4081,
+      "uniqueQuestions": 4080,
+      "invariantChecks": 28560,
+      "exceptions": 0,
+      "elapsedMs": 48775,
+      "latencyMs": {
+        "p50": 12,
+        "p95": 15,
+        "p99": 15
+      },
+      "strictReviewCue": {
+        "tp": 764,
+        "tn": 1686,
+        "fp": 461,
+        "fn": 1170
+      },
+      "rowReceiptSha256": "7ded17ff32740e11e3737f00b34134d43580945d2957cfe64c640b4cfaf51c01"
+    }
+  ],
+  "temporalCorpusSha256": "e71fa96f389e45d73c61915461f9b0b3f6207e956fd5b3eb72d19c66cfee9942",
+  "limitations": [
+    "Cue coverage not semantic correctness",
+    "Latency includes adapter overhead; memory not measured",
+    "Batch receipts are aggregate observations, not a retained full row log",
+    "No fresh native full-suite or independent human execution claim"
+  ],
+  "decisionAuthority": "NONE"
+}
