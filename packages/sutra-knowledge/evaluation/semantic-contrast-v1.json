@@ -112,7 +112,7 @@
       "id": "sutra-contrast-006",
       "family": "numerator",
       "domain": "manufacturing",
-      "question": "Did the first-pass yield exceed 95% of the 200 inspected pieces?",
+      "question": "Did the yield exceed 95% of the 200 inspected pieces?",
       "context": "196 pieces passed eventually; 186 passed without rework. Both use 200 inspected pieces.",
       "alternatives": [
         {
@@ -192,7 +192,7 @@
       "id": "sutra-contrast-010",
       "family": "reporting_period",
       "domain": "energy",
-      "question": "Did output exceed 400 MWh this month?",
+      "question": "Did monthly output exceed 400 MWh?",
       "context": "The reporting date is 15 June; May completed at 450 MWh and June month-to-date totals 220 MWh.",
       "alternatives": [
         {
@@ -672,7 +672,7 @@
       "id": "sutra-contrast-034",
       "family": "baseline_selection",
       "domain": "civil_engineering",
-      "question": "Did the new design reduce excavation by 20%?",
+      "question": "Did the new design reduce excavation by at least 20%?",
       "context": "New design 800 m3; approved design 1000 m3; latest revision 900 m3.",
       "alternatives": [
         {
