@@ -1284,6 +1284,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.match(await tablePage.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
    const mappedQuestion='Is current revenue not less than prior revenue?';
    await fill('question',mappedQuestion);await click('seal');await state('sealed');
+   await tablePage.locator('#review-hybrid-panel > summary').click();
+   await tablePage.locator('#review-hybrid-sources').selectOption('ledger');await click('hybrid-prepare');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-pin').textContent.startsWith('sha256:'));
+   const hp=JSON.parse(await tablePage.locator('#review-hybrid-packet').inputValue()),hpin=await tablePage.locator('#review-hybrid-pin').innerText();
+   assert.equal(hp.question,mappedQuestion);assert.equal(hp.sources.length,1);assert.equal(hp.sources[0].id,'ledger');
+   const hresponse={version:1,packetDigest:hpin,disposition:'ALTERNATIVES',alternatives:[{id:'comparison',meaning:'Current revenue at least prior revenue',questionSpans:[{start:0,end:mappedQuestion.length,quote:mappedQuestion}],evidenceSpans:[{sourceId:'ledger',start:0,end:hp.sources[0].text.length,quote:hp.sources[0].text}],facets:[{family:'negation_scope',interpretation:'not less than means greater than or equal to'}],operation:{mode:'DIRECT_COMPARISON',operator:'>=',roles:{left:'new_rev',right:'old_rev'}},missingContext:[]}],clarifications:[]};
+   await fill('hybrid-response',JSON.stringify(hresponse));assert.ok(await tablePage.locator('#review-hybrid-evaluate').isDisabled());await tablePage.locator('#review-hybrid-approve').check();await click('hybrid-evaluate');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-result').textContent.includes('CONDITIONALLY_SATISFIED'));
+   const hr=JSON.parse(await tablePage.locator('#review-hybrid-result').textContent());assert.equal(hr.alternatives[0].decisionAuthority,'NONE');assert.equal(hr.alternatives[0].computation.status,'CONDITIONALLY_SATISFIED');
+   const forged=JSON.parse(JSON.stringify(hresponse));forged.alternatives[0].evidenceSpans[0].quote='invented';await fill('hybrid-response',JSON.stringify(forged));await click('hybrid-evaluate');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-status').textContent.startsWith('Response refused'));assert.ok(await tablePage.locator('#review-hybrid-export').isDisabled());
+   await tablePage.locator('#review-hybrid-sources').selectOption([]);assert.equal(await tablePage.locator('#review-hybrid-packet').inputValue(),'');assert.ok(await tablePage.locator('#review-hybrid-evaluate').isDisabled());await tablePage.locator('#review-hybrid-panel > summary').click();
    await tablePage.locator('#review-question-path-panel > summary').click();
    async function capture(side,name){await tablePage.locator('#review-question-path-text').evaluate((el,name)=>{el.focus();const i=el.value.indexOf(name);el.setSelectionRange(i,i+name.length);},name);await click('question-path-'+side);}
    await capture('left','current revenue');await capture('right','prior revenue');
