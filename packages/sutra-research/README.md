@@ -90,3 +90,7 @@ Smoke tests accept `SUTRA_SMOKE_MODELS_JSON` as a nonsecret JSON object, e.g. `{
 ### Local orbital workspace
 
 After building the existing frontend, start `node apps/sutra-v2/research-workspace.mjs` and open the printed loopback URL. The host reads model/search credentials from environment variables. Enter model IDs once under shared model connections, select one to three, then enter an objective on the orbital map and approve the exact preview. Direct public HTTPS retrieval is separately scoped by `allowModelPublicUrls`; general search still needs an available host search backend. No model-to-avatar mapping, credential browser storage or public deployment is required. Local in-memory sessions do not survive restart; the PostgreSQL candidate is a separate integration.
+
+### Optional Obscura Rust browser backend (local experimental)
+
+A pinned Apache-2.0 Obscura Rust source checkout, opt-in JavaScript-rendered HTML enhancement, strict subprocess limits, static fallback and explicit unmetered-subresource caveats are described in [OBSCURA-WEB-ACCESS](../../docs/sutra-v2/OBSCURA-WEB-ACCESS.md). Disabled by default; not enabled for hosted/public deployment. Rendering is a second navigation behind original pinned static retrieval and does not replace native research or any existing capability.

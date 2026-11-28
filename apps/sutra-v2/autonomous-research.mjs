@@ -4,6 +4,7 @@ import {admitManifest,authorizeResearch} from '../../packages/sutra-research/res
 import {createSearchProviders} from '../../packages/sutra-research/providers.js';
 import {probePdfSandbox} from '../../packages/sutra-research/pdf-parser.js';
 import {createDocumentReader} from '../../packages/sutra-research/document-reader.js';
+import {createObscuraRenderer,createObscuraEnhancedReader} from '../../packages/sutra-research/obscura-adapter.js';
 import {createCheckpointWriter,consumeCheckpointFile} from '../../packages/sutra-research/research-checkpoint.js';
 import {formatMarkdownReport} from '../../packages/sutra-research/research-report.js';
 import {createResearchModelBroker,MODEL_PROFILES} from '../../packages/sutra-research/model-broker.js';
@@ -33,13 +34,15 @@ async function main(){
  let modelBroker;
  try{
   if(authorization.plan.modelPolicy){if(pauseAfter!==Infinity||resumeText!==undefined)fail('MODEL_RUN_CONFIG');modelBroker=createResearchModelBroker({authorization,credentials:Object.fromEntries(Object.entries(MODEL_PROFILES).map(([v,p])=>[v,process.env[p.env]]))});}
-  if(authorization.plan.scope.allowPdf===true)await probePdfSandbox({signal:authorization.signal});
+  if(authorization.plan.scope.allowJsRendering===true&&(process.env.SUTRA_ENABLE_OBSCURA!=='1'||!process.env.SUTRA_OBSCURA_BIN))fail('OBSCURA_NOT_CONFIGURED');
+   const obscura=authorization.plan.scope.allowJsRendering===true?createObscuraRenderer({binaryPath:process.env.SUTRA_OBSCURA_BIN}):null;
+   if(authorization.plan.scope.allowPdf===true)await probePdfSandbox({signal:authorization.signal});
   const providers=createSearchProviders({credentials:{brave:process.env.SUTRA_SEARCH_BRAVE,tavily:process.env.SUTRA_SEARCH_TAVILY}});
   const writer=opts.has('--checkpoint-dir')?await createCheckpointWriter(opts.get('--checkpoint-dir')):undefined;
   let checkpointDigest;
   const onCheckpoint=writer?async s=>{checkpointDigest=await writer(s);}:undefined;
   if(opts.has('--resume-checkpoint'))await consumeCheckpointFile(opts.get('--resume-checkpoint'),opts.get('--resume-pin'));
-  const report=await runAutonomousResearch({authorization,providers,modelBroker,onCheckpoint,pauseAfterOperations:pauseAfter,readDocument:createDocumentReader({authorization}),onEvent:e=>process.stderr.write(JSON.stringify(e)+'\n')});
+  const report=await runAutonomousResearch({authorization,providers,modelBroker,onCheckpoint,pauseAfterOperations:pauseAfter,readDocument:obscura?createObscuraEnhancedReader({authorization,renderer:obscura}):createDocumentReader({authorization}),onEvent:e=>process.stderr.write(JSON.stringify(e)+'\n')});
   if(checkpointDigest)process.stderr.write('Research checkpoint SHA-256: '+checkpointDigest+'\n');
   if(cancel.signal.aborted){process.exitCode=130;return;}
   process.stdout.write(opts.get('--format')==='markdown'?formatMarkdownReport(report):JSON.stringify({...report,...(checkpointDigest?{checkpointDigest}:{})},null,2)+'\n');
