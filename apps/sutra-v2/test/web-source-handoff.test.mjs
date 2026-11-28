@@ -19,8 +19,8 @@ test('model-free exact source can be staged with unverified provenance and no au
 test('tampered report pin, source body, digest and false provenance cannot be staged',async()=>{
  const x=example(),p=prepareWebSourceCandidate(x);x.report.documents[0].text='tampered after call';assert.equal((await p).text,'A public report estimated energy costs at USD 100.');
  for(const mutate of [x=>x.reportPin='sha256:'+'0'.repeat(64),x=>x.report.documents[0].text+=' forged',x=>x.report.documents[0].textDigest='sha256:'+'a'.repeat(64),x=>x.report.documents[0].verificationStatus='trusted',x=>x.report.authority='APPROVED',x=>x.report.operation='search',x=>x.report.documents[0].url='http://localhost/',x=>x.report.documents[0].retrievedAt='yesterday']){
-  const y=example();mutate(y);if(!('x' in y)){} // no-op: ensure no mutation of original fixture
-  if(y.reportPin==='sha256:'+'0'.repeat(64)){}else y.reportPin=hash(JSON.stringify(y.report));
+  const y=example();mutate(y);
+  if(y.reportPin!=='sha256:'+'0'.repeat(64))y.reportPin=hash(JSON.stringify(y.report));
   await assert.rejects(prepareWebSourceCandidate(y),/WEB_HANDOFF_|PROVENANCE_SCHEMA/);
  }
 });
