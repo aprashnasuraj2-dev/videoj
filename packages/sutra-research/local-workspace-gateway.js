@@ -60,19 +60,23 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  // route fixes actor=user and cannot supply an impersonated agent identity.
  function startAutonomous(input,{actor='user'}={}){
   check();if(active(current)||web.isBusy())fail('RUN_ACTIVE');
-  if(!['user','agent','engine'].includes(actor)||!exact(input,['objective'])||typeof input.objective!=='string')fail('AUTONOMOUS_INPUT');
+  const modelled=Object.hasOwn(input??{},'models');
+  if(!['user','agent','engine'].includes(actor)||!exact(input,['objective',...(modelled?['models']:[])])||typeof input.objective!=='string')fail('AUTONOMOUS_INPUT');
+  const models=modelled?input.models:[];
+  if(!Array.isArray(models)||models.length>3||models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model))||new Set(models.map(x=>x.vendor+'|'+x.model)).size!==models.length)fail('MODEL_SELECTION');
   const objective=input.objective.trim().replace(/\s+/gu,' ');
   if(!objective||objective.length>1000||secretLike(objective)||/[\u0000-\u001f\u007f]/.test(objective))fail('AUTONOMOUS_INPUT');
   const configured=searchBackends.length?searchBackends:['wikipedia'];
   const providers=configured.slice(0,2).map(id=>({id,estimatedMaxCostMicros:id==='wikipedia'?1:5000}));
   const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective,
-   scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,...(obscuraRenderer?{allowJsRendering:true}:{})},
-   budget:{...autonomousBudget},providers});
+   scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,...(models.length?{allowModelPublicUrls:true}:{}),...(obscuraRenderer?{allowJsRendering:true}:{})},
+   budget:models.length?{...autonomousBudget,maxDurationSeconds:120,maxCostMicros:100000,maxModelCalls:6}:{...autonomousBudget},providers,
+   ...(models.length?{modelPolicy:{allowPublicEvidenceDisclosure:true,models:models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}}:{})});
   const plan=admitManifest(raw);
   previewed=null;
   const session={browserScheduled:false,permit:null,permitSequence:0,actor,autonomous:true,sessionId:'research_'+randomUUID(),planPin:plan.planPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
   current=session;void execute(session,raw);
-  return {sessionId:session.sessionId,planPin:session.planPin,state:session.state,mode,autonomous:true,actor};
+  return {sessionId:session.sessionId,planPin:session.planPin,state:session.state,mode,autonomous:true,actor,modelCallsEnabled:models.length>0};
  }
  function status(id,after=0){
   check();if(!current||id!==current.sessionId)fail('SESSION_NOT_FOUND');
