@@ -69,7 +69,7 @@ function definitions(items){
  }
  return dl;
 }
-export function mountProofView(root){
+export function mountProofView(root,{onScenario=()=>{}}={}){
  const section=E('section');
  section.id='eh-proof';
  const title=E('h2','Proof workbench');
@@ -130,7 +130,8 @@ export function mountProofView(root){
  const graphDownload=button('Download graph JSON',()=>{
   save('sutra-graph.json',JSON.stringify({schemaVersion:1,nodes:session.snapshot().nodes},null,2));
  });
- actions.append(evaluate,baseline,clear,download,graphDownload,reset);
+ const scenario=button('Analyze scenario variations',()=>onScenario(session.snapshot().nodes));
+ actions.append(evaluate,baseline,clear,download,graphDownload,scenario,reset);
  const layout=E('div',undefined,'eh-proof-layout');
  const left=E('div');
  const side=E('aside',undefined,'eh-right');
@@ -312,6 +313,7 @@ export function mountProofView(root){
   clear.disabled=busy||!state.baseline;
   download.disabled=busy||!state.current;
   graphDownload.disabled=busy;
+  scenario.disabled=busy;
   reset.disabled=busy;
   inspectFile.disabled=busy;
   useFile.disabled=busy||!imported;

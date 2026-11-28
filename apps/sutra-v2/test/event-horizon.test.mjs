@@ -393,3 +393,34 @@ test('coalesced renderer preserves last dirty notification and cancels stale cal
  refresh.destroy();
  assert.equal(refresh.request('closed'),false);
 });
+
+import {prepareScenarios,runScenarios,parseAxisValues,summarizeScenarios,resultMatrix,exportScenarioCase} from '../src/event-horizon/scenario-model.js';
+test('scenario matrix evaluates exact constraints in all nine input combinations',async()=>{
+ const plan=prepareScenarios({first:{id:'available',values:['80','100','120']},second:{id:'required',values:['90','100','110']},output:'sufficient'});
+ assert.equal(plan.caseCount,9);
+ const result=await runScenarios(plan);
+ assert.equal(result.status,'completed');
+ const summary=summarizeScenarios(result);
+ assert.equal(summary.statuses.constraint_satisfied,5);
+ assert.equal(summary.statuses.constraint_refuted,4);
+ assert.equal(resultMatrix(result).length,3);
+ assert.equal(resultMatrix(result)[0].cells[0].outcome.status,'constraint_refuted');
+ const verified=await inspectProofArchive(exportScenarioCase(result,'case_2_2'));
+ assert.equal(verified.report.graphDigest,result.outcomes.at(-1).graphDigest);
+ assert.ok(result.stats.reused>0);
+});
+test('scenario exact numeric range, budgets, refusal and cancellation',async()=>{
+ const plan=prepareScenarios({first:{id:'available',values:['80','100','120']},output:'margin'});
+ const result=await runScenarios(plan);
+ const summary=summarizeScenarios(result);
+ assert.equal(summary.minimum.value,'-20/1');
+ assert.equal(summary.maximum.value,'20/1');
+ assert.throws(()=>parseAxisValues('1,1.0'));
+ assert.throws(()=>prepareScenarios({first:{id:'margin',values:['1']},output:'margin'}));
+ assert.throws(()=>prepareScenarios({first:{id:'available',values:['1']},second:{id:'available',values:['2']},output:'margin'}));
+ const changed=JSON.parse(JSON.stringify(plan));changed.cases[0].graphText=changed.cases[1].graphText;
+ await assert.rejects(runScenarios(changed));
+ const controller=new AbortController();
+ const stopped=await runScenarios(plan,{signal:controller.signal,onProgress:()=>controller.abort()});
+ assert.equal(stopped.status,'cancelled');assert.equal(stopped.outcomes.length,1);
+});

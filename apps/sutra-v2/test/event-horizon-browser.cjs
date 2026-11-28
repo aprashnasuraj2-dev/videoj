@@ -14,7 +14,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.equal(await page.locator('#orb-map').isVisible(),false);
   assert.match(await page.locator('#eh-status').innerText(),/No recorded execution/);
   assert.equal(await page.locator('#eh-workspace .eh-entity').count(),0);
-  assert.equal(await page.locator('#eh-workspace [data-lazy-view=pending]').count(),8);
+  assert.equal(await page.locator('#eh-workspace [data-lazy-view=pending]').count(),9);
   assert.equal(await page.locator('#eh-proof-evaluate').count(),0);
   assert.equal(await page.locator('#eh-notebook-save').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -52,6 +52,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.waitForFunction(()=>document.querySelector('#eh-proof .eh-proof-diff').textContent.includes('constraint refuted'));
    assert.match(await page.locator('#eh-proof .eh-proof-diff').innerText(),/3 affected nodes/);
    await page.screenshot({path:path.join(out,'event-horizon-proof-revision.png'),fullPage:false});
+   await page.locator('#eh-proof').getByRole('button',{name:'Analyze scenario variations',exact:true}).click();
+   await page.locator('#eh-scenario-review').click();
+   await page.locator('#eh-scenario-run').click();
+   await page.waitForFunction(()=>document.querySelector('#eh-scenario-status').textContent.includes('completed · 4 retained'));
+   assert.equal(await page.locator('#eh-scenarios [data-scenario]').count(),4);
+   assert.equal(await page.locator('#eh-scenarios [data-state=refuted]').count(),1);
+   await page.screenshot({path:path.join(out,'event-horizon-scenario-matrix.png'),fullPage:false});
    await page.locator('.eh-tabs').getByRole('button',{name:'Network designer',exact:true}).click();
    await page.locator('#eh-network-designer').getByLabel('New definition ID').fill('evidence');
    await page.locator('#eh-network-designer').getByRole('button',{name:'Add definition',exact:true}).click();
@@ -66,7 +73,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.screenshot({path:path.join(out,'event-horizon-network-designer.png'),fullPage:false});
    await page.locator('.eh-tabs').getByRole('button',{name:'Notebook',exact:true}).click();
    await page.locator('#eh-notebook').getByLabel('Note text').fill('Check the alternate capacity assumption.');
-   await page.locator('#eh-notebook').getByLabel('Annotation kind').selectOption('counterexample');
+   await page.locator('#eh-notebook').locator('#eh-note-kind').selectOption('counterexample');
    await page.locator('#eh-notebook-save').click();
    assert.match(await page.locator('[data-note=note_1]').innerText(),/Check the alternate capacity assumption/);
    await page.screenshot({path:path.join(out,'event-horizon-notebook.png'),fullPage:false});

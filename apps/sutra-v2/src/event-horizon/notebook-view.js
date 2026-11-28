@@ -135,6 +135,8 @@ export function mountNotebook(root){
  const editor=E('section',undefined,'eh-notebook-panel');
  const editorTitle=E('h3','New note');
  const kind=select(noteKinds,'observation');
+ kind.id='eh-note-kind';
+ kind.setAttribute('aria-label','Annotation kind');
  const noteState=select(noteStates,'open');
  const body=textarea(NOTEBOOK_LIMITS.body,6);
  body.placeholder='Write your observation, hypothesis or question…';
@@ -177,6 +179,7 @@ export function mountNotebook(root){
  const right=E('div');
  const filters=E('div',undefined,'eh-notebook-fields');
  const kindFilter=select([['all','All annotation kinds'],...noteKinds],'all');
+ kindFilter.setAttribute('aria-label','Filter annotation type');
  const stateFilter=select([['all','All review states'],...noteStates],'all');
  const query=E('input');
  query.type='search';
