@@ -42,6 +42,14 @@ export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPe
     if(req.method==='POST'&&req.headers.origin!==origin)return send(res,403,{error:'LOCAL_ORIGIN'});
     // Recheck token expiry after asynchronous body reads, before any host action.
     const active=()=>{const at=now();prune(at);if(!tokens.has(supplied))throw err('LOCAL_TOKEN');return at;};
+    if(path==='/api/research/web/auto/start'&&req.method==='POST'){
+     const input=await body(req),at=active();
+     if(tokens.get(supplied).expiresAt-at<120000)return send(res,403,{error:'LOCAL_TOKEN_EXPIRES'});
+     // Capability is limited to this local operator session and the host's public-URL policy.
+     const run=gateway.web.autoStart(input,{actor:'user'});
+     webPreviewOwner=null;webSessionOwner={token:supplied,id:run.sessionId};
+     return send(res,202,run);
+    }
     if(path==='/api/research/web/preview'&&req.method==='POST'){
      const input=await body(req);active();const p=gateway.web.preview(input,{actor:'user'});webPreviewOwner=supplied;return send(res,200,p);
     }
@@ -60,6 +68,13 @@ export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPe
      if(!input||Object.keys(input).length!==1||typeof input.sessionId!=='string')throw err('SESSION_ID');
      if(webSessionOwner?.token!==supplied||webSessionOwner.id!==input.sessionId)return send(res,403,{error:'LOCAL_SESSION_OWNER'});
      return send(res,200,gateway.web.cancel(input.sessionId));
+    }
+    if(path==='/api/research/auto/start'&&req.method==='POST'){
+     const input=await body(req),at=active();
+     if(tokens.get(supplied).expiresAt-at<120000)return send(res,403,{error:'LOCAL_TOKEN_EXPIRES'});
+     const run=gateway.startAutonomous(input,{actor:'user'});
+     previewOwner=null;sessionOwner={token:supplied,id:run.sessionId};
+     return send(res,202,run);
     }
     if(path==='/api/research/preview'&&req.method==='POST'){
      const input=await body(req);active();const p=gateway.preview(input);previewOwner=supplied;return send(res,200,p);
