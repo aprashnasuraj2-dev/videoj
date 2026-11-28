@@ -130,3 +130,31 @@ test('semantic corpus controls: real candidate generation, unresolved aliases, a
   const p=await preview(text);assert.equal(p.state,'UNSUPPORTED_GRAMMAR');assert.equal(p.candidates,0);
  }
 });
+
+test('material contrast corpus: preserve divergent readings without gold leakage',async t=>{
+ const d=JSON.parse(readFileSync(new URL('semantic-contrast-v1.json',folder),'utf8'));
+ assert.equal(d.version,'sutra-semantic-contrast/v1');
+ assert.equal(d.provenance.humanAnnotation,false);assert.equal(d.provenance.independentValidation,false);
+ assert.equal(d.cases.length,40);assert.equal(unique(d.cases,r=>r.id),40);
+ assert.equal(unique(d.cases.flatMap(r=>[r.question,...r.alternatives.map(a=>a.rewrite)]),s=>s),120);
+ const counts=count(d.cases,r=>r.family);
+ for(const family of AMBIGUITY_FAMILIES)assert.equal(counts[family],2);
+ const outcomes=[];
+ for(const r of d.cases){
+  assert.equal(r.expectedDisposition,'PRESERVE_ALTERNATIVES_OR_ABSTAIN');
+  assert.equal(r.alternatives.length,2);
+  assert.notEqual(r.alternatives[0].conditionalAnswer,r.alternatives[1].conditionalAnswer);
+  assert.ok(r.context.length>20&&r.alternatives.every(a=>a.witness&&['YES','NO','UNKNOWN'].includes(a.conditionalAnswer)));
+  // Same neutral alias fixture, unchanged by annotations. No oracle/context leakage.
+  const original=await preview(r.question),rewrites=[];
+  for(const a of r.alternatives)rewrites.push(await preview(a.rewrite));
+  outcomes.push({id:r.id,family:r.family,originalState:original.state,targetFamilySignal:original.signals[r.family],
+   rewriteStates:rewrites.map(x=>x.state),rewriteTargetSignals:rewrites.map(x=>x.signals[r.family]),
+   cueReduced:rewrites.map(x=>REVIEW.has(original.signals[r.family])&&!REVIEW.has(x.signals[r.family]))});
+ }
+ const result={cases:outcomes.length,prompts:outcomes.length*3,originalStates:count(outcomes,r=>r.originalState),
+  originalTargetSignals:count(outcomes,r=>r.targetFamilySignal),rewritesWithReducedReviewCue:outcomes.flatMap(x=>x.cueReduced).filter(Boolean).length,
+  independentHumanReview:'PENDING',boundary:'Target-family cue sensitivity under paired rewrites, not a claim of correct conditional answers or full unambiguity.'};
+ if(process.env.SUTRA_SEMANTIC_CONTRAST_REPORT)writeFileSync(process.env.SUTRA_SEMANTIC_CONTRAST_REPORT,JSON.stringify({...result,rows:outcomes},null,2)+'\n');
+ t.diagnostic(JSON.stringify(result));
+});
