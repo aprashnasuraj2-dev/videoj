@@ -32,7 +32,7 @@ test('portable reconstruction agrees with independent Python on five states incl
 });
 test('self-repinned forged preview, authority and stale input pins refuse in both implementations',async()=>{
  const x=await fixture('Is now greater than prior?',defaults),a=await exportInducedQuestion(x);
- for(const alter of [p=>{p.preview.decisionAuthority='APPROVED'},p=>{p.preview.candidateCount=3},p=>{p.preview.originalQuestion='Is now less than prior?'}]){
+ for(const alter of [p=>{p.preview.decisionAuthority='APPROVED'},p=>{p.preview.candidateCount=3},p=>{p.preview.candidateCount=true},p=>{p.preview.reviewRequired=1},p=>{p.preview.originalQuestion='Is now less than prior?'}]){
   const v=JSON.parse(a.artifactText);alter(v);const artifactText=JSON.stringify(v),artifactPin=await casePin(artifactText);
   const forged={artifactText,artifactPin};
   await assert.rejects(replayInducedQuestion({...forged,expectedContractPin:x.contractPin,expectedCatalogPin:x.catalogPin}),/PREVIEW_MISMATCH/);

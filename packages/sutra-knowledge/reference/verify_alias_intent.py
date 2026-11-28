@@ -138,7 +138,8 @@ def verify(text, expected_artifact, expected_contract, expected_catalog):
             plan_text = json.dumps(plan, ensure_ascii=False, separators=(",", ":"))
             p = dict(common, state="UNREVIEWED_PLAN", relation=rel, candidateCount=count,
                      unresolved=[], planText=plan_text, planPin=pin(plan_text))
-    require(p == a["preview"], "PREVIEW_MISMATCH")
+    require(json.dumps(p, ensure_ascii=False, separators=(",", ":"), sort_keys=True) ==
+            json.dumps(a["preview"], ensure_ascii=False, separators=(",", ":"), sort_keys=True), "PREVIEW_MISMATCH")
     return {"state": p["state"], "decisionAuthority": "NONE", "scope": "MAPPING_STRUCTURE_ONLY"}
 
 if __name__ == "__main__":
