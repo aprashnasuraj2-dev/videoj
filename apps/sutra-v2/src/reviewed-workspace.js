@@ -50,9 +50,10 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
-let historySaveUncertain=false;
+let historySaveUncertain=false,inspectedDurableHistory=null,previousLocalHistory=null,historyAdoptionPending=false,historySaveController=null;
+// Use the existing canonical history object; recovery never alters evidence draft or baseline.
 function markHistorySaveUnknown(attempted){
- historySaveUncertain=true;
+ historySaveUncertain=true;inspectedDurableHistory=null;
  by('history-durable-pin').value=attempted;
  durableHistoryStatus('unknown','Save outcome unknown: the host may have published the attempted digest. Verify this digest or a separately retained current digest using Read before another write. Local history was not replaced.');
 }
@@ -1381,12 +1382,27 @@ by('branch-run').onclick=()=>work(async ticket=>{
 });
 by('branch-export').onclick=()=>{if(branchCurrent&&!busy)download(JSON.stringify(branchCurrent),'sutra-sibling-contrast.json','application/json');};
 function durableHistoryStatus(state,message){by('history-durable-status').dataset.state=state;by('history-durable-status').textContent=message;}
+// These controls are added only to the existing durable-history panel.
+const durableRecoveryRow=document.createElement('div');durableRecoveryRow.className='controls';
+const durableRecoveryDetail=document.createElement('p');durableRecoveryDetail.id='review-history-durable-detail';durableRecoveryDetail.setAttribute('role','status');durableRecoveryDetail.className='mono';
+for(const [id,label] of [['cancel','Stop waiting for save'],['reload','Use inspected history; keep draft'],['undo','Restore previous local history']]){
+ const button=document.createElement('button');button.type='button';button.id='review-history-durable-'+id;button.textContent=label;button.className='secondary';button.disabled=true;durableRecoveryRow.append(button);
+}
+by('history-durable-status').after(durableRecoveryDetail,durableRecoveryRow);
 function durableHistoryControl(){
  const s=history?.snapshot(),retained=by('history-durable-pin').value.trim(),available=!!historyHost;
  by('history-durable-pin').disabled=busy||!available;
  by('history-durable-initialize').disabled=busy||!available||!s||!!retained||historySaveUncertain;
  by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest||historySaveUncertain;
  by('history-durable-read').disabled=busy||!available||!retained;
+ by('history-durable-cancel').disabled=!historySaveController;
+ const inspected=inspectedDurableHistory?.snapshot();
+ by('history-durable-reload').disabled=busy||historyAdoptionPending||historySaveUncertain||!inspected||inspected.digest!==retained||inspected.digest===s?.digest;
+ by('history-durable-undo').disabled=busy||!historyAdoptionPending;
+ const describe=x=>x.view.versions.length+' version(s) · '+x.view.branches.map(b=>b.name+' '+b.head.slice(7,19)).join(', ');
+ const localSet=new Set(s?.view.versions.map(v=>v.digest)),savedSet=new Set(inspected?.view.versions.map(v=>v.digest));
+ const delta=s&&inspected?localSet.size-[...localSet].filter(v=>savedSet.has(v)).length+' local-only / '+(savedSet.size-[...savedSet].filter(v=>localSet.has(v)).length)+' saved-only versions':'';
+ durableRecoveryDetail.textContent=[s?'Local: '+describe(s):'No local history',inspected?'Inspected: '+describe(inspected):'',delta].filter(Boolean).join(' · ');
  if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
 }
 function historyControl(){
@@ -1416,34 +1432,52 @@ function renderHistory(){
 by('history-branch').onchange=historyControl;
 for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
 by('history-file').addEventListener('change',historyControl);
-by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus(historySaveUncertain?'unknown':'idle',historySaveUncertain?'Save outcome remains unknown. Read the retained digest to verify it before another write.':'Retained durable digest edited. Host not contacted.');historyControl();});
+by('history-durable-pin').addEventListener('input',()=>{inspectedDurableHistory=null;durableHistoryStatus(historySaveUncertain?'unknown':'idle',historySaveUncertain?'Save outcome remains unknown. Read the retained digest to verify it before another write.':'Retained durable digest edited. Host not contacted.');historyControl();});
 by('history-durable-initialize').onclick=()=>work(async ticket=>{
  const h=history,s=h?.snapshot();if(!historyHost||!h||!s||historySaveUncertain)return;
- let committed;try{committed=await historyHost.initialize(s);}catch(e){if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN')markHistorySaveUnknown(s.digest);throw e;}
+ inspectedDurableHistory=null;historySaveController=new AbortController();durableHistoryControl();
+ let committed;try{committed=await historyHost.initialize(s,historySaveController.signal);}catch(e){if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN')markHistorySaveUnknown(s.digest);throw e;}finally{historySaveController=null;durableHistoryControl();}
  if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest)return;
  by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host initialized at the exact replayed history digest. Retain this digest separately.');status('history_durable_ready','Durable host initialized explicitly; browser history unchanged.');historyControl();
 });
 by('history-durable-append').onclick=()=>work(async ticket=>{
  const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected||historySaveUncertain)return;
+ inspectedDurableHistory=null;historySaveController=new AbortController();durableHistoryControl();
  try{
-  const committed=await historyHost.append(expected,s);
+  const committed=await historyHost.append(expected,s,historySaveController.signal);
   if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest||by('history-durable-pin').value.trim()!==expected)return;
   by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host advanced to the exact current history digest. Retain this new digest separately.');status('history_durable_ready','Durable history advanced with exact retained-head CAS.');historyControl();
  }catch(e){
   if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN'){markHistorySaveUnknown(s.digest);throw e;}
   if(ticket===epoch&&h===history&&by('history-durable-pin').value.trim()===expected)durableHistoryStatus(/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused',/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'Durable head differs from the retained digest. No retry or local history change occurred. Verify a separately retained current digest before proceeding.':'Durable host refused the write. No automatic retry or local history change occurred.');
   throw e;
- }
+ }finally{historySaveController=null;durableHistoryControl();}
 });
+by('history-durable-cancel').onclick=()=>historySaveController?.abort();
 by('history-durable-read').onclick=()=>work(async ticket=>{
  const h=history,expected=by('history-durable-pin').value.trim();if(!historyHost||!expected)return;
- const checked=await historyHost.read(expected);
+ inspectedDurableHistory=null;
+ let checked,opened;
+ try{checked=await historyHost.read(expected);opened=await openInvestigationHistory(checked.historyText,checked.digest);}
+ catch(e){if(ticket===epoch&&h===history){const state=historySaveUncertain?'unknown':/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused';durableHistoryStatus(state,'Saved digest not confirmed. Local history and draft unchanged; no retry.');}throw e;}
  if(ticket!==epoch||h!==history||by('history-durable-pin').value.trim()!==expected)return;
- historySaveUncertain=false;
+ inspectedDurableHistory=opened;historySaveUncertain=false;
  const local=history?.snapshot().digest??null,same=local===checked.digest;
  durableHistoryStatus('ready','Durable host exactly matches the retained digest. In-memory history '+(same?'matches it.':'is different and was not replaced.')+' No state was adopted automatically.');
  status('history_durable_ready','Retained durable head verified without changing browser history.');historyControl();
 });
+by('history-durable-reload').onclick=()=>{
+ if(busy||historyAdoptionPending||historySaveUncertain||!inspectedDurableHistory||inspectedDurableHistory.snapshot().digest!==by('history-durable-pin').value.trim()||inspectedDurableHistory.snapshot().digest===history?.snapshot().digest)return;
+ previousLocalHistory=history;historyAdoptionPending=true;history=inspectedDurableHistory;inspectedDurableHistory=null;renderHistory();
+ durableHistoryStatus('recovered','Inspected history loaded explicitly. Editable draft and comparison baseline unchanged; prior local history can be restored.');
+ status('history_ready','Saved history loaded without changing evidence draft or baseline.');
+};
+by('history-durable-undo').onclick=()=>{
+ if(busy||!historyAdoptionPending)return;
+ history=previousLocalHistory;previousLocalHistory=null;historyAdoptionPending=false;inspectedDurableHistory=null;renderHistory();
+ durableHistoryStatus('local','Previous local history restored. Durable store and editable draft unchanged.');
+ status('history_ready','Previous local history restored; no host write.');
+};
 by('history-create').onclick=()=>work(async ticket=>{
  const v=semanticCurrent;if(history||!v)return;
  const h=await createInvestigationHistory(v.versionText,v.digest);
