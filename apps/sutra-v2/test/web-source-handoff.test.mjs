@@ -33,3 +33,15 @@ test('Obscura provenance parser identity can be staged without a model',async()=
  const x=example();x.report.documents[0].parser='obscura-dom/v1';x.reportPin=hash(JSON.stringify(x.report));
  const c=await prepareWebSourceCandidate(x);assert.equal(c.provenance.parser,'obscura-dom/v1');
 });
+
+test('sandboxed PDF source retains exact page coordinate provenance without automatic adoption',async()=>{
+ const text='First page\fSecond page';
+ const x=example(text),d=x.report.documents[0];
+ d.mediaType='application/pdf';d.parser='linux-bwrap-poppler-text/v1';
+ d.pageMap=[{page:1,startOffset:0,endOffset:10},{page:2,startOffset:11,endOffset:text.length}];
+ x.reportPin=hash(JSON.stringify(x.report));
+ const candidate=await prepareWebSourceCandidate(x);
+ assert.equal(candidate.provenance.mediaType,'application/pdf');
+ assert.deepEqual(candidate.provenance.pages,[{page:1,start:0,end:10},{page:2,start:11,end:text.length}]);
+ assert.equal(candidate.adoption,'NONE');
+});
