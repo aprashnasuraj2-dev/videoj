@@ -1,0 +1,49 @@
+{
+  "version": "sutra-tab-human-ambiguity/v1",
+  "sourceRepository": "https://github.com/amazon-science/tab-dataset",
+  "revision": "2e9d70c3c44037ef7e6a2c96bf8efb31bd6aed0e",
+  "license": "CC BY-SA 4.0",
+  "humanAmbiguousPrompts": true,
+  "interpretationsIncluded": true,
+  "boundary": "Only the five main linguistic ambiguity files are vendored: syntax PP, syntax VP, syntax conjunction, discourse anaphora and discourse ellipsis. Fairness, complex, combination and miscellaneous artifacts are excluded from SUTRA semantic-family evidence.",
+  "files": [
+    {
+      "id": "syntax-pp",
+      "upstreamPath": "benchmark/data/syntax-pp.csv",
+      "path": "tab-human-ambiguity-v1/syntax-pp.csv",
+      "gitBlob": "831b787d02515ca0d677d90530abc6c0a12c9e38",
+      "records": 74
+    },
+    {
+      "id": "syntax-vp",
+      "upstreamPath": "benchmark/data/syntax-vp.csv",
+      "path": "tab-human-ambiguity-v1/syntax-vp.csv",
+      "gitBlob": "8d0fbb85bc8d61a3d9bc93d9fd83eba377f32fc3",
+      "records": 243
+    },
+    {
+      "id": "syntax-conj",
+      "upstreamPath": "benchmark/data/syntax-conj.csv",
+      "path": "tab-human-ambiguity-v1/syntax-conj.csv",
+      "gitBlob": "4d29db4d3d7777d3b62207f1e43e23278885b3d0",
+      "records": 127
+    },
+    {
+      "id": "disc-anaphor",
+      "upstreamPath": "benchmark/data/disc-anaphor.csv",
+      "path": "tab-human-ambiguity-v1/disc-anaphor.csv",
+      "gitBlob": "8defdf4f744b2cbf5b5a71baa6f2f9a95b540946",
+      "records": 21
+    },
+    {
+      "id": "disc-ellip",
+      "upstreamPath": "benchmark/data/disc-ellip.csv",
+      "path": "tab-human-ambiguity-v1/disc-ellip.csv",
+      "gitBlob": "6e323bd060d36d47c3f5fd5d4c8e32632149e214",
+      "records": 45
+    }
+  ],
+  "totalRecords": 510,
+  "provenance": "TAB README states the corpus expands/modifies LAVA; the associated ACL 2023 paper describes expert annotation and cross-checking. These prompts target visualizable linguistic ambiguity and do not map one-to-one to all 20 SUTRA semantic families.",
+  "citation": "Mehrabi et al. (ACL 2023), Resolving ambiguities in text-to-image generative models."
+}
