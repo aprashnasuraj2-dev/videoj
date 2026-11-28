@@ -53,9 +53,27 @@ jobs:
           node-version: '22'
       - run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends bubblewrap poppler-utils poppler-data
+          sudo apt-get install -y --no-install-recommends bubblewrap poppler-utils poppler-data apparmor-profiles
           bwrap --version
           pdftotext -v
+      - name: Enable only the distribution's restricted Bubblewrap AppArmor profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          before="$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)"
+          echo "Global user namespace restriction: $before"
+          if [ "$before" = 1 ]; then
+            profile=/usr/share/apparmor/extra-profiles/bwrap-userns-restrict
+            if [ -f /etc/apparmor.d/bwrap-userns-restrict ]; then
+              profile=/etc/apparmor.d/bwrap-userns-restrict
+            fi
+            test -f "$profile"
+            # Use distro-supplied capability-dropping child profile, never a global sysctl override.
+            grep -q 'profile unpriv_bwrap' "$profile"
+            grep -q 'deny capability' "$profile"
+            sudo apparmor_parser -r "$profile"
+          fi
+          test "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)" = "$before"
       - name: Probe sandbox as a dedicated unprivileged user with no other processes
         run: |
           sudo useradd --system --no-create-home sutra-pdf-ci
