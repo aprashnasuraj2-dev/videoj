@@ -31,9 +31,9 @@ if(host){
  }
  function render(preview){
   const review=preview.ambiguities.filter(x=>x.state==='REVIEW_REQUIRED'||x.state==='EXPLICIT_OR_REVIEW').length;
-  status.dataset.state=preview.state==='UNREVIEWED_CANDIDATES'?'ready':'refused';status.textContent=preview.state.replaceAll('_',' ')+' · '+preview.candidates.length+' candidates · semantic review required.';
+  status.dataset.state=preview.state==='UNREVIEWED_CANDIDATES'?'ready':preview.state==='SEMANTIC_REVIEW'?'review':'refused';status.textContent=preview.state.replaceAll('_',' ')+' · '+preview.candidates.length+' candidates · semantic review required.';
   ambiguity.textContent=review+' / '+preview.ambiguities.length+' ambiguity families require review or explicit confirmation. No authority granted.';
-  detail.textContent=preview.candidates.map(x=>x.id+' · '+x.mode+' · '+x.status+(x.expression?'\n  '+x.expression:'\n  '+x.reason)).join('\n')||'No executable candidate; unsupported or unresolved language remains visible.';
+  detail.textContent=preview.candidates.map(x=>x.id+' · '+x.mode+' · '+x.status+(x.expression?'\n  '+x.expression:'\n  '+x.reason)).join('\n')||preview.state==='SEMANTIC_REVIEW'?'Review-only language: structural and contextual obligations are visible, but no executable arithmetic candidate was invented.':'No executable candidate; unsupported or unresolved language remains visible.';
  }
  async function runAnalysis(){
   const ticket=++epoch;current=null;setBusy(true);status.dataset.state='busy';status.textContent='Analyzing locally…';

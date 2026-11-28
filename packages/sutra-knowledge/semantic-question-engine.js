@@ -4,6 +4,7 @@ import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
+import {analyzeSemanticContext} from './semantic-context-analyzer.js';
 
 export const VERSION='sutra-semantic-question-engine/v1';
 export const AMBIGUITY_FAMILIES=Object.freeze(['entity_identity','metric_definition','numerator','denominator','reporting_period','population','geography','units','scaling','sign','absolute_vs_relative','percentage_vs_percentage_point','aggregation','negation_scope','quantifier_scope','conditional_scope','baseline_selection','measurement_assumptions','modality','causal_vs_observational']);
@@ -57,40 +58,17 @@ function parseQuestion(q){
  if(m){const items=splitList(m[2]);if(items&&safe(m[4])){const op=RELMAP[m[3]],parts=[...items.map((alias,i)=>({role:'item'+i,alias})),{role:'limit',alias:m[4]}];if(m[1]==='sum'||m[1]==='total')out.push({mode:'AGGREGATE_SUM',parts,build:x=>'('+items.map((_,i)=>'['+x['item'+i]+']').join('+')+')'+op+'['+x.limit+']'});else out.push({mode:'AGGREGATE_MEAN',parts,portableOnly:'CURRENT_KERNEL_REQUIRES_REVIEWED_DIVISOR_BINDING'});}}
  return out;
 }
-function ambiguity(question,contract,lookup){
- const q=question.toLowerCase(),years=[...new Set([...question.matchAll(/\b(?:19|20)\d{2}\b/g)].map(x=>x[0]))],aliases=[...lookup].filter(([,ids])=>ids.length>1),byId=new Map(contract.bindings.map(x=>[x.id,x]));
- const conflicting=[];for(const [alias,ids] of lookup){const types=new Set(ids.map(id=>JSON.stringify(byId.get(id)?.type)));if(types.size>1)conflicting.push(alias);}
- const signal=(family,state,reason)=>({family,state,reason,decisionAuthority:'NONE'}),out=[];
- out.push(signal('entity_identity',aliases.length?'REVIEW_REQUIRED':'NO_SIGNAL',aliases.length?'Declared alias has multiple bindings.':'No declared alias collision.'));
- out.push(signal('metric_definition',conflicting.length?'REVIEW_REQUIRED':'NO_SIGNAL',conflicting.length?'Alias crosses declared quantity types.':'No declared metric-type collision.'));
- out.push(signal('numerator',/\b(ratio|proportion|rate|percent|percentage)\b/.test(q)?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Ratio-like wording requires an explicit numerator.'));
- out.push(signal('denominator',/\b(ratio|proportion|rate|percent|percentage)\b/.test(q)?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Ratio-like wording requires an explicit denominator/baseline.'));
- out.push(signal('reporting_period',years.length?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',years.length?'Explicit year cue(s): '+years.join(', '):'No explicit year cue.'));
- out.push(signal('population',/\b(all|any|each|every|population|customers?|users?|tickets?|shares?)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Population wording can change the evaluated set.'));
- out.push(signal('geography',/\b(global|country|region|province|district|state|city|market)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Geographic scope remains explicit.'));
- out.push(signal('units','EXPLICIT_OR_REVIEW','Reviewed binding types remain the unit authority.'));
- out.push(signal('scaling',/\b(thousands?|millions?|billions?|mn|bn)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Scale wording is not silently normalized.'));
- out.push(signal('sign',/\b(change|difference|increase|decrease|growth)\b/.test(q)&&!/\babsolute\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Change can be signed or magnitude depending on definition.'));
- out.push(signal('absolute_vs_relative',/\bchange\b/.test(q)&&!/\b(percent|percentage|relative|point)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Unqualified change can denote difference or relative change.'));
- out.push(signal('percentage_vs_percentage_point',/percentage\s+points?|\bpp\b/.test(q)?'EXPLICIT_POINTS':/\b(percent|percentage)\b/.test(q)?'EXPLICIT_RELATIVE':'NO_SIGNAL','Percent and percentage-point change are distinct.'));
- out.push(signal('aggregation',/\b(sum|total|average|mean|weighted)\b/.test(q)?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Aggregation method and population remain explicit.'));
- out.push(signal('negation_scope',/\b(not|no|without|except)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Negation scope can change the relation.'));
- out.push(signal('quantifier_scope',/\b(all|any|each|every|exactly|some|at least|at most)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Quantifier scope is separate from arithmetic.'));
- out.push(signal('conditional_scope',/\b(if|unless|when|assuming|provided)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Conditional clauses define applicability.'));
- out.push(signal('baseline_selection',/\bfrom\b.+\bto\b/.test(q)||/\bchange|growth|increase|decrease\b/.test(q)?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Change requires a baseline.'));
- out.push(signal('measurement_assumptions',/\b(reported|measured|estimated|approximate|adjusted|nominal|surviving|observed)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Measurement qualifiers remain obligations.'));
- out.push(signal('modality',/\b(may|might|must|should|could|significant|likely|possible)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Modality is not probability.'));
- out.push(signal('causal_vs_observational',/\b(cause|caused|because|due to|impact|effect|led to)\b/.test(q)?'REVIEW_REQUIRED':'NO_SIGNAL','Causal wording needs causal evidence/study design.'));
- return out;
-}
 export async function previewSemanticQuestion({contractText,contractPin,catalogText,catalogPin}={}){
  if(typeof catalogPin!=='string'||await casePin(catalogText)!==catalogPin)fail('CATALOG_PIN');
  await validateReviewedContract(contractText,contractPin);
  const c=parse(contractText),raw=parse(catalogText,8);if(raw?.contractDigest!==contractPin)fail('STALE_CATALOG');
  const lookup=catalog(raw,contractPin,new Set(c.bindings.map(x=>x.id))),parses=parseQuestion(c.question.text),candidates=[],unresolved=[];
+ const aliasCollisions=[...lookup].filter(([,ids])=>ids.length>1).map(([alias])=>alias),byId=new Map(c.bindings.map(x=>[x.id,x])),typeCollisions=[];
+ for(const [alias,ids] of lookup){if(new Set(ids.map(id=>JSON.stringify(byId.get(id)?.type))).size>1)typeCollisions.push(alias);}
+ const context=analyzeSemanticContext({question:c.question.text,sources:c.sources,aliasCollisions,typeCollisions});
  for(const p of parses){const resolved=mappings(p.parts,lookup,64);if(resolved.missing.length){unresolved.push(...resolved.missing);continue;}if(resolved.truncated){unresolved.push('CANDIDATE_LIMIT:'+resolved.count);continue;}if(p.portableOnly){candidates.push({id:'portable_'+(candidates.length+1),mode:p.mode,status:'PORTABLE_ONLY',reason:p.portableOnly,expression:null,mapping:null,decisionAuthority:'NONE'});continue;}for(const mapping of resolved.rows)candidates.push({id:'candidate_'+(candidates.length+1),mode:p.mode,status:'KERNEL_READY',expression:p.build(mapping),mapping,decisionAuthority:'NONE'});}
- const diagnostics=ambiguity(c.question.text,c,lookup),state=!parses.length?'UNSUPPORTED_GRAMMAR':candidates.length?'UNREVIEWED_CANDIDATES':'UNRESOLVED_BINDINGS';
- const preview={version:VERSION,contractDigest:contractPin,catalogDigest:catalogPin,question:c.question.text,state,candidates,unresolved:[...new Set(unresolved)].sort(),ambiguities:diagnostics,reviewRequired:true,decisionAuthority:'NONE',qualification:'Deterministic bounded grammar over caller-declared alias mappings. Candidate generation is not semantic approval; kernel-ready candidates still require reviewed computation. Portable-only forms expose current closed-kernel gaps rather than inventing literals.'};
+ const diagnostics=context.diagnostics,state=!parses.length?(context.admission==='REFUSE'?'UNSUPPORTED_GRAMMAR':'SEMANTIC_REVIEW'):candidates.length?'UNREVIEWED_CANDIDATES':'UNRESOLVED_BINDINGS';
+ const preview={version:VERSION,contractDigest:contractPin,catalogDigest:catalogPin,question:c.question.text,state,candidates,unresolved:[...new Set(unresolved)].sort(),ambiguities:diagnostics,contextProfile:context.profile,reviewPrompts:context.reviewPrompts,refusalReason:context.refusalReason,reviewRequired:true,decisionAuthority:'NONE',qualification:'Bounded structural/contextual semantic review plus a closed executable grammar. Review-only language is never promoted to computation; kernel-ready candidates still require reviewed computation. Unsupported hostile or semantically hidden suffixes fail closed.'};
  const previewText=JSON.stringify(preview),previewPin=await casePin(previewText);return freeze({...preview,previewText,previewPin});
 }
 export async function compileSemanticCandidate(input,candidateId,expectedPreviewPin){

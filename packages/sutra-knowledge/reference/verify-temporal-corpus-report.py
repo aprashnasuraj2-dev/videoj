@@ -11,7 +11,7 @@ import sys
 
 EVAL = Path(__file__).resolve().parents[1] / "evaluation"
 SHA = "e71fa96f389e45d73c61915461f9b0b3f6207e956fd5b3eb72d19c66cfee9942"
-STATES = {"UNSUPPORTED_GRAMMAR", "UNRESOLVED_BINDINGS", "UNREVIEWED_CANDIDATES"}
+STATES = {"UNSUPPORTED_GRAMMAR", "SEMANTIC_REVIEW", "UNRESOLVED_BINDINGS", "UNREVIEWED_CANDIDATES"}
 
 def require(ok, message):
     if not ok:
@@ -77,7 +77,7 @@ def verify(report):
         require(r["index"]==i and r["questionHash"]==sha256(q.encode("utf-8")).hexdigest(),"record identity")
         require(r["gold"] is original["is_ambiguous"],"gold mismatch")
         require((r["prediction"],r["reason"])==independent_baseline(q),"independent baseline mismatch at row "+str(i))
-        require(r["engineState"] in STATES and r["engineReportingPeriod"] in {"NO_SIGNAL","EXPLICIT_OR_REVIEW"},"engine state")
+        require(r["engineState"] in STATES and r["engineReportingPeriod"] in {"NO_SIGNAL","EXPLICIT_OR_REVIEW","REVIEW_REQUIRED"},"engine state")
         require(bool(re.fullmatch(r"sha256:[a-f0-9]{64}",r["previewPin"])),"preview pin")
         if q in seen:
             require({k:v for k,v in r.items() if k!="index"}=={k:v for k,v in seen[q].items() if k!="index"},"duplicate inconsistent")
