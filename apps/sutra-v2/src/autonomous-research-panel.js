@@ -113,6 +113,6 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
  cancel.onclick=async()=>{if(cancel.disabled)return;cancelRequested=true;if(browserController){browserController.abort();state('Browser cancellation and approval revocation requested.','cancelling');return;}if(!session)return;const ticket=epoch,s=session;busy=true;sync();try{await request('cancel',{method:'POST',data:{sessionId:s.sessionId}});if(ticket===epoch&&running)state('Cancellation requested; awaiting confirmed terminal state.','cancelling');}catch(e){if(ticket===epoch&&running)state('Cancellation status unknown: '+reason(e),'disconnected');}finally{if(ticket===epoch){busy=false;sync();}}};
  download.onclick=()=>{if(report&&saveFile)saveFile(JSON.stringify(report),'sutra-autonomous-research-report.json');};
  receiptDownload.onclick=()=>{if(browserReceipt&&saveFile)saveFile(JSON.stringify(browserReceipt,null,2),'sutra-browser-run-receipt.json');};
- const directWeb=createDirectWebPanel(root,{saveFile});
+ const directWeb=createDirectWebPanel(root,{saveFile,stageSource});
  sync();return Object.freeze({invalidate(){if(!busy&&!running)reset();},close(){directWeb.close();clearTimeout(timer);browserController?.abort();epoch++;},isRunning(){return running;}});
 }
