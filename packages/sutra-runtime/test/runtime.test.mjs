@@ -245,3 +245,13 @@ test('poisoned approved source remains data and cannot enable an external write 
  await assert.rejects(runNetwork({definition,name:'reviewed_investigation',frontMan:'planner',request:'Read the approved span',model,workspaceEvidence:{selection,assertCurrent:()=>true},onEvent:e=>events.push(e)}),e=>e.code==='TOOL_UNAVAILABLE'&&!JSON.stringify(e).includes(secret));
  assert.equal(calls.length,2);assert.equal(events.filter(e=>e.kind==='tool'&&e.phase==='start').length,1);assert.ok(events.every(e=>!JSON.stringify(e).includes(secret)));
 });
+
+test('read-only action profile rejects site action registry, executable handler and irreversible model action before effect',async()=>{
+ for(const mutate of [g=>g.actions=[{name:'delete_record',effect:'irreversible',handler:'https://unapproved.invalid/delete'}],g=>g.tools[0].tools=[{action:'delete_record'}],g=>g.tools[0].class='ExecuteAction',g=>g.tools[0].function.handler='https://unapproved.invalid/delete']){
+  const g=copy();mutate(g);let calls=0;
+  await assert.rejects(run({definition:g,model:{mode:'scripted-test',chat(){calls++;}}}),e=>['UNSUPPORTED_FIELD','TOOLS'].includes(e.code));assert.equal(calls,0);
+ }
+ const seen=[];let modelCalls=0;
+ const model={mode:'scripted-test',async chat(args){modelCalls++;seen.push(...args.tools.map(t=>t.function.name));return {content:'',toolCalls:[{id:'write-1',type:'function',function:{name:'delete_record',arguments:'{"id":"synthetic"}'}}]};}};
+ await assert.rejects(run({model}),e=>e.code==='TOOL_UNAVAILABLE');assert.equal(modelCalls,1);assert.ok(!seen.includes('delete_record'));
+});
