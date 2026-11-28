@@ -1,5 +1,13 @@
 # SUTRA standalone autonomous research — experimental vertical slice
 
+## Current integration contract (2026-11-28; PR #66, not released)
+
+The primary workspace starts with an investigation objective or a labeled offline worked example. The browser owns its portable declarative graph execution; a publisher-owned, same-origin model route is an optional bounded capability, disabled in the reviewed public candidate until separately authorized. No visitor-controlled arbitrary endpoint or browser key enrollment is exposed by that public candidate. The trusted local research host supports one shared ordered pool of one to three operator-selected model IDs; one model is sufficient. Specialist role mappings are historical/advanced compatibility, not the default. Arbitrary user-operated model/API connectivity remains a longer-term requirement, subject to trusted adapters and egress admission, not a shipped unrestricted relay.
+
+General web research is optional, on demand, and mediated by the separate loopback Node host. Missing search, model or permission is explicit, not simulated. The host's research supervisor is not browser-native graph orchestration; Node DNS/TLS/PDF/PostgreSQL facilities are not browser capabilities. Deterministic/manual investigation and replay do not require web or inference. Model claims are untrusted; exact citation integrity and deterministic replay do not prove empirical truth or independent corroboration.
+
+Browser/peer tests use real Chromium and distinct loopback origins with injected model responses. This establishes candidate behavior, not live commercial inference, deployed HTTPS conformance or public availability of the V2 candidate. The existing public app is legacy and unchanged; no release, merge or deployment is authorized. See [the pre-release checklist](../../docs/sutra-v2/DEVPOST-PRE-RELEASE.md) for unresolved gates.
+
 This package is separate from the exact-URL, pinned-investigation research operator. The old operator, hosted model policies and deterministic kernel are unchanged.
 
 ## Run locally (Node 22.12+)
@@ -75,7 +83,7 @@ node apps/sutra-v2/live-model-smoke.mjs --execute-live-model-smoke --approve-pro
 
 ### Model selection and on-demand web access
 
-The public configuration is one ordered `modelPolicy.models` pool (one to three selected model descriptors) and `allowPublicEvidenceDisclosure: true`. Each descriptor supplies `vendor`, `model`, `maxInputBytes`, `maxOutputTokens`, and `estimatedMaxCostMicros`. The first is preferred. The runtime schedules planning, synthesis, and critique internally; avatars are not model connections. One model can perform all operations; two or three can supply another perspective. Different models or vendors do not prove independence. The default `webAccess` is `on_demand`: the model can answer without web, request bounded host searches, or request synthesis after acquiring evidence. An empty provider list is valid; unavailable web requests are explicitly reported, not simulated. Previously exported role-specific manifests remain compatible but are not the public configuration.
+The supported local research configuration is one ordered `modelPolicy.models` pool (one to three selected model descriptors) and `allowPublicEvidenceDisclosure: true`. Each descriptor supplies `vendor`, `model`, `maxInputBytes`, `maxOutputTokens`, and `estimatedMaxCostMicros`. The first is preferred. The runtime schedules planning, synthesis, and critique internally; avatars are not model connections. One model can perform all operations; two or three can supply another perspective. Different models or vendors do not prove independence. The default `webAccess` is `on_demand`: the model can answer without web, request bounded host searches, or request synthesis after acquiring evidence. An empty provider list is valid; unavailable web requests are explicitly reported, not simulated. Previously exported role-specific manifests remain compatible but are not the primary local configuration.
 
 Smoke tests accept `SUTRA_SMOKE_MODELS_JSON` as a nonsecret JSON object, e.g. `{"groq":"openai/gpt-oss-20b"}`. The selected model IDs are part of the approval pin; a single configured credential is sufficient when only one route is selected. These are test inputs, not orbital role mappings.
 

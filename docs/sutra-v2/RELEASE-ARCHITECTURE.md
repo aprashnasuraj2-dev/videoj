@@ -1,6 +1,14 @@
 # SUTRA v2 release architecture and trust boundaries
 Status: accepted engineering design for PR #66; **not** release or deployment authorization. Reviewed baseline 55ca53b0e3137db5241d0b2ec68c1e6bf1a3cf5a (2026-11-28). Implementation may advance; revalidate affected boundaries against the exact deployed revision.
 
+## Current integration contract (2026-11-28; PR #66, not released)
+
+The primary workspace starts with an investigation objective or a labeled offline worked example. The browser owns its portable declarative graph execution; a publisher-owned, same-origin model route is an optional bounded capability, disabled in the reviewed public candidate until separately authorized. No visitor-controlled arbitrary endpoint or browser key enrollment is exposed by that public candidate. The trusted local research host supports one shared ordered pool of one to three operator-selected model IDs; one model is sufficient. Specialist role mappings are historical/advanced compatibility, not the default. Arbitrary user-operated model/API connectivity remains a longer-term requirement, subject to trusted adapters and egress admission, not a shipped unrestricted relay.
+
+General web research is optional, on demand, and mediated by the separate loopback Node host. Missing search, model or permission is explicit, not simulated. The host's research supervisor is not browser-native graph orchestration; Node DNS/TLS/PDF/PostgreSQL facilities are not browser capabilities. Deterministic/manual investigation and replay do not require web or inference. Model claims are untrusted; exact citation integrity and deterministic replay do not prove empirical truth or independent corroboration.
+
+Browser/peer tests use real Chromium and distinct loopback origins with injected model responses. This establishes candidate behavior, not live commercial inference, deployed HTTPS conformance or public availability of the V2 candidate. The existing public app is legacy and unchanged; no release, merge or deployment is authorized. See [the pre-release checklist](DEVPOST-PRE-RELEASE.md) for unresolved gates.
+
 ## ADR-REL-001 — retain browser orchestration and separate host capabilities
 Decision: use the canonical V2 static Pages artifact as the sole release surface. The browser downloads and compiles its published Neuro SAN-compatible JSON graph and runs the pinned nsDeploy agent loop locally. A same-origin API may supply bounded inference, never agent scheduling authority. The Pages function forwards only its fixed method/path table over the private same-account SUTRA_API service binding. The Worker owns fixed provider routes, credentials and durable quota admission. The separate guide origin publishes public graph JSON only. Keep public inference disabled until explicit owner approval and actual preview checks.
 
@@ -30,8 +38,8 @@ Alternatives rejected:
     + NO route to autonomous research, PostgreSQL, PDF or arbitrary URL proxy
 
  separate local operator (single trusted workstation)
-    browser -- loopback Host/Origin + process token --> Node research gateway
-       |      preview pin, scoped queries, one active session      |
+    browser -- loopback Host/Origin + scoped client token --> Node research gateway
+       |      one-shot preview, scoped queries, one active session      |
        |                                               fixed model/search APIs
        |                                               pinned public DNS/TLS
        |                                               bounded extraction
@@ -39,7 +47,7 @@ Alternatives rejected:
                            offline proof export -> independently pinned verifier
 ```
 
-The public guide edge in the diagram is a browser-to-guide credentialless GET, not a Pages-to-guide relay. Provider transport receipts establish response admission only. Neither an extracted span nor a proof digest establishes empirical truth. The local gateway is not a multi-tenant authorization system; the process token is not an account identity. A separately trusted proof pin and verifier digest are required for offline replay.
+The public guide edge in the diagram is a browser-to-guide credentialless GET, not a Pages-to-guide relay. Provider transport receipts establish response admission only. Neither an extracted span nor a proof digest establishes empirical truth. The local gateway is not a multi-tenant authorization system; a short-lived client token is not an account identity. A separately trusted proof pin and verifier digest are required for offline replay.
 
 ## REL-S02 — release threat model
 Assets: provider/search credentials, approved model/config pins, quota reservations, source text and reviewed evidence, private session/report and draft state, artifact integrity, judge availability. Principals: anonymous visitor (untrusted), browser application (caller policy, not server authentication), peer publisher (untrusted graph/instructions), external provider/source (untrusted response), trusted local operator, deployment operator, private Worker and quota DO. An authenticated hosted tenant is a future principal; it has no enabled public session endpoint today. Same-origin does not prove user identity, and client IP is at most an abuse-control input.
