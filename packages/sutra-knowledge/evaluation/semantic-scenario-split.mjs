@@ -17,9 +17,11 @@ export function buildScenarioSplitReport(){
  const root=new URL('./',import.meta.url),temp=JSON.parse(readFileSync(new URL('tempambiqa-human-full-v1.json',root),'utf8'));
  const manifest=JSON.parse(readFileSync(new URL('semantic-model-authored-manifest-v1.json',root),'utf8')),synthetic=manifest.shards.flatMap(s=>readFileSync(new URL(s.path,root),'utf8').trim().split('\n').map(JSON.parse));
  const scopeRoot=new URL('scope-ambiguity-human-v1/',root),scope=['scope-exp1b-base.csv','scope-exp2a-base.csv','scope-exp2b-base.csv'].flatMap(f=>parseCsv(readFileSync(new URL(f,scopeRoot),'utf8')));
- const report={version:VERSION,assignment:'SHA256(structural scenario key) => 70/15/15 train/dev/test',labelUsedForAssignment:false,
-  corpora:[summarize('TempAmbiQA',temp.map(x=>x.question),temp.map(x=>x.is_ambiguous)),summarize('SUTRA model-authored',synthetic.map(x=>x.question),synthetic.map(x=>x.family)),summarize('McGill scope',scope.map(x=>x.sentence))],
-  boundary:'Structural grouping masks content words, years and numbers conservatively. It reduces template/entity leakage but does not prove semantic independence or absence of training contamination.'};
+ const externalTemporal={...summarize('TempAmbiQA',temp.map(x=>x.question),temp.map(x=>x.is_ambiguous)),role:'external-human-evaluation',heldOutEligible:true,labelBlindAssignment:true};
+ const syntheticSummary={...summarize('SUTRA model-authored',synthetic.map(x=>x.question),synthetic.map(x=>x.family)),role:'development-only',heldOutEligible:false,labelBlindAssignment:true,reason:'4000 records collapse to only 70 structural scenario keys; several families are absent from hashed dev/test folds, so no held-out generalization claim is permitted.'};
+ const externalScope={...summarize('McGill scope',scope.map(x=>x.sentence)),role:'external-human-evaluation',heldOutEligible:true,labelBlindAssignment:true};
+ const report={version:VERSION,assignment:'SHA256(structural scenario key) => 70/15/15 train/dev/test',labelUsedForAssignment:false,heldOutClaim:'EXTERNAL_HUMAN_SCENARIO_GROUPS_ONLY',corpora:[externalTemporal,syntheticSummary,externalScope],
+  boundary:'Structural grouping masks content words, years and numbers conservatively. It reduces template/entity leakage but does not prove semantic independence or absence of model-training contamination. Model-authored synthetic data remains development-only regardless of hash fold.'};
  for(const c of report.corpora)if(c.crossFoldScenarioKeyOverlap!==0)throw Error('SCENARIO_SPLIT_LEAK');
  return report;
 }
