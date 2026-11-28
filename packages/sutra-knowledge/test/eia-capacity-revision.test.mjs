@@ -19,8 +19,10 @@ test('EIA dated forecast versus subsequent reported additions: conditional thres
  const bindings=[tokenBinding('addition','addition_report',before.excerpt,before.token),tokenBinding('threshold','threshold_rule',threshold.text,threshold.token)];
  const {contractText,pin}=await sealReviewedDraft(JSON.stringify({version:1,question,sources,bindings}));
  const proposalText=JSON.stringify({version:1,contractDigest:pin,questionSpan:selectedSpan('question',question,0,question.length),claims:[],nodes:[{id:'addition_value',kind:'input',bindingId:'addition'},{id:'threshold_value',kind:'input',bindingId:'threshold'},{id:'target',kind:'constraint',op:'ge',args:['addition_value','threshold_value']}],targetId:'target'});
- const batchText=JSON.stringify({version:1,contractDigest:pin,proposals:[{id:'threshold_check',proposalText}]});
- const annotationText=JSON.stringify({version:1,contractDigest:pin,batchDigest:await casePin(batchText),candidates:[{id:'threshold_check',meaning:'Conditional on the selected dated estimate; not an empirical forecast verification or investment recommendation.',facets:Object.fromEntries(FACETS.map(k=>[k,null]))}]});
+ // The contrast contract requires two to eight candidates. Compare the predicate with its exact complement, not a fabricated independent interpretation.
+ const complement=JSON.parse(proposalText);complement.nodes.find(n=>n.id==='target').op='lt';
+ const batchText=JSON.stringify({version:1,contractDigest:pin,proposals:[{id:'threshold_check',proposalText},{id:'below_threshold',proposalText:JSON.stringify(complement)}]});
+ const annotationText=JSON.stringify({version:1,contractDigest:pin,batchDigest:await casePin(batchText),candidates:[{id:'threshold_check',meaning:'Conditional on the selected dated estimate; not an empirical forecast verification or investment recommendation.',facets:Object.fromEntries(FACETS.map(k=>[k,null]))},{id:'below_threshold',meaning:'Complementary predicate: selected dated estimate is below the hypothetical threshold; not a separate independent source.',facets:Object.fromEntries(FACETS.map(k=>[k,null]))}]});
  const parent=await sealInvestigationVersion({previousDigest:null,contractText,contractPin:pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
  const contract=JSON.parse(contractText);
  const old=contract.sources.find(s=>s.id==='addition_report');
@@ -30,7 +32,7 @@ test('EIA dated forecast versus subsequent reported additions: conditional thres
  const e=await exportEvidenceRevision(parent.versionText,parent.digest,planText,planPin);
  assert.equal(e.portable,true);
  const r=e.revision;
- assert.deepEqual(r.changes.map(c=>[c.id,c.classification,c.before,c.after]),[['threshold_check','TARGET_INPUT_RESELECTED',fixture.expected.before,fixture.expected.after]]);
+ assert.deepEqual(r.changes.map(c=>[c.id,c.classification,c.before,c.after]),[['threshold_check','TARGET_INPUT_RESELECTED',fixture.expected.before,fixture.expected.after],['below_threshold','TARGET_INPUT_RESELECTED',fixture.expected.after,fixture.expected.before]]);
  assert.deepEqual(r.invalidatedBindingIds,['addition']);assert.deepEqual(r.reselectedBindingIds,['addition']);assert.deepEqual(r.missingBindingIds,[]);
  const childContract=JSON.parse(JSON.parse(r.child.versionText).contractText);
  assert.deepEqual(childContract.sources.find(s=>s.id==='threshold_rule'),contract.sources.find(s=>s.id==='threshold_rule'));
