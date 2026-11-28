@@ -348,3 +348,48 @@ test('broad objective suggestions never silently grant authority',()=>{
  assert.throws(()=>confirmRequirements(a,['constructor']));
  assert.equal(analyzeObjective('hello').status,'unclassified');
 });
+
+import {createLazyViews,createCoalescedRefresh} from '../src/event-horizon/view-lifecycle.js';
+test('lazy views mount once, isolate errors and suspend hidden state',()=>{
+ const log=[];
+ const entries=['a','b','bad'].map(id=>({id,panelId:'panel_'+id,mount(){
+  log.push('mount:'+id);
+  if(id==='bad')throw Error('FAIL');
+  return {section:{id:'panel_'+id,hidden:true},setActive(v){log.push(id+':'+v);},destroy(){log.push('destroy:'+id);}};
+ }}));
+ const registry=createLazyViews(entries,{makePlaceholder:()=>({hidden:true}),removePlaceholder(){},onFailure:r=>log.push('failure:'+r.id)});
+ assert.equal(registry.snapshot().views.filter(v=>v.mounted).length,0);
+ const a=registry.show('a');
+ assert.equal(a.section.hidden,false);
+ assert.equal(registry.show('a'),a);
+ assert.equal(log.filter(s=>s==='mount:a').length,1);
+ assert.equal(registry.show('bad'),null);
+ assert.equal(registry.snapshot().selected,'a');
+ registry.show('b');
+ assert.equal(a.section.hidden,true);
+ registry.suspend();
+ registry.resume();
+ registry.destroy();
+ assert.ok(log.includes('destroy:a'));assert.ok(log.includes('destroy:b'));
+ assert.equal(registry.snapshot().closed,true);
+});
+test('coalesced renderer preserves last dirty notification and cancels stale callbacks',()=>{
+ const queue=[],calls=[];
+ const refresh=createCoalescedRefresh(value=>calls.push(value),fn=>queue.push(fn));
+ for(let i=0;i<1000;i++)refresh.request(i);
+ assert.equal(queue.length,1);
+ queue.shift()();
+ assert.deepEqual(calls,[999]);
+ refresh.request('old');
+ refresh.cancel();
+ refresh.request('new');
+ queue.shift()();
+ queue.shift()();
+ assert.deepEqual(calls,[999,'new']);
+ refresh.request('flush');
+ assert.equal(refresh.flush(),true);
+ queue.shift()();
+ assert.deepEqual(calls,[999,'new','flush']);
+ refresh.destroy();
+ assert.equal(refresh.request('closed'),false);
+});

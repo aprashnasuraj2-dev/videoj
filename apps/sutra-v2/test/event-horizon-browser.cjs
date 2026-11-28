@@ -14,6 +14,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.equal(await page.locator('#orb-map').isVisible(),false);
   assert.match(await page.locator('#eh-status').innerText(),/No recorded execution/);
   assert.equal(await page.locator('#eh-workspace .eh-entity').count(),0);
+  assert.equal(await page.locator('#eh-workspace [data-lazy-view=pending]').count(),8);
+  assert.equal(await page.locator('#eh-proof-evaluate').count(),0);
+  assert.equal(await page.locator('#eh-notebook-save').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   if(width===390)assert.ok(await page.locator('#orb-autonomous-objective').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight),'objective visible within 390 × 844 viewport');
   await page.screenshot({path:path.join(out,'event-horizon-'+width+'.png'),fullPage:false});

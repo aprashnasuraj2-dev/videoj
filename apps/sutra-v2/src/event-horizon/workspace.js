@@ -10,6 +10,7 @@ import {mountBatchWorkshop} from './batch-workshop.js';
 import {mountProofView} from './proof-view.js';
 import {mountNetworkDesigner} from './network-designer-view.js';
 import {mountNotebook} from './notebook-view.js';
+import {createLazyViews,createCoalescedRefresh} from './view-lifecycle.js';
 import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -157,26 +158,56 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  runSelect.addEventListener('change',()=>{autoFollow=false;selectedRun=runSelect.value;selection=null;pageIndex=0;replaySequence=null;refresh();});
  layoutSelect.addEventListener('change',()=>{viewportKey=null;render();});filter.addEventListener('input',()=>{pageIndex=0;render();});for(const select of [kindFilter,relationFilter])select.addEventListener('change',()=>{pageIndex=0;viewportKey=null;render();});
  const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;pageIndex=0;replaySequence=null;const list=snapshots();selectedRun=list.some(g=>g.id===latestObservedId)?latestObservedId:list.at(-1)?.id??'empty';refresh();});controls.append(follow);
- const knowledge=mountKnowledgeView(section,{openTool});
- const computation=mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}});
- const composition=mountCompositionView(section,{readObjective:()=>objectiveSlot.querySelector('#orb-autonomous-objective')?.value??'',onConversion(input){if(computation.stage(input))switchView('computation');},openWorkflow(id){if(id==='direct_compute')switchView('computation');else openWorkflow(id);}});
- const atlas=mountAtlasView(section);
- const batch=mountBatchWorkshop(section,{publish:publishTaskExecution,onObserve(runId){autoFollow=false;selectedRun='task/'+encodeURIComponent(runId);selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}});
- const proof=mountProofView(section);
- const designer=mountNetworkDesigner(section);
- const notebook=mountNotebook(section);
- const views=[['runtime','Runtime',runtime],['composition','Compose',composition],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation.section],['atlas','Agent Atlas',atlas],['batch','Task workshop',batch.section],['proof','Proof workbench',proof],['designer','Network designer',designer],['notebook','Notebook',notebook.section]];
- function switchView(next){viewMode=next;for(const [id,,panel] of views)panel.hidden=id!==next;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));knowledge.setActive(active&&next==='knowledge');notebook.setActive(active&&next==='notebook');if(next==='runtime')refresh();}
- for(const [id,name,panel] of views){const b=button(name,()=>switchView(id));b.dataset.view=id;b.setAttribute('aria-controls',panel.id);tabs.append(b);}
- function setActive(value){active=!!value;for(const {node,marker} of placements){if(active)objectiveSlot.append(node);else marker.after(node);}objectiveSlot.hidden=!active||!placements.length;knowledge.setActive(active&&viewMode==='knowledge');notebook.setActive(active&&viewMode==='notebook');if(active)refresh();}
+ let latestKnowledge=null;
+ const viewDefinitions=[
+  {id:'runtime',name:'Runtime',panelId:'eh-runtime',mount:()=>runtime},
+  {id:'composition',name:'Compose',panelId:'eh-compose',mount:()=>mountCompositionView(section,{readObjective:()=>objectiveSlot.querySelector('#orb-autonomous-objective')?.value??'',onConversion(input){const computation=registry.ensure('computation');if(computation?.stage(input))switchView('computation');},openWorkflow(id){if(id==='direct_compute')switchView('computation');else openWorkflow(id);}})},
+  {id:'knowledge',name:'Knowledge',panelId:'eh-knowledge',mount:()=>{const instance=mountKnowledgeView(section,{openTool});if(latestKnowledge)instance.update(latestKnowledge);return instance;}},
+  {id:'computation',name:'Direct compute',panelId:'eh-compute',mount:()=>mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}})},
+  {id:'atlas',name:'Agent Atlas',panelId:'eh-atlas',mount:()=>mountAtlasView(section)},
+  {id:'batch',name:'Task workshop',panelId:'eh-batch',mount:()=>mountBatchWorkshop(section,{publish:publishTaskExecution,onObserve(runId){autoFollow=false;selectedRun='task/'+encodeURIComponent(runId);selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}})},
+  {id:'proof',name:'Proof workbench',panelId:'eh-proof',mount:()=>mountProofView(section)},
+  {id:'designer',name:'Network designer',panelId:'eh-network-designer',mount:()=>mountNetworkDesigner(section)},
+  {id:'notebook',name:'Notebook',panelId:'eh-notebook',mount:()=>{const instance=mountNotebook(section);if(latestKnowledge)instance.update(latestKnowledge);return instance;}}
+ ];
+ const viewError=E('p','','eh-state');viewError.hidden=true;viewError.setAttribute('role','status');tabs.after(viewError);
+ const registry=createLazyViews(viewDefinitions,{
+  makePlaceholder(entry){
+   const placeholder=E('div');placeholder.id=entry.panelId;placeholder.hidden=true;placeholder.dataset.lazyView='pending';
+   if(entry.id==='runtime'){runtime.before(placeholder);placeholder.removeAttribute('id');}
+   else section.append(placeholder);
+   return placeholder;
+  },
+  removePlaceholder(element){element.remove();},
+  onFailure(entry){viewError.textContent='Could not open '+entry.name+'. Existing views remain available.';viewError.hidden=false;}
+ });
+ function switchView(next){
+  const instance=registry.show(next);
+  if(!instance)return;
+  viewMode=next;viewError.hidden=true;
+  for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));
+  if(!active)registry.suspend();
+  if(next==='runtime')refresh();
+ }
+ for(const entry of viewDefinitions){
+  const b=button(entry.name,()=>switchView(entry.id));b.dataset.view=entry.id;b.setAttribute('aria-controls',entry.panelId);tabs.append(b);
+ }
+ function setActive(value){
+  active=!!value;
+  for(const {node,marker} of placements){if(active)objectiveSlot.append(node);else marker.after(node);}
+  objectiveSlot.hidden=!active||!placements.length;
+  if(active){registry.resume();refresh();}
+  else registry.suspend();
+ }
  function attachObjective(elements){for(const node of elements){if(!node||placements.some(p=>p.node===node))continue;const marker=document.createComment('Original objective control position');node.before(marker);placements.push({node,marker});}setActive(active);}
- const unsubscribe=feed.subscribe((event,snapshot)=>{const p=projectTaskRun(snapshot);if(p)refresh(p.id);});
+ const coalesced=createCoalescedRefresh(preferred=>refresh(preferred));
+ const unsubscribe=feed.subscribe((event,snapshot)=>{if(snapshot?.runId)coalesced.request('task/'+encodeURIComponent(snapshot.runId));});
  switchView('runtime');
  return Object.freeze({
   startResearch(){research.begin();refresh(research.snapshot().id);},
   observeResearch(e,mode){if(research.accept(e,mode))refresh(research.snapshot().id);},
   endResearch(status){research.end(status);refresh(research.snapshot()?.id);},
-  setActive,attachObjective,updateKnowledge(state){knowledge.update(state);notebook.update(state);},
-  destroy(){destroyed=true;batch.cancel();unsubscribe();section.remove();}
+  setActive,attachObjective,updateKnowledge(state){latestKnowledge=state;registry.instance('knowledge')?.update(state);registry.instance('notebook')?.update(state);},
+  destroy(){destroyed=true;coalesced.destroy();registry.destroy();unsubscribe();section.remove();}
  });
 }
