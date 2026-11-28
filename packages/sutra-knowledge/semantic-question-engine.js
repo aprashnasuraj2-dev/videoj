@@ -57,7 +57,9 @@ function parseQuestion(q){
  if(m&&[m[1],m[2],m[3],m[4],m[6]].every(safe)){const op=RELMAP[m[5]];out.push({mode:'WEIGHTED_MEAN',parts:[{role:'a',alias:m[1]},{role:'wa',alias:m[2]},{role:'b',alias:m[3]},{role:'wb',alias:m[4]},{role:'limit',alias:m[6]}],build:x=>'((['+x.a+']*['+x.wa+'])+(['+x.b+']*['+x.wb+']))/(['+x.wa+']+['+x.wb+'])'+op+'['+x.limit+']'});}
  m=/^Is the (sum|total|average|mean) of (.+?) (not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to) (.+)\?$/.exec(q);
  if(m){const items=splitList(m[2]);if(items&&safe(m[4])){const op=RELMAP[m[3]],parts=[...items.map((alias,i)=>({role:'item'+i,alias})),{role:'limit',alias:m[4]}];if(m[1]==='sum'||m[1]==='total')out.push({mode:'AGGREGATE_SUM',parts,build:x=>'('+items.map((_,i)=>'['+x['item'+i]+']').join('+')+')'+op+'['+x.limit+']'});else out.push({mode:'AGGREGATE_MEAN',parts,portableOnly:'CURRENT_KERNEL_REQUIRES_REVIEWED_DIVISOR_BINDING'});}}
- return out;
+ // Specific compositional parses take precedence over a generic whole-phrase alias.
+ // An alias must not silently override a recognized operation.
+ return out.some(p=>p.mode!=='DIRECT_COMPARISON')?out.filter(p=>p.mode!=='DIRECT_COMPARISON'):out;
 }
 export async function previewSemanticQuestion({contractText,contractPin,catalogText,catalogPin}={}){
  if(typeof catalogPin!=='string'||await casePin(catalogText)!==catalogPin)fail('CATALOG_PIN');

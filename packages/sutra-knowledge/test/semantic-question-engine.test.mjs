@@ -63,3 +63,5 @@ test('source-linked year suggestions remain unadmitted until a reviewed catalog 
  const next=await previewSemanticQuestion(admitted);assert.equal(next.candidates.length,1);assert.equal(next.temporalAliasSuggestions.length,0);
  const r=await compileSemanticCandidate(admitted,next.candidates[0].id,next.previewPin);assert.equal(r.compiled.target.status,'CONDITIONALLY_SATISFIED');assert.equal(r.decisionAuthority,'NONE');
 });
+
+test('specific compositional parse cannot be shadowed by a generic whole-phrase alias',async()=>{const q='Is the percentage change in revenue from 2024 to 2025 greater than limit?',x=await fixture(q,[['r24','100',['revenue 2024'],money],['r25','120',['revenue 2025'],money],['limit','3/20',['limit'],ratio],['shadow','1',['the percentage change in revenue from 2024 to 2025'],ratio]]);const p=await previewSemanticQuestion(x);assert.deepEqual(p.candidates.map(x=>x.mode),['TEMPORAL_RELATIVE_CHANGE']);assert.deepEqual(p.unresolved,[]);});
