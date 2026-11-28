@@ -84,7 +84,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
    const caps=await request('capabilities',{publicRequest:true});
    if(caps?.schema!=='sutra-local-research-capabilities/v1'||!caps.autonomousModelFree||typeof caps.sessionToken!=='string'||!/^[a-f0-9]{64}$/.test(caps.sessionToken))throw Error('HOST_UNAVAILABLE');
    token=caps.sessionToken;mode=caps.mode;
-   const s=await request('auto/start',{method:'POST',data:{objective:objective.value.trim().replace(/\\s+/gu,' ')}});
+   const s=await request('auto/start',{method:'POST',data:{objective:objective.value.trim().replace(/\s+/gu,' ')}});
    if(ticket!==epoch)return;
    session=s;cursor=0;scheduledSequence=0;reconnects=0;running=true;onState(true);
    state('SUTRA is searching and fetching sources autonomously within a bounded local runtime. No model or per-URL approval.','running');
