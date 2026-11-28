@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "name": "SUTRA model-authored semantic ambiguity corpus",
+  "source": "SUTRA_MODEL_AUTHORED_SYNTHETIC_V1",
+  "authoring": "Model-authored synthetic evaluation data created for SUTRA; not extracted from OpenAI training data and not presented as human annotation.",
+  "hiddenTrainingExampleClaim": false,
+  "humanAnnotation": false,
+  "counts": {
+    "cases": 4000,
+    "families": 20,
+    "domains": 10,
+    "casesPerFamily": 200,
+    "casesPerDomain": 400
+  },
+  "families": [
+    "entity_identity",
+    "metric_definition",
+    "numerator",
+    "denominator",
+    "reporting_period",
+    "population",
+    "geography",
+    "units",
+    "scaling",
+    "sign",
+    "absolute_vs_relative",
+    "percentage_vs_percentage_point",
+    "aggregation",
+    "negation_scope",
+    "quantifier_scope",
+    "conditional_scope",
+    "baseline_selection",
+    "measurement_assumptions",
+    "modality",
+    "causal_vs_observational"
+  ],
+  "domains": [
+    "finance",
+    "telecom",
+    "civil_engineering",
+    "software_reliability",
+    "energy",
+    "logistics",
+    "research",
+    "public_health_research",
+    "education",
+    "manufacturing"
+  ],
+  "generation": {
+    "variantsPerFamilyDomain": 20,
+    "deterministic": true,
+    "randomness": false,
+    "expectedReviewState": "REVIEW_REQUIRED"
+  },
+  "shards": [
+    {
+      "path": "semantic-model-authored-v1-0001.jsonl",
+      "count": 1000,
+      "gitBlob": "837075d6692726fd4863c193823219a3200bd9f3"
+    },
+    {
+      "path": "semantic-model-authored-v1-0002.jsonl",
+      "count": 1000,
+      "gitBlob": "14b47dd140487d6dd2fd8b9810aca8fdfa7a3913"
+    },
+    {
+      "path": "semantic-model-authored-v1-0003.jsonl",
+      "count": 1000,
+      "gitBlob": "6211bcb6918c33e99a7da249c0a37f3c2356a662"
+    },
+    {
+      "path": "semantic-model-authored-v1-0004.jsonl",
+      "count": 1000,
+      "gitBlob": "fa11721dc111dcc5c5b122c876d42a5a74bbc73d"
+    }
+  ]
+}
