@@ -9,7 +9,7 @@ import {verifyPassage,verifyEvidence,extractNumericObservations,compareNumericOb
 export {verifyPassage} from './evidence-index.js';
 const fail=code=>{throw Object.assign(Error('Research supervisor refused: '+code),{code});};
 import {objectiveTerms as terms,createResearchPlan,chooseResearchQuery,questionProgress} from './research-planner.js';
-import {rankFrontier} from './source-ranker.js';
+import {rankFrontier,browserFrontierChoices} from './source-ranker.js';
 import {plannerInput,admitModelQueries,admitWebDecision,makeEvidencePacket,admitSynthesis,admitReviews,conflictCandidates,admitConflictReviews,assembleIntelligence} from './research-intelligence.js';
 const safeCode=e=>typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'OPERATION_FAILED';
 export function extractPassages(doc,objective){
@@ -45,9 +45,9 @@ function validateRestored(s,b,scope){
  const domains=new Map(s.domainAttempts);if(domains.size!==s.domainAttempts.length||s.domainAttempts.some(x=>!Array.isArray(x)||x.length!==2||typeof x[0]!=='string'||!Number.isSafeInteger(x[1])||x[1]<1||x[1]>3))fail('RESUME_FRONTIER');
  return {seen,domains,digests};
 }
-export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity,modelBroker,assignedSessionId,beforeOperation=async()=>{}}){
+export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity,modelBroker,assignedSessionId,beforeOperation=async()=>{},selectDocument=null}){
  assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
- if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||typeof beforeOperation!=='function'||plan.modelPolicy?.webAccess!=='on_demand'&&plan.providers.some(p=>typeof providers?.[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
+ if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||typeof beforeOperation!=='function'||selectDocument!==null&&typeof selectDocument!=='function'||plan.modelPolicy?.webAccess!=='on_demand'&&plan.providers.some(p=>typeof providers?.[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
  if(plan.modelPolicy&&(!modelBroker||typeof modelBroker.consult!=='function'||pauseAfterOperations!==Infinity||prior))fail('MODEL_RUN_CONFIG');
  if(!plan.modelPolicy&&modelBroker)fail('MODEL_SCOPE');
  const restored=prior?validateRestored(prior,b,plan.scope):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
@@ -134,7 +134,17 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
    }
    if(slots===0||!frontier.length||a.usage().documents>=b.maxDocuments){const q=queries.at(-1);if(q&&Number.isSafeInteger(q.documentsBefore)&&Number.isSafeInteger(q.passagesBefore))q.waveOutcome={newDocuments:documents.length-q.documentsBefore,newPassages:passages.length-q.passagesBefore};phase='search';slots=0;await checkpoint();continue;}
    if(!canAcquire(0,(plan.scope.allowPdf?1048576:262144)+65536)){reason='budget_reserved_for_review';break;}
-   const ranked=rankFrontier(frontier,plan.objective,domainAttempts);frontier.splice(0,frontier.length,...ranked);const item=frontier.shift(),host=new URL(item.url).hostname;
+   let item;
+   if(selectDocument){
+    const choices=browserFrontierChoices(frontier,domainAttempts);
+    if(!choices.length){frontier.length=0;continue;}
+    const selected=await selectDocument(choices,a.signal);a.assertActive();
+    const choice=choices.find(c=>c.id===selected);if(!choice)fail('FRONTIER_SELECTION');
+    const index=Number(choice.id.slice(10));[item]=frontier.splice(index,1);
+    if(!item||(domainAttempts.get(new URL(item.url).hostname)??0)>=3)fail('FRONTIER_SELECTION');
+    emit('browser.frontier_selected',{role:'drone',candidateId:choice.id,candidateCount:choices.length,policy:'bounded_admitted_frontier'});
+   }else{const ranked=rankFrontier(frontier,plan.objective,domainAttempts);frontier.splice(0,frontier.length,...ranked);item=frontier.shift();}
+   const host=new URL(item.url).hostname;
    const count=domainAttempts.get(host)??0;if(count>=3)continue;
    domainAttempts.set(host,count+1);slots--;
    const doc=await operation('document','drone',{url:item.url,depth:item.depth},async(signal)=>{

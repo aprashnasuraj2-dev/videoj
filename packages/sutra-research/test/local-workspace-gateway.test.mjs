@@ -133,3 +133,26 @@ test('model-free engine objective autonomously plans multiple scholarly provider
   assert.equal(r.autonomous,true);assert.equal(r.actor,'engine');
  }finally{g.close();}
 });
+
+test('browser selects only an admitted frontier candidate, then separately permits actual document dispatch',async()=>{
+ const reads=[],calls=[];let planned=false;
+ const urls=['https://alpha.example.org/report','https://beta.example.org/report'];
+ const {digest}=await import('../research-session.js');
+ const g=createLocalResearchGateway({modelCredentials,configure:a=>({providers:{},readDocument:async url=>{reads.push(url);a.reserve('document',{bytes:262144});const text='Battery storage cost evidence in 2025.';return {url,text,textDigest:digest(text),rawDigest:digest(url+text),links:[],mediaType:'text/plain',retrievedAt:'2026-11-28T00:00:00Z',parser:'bounded-text/v1'};},modelBroker:createResearchModelBroker({authorization:a,credentials:modelCredentials,exchangeFactory:()=>({close(){},async exchange(req){calls.push(req);const body=JSON.parse(req.bodyText),system=body.messages[0].content;const value=system.includes('research decision maker')?planned?{webAction:'finish_research'}:(planned=true,{webAction:'open_public_urls',urls}):{claims:[],gaps:[]};return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(value)}}],usage:{completion_tokens:12}})};}})})})});
+ try{
+  const p=g.preview({...input,objective:'Compare battery storage costs',browserScheduled:true,reviewEnabled:false}),s=g.start(approval(p));
+  const next=async()=>{for(let i=0;i<200;i++){const r=g.status(s.sessionId);if(r.pendingOperation||r.state!=='running')return r;await delay(10);}throw Error('NO_PERMIT');};
+  const permit=op=>({sessionId:s.sessionId,planPin:s.planPin,operationId:op.id,sequence:op.sequence});
+  let r=await next();assert.equal(r.pendingOperation.kind,'model');g.advance(permit(r.pendingOperation));
+  r=await next();const select=r.pendingOperation;assert.equal(select.kind,'select_document');assert.equal(select.choices.length,2);assert.equal(reads.length,0);assert.ok(select.choices.every(c=>!Object.hasOwn(c,'url')));
+  assert.throws(()=>g.advance({...permit(select),selectionId:'candidate_239'}),/OPERATION_PERMIT/);
+  assert.throws(()=>g.advance({...permit(select),selectionId:select.choices[1].id,url:'https://forged.invalid/'}),/OPERATION_PERMIT/);
+  const chosen=select.choices[1].id;assert.equal(g.advance({...permit(select),selectionId:chosen}).selectionId,chosen);assert.throws(()=>g.advance({...permit(select),selectionId:chosen}),/OPERATION_PERMIT/);
+  r=await next();assert.equal(r.pendingOperation.kind,'document');assert.equal(reads.length,0);g.advance(permit(r.pendingOperation));
+  r=await next();assert.equal(reads[0],urls[1]);assert.equal(r.pendingOperation.kind,'select_document');
+  // Cancel before the next source is selected: no further document dispatch.
+  g.cancel(s.sessionId);
+  for(let i=0;i<200;i++){r=g.status(s.sessionId);if(!['running','cancelling'].includes(r.state))break;await delay(10);}
+  assert.equal(r.state,'cancelled');assert.equal(reads.length,1);assert.equal(calls.length,1);assert.equal(r.pendingOperation,null);
+ }finally{g.close();}
+});
