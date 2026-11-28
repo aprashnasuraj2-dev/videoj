@@ -39,5 +39,10 @@ test('hidden clauses, forged pins, stale catalogs and excessive mappings fail cl
  const p=await previewSemanticQuestion(base);await assert.rejects(compileSemanticCandidate(base,p.candidates[0].id,'sha256:'+'0'.repeat(64)),/PREVIEW_NOT_RETAINED/);
 });
 test('causal and modality diagnostics never grant authority',async()=>{
- const x=await fixture('Did pricing cause churn?',[['pricing','1',['pricing'],ratio],['churn','1/10',['churn'],ratio]]),p=await previewSemanticQuestion(x);assert.equal(p.state,'UNSUPPORTED_GRAMMAR');assert.equal(p.decisionAuthority,'NONE');assert.equal(p.ambiguities.find(x=>x.family==='causal_vs_observational').state,'REVIEW_REQUIRED');
+ const x=await fixture('Did pricing cause churn?',[['pricing','1',['pricing'],ratio],['churn','1/10',['churn'],ratio]]),p=await previewSemanticQuestion(x);assert.equal(p.state,'SEMANTIC_REVIEW');assert.equal(p.decisionAuthority,'NONE');assert.equal(p.ambiguities.find(x=>x.family==='causal_vs_observational').state,'REVIEW_REQUIRED');assert.equal(p.contextProfile.temporalAnchor,'UNSPECIFIED');
+});
+
+test('implicit temporal state and source contrasts enter bounded semantic review without fake computation',async()=>{
+ const a=await fixture("What is George Klein's job title?",[['prior','1',['prior'],ratio]]),p=await previewSemanticQuestion(a);assert.equal(p.state,'SEMANTIC_REVIEW');assert.equal(p.candidates.length,0);assert.equal(p.contextProfile.temporalAnchor,'IMPLICIT_DYNAMIC');assert.equal(p.ambiguities.find(x=>x.family==='reporting_period').state,'REVIEW_REQUIRED');
+ const b=await fixture('Who was president in 1990?',[['prior','1',['prior'],ratio]]),q=await previewSemanticQuestion(b);assert.equal(q.state,'SEMANTIC_REVIEW');assert.equal(q.contextProfile.temporalAnchor,'EXPLICIT_ABSOLUTE');
 });

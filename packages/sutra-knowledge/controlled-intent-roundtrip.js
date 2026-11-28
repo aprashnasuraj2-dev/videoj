@@ -44,7 +44,7 @@ export async function detectControlledIntentDrift(intentText,intentPin,controlle
  const byId=new Map(round.candidates.map(c=>[c.id,c]));
  for(const b of baseline.candidates){
   const a=byId.get(b.id);if(!a){push(drifts,b.id,'INVENTED_RELATION_DRIFT',b.id,null);continue;}
-  if(a.mode!==b.mode)push(drifts,b.id,'DEFINITION_DRIFT',b.mode,a.mode);
+  if(a.mode!==b.mode||a.relationship.mode!==b.relationship.mode||a.relationship.mode!==a.mode)push(drifts,b.id,'DEFINITION_DRIFT',{candidateMode:b.mode,relationshipMode:b.relationship.mode},{candidateMode:a.mode,relationshipMode:a.relationship.mode});
   if(a.relationship.negated!==b.relationship.negated)push(drifts,b.id,'NEGATION_DRIFT',b.relationship.negated,a.relationship.negated);
   if(a.relationship.denominatorBinding!==b.relationship.denominatorBinding)push(drifts,b.id,'DENOMINATOR_DRIFT',b.relationship.denominatorBinding,a.relationship.denominatorBinding);
   if(a.relationship.operator!==b.relationship.operator||canonical(a.relationship.roles)!==canonical(b.relationship.roles))push(drifts,b.id,'INVENTED_RELATION_DRIFT',{operator:b.relationship.operator,roles:b.relationship.roles},{operator:a.relationship.operator,roles:a.relationship.roles});
