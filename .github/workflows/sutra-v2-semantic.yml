@@ -66,6 +66,7 @@ jobs:
             packages/sutra-knowledge/test/semantic-calibration.test.mjs \
             packages/sutra-knowledge/test/semantic-human-receipts.test.mjs \
             packages/sutra-knowledge/test/semantic-compact-response.test.mjs \
+            packages/sutra-knowledge/test/semantic-reading-only.test.mjs \
             packages/sutra-knowledge/test/semantic-readiness.test.mjs \
             packages/sutra-knowledge/test/local-semantic-runner.test.mjs \
             packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
