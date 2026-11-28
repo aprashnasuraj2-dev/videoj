@@ -1,0 +1,98 @@
+name: SUTRA bounded keyless release observations
+on:
+  push:
+    branches: [sutra/master-investigation-ui]
+    paths:
+      - '.github/workflows/sutra-keyless-release-acceptance.yml'
+      - 'packages/sutra-research/keyless-release-probes.mjs'
+      - 'packages/sutra-research/fixtures/keyless-release-documents.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discovery:
+    if: github.ref == 'refs/heads/sutra/master-investigation-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - group: 1
+            ids: '["e01","e02","e03"]'
+            pin: 'sha256:144a81c189bd28b81226e1ecfb42d218d9e5741f556f6f5837c94a249b2850fd'
+          - group: 2
+            ids: '["e04","e05","e06"]'
+            pin: 'sha256:8f4ada5a3b38ffd8d6906654c48466f59940b653398dce9766c2d6d06e1d293f'
+          - group: 3
+            ids: '["t01","t02","t03"]'
+            pin: 'sha256:d44832bf58da7bbf5c01377b2dbf065fe8445f465cb064e7bcaf1af38a1ed7d9'
+          - group: 4
+            ids: '["t04","t05","t06"]'
+            pin: 'sha256:3718ff0e93abbc34fc782e05eac7c820056d4d135db489eb702f1b7b4ae5275b'
+          - group: 5
+            ids: '["c01","c02","c03"]'
+            pin: 'sha256:87d6d9d5966502ad57ea8237bbe617f2ceeffaa5b5aa0a93b0b6ae68e5d00e26'
+          - group: 6
+            ids: '["c04","m01","m02"]'
+            pin: 'sha256:3a0062621c6b62fdd1e4e848c00cef00e523fd5ed6d7327b7c5793e26831561f'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Execute pre-reviewed exact public objectives without credentials
+        env:
+          CASE_IDS: ${{ matrix.ids }}
+          PLAN_PIN: ${{ matrix.pin }}
+        run: |
+          node -e 'require("fs").writeFileSync("/tmp/config.json",JSON.stringify({mode:"discovery",caseIds:JSON.parse(process.env.CASE_IDS),models:[],maxEstimatedCostMicros:9}))'
+          git rev-parse HEAD > /tmp/revision.txt
+          node packages/sutra-research/live-acceptance.js --plan /tmp/config.json > /tmp/live-plan.json
+          test "$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/live-plan.json")).planPin')" = "$PLAN_PIN"
+          node packages/sutra-research/live-acceptance.js --run /tmp/config.json "$PLAN_PIN" --approve-public-contact --approve-estimated-cost > /tmp/live-receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-keyless-discovery-${{ matrix.group }}-${{ github.sha }}
+          path: |
+            /tmp/live-plan.json
+            /tmp/live-receipt.json
+            /tmp/revision.txt
+          if-no-files-found: error
+          retention-days: 14
+  documents:
+    if: github.ref == 'refs/heads/sutra/master-investigation-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify exact document probe contract
+        run: |
+          node --test packages/sutra-research/test/keyless-release-probes.test.mjs packages/sutra-research/test/transport.test.mjs
+      - name: Execute fixed direct public document probes
+        env:
+          PLAN_PIN: 'sha256:6354c3258312fd99bc69314e6518a5250385e4fac59e2773c7ca3ab6207037ca'
+        run: |
+          git rev-parse HEAD > /tmp/revision.txt
+          node packages/sutra-research/keyless-release-probes.mjs --plan > /tmp/document-plan.json
+          test "$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/document-plan.json")).planPin')" = "$PLAN_PIN"
+          node packages/sutra-research/keyless-release-probes.mjs --run "$PLAN_PIN" --approve-public-contact --approve-estimated-cost > /tmp/document-receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-keyless-documents-${{ github.sha }}
+          path: |
+            /tmp/document-plan.json
+            /tmp/document-receipt.json
+            /tmp/revision.txt
+          if-no-files-found: error
+          retention-days: 14

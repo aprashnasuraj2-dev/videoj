@@ -1,0 +1,61 @@
+{
+  "schema": "sutra-keyless-document-probe/v1",
+  "manifestText": "{\"schema\":\"sutra-autonomous-research/v1\",\"objective\":\"Validate fixed public document transport and extraction without retaining source contents.\",\"scope\":{\"publicWeb\":true,\"queryDisclosureAllowed\":true,\"allowPrivateNetworks\":false,\"allowAuthentication\":false,\"allowExternalWrites\":false,\"privateEvidenceDisclosureAllowed\":false,\"allowCrossOriginLinks\":true,\"allowRedirects\":true,\"allowPublicQueryParameters\":true,\"allowDirectPublicUrls\":true,\"allowModelPublicUrls\":false,\"allowPdf\":false},\"budget\":{\"maxSearches\":2,\"maxDocuments\":4,\"maxLinkDepth\":0,\"maxDurationSeconds\":30,\"maxDownloadBytes\":2097152,\"maxCostMicros\":1},\"providers\":[]}",
+  "cases": [
+    {
+      "id": "html",
+      "url": "https://www.iana.org/domains/reserved",
+      "expected": "text/html",
+      "rights": "Public IANA documentation; metadata/digest only"
+    },
+    {
+      "id": "text",
+      "url": "https://www.rfc-editor.org/rfc/rfc20.txt",
+      "expected": "text/plain",
+      "rights": "RFC public specification; metadata/digest only"
+    },
+    {
+      "id": "csv",
+      "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.csv",
+      "expected": "text/csv",
+      "rights": "USGS public earthquake feed; metadata/digest only"
+    },
+    {
+      "id": "json",
+      "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson",
+      "expected": "application/json",
+      "rights": "USGS public earthquake feed; strict media type; metadata/digest only"
+    },
+    {
+      "id": "json-alternative",
+      "url": "https://api.worldbank.org/v2/country/NPL?format=json",
+      "expected": "application/json",
+      "rights": "World Bank open data API; metadata/digest only"
+    },
+    {
+      "id": "redirect",
+      "url": "https://doi.org/10.17487/RFC0020",
+      "expected": "redirect",
+      "rights": "DOI public resolver; metadata/digest only"
+    },
+    {
+      "id": "robots-denial",
+      "url": "https://www.google.com/search",
+      "expected": "ROBOTS",
+      "rights": "Robots policy observation; no document contact if denied"
+    },
+    {
+      "id": "missing",
+      "url": "https://www.rfc-editor.org/rfc/sutra-release-probe-nonexistent-20261128.txt",
+      "expected": "NOT_FOUND",
+      "rights": "Nonexistent path; no error body retained"
+    },
+    {
+      "id": "cancel-before-dispatch",
+      "url": "https://www.iana.org/domains/reserved",
+      "expected": "cancel",
+      "rights": "Pre-aborted; no network contact"
+    }
+  ],
+  "authority": "NONE"
+}

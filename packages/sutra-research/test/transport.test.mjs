@@ -50,8 +50,8 @@ test('document transport denies arbitrary headers, auth, body and non-GET before
  }
 });
 
-test('429 and 5xx classify bounded failures without error-body exposure or automatic re-dispatch',async()=>{
- for(const [statusCode,code] of [[429,'RATE_LIMIT'],[500,'UPSTREAM_UNAVAILABLE'],[503,'UPSTREAM_UNAVAILABLE'],[599,'UPSTREAM_UNAVAILABLE']]){
+test('404, 410, 429 and 5xx classify bounded failures without error-body exposure or automatic re-dispatch',async()=>{
+ for(const [statusCode,code] of [[404,'NOT_FOUND'],[410,'NOT_FOUND'],[429,'RATE_LIMIT'],[500,'UPSTREAM_UNAVAILABLE'],[503,'UPSTREAM_UNAVAILABLE'],[599,'UPSTREAM_UNAVAILABLE']]){
   const f=fixture({response:{statusCode,headers:{'content-type':'text/plain','retry-after':'5'},bytes:Buffer.from('synthetic-secret-error-body')}});
   await assert.rejects(pinnedPublicHttp(options,f.io),e=>e.code===code&&!e.message.includes('synthetic-secret')&&!e.message.includes('retry-after'));
   assert.equal(f.events.filter(x=>x.type==='request').length,1);assert.equal(f.events.filter(x=>x.type==='dial').length,1);
