@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {admitManifest,authorizeResearch,digest,secretLike} from './research-session.js';
 import {createDocumentReader} from './document-reader.js';
+import {probePdfSandbox} from './pdf-parser.js';
 import {createSearchProviders,SEARCH_BYTES} from './providers.js';
 import {selectResearchBackends} from './research-source-router.js';
 import {createObscuraEnhancedReader} from './obscura-adapter.js';
@@ -14,7 +15,7 @@ const active=s=>s&&['running','cancelling'].includes(s.state);
 const safeCode=e=>typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'WEB_OPERATION_FAILED';
 const actors=Object.freeze(['user','engine','agent']);
 const budget=Object.freeze({maxSearches:5,maxDocuments:3,maxLinkDepth:0,maxDurationSeconds:90,maxDownloadBytes:2097152,maxCostMicros:100000});
-const SAFE_TYPES=new Set(['text/html','text/plain','application/json','text/csv']);
+const SAFE_TYPES=new Set(['text/html','text/plain','application/json','text/csv','application/pdf']);
 const MAX_RESULT_CHARS=100000;
 const readInput=(input,actor,backends,hasRenderer)=>{
  if(!actors.includes(actor)||!EXACT(input,['operation','resource','backend','render']))fail('WEB_REQUEST');
@@ -37,7 +38,7 @@ function sanitizedDocument(doc,request){
  const text=doc.text.slice(0,MAX_RESULT_CHARS),truncated=doc.text.length!==text.length;
  const metadata={};for(const key of ['title','author','article:published_time','date','og:title'])if(typeof doc.metadata?.[key]==='string'&&!secretLike(doc.metadata[key]))metadata[key]=doc.metadata[key].slice(0,300);
  const render=doc.render&&typeof doc.render==='object'?Object.fromEntries(['status','reason','engine','upstreamCommit','renderedDomDigest','staticTextDigest','binaryAttestation','durationMs','secondNavigation','secondNavigationPossible','subresourceBytesMetered','retrievedAt'].filter(k=>['string','boolean','number'].includes(typeof doc.render[k])&&String(doc.render[k]).length<=200).map(k=>[k,doc.render[k]])):null;
- return Object.freeze({id:'source_1',url:request,finalUrl:final,redirectChain:chain,mediaType:doc.mediaType,rawDigest:doc.rawDigest,fullTextDigest:doc.textDigest,textDigest:digest(text),text,extractionTruncated:truncated,links,metadata,parser:typeof doc.parser==='string'?doc.parser.slice(0,80):'unknown',retrievedAt:doc.retrievedAt,render,verificationStatus:'unverified_public_extraction'});
+ return Object.freeze({id:'source_1',url:request,finalUrl:final,redirectChain:chain,mediaType:doc.mediaType,...(doc.mediaType==='application/pdf'&&Array.isArray(doc.pageMap)?{pageMap:doc.pageMap.filter(p=>Number.isSafeInteger(p?.page)&&p.page>=1&&Number.isSafeInteger(p.startOffset)&&Number.isSafeInteger(p.endOffset)&&p.startOffset<text.length).slice(0,128).map(p=>({page:p.page,startOffset:p.startOffset,endOffset:Math.min(p.endOffset,text.length)}))}:{}),rawDigest:doc.rawDigest,fullTextDigest:doc.textDigest,textDigest:digest(text),text,extractionTruncated:truncated,links,metadata,parser:typeof doc.parser==='string'?doc.parser.slice(0,80):'unknown',retrievedAt:doc.retrievedAt,render,verificationStatus:'unverified_public_extraction'});
 }
 function sanitizedDiscovery(rows,backend){
  if(!Array.isArray(rows)||rows.length>10)fail('WEB_SEARCH_RESULT');
@@ -55,20 +56,20 @@ function sanitizedDiscovery(rows,backend){
  }
  return out;
 }
-export function createOnDemandWebAccess({searchCredentials={},renderer=null,makeReader,makeProviders=createSearchProviders,clock=()=>Date.now(),isBusy=()=>false}={}){
+export function createOnDemandWebAccess({searchCredentials={},renderer=null,enablePdf=false,makeReader,makeProviders=createSearchProviders,clock=()=>Date.now(),isBusy=()=>false}={}){
  const available=Object.freeze(Object.keys(createSearchProviders({credentials:searchCredentials})));
 
  if(makeReader!==undefined&&typeof makeReader!=='function'||typeof makeProviders!=='function'||typeof clock!=='function'||typeof isBusy!=='function')fail('WEB_CONFIG');
  let previewed=null,current=null,closed=false;
  const check=()=>{if(closed)fail('WEB_CLOSED');};
- const capabilities=()=>Object.freeze({schema:'sutra-web-access-capabilities/v1',actors,operations:['fetch','search'],searchBackends:['auto',...available],staticHttp:'pinned_https_robots',jsRendering:renderer?'local_experimental':'unavailable',maxConcurrentOperations:1,authority:'NONE'});
+ const capabilities=()=>Object.freeze({schema:'sutra-web-access-capabilities/v1',actors,operations:['fetch','search'],searchBackends:['auto',...available],staticHttp:'pinned_https_robots',jsRendering:renderer?'local_experimental':'unavailable',maxConcurrentOperations:1,pdfExtraction:enablePdf?'linux_sandbox_opt_in':'unavailable',authority:'NONE'});
  function preview(input,{actor='user'}={}){
   check();if(isBusy()||active(current))fail('WEB_BUSY');
   const q=readInput(input,actor,available,Boolean(renderer));
   const isSearch=q.operation==='search',raw=JSON.stringify({
    schema:'sutra-autonomous-research/v1',
    objective:isSearch?q.resource:'Operator-reviewed public source retrieval',
-   scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,allowDirectPublicUrls:true,...(q.render?{allowJsRendering:true}:{})},
+   scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,allowDirectPublicUrls:true,...(enablePdf?{allowPdf:true}:{}),...(q.render?{allowJsRendering:true}:{})},
    budget:{...budget},providers:isSearch?(q.backend==='auto'?selectResearchBackends(q.resource,available,{max:5}).providers:[q.backend]).map(id=>({id,estimatedMaxCostMicros:['brave','tavily'].includes(id)?5000:1})):[]
   });
   const manifest=admitManifest(raw),expiresAt=clock()+120000;
@@ -83,6 +84,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
   try{
    a=authorizeResearch(proposal.raw,{approvedPlanPin:proposal.planPin,approvePublicContact:true,approveEstimatedCost:true,signal:session.controller.signal});
    a.assertActive();
+   if(a.plan.scope.allowPdf===true)await probePdfSandbox({signal:a.signal});
    let report;
    if(proposal.request.operation==='search'){
     const providers=makeProviders({credentials:searchCredentials});
