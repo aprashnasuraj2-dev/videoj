@@ -1,0 +1,71 @@
+{
+  "version": "sutra-external-scope-human/v1",
+  "sourceRepository": "https://github.com/McGill-NLP/scope-ambiguity",
+  "revision": "3d00bad00c7b0c3775e69706f5322f44ff1ccff0",
+  "license": "MIT",
+  "boundary": "Experiments 1B, 2A and 2B only. Experiment 1A is intentionally excluded because upstream states that its source corpus requires copyright-holder permission.",
+  "baseArtifacts": [
+    {
+      "id": "exp1b",
+      "path": "scope-exp1b-base.csv",
+      "upstreamPath": "datasets/exp1b_base_dataset.csv",
+      "gitBlob": "3fd0aede6e268d226c137c863946427247debe6e",
+      "rows": 1674,
+      "uniqueSentences": 837
+    },
+    {
+      "id": "exp2a",
+      "path": "scope-exp2a-base.csv",
+      "upstreamPath": "datasets/exp2a_base_dataset.csv",
+      "gitBlob": "a6989f37e2d2364481bdf81319f551a5dc3bae9b",
+      "rows": 116,
+      "uniqueSentences": 58
+    },
+    {
+      "id": "exp2b",
+      "path": "scope-exp2b-base.csv",
+      "upstreamPath": "datasets/exp2b_base_dataset.csv",
+      "gitBlob": "d13b5c1702bed785f31cd616306ceb7478be375c",
+      "rows": 440,
+      "uniqueSentences": 218
+    }
+  ],
+  "humanSourceArtifacts": [
+    {
+      "id": "exp1b",
+      "upstreamPath": "human_results/exp1b_human_results_cleaned.csv",
+      "gitBlob": "abd707d17096c0c63a74c356d4ce742e996c1af1",
+      "rows": 4136,
+      "matchedResponses": 3932,
+      "finalItems": 837,
+      "itemsWithResponses": 796
+    },
+    {
+      "id": "exp2a",
+      "upstreamPath": "human_results/exp2a_human_results_cleaned.csv",
+      "gitBlob": "8bf3e62ded8608f0da17b6f2761685d0b04bb84c",
+      "rows": 1459,
+      "matchedResponses": 1113,
+      "finalItems": 116,
+      "itemsWithResponses": 116
+    },
+    {
+      "id": "exp2b",
+      "upstreamPath": "human_results/exp2b_human_results_cleaned.csv",
+      "gitBlob": "c67c794a48e412cb69f3f3b2bfb8ec155cae3fb3",
+      "rows": 4014,
+      "matchedResponses": 3508,
+      "finalItems": 440,
+      "itemsWithResponses": 440
+    }
+  ],
+  "derivedAggregate": {
+    "path": "scope-human-aggregate-v1.jsonl",
+    "rows": 1393,
+    "participantIdentifiersRetained": false,
+    "commentsRetained": false
+  },
+  "paper": "Kamath, Schuster, Vajjala, Reddy (2024), Scope Ambiguities in Large Language Models, TACL 12:738-754, DOI 10.1162/tacl_a_00670",
+  "humanAnnotation": true,
+  "hiddenTrainingExampleClaim": false
+}
