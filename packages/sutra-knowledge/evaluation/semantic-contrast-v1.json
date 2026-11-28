@@ -1,0 +1,812 @@
+{
+  "version": "sutra-semantic-contrast/v1",
+  "provenance": {
+    "source": "SUTRA_MODEL_AUTHORED_CONTRAST_V1",
+    "humanAnnotation": false,
+    "hiddenTrainingExampleClaim": false,
+    "independentValidation": false
+  },
+  "boundary": "Hypothetical evidence contexts and model-authored counterfactual contrasts. Rewrites disambiguate the target distinction only; not global unambiguity labels. Conditional answers are scenario witnesses, not actual-world findings.",
+  "cases": [
+    {
+      "id": "sutra-contrast-001",
+      "family": "entity_identity",
+      "domain": "finance",
+      "question": "Did Atlas meet its liquidity floor?",
+      "context": "The issuer's parent has 12m cash, the subsidiary has 7m cash; each is measured against a 10m floor.",
+      "alternatives": [
+        {
+          "rewrite": "Did the Atlas parent meet its 10m cash floor?",
+          "conditionalAnswer": "YES",
+          "witness": "12 > 10"
+        },
+        {
+          "rewrite": "Did the Atlas operating subsidiary meet its 10m cash floor?",
+          "conditionalAnswer": "NO",
+          "witness": "7 < 10"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-002",
+      "family": "entity_identity",
+      "domain": "telecom",
+      "question": "Is the East exchange below its outage limit?",
+      "context": "The East metro exchange had 2 outage hours; the identically named rural exchange had 9. Limit: 5 hours.",
+      "alternatives": [
+        {
+          "rewrite": "Is the East metro exchange below five outage hours?",
+          "conditionalAnswer": "YES",
+          "witness": "2 < 5"
+        },
+        {
+          "rewrite": "Is the East rural exchange below five outage hours?",
+          "conditionalAnswer": "NO",
+          "witness": "9 > 5"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-003",
+      "family": "metric_definition",
+      "domain": "finance",
+      "question": "Did profit exceed 20 million?",
+      "context": "Operating profit is 23m; net income is 17m.",
+      "alternatives": [
+        {
+          "rewrite": "Did operating profit exceed 20 million?",
+          "conditionalAnswer": "YES",
+          "witness": "23 > 20"
+        },
+        {
+          "rewrite": "Did net income exceed 20 million?",
+          "conditionalAnswer": "NO",
+          "witness": "17 < 20"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-004",
+      "family": "metric_definition",
+      "domain": "software_reliability",
+      "question": "Did uptime reach 99.9%?",
+      "context": "Process uptime is 99.95%; successful-request availability is 99.7%.",
+      "alternatives": [
+        {
+          "rewrite": "Did process uptime reach 99.9%?",
+          "conditionalAnswer": "YES",
+          "witness": "99.95 >= 99.9"
+        },
+        {
+          "rewrite": "Did successful-request availability reach 99.9%?",
+          "conditionalAnswer": "NO",
+          "witness": "99.7 < 99.9"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-005",
+      "family": "numerator",
+      "domain": "telecom",
+      "question": "Was the restoration rate above 90% of 100 tickets?",
+      "context": "96 tickets were marked closed, but only 84 had verified service restoration; the denominator is fixed at 100.",
+      "alternatives": [
+        {
+          "rewrite": "Were more than 90 of the 100 tickets marked closed?",
+          "conditionalAnswer": "YES",
+          "witness": "96 > 90"
+        },
+        {
+          "rewrite": "Were more than 90 of the 100 tickets verified restored?",
+          "conditionalAnswer": "NO",
+          "witness": "84 < 90"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-006",
+      "family": "numerator",
+      "domain": "manufacturing",
+      "question": "Did the first-pass yield exceed 95% of the 200 inspected pieces?",
+      "context": "196 pieces passed eventually; 186 passed without rework. Both use 200 inspected pieces.",
+      "alternatives": [
+        {
+          "rewrite": "Did eventual acceptance exceed 95% of 200 pieces?",
+          "conditionalAnswer": "YES",
+          "witness": "196/200 = 98%"
+        },
+        {
+          "rewrite": "Did acceptance without rework exceed 95% of 200 pieces?",
+          "conditionalAnswer": "NO",
+          "witness": "186/200 = 93%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-007",
+      "family": "denominator",
+      "domain": "education",
+      "question": "Did the graduation rate exceed 80%?",
+      "context": "72 students graduated; 80 remained enrolled at the end; 100 originally entered. The same 72 graduates are used for either rate.",
+      "alternatives": [
+        {
+          "rewrite": "Did 72 graduates exceed 80% of the 80 students retained?",
+          "conditionalAnswer": "YES",
+          "witness": "72/80 = 90%"
+        },
+        {
+          "rewrite": "Did 72 graduates exceed 80% of the original 100 entrants?",
+          "conditionalAnswer": "NO",
+          "witness": "72/100 = 72%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-008",
+      "family": "denominator",
+      "domain": "public_health_research",
+      "question": "Did the treatment completion rate reach 75%?",
+      "context": "60 participants completed treatment; 70 started treatment and 100 were assigned treatment.",
+      "alternatives": [
+        {
+          "rewrite": "Did completion among the 70 starters reach 75%?",
+          "conditionalAnswer": "YES",
+          "witness": "60/70 > 75%"
+        },
+        {
+          "rewrite": "Did completion among all 100 assigned participants reach 75%?",
+          "conditionalAnswer": "NO",
+          "witness": "60/100 = 60%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-009",
+      "family": "reporting_period",
+      "domain": "finance",
+      "question": "Was sales growth positive in the annual report?",
+      "context": "Calendar-year sales rose from 100 to 108; the fiscal-year period ending September fell from 100 to 94.",
+      "alternatives": [
+        {
+          "rewrite": "Was calendar-year sales growth positive?",
+          "conditionalAnswer": "YES",
+          "witness": "108 - 100 = 8"
+        },
+        {
+          "rewrite": "Was sales growth positive for the fiscal year ending September?",
+          "conditionalAnswer": "NO",
+          "witness": "94 - 100 = -6"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-010",
+      "family": "reporting_period",
+      "domain": "energy",
+      "question": "Did output exceed 400 MWh this month?",
+      "context": "The reporting date is 15 June; May completed at 450 MWh and June month-to-date totals 220 MWh.",
+      "alternatives": [
+        {
+          "rewrite": "Did output in the last completed calendar month, May, exceed 400 MWh?",
+          "conditionalAnswer": "YES",
+          "witness": "450 > 400"
+        },
+        {
+          "rewrite": "Did June month-to-date output exceed 400 MWh?",
+          "conditionalAnswer": "NO",
+          "witness": "220 < 400"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-011",
+      "family": "population",
+      "domain": "logistics",
+      "question": "Was the median delivery time below 48 hours?",
+      "context": "For domestic orders the median is 36 hours; the median across every domestic and international order is 60 hours.",
+      "alternatives": [
+        {
+          "rewrite": "Was the domestic-order median below 48 hours?",
+          "conditionalAnswer": "YES",
+          "witness": "36 < 48"
+        },
+        {
+          "rewrite": "Was the median across all orders below 48 hours?",
+          "conditionalAnswer": "NO",
+          "witness": "60 > 48"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-012",
+      "family": "population",
+      "domain": "research",
+      "question": "Did the trial's mean score improve?",
+      "context": "The mean change among completers is +5 points; the supplied intention-to-treat estimate is -1 point.",
+      "alternatives": [
+        {
+          "rewrite": "Did the completer-population mean score improve?",
+          "conditionalAnswer": "YES",
+          "witness": "+5 > 0"
+        },
+        {
+          "rewrite": "Did the intention-to-treat population mean score improve?",
+          "conditionalAnswer": "NO",
+          "witness": "-1 < 0"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-013",
+      "family": "geography",
+      "domain": "telecom",
+      "question": "Did churn in the capital region fall below 2%?",
+      "context": "The capital municipality had 1.5% churn; the wider metropolitan region had 2.8%.",
+      "alternatives": [
+        {
+          "rewrite": "Did churn within the capital municipality fall below 2%?",
+          "conditionalAnswer": "YES",
+          "witness": "1.5 < 2"
+        },
+        {
+          "rewrite": "Did churn across the wider capital metropolitan region fall below 2%?",
+          "conditionalAnswer": "NO",
+          "witness": "2.8 > 2"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-014",
+      "family": "geography",
+      "domain": "civil_engineering",
+      "question": "Does the river corridor meet the flood clearance requirement?",
+      "context": "The upstream project segment has 1.2m clearance; the downstream segment has 0.7m. Required minimum: 1m.",
+      "alternatives": [
+        {
+          "rewrite": "Does the upstream project segment meet the 1m clearance requirement?",
+          "conditionalAnswer": "YES",
+          "witness": "1.2 >= 1"
+        },
+        {
+          "rewrite": "Does the downstream project segment meet the 1m clearance requirement?",
+          "conditionalAnswer": "NO",
+          "witness": "0.7 < 1"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-015",
+      "family": "units",
+      "domain": "civil_engineering",
+      "question": "Is the beam deflection below 2?",
+      "context": "Deflection is 12 millimetres; the threshold's unit was omitted.",
+      "alternatives": [
+        {
+          "rewrite": "Is the beam deflection below 2 centimetres?",
+          "conditionalAnswer": "YES",
+          "witness": "12 mm < 20 mm"
+        },
+        {
+          "rewrite": "Is the beam deflection below 2 millimetres?",
+          "conditionalAnswer": "NO",
+          "witness": "12 mm > 2 mm"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-016",
+      "family": "units",
+      "domain": "energy",
+      "question": "Did the storage system deliver more than 4?",
+      "context": "Delivered energy is 4500 kWh; the threshold's energy unit is unspecified.",
+      "alternatives": [
+        {
+          "rewrite": "Did the storage system deliver more than 4 MWh?",
+          "conditionalAnswer": "YES",
+          "witness": "4500 kWh > 4000 kWh"
+        },
+        {
+          "rewrite": "Did the storage system deliver more than 4 GWh?",
+          "conditionalAnswer": "NO",
+          "witness": "4500 kWh < 4000000 kWh"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-017",
+      "family": "scaling",
+      "domain": "finance",
+      "question": "Did assets exceed 250 in the report?",
+      "context": "Assets are 300,000 USD; the comparison amount may be in thousands or millions of USD.",
+      "alternatives": [
+        {
+          "rewrite": "Did assets exceed 250 thousand USD?",
+          "conditionalAnswer": "YES",
+          "witness": "300000 > 250000"
+        },
+        {
+          "rewrite": "Did assets exceed 250 million USD?",
+          "conditionalAnswer": "NO",
+          "witness": "300000 < 250000000"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-018",
+      "family": "scaling",
+      "domain": "manufacturing",
+      "question": "Did monthly output exceed 6 in the summary table?",
+      "context": "Actual output is 8500 identical units; the table header's multiplier was omitted.",
+      "alternatives": [
+        {
+          "rewrite": "Did monthly output exceed 6 thousand units?",
+          "conditionalAnswer": "YES",
+          "witness": "8500 > 6000"
+        },
+        {
+          "rewrite": "Did monthly output exceed 6 ten-thousand units?",
+          "conditionalAnswer": "NO",
+          "witness": "8500 < 60000"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-019",
+      "family": "sign",
+      "domain": "finance",
+      "question": "Was the revenue change greater than 5 million?",
+      "context": "Revenue fell from 100m to 92m.",
+      "alternatives": [
+        {
+          "rewrite": "Was the magnitude of the revenue change greater than 5 million?",
+          "conditionalAnswer": "YES",
+          "witness": "abs(92-100) = 8 > 5"
+        },
+        {
+          "rewrite": "Was the signed current-minus-prior revenue change greater than 5 million?",
+          "conditionalAnswer": "NO",
+          "witness": "92-100 = -8 < 5"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-020",
+      "family": "sign",
+      "domain": "civil_engineering",
+      "question": "Was the displacement more than 3 mm?",
+      "context": "The signed vertical displacement from datum is -5 mm (downwards).",
+      "alternatives": [
+        {
+          "rewrite": "Was the absolute vertical displacement more than 3 mm?",
+          "conditionalAnswer": "YES",
+          "witness": "abs(-5) = 5 > 3"
+        },
+        {
+          "rewrite": "Was signed upward displacement more than 3 mm?",
+          "conditionalAnswer": "NO",
+          "witness": "-5 < 3"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-021",
+      "family": "absolute_vs_relative",
+      "domain": "finance",
+      "question": "Did revenue change by more than 10?",
+      "context": "Revenue increased from 200 to 215 units; threshold 10 has no stated unit.",
+      "alternatives": [
+        {
+          "rewrite": "Did revenue increase by more than 10 revenue units?",
+          "conditionalAnswer": "YES",
+          "witness": "215-200 = 15"
+        },
+        {
+          "rewrite": "Did revenue increase by more than 10 percent relative to the prior value?",
+          "conditionalAnswer": "NO",
+          "witness": "15/200 = 7.5%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-022",
+      "family": "absolute_vs_relative",
+      "domain": "education",
+      "question": "Did the average score improve by over 5?",
+      "context": "A score on a 100-point scale rose from 40 to 44.",
+      "alternatives": [
+        {
+          "rewrite": "Did the average score improve by over 5 percent relative to its old value?",
+          "conditionalAnswer": "YES",
+          "witness": "4/40 = 10%"
+        },
+        {
+          "rewrite": "Did the average score improve by over 5 score points?",
+          "conditionalAnswer": "NO",
+          "witness": "44-40 = 4"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-023",
+      "family": "percentage_vs_percentage_point",
+      "domain": "telecom",
+      "question": "Did the failure rate increase by more than 10 percent?",
+      "context": "Failure rate rose from 20% to 25%; a colloquial report uses percent for both relative change and points.",
+      "alternatives": [
+        {
+          "rewrite": "Did the failure rate increase by more than 10 percent relative to the previous rate?",
+          "conditionalAnswer": "YES",
+          "witness": "(25-20)/20 = 25%"
+        },
+        {
+          "rewrite": "Did the failure rate increase by more than 10 percentage points?",
+          "conditionalAnswer": "NO",
+          "witness": "25-20 = 5 points"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-024",
+      "family": "percentage_vs_percentage_point",
+      "domain": "public_health_research",
+      "question": "Did participation increase by at least 5 percent?",
+      "context": "Participation rose from 50% to 53%. The reporting convention is unclear.",
+      "alternatives": [
+        {
+          "rewrite": "Did participation increase by at least 5 percent relative to baseline?",
+          "conditionalAnswer": "YES",
+          "witness": "3/50 = 6%"
+        },
+        {
+          "rewrite": "Did participation increase by at least 5 percentage points?",
+          "conditionalAnswer": "NO",
+          "witness": "53-50 = 3 points"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-025",
+      "family": "aggregation",
+      "domain": "manufacturing",
+      "question": "Was the average defect rate under 10% across plants?",
+      "context": "Plant A: 1 defect in 100 items. Plant B: 9 defects in 20 items.",
+      "alternatives": [
+        {
+          "rewrite": "Was the item-weighted defect rate under 10% across both plants?",
+          "conditionalAnswer": "YES",
+          "witness": "10/120 = 8.33% < 10%"
+        },
+        {
+          "rewrite": "Was the unweighted average of plant defect rates under 10%?",
+          "conditionalAnswer": "NO",
+          "witness": "(1% + 45%)/2 = 23%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-026",
+      "family": "aggregation",
+      "domain": "software_reliability",
+      "question": "Was average API latency below 100 ms across regions?",
+      "context": "Region A has 900 requests averaging 50 ms; region B has 100 requests averaging 200 ms.",
+      "alternatives": [
+        {
+          "rewrite": "Was request-weighted mean latency below 100 ms?",
+          "conditionalAnswer": "YES",
+          "witness": "(900*50+100*200)/1000 = 65"
+        },
+        {
+          "rewrite": "Was the equal-region mean of regional latencies below 100 ms?",
+          "conditionalAnswer": "NO",
+          "witness": "(50+200)/2 = 125"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-027",
+      "family": "negation_scope",
+      "domain": "education",
+      "question": "Did not all candidates pass?",
+      "context": "Three candidates passed and one failed.",
+      "alternatives": [
+        {
+          "rewrite": "Is it false that all four candidates passed?",
+          "conditionalAnswer": "YES",
+          "witness": "At least one candidate failed"
+        },
+        {
+          "rewrite": "Is it true that all four candidates did not pass (none passed)?",
+          "conditionalAnswer": "NO",
+          "witness": "Three candidates passed"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-028",
+      "family": "negation_scope",
+      "domain": "software_reliability",
+      "question": "Did the backup not run on Monday and Tuesday?",
+      "context": "The backup ran Monday but did not run Tuesday.",
+      "alternatives": [
+        {
+          "rewrite": "Did the backup fail to run on at least one of Monday and Tuesday?",
+          "conditionalAnswer": "YES",
+          "witness": "Tuesday missed"
+        },
+        {
+          "rewrite": "Did the backup fail to run on both Monday and Tuesday?",
+          "conditionalAnswer": "NO",
+          "witness": "Monday ran"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-029",
+      "family": "quantifier_scope",
+      "domain": "telecom",
+      "question": "Did every site use a shared spare router?",
+      "context": "Site A used spare R1; site B used spare R2. Both used a spare, but no spare was used at both sites.",
+      "alternatives": [
+        {
+          "rewrite": "Did each site use some spare router?",
+          "conditionalAnswer": "YES",
+          "witness": "Each has a spare"
+        },
+        {
+          "rewrite": "Was there one spare router used by every site?",
+          "conditionalAnswer": "NO",
+          "witness": "R1 and R2 differ"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-030",
+      "family": "quantifier_scope",
+      "domain": "logistics",
+      "question": "Can all orders be served by a single truck?",
+      "context": "Each order fits independently on one truck; all orders together weigh 12 tonnes and truck capacity is 8 tonnes.",
+      "alternatives": [
+        {
+          "rewrite": "Can every order be served individually by one truck trip?",
+          "conditionalAnswer": "YES",
+          "witness": "Each order independently fits"
+        },
+        {
+          "rewrite": "Can all orders together be served by the same single truck trip?",
+          "conditionalAnswer": "NO",
+          "witness": "12 > 8 tonnes"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-031",
+      "family": "conditional_scope",
+      "domain": "energy",
+      "question": "If demand peaks, are reserves and imports adequate?",
+      "context": "Peak reserves: adequate; peak imports: inadequate. Outside peak, both are adequate.",
+      "alternatives": [
+        {
+          "rewrite": "During peak demand, are both reserves and imports adequate?",
+          "conditionalAnswer": "NO",
+          "witness": "Peak imports are inadequate"
+        },
+        {
+          "rewrite": "During peak demand are reserves adequate, with imports assessed outside peak?",
+          "conditionalAnswer": "YES",
+          "witness": "Peak reserves and off-peak imports are adequate"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-032",
+      "family": "conditional_scope",
+      "domain": "manufacturing",
+      "question": "Are the alarm and valve shutdown required when pressure rises?",
+      "context": "At high pressure an alarm is required but valve shutdown is required only if temperature is also high. Current temperature is normal.",
+      "alternatives": [
+        {
+          "rewrite": "With pressure high and temperature normal, are both alarm and shutdown required?",
+          "conditionalAnswer": "NO",
+          "witness": "Shutdown requires high temperature"
+        },
+        {
+          "rewrite": "With pressure high, is the alarm required, and is shutdown required only when temperature is also high?",
+          "conditionalAnswer": "YES",
+          "witness": "The stated conditional policy matches"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-033",
+      "family": "baseline_selection",
+      "domain": "finance",
+      "question": "Did costs fall by at least 10%?",
+      "context": "Current costs 90; last year's costs 95; original budget 110.",
+      "alternatives": [
+        {
+          "rewrite": "Did costs fall by at least 10% relative to the original budget?",
+          "conditionalAnswer": "YES",
+          "witness": "20/110 = 18.18%"
+        },
+        {
+          "rewrite": "Did costs fall by at least 10% relative to last year's actual costs?",
+          "conditionalAnswer": "NO",
+          "witness": "5/95 = 5.26%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-034",
+      "family": "baseline_selection",
+      "domain": "civil_engineering",
+      "question": "Did the new design reduce excavation by 20%?",
+      "context": "New design 800 m3; approved design 1000 m3; latest revision 900 m3.",
+      "alternatives": [
+        {
+          "rewrite": "Did excavation fall by at least 20% versus the original approved design?",
+          "conditionalAnswer": "YES",
+          "witness": "200/1000 = 20%"
+        },
+        {
+          "rewrite": "Did excavation fall by at least 20% versus the latest revision?",
+          "conditionalAnswer": "NO",
+          "witness": "100/900 = 11.11%"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-035",
+      "family": "measurement_assumptions",
+      "domain": "research",
+      "question": "Did temperature exceed 25 degrees Celsius?",
+      "context": "The raw sensor reading is 26 C; a documented calibration subtracts 2 C.",
+      "alternatives": [
+        {
+          "rewrite": "Did the raw sensor reading exceed 25 degrees Celsius?",
+          "conditionalAnswer": "YES",
+          "witness": "26 > 25"
+        },
+        {
+          "rewrite": "Did the calibrated sensor estimate exceed 25 degrees Celsius?",
+          "conditionalAnswer": "NO",
+          "witness": "24 < 25"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-036",
+      "family": "measurement_assumptions",
+      "domain": "finance",
+      "question": "Did wages grow in real terms?",
+      "context": "Nominal wage growth is 5%; inflation measured by national CPI is 3%; the local cost-of-living index rose 8%.",
+      "alternatives": [
+        {
+          "rewrite": "Did wages grow after adjusting by the national CPI?",
+          "conditionalAnswer": "YES",
+          "witness": "1.05/1.03 > 1"
+        },
+        {
+          "rewrite": "Did wages grow after adjusting by the local cost-of-living index?",
+          "conditionalAnswer": "NO",
+          "witness": "1.05/1.08 < 1"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-037",
+      "family": "modality",
+      "domain": "software_reliability",
+      "question": "Should the service handle 1000 requests per second?",
+      "context": "The capacity specification requires 1000 requests/s; only a 700 requests/s load test is documented.",
+      "alternatives": [
+        {
+          "rewrite": "Does the specification require support for 1000 requests per second?",
+          "conditionalAnswer": "YES",
+          "witness": "Explicit capacity requirement"
+        },
+        {
+          "rewrite": "Has the service demonstrated support for 1000 requests per second?",
+          "conditionalAnswer": "UNKNOWN",
+          "witness": "700 requests/s is the only tested level"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-038",
+      "family": "modality",
+      "domain": "energy",
+      "question": "Can the turbine supply 5 MW?",
+      "context": "Nameplate capacity is 5 MW; current weather and operating conditions are unknown.",
+      "alternatives": [
+        {
+          "rewrite": "Is the turbine rated to supply 5 MW under specified conditions?",
+          "conditionalAnswer": "YES",
+          "witness": "Nameplate 5 MW"
+        },
+        {
+          "rewrite": "Can the turbine supply 5 MW under current operating conditions?",
+          "conditionalAnswer": "UNKNOWN",
+          "witness": "No current operating conditions are supplied"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-039",
+      "family": "causal_vs_observational",
+      "domain": "telecom",
+      "question": "Did the new tariff lead to higher churn?",
+      "context": "Churn rose after the tariff change from 1% to 2%; a concurrent competitor launch occurred and no causal identification study is supplied.",
+      "alternatives": [
+        {
+          "rewrite": "Did churn rise after the new tariff was introduced?",
+          "conditionalAnswer": "YES",
+          "witness": "Observed change: 1% to 2%"
+        },
+        {
+          "rewrite": "Did the new tariff independently cause the increase in churn?",
+          "conditionalAnswer": "UNKNOWN",
+          "witness": "No design isolates tariff from competitor launch"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    },
+    {
+      "id": "sutra-contrast-040",
+      "family": "causal_vs_observational",
+      "domain": "public_health_research",
+      "question": "Did the intervention improve attendance?",
+      "context": "Attendance increased from 60% to 75% among participants; no untreated comparison or adjustment for selection is supplied.",
+      "alternatives": [
+        {
+          "rewrite": "Did attendance increase among intervention participants?",
+          "conditionalAnswer": "YES",
+          "witness": "Observed increase: 15 percentage points"
+        },
+        {
+          "rewrite": "Did the intervention cause the attendance increase relative to its counterfactual?",
+          "conditionalAnswer": "UNKNOWN",
+          "witness": "Counterfactual is not identified"
+        }
+      ],
+      "expectedDisposition": "PRESERVE_ALTERNATIVES_OR_ABSTAIN"
+    }
+  ]
+}
