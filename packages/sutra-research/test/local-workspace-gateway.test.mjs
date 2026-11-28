@@ -85,3 +85,30 @@ test('actual loopback HTTP isolates preview and run capabilities, expires tokens
   assert.equal(second.calls.length,0);assert.equal(first.calls.length,1);
  }finally{await other?.close();await app.close();await rm(dir,{recursive:true,force:true});}
 });
+
+test('red-team exact browser permit, origin, duplicate JSON, oversized payload and cross-client replay',async()=>{
+ const {gateway,calls}=fixture(),dir=await mkdtemp(join(tmpdir(),'sutra-redteam-'));await writeFile(join(dir,'index.html'),'<h1>fixture</h1>');
+ const app=createResearchWorkspaceServer({gateway,dist:dir,port:0});
+ try{
+  const origin=await app.listen(),token=async()=> (await (await fetch(origin+'/api/research/capabilities')).json()).sessionToken,owner=await token(),other=await token();
+  const post=(route,data,key=owner,headerOrigin=origin)=>fetch(origin+'/api/research/'+route,{method:'POST',headers:{origin:headerOrigin,'content-type':'application/json','x-sutra-session':key},body:typeof data==='string'?data:JSON.stringify(data)});
+  assert.equal((await post('preview','{"objective":"one","objective":"two","models":[]}')).status,400);
+  assert.equal((await post('preview',{...input,objective:'x'.repeat(17000)})).status,400);
+  assert.equal((await post('preview',{...input,objective:'api_key=fixture-groq-key'})).status,400);
+  const p=await (await post('preview',{...input,browserScheduled:true})).json(),q=await (await post('preview',{...input,browserScheduled:true})).json();
+  assert.equal((await post('start',approval(p))).status,400);
+  const started=await post('start',approval(q));assert.equal(started.status,202);const run=await started.json();
+  const poll=async()=> (await (await fetch(origin+'/api/research/status?id='+run.sessionId,{headers:{'x-sutra-session':owner}})).json());
+  let row;for(let i=0;i<100;i++){row=await poll();if(row.pendingOperation)break;await delay(10);}
+  const op=row.pendingOperation;assert.ok(op);assert.equal(calls.length,0);
+  const exactPermit={sessionId:run.sessionId,planPin:run.planPin,operationId:op.id,sequence:op.sequence};
+  for(const patch of [{operationId:'forged'},{sequence:op.sequence+1},{planPin:'sha256:'+'a'.repeat(64)},{url:'https://unapproved.invalid/'}])assert.equal((await post('advance',{...exactPermit,...patch})).status,400);
+  assert.equal((await post('advance',exactPermit,other)).status,403);
+  assert.equal((await post('advance',exactPermit,owner,'https://unapproved.invalid')).status,403);
+  assert.equal(calls.length,0);
+  const ok=await post('advance',exactPermit);assert.equal(ok.status,200);assert.equal((await ok.json()).accepted,true);
+  assert.equal((await post('advance',exactPermit)).status,400);
+  for(let i=0;i<100;i++){row=await poll();if(row.state==='closed')break;await delay(10);}
+  assert.equal(row.state,'closed');assert.equal(calls.length,1);assert.equal(row.pendingOperation,null);assert.doesNotMatch(JSON.stringify(row),/fixture-groq-key/);
+ }finally{await app.close();await rm(dir,{recursive:true,force:true});}
+});
