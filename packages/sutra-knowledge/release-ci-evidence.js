@@ -12,7 +12,10 @@ const requiredJobs={
     "impact"
   ],
   "Validate SUTRA browser compatibility matrix": [
-    "freshness"
+    "freshness",
+    "browser (chromium)",
+    "browser (firefox)",
+    "browser (webkit)"
   ],
   "Validate SUTRA operator model approval browser": [
     "operator-browser"
@@ -31,6 +34,7 @@ const requiredJobs={
   ],
   "Validate SUTRA engineering evaluation": [
     "freshness",
+    "baseline",
     "historical-source-regression"
   ],
   "SUTRA autonomous research": [
