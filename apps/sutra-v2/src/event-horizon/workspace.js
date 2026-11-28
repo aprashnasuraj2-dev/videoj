@@ -4,6 +4,8 @@ import './workspace.css';
 import {mountKnowledgeView,mountComputationView} from './explorers.js';
 import {mountCompositionView} from './composition-view.js';
 import {mountAtlasView} from './atlas-view.js';
+import {fitViewport,zoomViewport,panViewport,centerViewport,viewBox,entityPage,projectGraphFilter} from './navigation.js';
+import {replayJournalPrefix} from './replay.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
 const label=s=>String(s??'Unknown').replaceAll('_',' ');
@@ -32,11 +34,13 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const head=E('div',undefined,'eh-head'),heading=E('h2','Intelligence takes the shape of the problem.');heading.id='eh-title';
  const lead=E('div');lead.append(E('p','EVENT HORIZON / ADAPTIVE WORKSPACE','eh-kicker'),heading,E('p','Observe the actual task graph and research activity. Participants appear only from recorded runtime state.','eh-copy'));
  const mark=E('span','Read-only runtime projection','eh-mark');head.append(lead,mark);
- const controls=E('div',undefined,'eh-controls'),runSelect=E('select'),layoutSelect=E('select'),filter=E('input');
+ const controls=E('div',undefined,'eh-controls'),runSelect=E('select'),layoutSelect=E('select'),filter=E('input'),kindFilter=E('select'),relationFilter=E('select');
  filter.type='search';filter.placeholder='Filter names and types';filter.maxLength=100;
  for(const mode of layouts){const o=E('option',mode==='auto'?'Adaptive layout':label(mode));o.value=mode;layoutSelect.append(o);}
- controls.append(field('Run',runSelect),field('Layout',layoutSelect),field('Filter entities',filter));
- const counters=E('div',undefined,'eh-metrics'),agents=metric('Agent instances'),invocations=metric('Observed invocations'),entities=metric('Entities'),links=metric('Recorded relations');
+ for(const [id,name] of [['all','All entities'],['participants','Agents and invocations'],['operations','Tasks and tools'],['evidence','Evidence']]){const o=E('option',name);o.value=id;kindFilter.append(o);}
+ for(const [id,name] of [['all','All relationships'],['assignment','Assignments'],['dependency','Dependencies'],['invocation ancestry','Observed ancestry']]){const o=E('option',name);o.value=id;relationFilter.append(o);}
+ controls.append(field('Run',runSelect),field('Layout',layoutSelect),field('Filter entities',filter),field('Entity type',kindFilter),field('Relationship type',relationFilter));
+ const counters=E('div',undefined,'eh-metrics'),agents=metric('Agent instances'),invocations=metric('Retained invocations'),entities=metric('Entities'),links=metric('Recorded relations');
  counters.append(agents.wrap,invocations.wrap,entities.wrap,links.wrap);
  const status=E('p','No recorded execution.','eh-status');status.id='eh-status';status.setAttribute('role','status');
  const qualification=E('p',undefined,'eh-copy');
@@ -44,8 +48,10 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const canvas=E('div',undefined,'eh-canvas');canvas.setAttribute('aria-label','Visual topology; equivalent interactive list below');
  const roster=E('div',undefined,'eh-roster');roster.setAttribute('aria-label','Runtime entities');
  const rosterTitle=E('h3','Participants and operations');
- left.append(canvas,rosterTitle,roster);split.append(left,right);
- const timeline=E('details',undefined,'eh-timeline');timeline.append(E('summary','Recorded event timeline'));const eventList=E('ol');timeline.append(eventList);
+ const viewportControls=E('div',undefined,'eh-viewport-controls'),zoomText=E('small','100%');
+ const pageControls=E('div',undefined,'eh-page-controls'),pageText=E('small');
+ left.append(viewportControls,canvas,rosterTitle,pageControls,roster);split.append(left,right);
+ const timeline=E('details',undefined,'eh-timeline');timeline.append(E('summary','Recorded event timeline'));const eventList=E('ol'),replayControls=E('div',undefined,'eh-replay-controls'),replayInput=E('input'),replayText=E('p',undefined,'eh-state');replayInput.type='range';replayInput.min='0';replayInput.step='1';replayInput.id='eh-replay-sequence';replayControls.append(field('Recorded event sequence',replayInput),replayText);timeline.append(replayControls,eventList);
  const footer=E('p','Visualization does not execute agents, grant consent, or verify factual truth. Use the existing research, review and proof controls to perform operations.','eh-copy');
  const objectiveSlot=E('div',undefined,'eh-objective-slot');objectiveSlot.id='eh-objective-slot';objectiveSlot.hidden=true;
  const tabs=E('nav',undefined,'eh-tabs');tabs.setAttribute('aria-label','Adaptive workspace views');
@@ -53,14 +59,19 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  section.append(head,objectiveSlot,tabs,runtime);root.prepend(section);
  let selection=null,selectedRun='empty',autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
  const localRuns=new Map(),placements=[];
+ let pageIndex=0,viewport=null,currentSvg=null,viewportKey=null,currentPositions=new Map(),drag=null,replaySequence=null,replayEvents=[],liveGraph=emptyGraph();
  const research=createResearchProjection();
  const snapshots=()=>{const list=feed.runs().map(r=>projectTaskRun(r,feed.events(r.runId))).filter(Boolean);const trace=research.snapshot();if(trace)list.push(trace);list.push(...localRuns.values());return list;};
- function visibleGraph(){
-  const q=filter.value.trim().toLowerCase();
-  if(!q)return graph;
-  const nodes=graph.nodes.filter(n=>(n.label+' '+n.kind+' '+n.status).toLowerCase().includes(q)),keys=new Set(nodes.map(n=>n.key));
-  return {...graph,nodes,edges:graph.edges.filter(e=>keys.has(e.from)&&keys.has(e.to))};
- }
+ function visibleGraph(){return projectGraphFilter(graph,{query:filter.value,kind:kindFilter.value,relation:relationFilter.value});}
+ function applyViewport(){if(!viewport||!currentSvg)return;currentSvg.setAttribute('viewBox',viewBox(viewport));zoomText.textContent=Math.round(viewport.zoom*100)+'%';}
+ function fit(){if(!viewport)return;viewport=fitViewport(viewport.extentWidth,viewport.extentHeight);applyViewport();}
+ function zoom(factor){if(!viewport)return;viewport=zoomViewport(viewport,factor);applyViewport();}
+ function pan(dx,dy){if(!viewport)return;viewport=panViewport(viewport,dx*viewport.width,dy*viewport.height);applyViewport();}
+ const viewportButtons=[button('Zoom in',()=>zoom(1.35)),button('Zoom out',()=>zoom(1/1.35)),button('Fit graph',fit),button('Pan left',()=>pan(-.2,0)),button('Pan right',()=>pan(.2,0)),button('Pan up',()=>pan(0,-.2)),button('Pan down',()=>pan(0,.2))];
+ viewportControls.append(...viewportButtons,zoomText);
+ const prevPage=button('Previous entities',()=>{pageIndex--;render();}),nextPage=button('Next entities',()=>{pageIndex++;render();});pageControls.append(prevPage,pageText,nextPage);
+ const goLive=button('Return to current run state',()=>{replaySequence=null;refresh();});replayControls.append(goLive);
+ replayInput.addEventListener('input',()=>{if(!replayEvents.length)return;autoFollow=false;replaySequence=Number(replayInput.value);selection=null;pageIndex=0;refresh();});
  function inspect(){
   const n=graph.nodes.find(n=>n.key===selection);right.replaceChildren(E('p','ENTITY INSPECTOR','eh-kicker'));
   if(!n){right.append(E('h3','Select an entity'),E('p','Inspect a recorded agent, invocation, task, tool or evidence node. No activity is inferred from the visual layout.','eh-copy'));return;}
@@ -68,27 +79,39 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   const dl=E('dl',undefined,'eh-details');
   const pairs=[['Identifier',n.id],['Run',graph.runId??'Unknown'],['Version',graph.version??'Not supplied'],['Task kind',n.taskKind],['Assigned agent',n.agentId],['Active tasks',n.activeCount],['Assigned tasks',n.taskCount],['Waiting for',n.waitingFor?.join(', ')],['Reported host role (not instance)',n.reportedRole],['Recorded parent span',n.parentId],['Admitted passages',n.passages],['Start receipt',n.startUnknown?'Unknown':undefined]];
   for(const [k,v] of pairs)if(v!==undefined&&v!==null&&v!==''){dl.append(E('dt',k),E('dd',String(v)));}
-  right.append(dl,E('h4','Recorded relationships'));
+  right.append(dl);
+  if(n.routeAttempts?.length||n.consultationSlots?.length){right.append(E('h4','Recorded transport phases'));for(const a of n.routeAttempts??[])right.append(E('p',a.routeId+' · '+a.phase,'eh-copy'));for(const a of n.consultationSlots??[])right.append(E('p',a.slotId+' · '+a.phase,'eh-copy'));right.append(E('p','Phase receipt is not billing or truth verification.','eh-copy'));}
+  right.append(E('h4','Recorded relationships'));
   const rel=graph.edges.filter(e=>e.from===n.key||e.to===n.key);
   if(!rel.length)right.append(E('p','No recorded relationship.','eh-copy'));
   for(const e of rel){const other=graph.nodes.find(x=>x.key===(e.from===n.key?e.to:e.from));if(!other)continue;const b=button((e.from===n.key?'To ':'From ')+other.label,()=>choose(other.key,true));right.append(b,E('small',e.kind+' · '+e.authority,'eh-copy'));}
  }
  function choose(id,focus=false){
   if(!graph.nodes.some(n=>n.key===id))return;selection=id;
+  let view=visibleGraph(),index=view.nodes.findIndex(n=>n.key===id);
+  if(index<0&&focus){filter.value='';kindFilter.value='all';view=visibleGraph();index=view.nodes.findIndex(n=>n.key===id);}
+  if(index>=0&&Math.floor(index/32)!==pageIndex){pageIndex=Math.floor(index/32);render();}
+  if(focus&&viewport&&currentPositions.has(id)&&viewport.zoom>1){const p=currentPositions.get(id);viewport=centerViewport(viewport,p.x,p.y);applyViewport();}
   for(const b of roster.querySelectorAll('button[data-entity]'))b.setAttribute('aria-pressed',String(b.dataset.entity===id));
   for(const g of canvas.querySelectorAll('[data-entity]'))g.setAttribute('data-selected',String(g.dataset.entity===id));
   inspect();
   if(focus)[...roster.querySelectorAll('button[data-entity]')].find(b=>b.dataset.entity===id)?.focus({preventScroll:true});
  }
  function draw(view){
-  canvas.replaceChildren();const layout=layoutGraph(view,layoutSelect.value);
+  canvas.replaceChildren();currentSvg=null;drag=null;currentPositions=new Map();const layout=layoutGraph(view,layoutSelect.value);
+  viewportControls.hidden=layout.mode==='list'||!view.nodes.length;
   if(!view.nodes.length){const empty=E('div',undefined,'eh-empty');empty.append(E('span','◌','eh-empty-glyph'),E('h3',graph.nodes.length?'No matching entities':'A universe begins with an objective.'),E('p',graph.nodes.length?'Change or clear the filter.':'No synthetic agents, metrics or activity are displayed.','eh-copy'));canvas.append(empty);return;}
   if(layout.mode==='list'){canvas.append(E('p','List projection selected. Every retained entity remains inspectable below.','eh-copy'));return;}
-  const svg=S('svg',{viewBox:'0 0 '+layout.width+' '+layout.height,role:'img','aria-label':view.nodes.length+' entities; '+view.edges.length+' recorded relationships'});
-  const pos=new Map(layout.positions.map(p=>[p.key,p]));
+  const signature=graph.id+'|'+layout.mode+'|'+layout.width+'|'+layout.height;
+  if(!viewport||viewportKey!==signature){viewport=fitViewport(layout.width,layout.height);viewportKey=signature;}
+  const svg=S('svg',{viewBox:viewBox(viewport),role:'img','aria-label':view.nodes.length+' entities; '+view.edges.length+' recorded relationships'});currentSvg=svg;
+  const pos=new Map(layout.positions.map(p=>[p.key,p]));currentPositions=pos;
+  svg.addEventListener('pointerdown',e=>{if(e.button!==0||e.pointerType==='touch'||e.target.closest?.('[data-entity]')||viewport.zoom<=1)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY};svg.setPointerCapture?.(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const box=svg.getBoundingClientRect();if(!box.width||!box.height)return;viewport=panViewport(viewport,(drag.x-e.clientX)*viewport.width/box.width,(drag.y-e.clientY)*viewport.height/box.height);drag.x=e.clientX;drag.y=e.clientY;applyViewport();});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(type,()=>{drag=null;});
   for(const e of view.edges){const a=pos.get(e.from),b=pos.get(e.to);if(!a||!b)continue;const line=S('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:e.kind==='assignment'?'#59727E':'#A5C5BD','stroke-width':1.2,'stroke-dasharray':e.kind==='assignment'?'2 5':'none'});const title=S('title');title.textContent=e.kind+' · '+e.authority;line.append(title);svg.append(line);}
   for(const n of view.nodes){const p=pos.get(n.key);if(!p)continue;const g=glyph(n,p);g.dataset.entity=n.key;g.setAttribute('data-selected',String(selection===n.key));g.addEventListener('click',()=>choose(n.key,true));svg.append(g);}
-  canvas.append(svg);
+  canvas.append(svg);applyViewport();
  }
  function render(){
   if(destroyed||!active||viewMode!=='runtime')return;
@@ -101,29 +124,33 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   qualification.textContent=graph.qualification;
   if(selection&&!graph.nodes.some(n=>n.key===selection))selection=null;
   draw(view);roster.replaceChildren();
-  for(const n of view.nodes){
+  const page=entityPage(view.nodes,pageIndex);pageIndex=page.index;pageControls.hidden=page.pages<=1;prevPage.disabled=page.index===0;nextPage.disabled=page.index===page.pages-1;pageText.textContent=(page.start+1)+'–'+page.end+' of '+page.total;
+  for(const n of page.nodes){
    const b=button('',()=>choose(n.key));b.className='eh-entity';b.dataset.entity=n.key;b.setAttribute('aria-pressed',String(n.key===selection));
    b.append(E('strong',n.label),E('small',label(n.kind)+' · '+label(n.status)));roster.append(b);
   }
   if(!view.nodes.length)roster.append(E('p','No entities to inspect.','eh-copy'));
   inspect();eventList.replaceChildren();
+  replayControls.hidden=!replayEvents.length;replayInput.max=String(replayEvents.length);replayInput.value=String(replaySequence??replayEvents.length);replayText.textContent=replaySequence===null?'Current retained state · '+replayEvents.length+' events':'Historical prefix · '+replaySequence+' / '+replayEvents.length+' events · no execution';goLive.disabled=replaySequence===null;
   for(const e of [...graph.events].reverse()){const li=E('li');li.append(E('strong','#'+e.sequence+' '+e.label),E('span',e.detail));eventList.append(li);}
   if(!graph.events.length)eventList.append(E('li','No retained events.'));
   if(focused)[...roster.querySelectorAll('button[data-entity]')].find(b=>b.dataset.entity===focused)?.focus({preventScroll:true});
  }
  function refresh(preferred){
-  if(autoFollow&&preferred)selectedRun=preferred;
+  if(autoFollow&&preferred){if(selectedRun!==preferred){selection=null;pageIndex=0;replaySequence=null;}selectedRun=preferred;}
   if(!active)return;
   const all=snapshots(),options=[emptyGraph(),...all];
-  if(!options.some(g=>g.id===selectedRun))selectedRun=all.at(-1)?.id??'empty';
-  graph=options.find(g=>g.id===selectedRun)??options[0];
+  if(!options.some(g=>g.id===selectedRun)){selectedRun=all.at(-1)?.id??'empty';selection=null;pageIndex=0;replaySequence=null;}
+  liveGraph=options.find(g=>g.id===selectedRun)??options[0];graph=liveGraph;
+  replayEvents=liveGraph.journalBacked?feed.events(liveGraph.runId):[];
+  if(replaySequence!==null){try{graph=replayJournalPrefix(replayEvents,replaySequence);}catch{graph={...emptyGraph(),id:'refused-replay',label:'Recorded replay refused',status:'refused',qualification:'The selected historical event prefix could not be reconstructed. No current execution or result is claimed.'};}}
   const signature=options.map(g=>g.id+' '+g.label).join('|');
   if(runSelect.dataset.signature!==signature){runSelect.replaceChildren();for(const g of options){const o=E('option',g.label+(g.runId?' · '+g.runId:''));o.value=g.id;runSelect.append(o);}runSelect.dataset.signature=signature;}
   runSelect.value=selectedRun;render();
  }
- runSelect.addEventListener('change',()=>{autoFollow=false;selectedRun=runSelect.value;selection=null;refresh();});
- layoutSelect.addEventListener('change',render);filter.addEventListener('input',render);
- const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;const list=snapshots();selectedRun=list.at(-1)?.id??'empty';refresh();});controls.append(follow);
+ runSelect.addEventListener('change',()=>{autoFollow=false;selectedRun=runSelect.value;selection=null;pageIndex=0;replaySequence=null;refresh();});
+ layoutSelect.addEventListener('change',()=>{viewportKey=null;render();});filter.addEventListener('input',()=>{pageIndex=0;render();});for(const select of [kindFilter,relationFilter])select.addEventListener('change',()=>{pageIndex=0;viewportKey=null;render();});
+ const follow=button('Follow latest activity',()=>{autoFollow=true;selection=null;pageIndex=0;replaySequence=null;const list=snapshots();selectedRun=list.at(-1)?.id??'empty';refresh();});controls.append(follow);
  const knowledge=mountKnowledgeView(section,{openTool});
  const computation=mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}});
  const composition=mountCompositionView(section,{openWorkflow(id){if(id==='direct_compute')switchView('computation');else openWorkflow(id);}});

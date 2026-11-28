@@ -21,7 +21,7 @@ export function projectTaskRun(run,events=[]){
  }
  for(const t of run.tasks.slice(0,64)){
   if(!valid(t.id)||tasks.has(t.id))continue;
-  const n=entity(run.runId,'task',t.id,t.id,t.status,{taskKind:safe(t.kind),agentId:safe(t.agentId),waitingFor:Array.isArray(t.waitingFor)?t.waitingFor.filter(valid):[]});
+  const n=entity(run.runId,'task',t.id,t.id,t.status,{taskKind:safe(t.kind),agentId:safe(t.agentId),waitingFor:Array.isArray(t.waitingFor)?t.waitingFor.filter(valid):[],routeAttempts:Array.isArray(t.routeAttempts)?t.routeAttempts.slice(0,16).map(a=>({routeId:safe(a.routeId),phase:safe(a.phase??a.status)})):[],consultationSlots:Array.isArray(t.consultationSlots)?t.consultationSlots.slice(0,16).map(a=>({slotId:safe(a.slotId),phase:safe(a.phase??a.status)})):[]});
   tasks.set(t.id,n);nodes.push(n);
   if(agents.has(t.agentId))edges.push(relation(agents.get(t.agentId).key,n.key,'assignment','admitted manifest'));
  }
@@ -30,7 +30,7 @@ export function projectTaskRun(run,events=[]){
   for(const id of t.dependsOn){const source=tasks.get(id);if(source)edges.push(relation(source.key,target.key,'dependency','admitted manifest'));}
  }
  const journal=events.slice(-120).filter(e=>e.runId===run.runId&&e.version===run.version&&e.origin===run.origin).map(e=>Object.freeze({sequence:e.sequence,label:safe(e.type),detail:[e.payload?.taskId,e.payload?.agentId,e.payload?.phase,e.payload?.status].filter(valid).join(' · ')}));
- return freezeGraph({id:key('task',run.runId),label:origins[run.origin],runId:run.runId,version:run.version,status:state(run.status),nodes,edges,events:journal,agentCount:agents.size,invocationCount:null,qualification:'Recorded task manifest and validated journal. Assignment and dependency edges are not observed messages. Model independence and factual truth are not established.'});
+ return freezeGraph({id:key('task',run.runId),label:origins[run.origin],runId:run.runId,version:run.version,journalBacked:true,status:state(run.status),nodes,edges,events:journal,agentCount:agents.size,invocationCount:null,qualification:'Recorded task manifest and validated journal. Assignment and dependency edges are not observed messages. Model independence and factual truth are not established.'});
 }
 export function createResearchProjection({maxNodes=512,maxEvents=120}={}){
  if(!Number.isInteger(maxNodes)||maxNodes<1||maxNodes>512||!Number.isInteger(maxEvents)||maxEvents<1||maxEvents>512)throw Error('PROJECTION_LIMIT');

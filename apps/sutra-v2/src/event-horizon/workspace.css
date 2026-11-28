@@ -100,3 +100,11 @@
 #eh-workspace .eh-atlas .eh-field{flex:1 1 180px}
 #eh-workspace .eh-atlas input[type=file]{max-width:100%;width:100%;font-size:.8rem}
 #eh-workspace .eh-atlas .eh-timeline .eh-field{margin:8px 0}
+
+#eh-workspace .eh-viewport-controls,#eh-workspace .eh-page-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:5px 0 8px}
+#eh-workspace .eh-viewport-controls button,#eh-workspace .eh-page-controls button{font-size:.75rem;padding:6px;min-height:44px}
+#eh-workspace .eh-viewport-controls small,#eh-workspace .eh-page-controls small{padding:0 6px;font:600 .72rem ui-monospace,monospace}
+#eh-workspace .eh-canvas svg{touch-action:pan-y}
+#eh-workspace .eh-replay-controls{border:1px solid var(--eh-line);background:var(--eh-panel);border-radius:7px;padding:10px;margin:8px 0}
+#eh-workspace .eh-replay-controls input[type=range]{width:100%;padding:0;accent-color:var(--eh-accent)}
+#eh-workspace button:disabled{opacity:.5;cursor:not-allowed}

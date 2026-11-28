@@ -1,5 +1,5 @@
 // Deterministic, bounded, display-only layouts. Edges never grant execution authority.
-export const layouts=Object.freeze(['auto','radial','layered','grid','list']);
+export const layouts=Object.freeze(['auto','radial','layered','clustered','grid','list']);
 export function selectLayout(graph){
  const nodes=graph.nodes,edges=graph.edges;
  if(nodes.length<=1)return 'grid';
@@ -10,7 +10,14 @@ export function selectLayout(graph){
   if(nodes.length<=12&&Math.max(...counts.values())>=3)return 'radial';
   return 'layered';
  }
+ if(edges.length&&nodes.length>2)return 'clustered';
  return 'grid';
+}
+function connectedComponents(nodes,edges){
+ const adjacency=new Map(nodes.map(n=>[n.key,[]]));for(const e of edges){if(!adjacency.has(e.from)||!adjacency.has(e.to))continue;adjacency.get(e.from).push(e.to);adjacency.get(e.to).push(e.from);}
+ const byKey=new Map(nodes.map(n=>[n.key,n])),visited=new Set(),groups=[];
+ for(const n of nodes){if(visited.has(n.key))continue;const queue=[n.key];visited.add(n.key);for(let i=0;i<queue.length;i++)for(const id of adjacency.get(queue[i]))if(!visited.has(id)){visited.add(id);queue.push(id);}groups.push(queue.map(id=>byKey.get(id)));}
+ return groups;
 }
 function depthMap(nodes,edges){
  const ids=new Set(nodes.map(n=>n.key)),incoming=new Map(nodes.map(n=>[n.key,0])),children=new Map(nodes.map(n=>[n.key,[]])),depth=new Map(nodes.map(n=>[n.key,0]));
@@ -43,6 +50,10 @@ export function layoutGraph(graph,mode='auto'){
    width=Math.max(720,columns.size*156);height=Math.max(300,maxRows*108);
    for(const [d,col] of columns)col.forEach((n,i)=>positions.push({key:n.key,x:78+d*(width-156)/Math.max(1,columns.size-1),y:(i+1)*height/(col.length+1)}));
   }
+ }else if(selected==='clustered'){
+  const groups=connectedComponents(nodes,edges),cols=Math.min(3,Math.max(1,groups.length)),cellWidth=240,cellHeight=Math.max(180,...groups.map(g=>Math.ceil(g.length/2)*105));
+  width=Math.max(720,cols*cellWidth);height=Math.max(300,Math.ceil(groups.length/cols)*cellHeight);
+  groups.forEach((group,i)=>{const left=(i%cols)*width/cols,top=Math.floor(i/cols)*cellHeight,subcols=group.length===1?1:2;group.forEach((n,j)=>positions.push({key:n.key,x:left+(j%subcols+.5)*width/cols/subcols,y:top+48+Math.floor(j/subcols)*100}));});
  }else selected='grid';
  if(selected==='grid'){
   const cols=Math.min(5,Math.max(1,Math.ceil(Math.sqrt(nodes.length))));const rows=Math.max(1,Math.ceil(nodes.length/cols));height=Math.max(240,rows*110);

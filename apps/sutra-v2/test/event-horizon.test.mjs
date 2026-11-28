@@ -144,3 +144,34 @@ test('publisher inspection reads only static JSON with credentialless GET and re
  const i=await readPublishedIndex(passportOrigin,{fetchImpl});assert.equal(i.networks.length,1);assert.equal(calls.length,1);
  const p=await inspectPublishedNetwork(passportOrigin,'custom',{fetchImpl});assert.equal(p.definitionCount,1);assert.match(p.digests.definition,/^sha256:[0-9a-f]{64}$/);assert.equal(calls.length,3);
 });
+
+import {fitViewport,zoomViewport,panViewport,centerViewport,viewBox,entityPage,projectGraphFilter} from '../src/event-horizon/navigation.js';
+import {replayJournalPrefix} from '../src/event-horizon/replay.js';
+test('viewport operations are finite, clamped and reversible at fit',()=>{
+ const initial=fitViewport(720,420);let v=initial;
+ for(let i=0;i<100;i++){v=zoomViewport(v,1.5);v=panViewport(v,100000,-100000);}
+ assert.equal(v.zoom,5);assert.ok(v.x<=720&&v.y>=-420);assert.match(viewBox(v),/^-?[\d.]+ -?[\d.]+ [\d.]+ [\d.]+$/);
+ const centered=centerViewport(v,360,210);assert.ok(Math.abs(centered.x+centered.width/2-360)<1e-8);
+ v=zoomViewport(centered,.01);assert.equal(v.zoom,1);assert.deepEqual(v,initial);assert.throws(()=>zoomViewport(v,NaN));assert.throws(()=>panViewport(v,Infinity,0));
+});
+test('bounded entity pagination preserves all 500 entities and never hides filter matches',()=>{
+ const nodes=Array.from({length:500},(_,i)=>({key:'n'+i,label:'entity '+i,kind:i%2?'agent':'task',status:'queued'})),graph={nodes,edges:[]};
+ const all=[];for(let i=0;i<16;i++)all.push(...entityPage(nodes,i).nodes);assert.deepEqual(all,nodes);assert.equal(entityPage(nodes,1000).index,15);assert.equal(entityPage(nodes,-2).index,0);
+ const filtered=projectGraphFilter(graph,{query:'499',kind:'participants'});assert.equal(filtered.nodes.length,1);assert.equal(filtered.nodes[0].key,'n499');
+});
+test('replay reconstructs exact journal prefix; rejects invalid or reordered history',()=>{
+ const {journal,emitter}=journalRun(1);
+ for(const status of ['executing','validating','completed'])assert.equal(emitter.emit('task.state',{taskId:'task_0',kind:'compute',agentId:'specialist_0',status}),true);
+ assert.equal(emitter.emit('run.close',{status:'completed'}),true);
+ const events=journal.events('dynamic_run'),before=JSON.stringify(journal.snapshot('dynamic_run'));
+ assert.equal(replayJournalPrefix(events,0).nodes.length,0);
+ assert.equal(replayJournalPrefix(events,1).nodes.find(n=>n.kind==='task').status,'queued');
+ assert.equal(replayJournalPrefix(events,2).nodes.find(n=>n.kind==='task').status,'executing');
+ assert.equal(replayJournalPrefix(events,events.length).nodes.find(n=>n.kind==='task').status,'completed');
+ assert.throws(()=>replayJournalPrefix([events[0],events[2]],2));assert.throws(()=>replayJournalPrefix(events,99));assert.equal(JSON.stringify(journal.snapshot('dynamic_run')),before);
+});
+test('clustered layout retains each entity and all original relations',()=>{
+ const graph={nodes:Array.from({length:8},(_,i)=>({key:'k'+i,id:'k'+i,kind:'task'})),edges:[{from:'k0',to:'k1',kind:'assignment'},{from:'k2',to:'k3',kind:'assignment'}]};
+ const layout=layoutGraph(graph,'clustered');assert.equal(layout.mode,'clustered');assert.equal(layout.positions.length,8);assert.equal(new Set(layout.positions.map(x=>x.key)).size,8);
+ assert.ok(layout.positions.every(p=>p.x>=0&&p.x<=layout.width&&p.y>=0&&p.y<=layout.height));
+});
