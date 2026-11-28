@@ -11,3 +11,10 @@ test('unsafe URLs, secret-like path and malformed HTML are refused or excluded',
  const d=scanHtml('<a href="http://public.org/x">a</a><a href="https://127.0.0.1/">b</a><a href="/password%3Dsecret">c</a><a href="/x?token=secret">d</a><a href="/good">e</a>','https://primary.org/report');
  assert.deepEqual(d.links,['https://primary.org/good']);assert.throws(()=>scanHtml('<script>unclosed','https://primary.org/report'),/HTML_RAW_BLOCK/);assert.throws(()=>scanHtml('<a href="'+ 'x'.repeat(5000),'https://primary.org/report'),/HTML_TAG_LIMIT/);
 });
+
+test('Unicode case folding cannot move scanner offsets; hostile raw blocks remain inert',()=>{
+ const url='https://primary.org/report';
+ const d=scanHtml('<p>İSTANBUL before</p><ScRiPt>CANARY</sCrIpT><textarea><a href="/hidden">HIDDEN</a></textarea><p>visible</p><a href="/ok">source</a>',url);
+ assert.match(d.text,/İSTANBUL before/);assert.match(d.text,/visible/);assert.doesNotMatch(d.text,/CANARY|HIDDEN/);assert.deepEqual(d.links,['https://primary.org/ok']);
+ for(const tag of ['template','svg','math','object','noscript'])assert.throws(()=>scanHtml('<'+tag+'><'+tag+'>hidden</'+tag+'><a href="/bad">bad</a></'+tag+'>',url),/HTML_NESTED_RAW_BLOCK/);
+});

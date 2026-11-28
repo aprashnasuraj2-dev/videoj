@@ -2,6 +2,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {extractPdfDocument,PDF_INPUT_BYTES} from './pdf-parser.js';
 import {scanHtml} from './html-parser.js';
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {pinnedPublicHttp} from './pinned-public-http.js';
 import {secretLike,digest,assertResearchAuthorization} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Research document refused: '+code),{code});};
@@ -30,9 +31,11 @@ export function robotsAllows(text,path){
  return !rules.length||rules[0].allow;
 }
 export function extractDocument(body,mediaType,url,{allowCrossOriginLinks=false,allowQuery=false}={}){
+ if(!Buffer.isBuffer(body)||body.length<1||body.length>1048576)fail('EXTRACTION_SIZE');
+ if(!['text/html','text/plain','application/json','text/csv'].includes(mediaType))fail('EXTRACTION_MEDIA');
  const original=utf8(body);let text=original,links=[],metadata={};
  if(mediaType==='text/html'){({text,links,metadata}=scanHtml(original,url,{allowCrossOriginLinks,allowQuery}));}
- else if(mediaType==='application/json'){JSON.parse(original);}
+ else if(mediaType==='application/json'){try{parseUniqueJson(original,{maxChars:1048576,maxDepth:32});}catch{fail('EXTRACTION_JSON');}}
  if(!text.trim())fail('EMPTY');
  return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),metadata:Object.freeze(metadata),parser:mediaType==='text/html'?'bounded-html/v2':'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }

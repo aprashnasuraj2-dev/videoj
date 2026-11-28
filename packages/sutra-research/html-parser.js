@@ -3,7 +3,7 @@
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {secretLike} from './research-session.js';
 const blocks=new Set(['address','article','blockquote','br','caption','dd','div','dl','dt','h1','h2','h3','h4','h5','h6','hr','li','main','ol','p','pre','section','table','td','th','tr','ul']);
-const rawBlocks=new Set(['script','style','iframe','object','template','noscript','svg']);
+const rawBlocks=new Set(['script','style','iframe','object','template','noscript','svg','textarea','xmp','noembed','noframes','math']);
 const entities={nbsp:' ',amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"};
 function decode(s){
  return s.replace(/&(?:#(?:[0-9]{1,7}|x[0-9a-f]{1,6})|nbsp|amp|lt|gt|quot|apos);/gi,m=>{
@@ -28,7 +28,7 @@ function attributes(raw){
 }
 export function scanHtml(source,url,{allowCrossOriginLinks=false,allowQuery=false}={}){
  if(typeof source!=='string'||source.length>1048576)throw Error('HTML_SIZE');
- const lower=source.toLowerCase(),pieces=[],links=[],metadata=Object.create(null),base=new URL(url);let i=0,tags=0,title=false;
+ const lower=source.replace(/[A-Z]/g,c=>c.toLowerCase()),pieces=[],links=[],metadata=Object.create(null),base=new URL(url);let i=0,tags=0,title=false;
  while(i<source.length){
   const next=source.indexOf('<',i);
   if(next<0){const tail=decode(source.slice(i));pieces.push(tail);break;}
@@ -41,7 +41,11 @@ export function scanHtml(source,url,{allowCrossOriginLinks=false,allowQuery=fals
   if(rawBlocks.has(name)&&!closing){
    // Skip raw/untrusted subtrees. Exact closing tag delimiter prevents </scriptx> confusion.
    let at=i,found=-1;while((at=lower.indexOf('</'+name,at))>=0){const after=lower[at+name.length+2];if(after==='>'||/\s/.test(after??'')){found=at;break;}at+=name.length+2;}
-   if(found<0)throw Error('HTML_RAW_BLOCK');i=readTag(source,found).end;pieces.push(' ');continue;
+   if(found<0)throw Error('HTML_RAW_BLOCK');
+   // Nested non-raw containers are ambiguous in this intentionally narrow scanner.
+   // Refuse rather than let a nested close expose hidden text or links as evidence.
+   if(['template','svg','math','object','noscript'].includes(name)){const nested=new RegExp('<'+name+'(?:[\\s/>])','i');if(nested.test(source.slice(i,found)))throw Error('HTML_NESTED_RAW_BLOCK');}
+   i=readTag(source,found).end;pieces.push(' ');continue;
   }
   if(name==='title'){title=!closing;pieces.push('\n');}
   if(blocks.has(name))pieces.push('\n');

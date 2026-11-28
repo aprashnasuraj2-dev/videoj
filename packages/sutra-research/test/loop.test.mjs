@@ -31,3 +31,11 @@ test('cancellation rejects a late document',async()=>{
  const c=new AbortController(),a=grant({signal:c.signal});
  try{const r=await runAutonomousResearch({authorization:a,providers:{brave:{search:async()=>[{url:'https://primary.org/a'}]},tavily:{search:async()=>[]}},readDocument:async url=>{c.abort();const text='Battery costs fell.';return {url,text,textDigest:digest(text),rawDigest:digest(text),links:[]};}});assert.equal(r.documents.length,0);assert.equal(r.terminationReason,'cancelled_or_expired');}finally{a.close();}
 });
+
+test('structured extraction is bounded, rejects duplicate JSON keys and preserves exact source bytes',()=>{
+ const url='https://primary.org/report';
+ for(const raw of ['{"x":1,"x":2}','{"x":1,"\\u0078":2}','['.repeat(40)+'0'+']'.repeat(40)])assert.throws(()=>extractDocument(Buffer.from(raw),'application/json',url),/EXTRACTION_JSON/);
+ assert.throws(()=>extractDocument(Buffer.alloc(1048577),'text/plain',url),/EXTRACTION_SIZE/);
+ assert.throws(()=>extractDocument(Buffer.from('text'),'image/svg+xml',url),/EXTRACTION_MEDIA/);
+ const bytes=Buffer.from('{"cost":100,"scope":"fixture"}'),doc=extractDocument(bytes,'application/json',url);assert.equal(doc.text,bytes.toString());assert.equal(doc.rawDigest,digest(bytes));
+});
