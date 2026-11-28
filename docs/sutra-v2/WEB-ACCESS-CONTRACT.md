@@ -1,51 +1,48 @@
-# SUTRA bounded web access — shared consent contract (2026-11-28)
+# SUTRA — autonomous source-agnostic web access (2026-11-28)
 
-## Architecture
+## Engineering contract
 
-SUTRA has three independent entry points, **one local trusted web boundary**, and a deterministic, evidence-only result contract:
+**No per-URL human intervention for routine public-web research.** A trusted local SUTRA runtime can start a bounded investigation from a natural-language objective, and an agent, engine or user can invoke public search or exact URL retrieval automatically through the common host web broker. The configured runtime grants public-read capability for its limited session; the model can select queries and document candidates within that capability, but cannot extend its budget, read private networks, authenticate as a user, write to external sites, or grant itself a different privilege.
 
-| Caller | How it proposes work | Who grants contact | Result |
+The optional one-shot manual approval path remains for operators who **want** it; it is not the default autonomous research journey.
+
+### Entry points
+
+| Caller | Autonomous invocation | Model needed? | Egress and evidence rule |
 |---|---|---|---|
-| User | `Open the public web — no model required` in objective workspace; exact URL or query | User checkbox + one-shot host preview | Unverified extracted source or candidate search links |
-| Deterministic SUTRA engine | `gateway.web.preview(request,{actor:'engine'})` on trusted local host | Explicit operator-controlled `gateway.web.start(exactApproval)` | Same result schema and hashes |
-| LLM agent | Existing on-demand model research supervisor; or trusted host `gateway.web.preview(request,{actor:'agent'})` | Operator approves exact request, destination, scope, budget; model output alone is **never** approval | Same result schema; model claims remain untrusted |
+| User | **Investigate autonomously — no model required** button in objective workspace; host `POST /api/research/auto/start` with `{"objective":"..."}` | No | Multi-step deterministic source discovery, follow links, extract candidate passages, preserve failures, evidence remains unverified |
+| User, exact URL/search | **Run automatically — no repeated approvals** in public web panel; `POST /api/research/web/auto/start` with an exact bounded tool request | No | Direct public HTTPS source or federated/search-backend discovery |
+| Trusted SUTRA engine | `gateway.web.autoStart(request,{actor:'engine'})` or `gateway.startAutonomous({objective},{actor:'engine'})` | No | Same bounded transport and immutable report schema |
+| Trusted LLM agent | `gateway.web.autoStart(request,{actor:'agent'})`, or `gateway.startAutonomous({objective,models:[...]},{actor:'agent'})` with configured model profiles | Optional | Agent can request additional public sources during investigation within its preconfigured runtime scope; no manual approval between eligible operations |
 
-The browser-facing host **always** forces `actor:'user'`. It cannot set `agent`/`engine` by submitting a forged JSON role. Native browser port is loopback, behind an origin-checked, short-lived host token; no visitor-controlled public proxy or arbitrary API credentials.
+The loopback HTTP bridge binds an authenticated, same-origin session and **always fixes browser origin actor to `user`**; browser JSON cannot impersonate the engine or another agent. Internal calls only are allowed to assign `agent` and `engine` roles. No public, anonymous browser-to-network relay is exposed.
 
-Web tool: `packages/sutra-research/on-demand-web.js`. Bridge: `packages/sutra-research/local-workspace-gateway.js` and `apps/sutra-v2/research-workspace.mjs`; interface: `apps/sutra-v2/src/direct-web-panel.js`.
+### Broad source discovery, not a website whitelist
 
-## Exact web-tool request
+`createSearchProviders()` exposes the following adapters: **Brave**, **Tavily** (configured keys); **OpenAlex** (best-effort basic public API, optional key), **Crossref**, **Europe PMC**, **Semantic Scholar** (public/rate-limited, optional key), **arXiv**, and **Wikipedia**. The research-source router chooses up to five heterogeneous backends based on objective; the automatic direct search can federate across those backends and deduplicate links, preserving any failed provider status. Wikipedia is one optional low-priority collection for academic research, **never the sole default search universe**.
 
-```json
-{"operation":"fetch","resource":"https://public.example.org/document","backend":null,"render":false}
-```
+**Publisher coverage is intentionally unbounded.** Search indexes and DOI metadata can point at individual journal and research pages on Nature, Science/AAAS, Springer Nature, Elsevier/ScienceDirect, Wiley, Taylor & Francis, SAGE, IEEE, ACM, PLOS, SciELO, ResearchGate and any other public HTTPS publisher. A public URL is eligible for ordinary retrieval regardless of its brand, provided it passes the dynamic URL policy, public DNS/TLS pinning, robots policy and response limits. Inclusion is **not** a claim that every site is indexed or accessible. Special subscription-only services (for example SciFinder) require legitimately configured licensed integrations; no credential/paywall bypass exists.
 
-or search using a **configured** provider:
+OpenAlex and Crossref metadata identify publications; they do not confer article/full-text access. A ResearchGate record may be publicly visible while its full text is restricted. DOI redirects may lead to paywalled journals, in which case the failure is recorded and SUTRA can seek independently available sources. Never represent indexing metadata or abstract snippets as a full extracted journal article.
 
-```json
-{"operation":"search","resource":"public dataset battery storage 2026","backend":"brave","render":false}
-```
+### Autonomous routing and resource controls
 
-A preview is local and returns `requestPin`, `planPin`, `approvalId`, `expiresAt`, actor, exact public destination/query, budget and disclosure. An approved start must match **all three** identifiers and both explicit approval booleans. Starting consumes the preview. Changed query, actor, backend, URL, render capability, or an expired preview requires a new approval. No contact happens during preview.
+`selectResearchBackends(objective,available,{max:5})` favors Europe PMC for biomedical investigations; Semantic Scholar/arXiv/OpenAlex for technical studies; OpenAlex/Crossref for scholarly literature; configured general-web search for contemporary general queries. Other indexes can still be used after preferred ones; source domains themselves are not filtered by these preferences.
 
-`web.capabilities()`, `web.preview(request,{actor})`, `web.start(approval)`, `web.status(sessionId)`, `web.cancel(sessionId)` are reusable on a trusted host. User-facing local API paths under `/api/research/web/`: `capabilities` (GET), `preview` (POST), `start` (POST), `status?id=...` (GET) and `cancel` (POST). No browser service credentials are returned.
+Default model-free objective budget: **5 search reservations, 10 document reservations, 8 MiB of reserved transport/download bytes, 180 seconds, one link depth**. Each direct web operation is separately bounded (up to 5 search providers, 3 document reservations, 2 MiB and 90 seconds). Operation failure does not turn into positive evidence. Cancellations abort execution; actual external contact may remain uncertain where dispatch has occurred. The search-to-source admission step is explicit in the report, **not** an approval popup.
 
-## Extraction and fallback
+Provider-specific APIs retain their own rate limits and might return 429/403; report provider errors. No hidden scraping of logins, captcha evasion, private networks, cookies, secrets or third-party POST/PUT writes. Browser-based JavaScript rendering through Obscura stays optional and local; static pinned HTTPS extraction remains the low-resource default.
 
-- `fetch` always starts with the existing non-executing, pinned HTTPS/TLS/DNS peer-checked document transport and conservative `robots.txt` checking. Explicitly admitted redirects are independently robots-checked. URLs with credentials, private networks, IP literals, unsafe query fields, non-HTTPS, or forbidden port are rejected.
-- `search` contacts only the explicitly selected configured search provider; links and titles are **discovery only**. Each candidate URL passes the public URL policy; no destination is fetched implicitly. A separate `fetch` proposal and approval must precede actual reading.
-- Optional Obscura JavaScript rendering requires a trusted local binary and `render:true` in the **exact** approved request. Existing static results are kept on renderer failure or absent material gain. Unmetered subresource egress and lack of proven native isolation prohibit public deployment.
-- Documents retain requested/final URL, retrieval timestamp, original raw-body SHA-256, full extracted-text digest, returned-text digest, parser and any renderer provenance, and the source text. Bounded returned extraction is at most 100,000 UTF-16 code units (explicitly marked if truncated); reports at most 512 KiB.
-- Search results and document text are untrusted data. Exact quote/digest integrity does not establish truth, freshness, originality, independent corroboration, or authority to act.
+### Reusable code and tests
 
-## Bounded budgets and failure semantics
+- `packages/sutra-research/providers.js`: eight dedicated provider adapters, all with bounded responses
+- `packages/sutra-research/research-source-router.js`: deterministic objective-to-diverse-provider selection
+- `packages/sutra-research/on-demand-web.js`: `autoStart`, federated multi-index search, exact source results and provenance
+- `packages/sutra-research/local-workspace-gateway.js`: `startAutonomous` and model-optional shared research host
+- `apps/sutra-v2/research-workspace.mjs`: token-checked automatic local HTTP dispatch; no external proxy
+- `apps/sutra-v2/src/autonomous-research-panel.js`, `direct-web-panel.js`: user-facing autonomous and manual workflows
+- `test/discovery-providers.test.mjs`, `test/on-demand-web.test.mjs`: parser, source routing, publisher-domain coverage, failure and authorization regressions
 
-One web operation at a time per local web broker, up to 45 seconds, 2 search reservations, 3 document reservations, and 2 MiB of **reserved** response bytes. A pending legacy autonomous research run blocks the web broker; a pending web operation blocks launching a new local research run. No credential sharing, session persistence, automatic web continuation, public writes or browser-side network authority.
+### Verification gates — not release certified
 
-Cancellation aborts the host request. A transport failure after a dispatch attempt is marked as potentially unknown outcome, not quietly retried or counted as success. The report's recorded reserved bytes do **not** equal actual egress, especially with a browser renderer, redirects, transport headers and search provider overhead.
-
-## Verification and release blockers
-
-`npm test --prefix packages/sutra-research` is mandatory and includes `test/on-demand-web.test.mjs`: model-free fetch, engine and model proposals, strict approval, unsafe URLs and queries, duplicate/hostile search candidates, cancellation, busy sessions, provenance, and token/owner enforcement. Browser UI/Playwright smoke and actual-host egress are separate requirements.
-
-**Not production-ready:** Do not claim flawless or complete browser-native agent support. Required before public release: end-to-end live direct URL, JS SPA, redirect, robots denial and search cases; Obscura binary attestation, sandbox + firewall with subresource egress enforcement, shared global rate limits across workers, actual CPU/RSS/network-byte latency measurements, full browser control accessibility smoke, search-provider credentials/terms evaluation, source injection adversarial testing and current exact-revision CI.
+New unit tests and code parsing alone **do not** prove live retrieval, publisher coverage or resource savings. Still needed: full CI exact-head completion, live interoperability across scholarly/general backends with published timestamps, journal paywall/robots negative cases, actual arXiv/Europe PMC/OpenAlex/Crossref response fixtures, accurate memory/CPU/network metrics, external-run egress limits, Obscura sandbox and native-binary verification, and operator UI browser/accessibility tests. No Cloudflare/production deployment from this development branch.
