@@ -2,6 +2,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fork} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import pg from 'pg';
 import {createPostgresResearchStore} from '../storage/postgres-store.js';
 import {admitManifest,digest} from '../research-session.js';
@@ -43,6 +45,28 @@ test('real PostgreSQL migration, concurrency, fenced recovery, atomic events and
   assert.equal((await store.sweep()).find(x=>x.sessionId===n.sessionId).state,'reconciliation_required');assert.equal(await store.claimNext(),null);
   await clear();
   const q=await store.enqueue(a,approval),lease=await store.claimNext();assert.equal(lease.sessionId,q.sessionId);await store.cancel(a,q.sessionId);assert.equal(await store.renew(lease),null);
+  // Actual killed child, not a mocked SQL store or a simulated thrown exception.
+  for(const phase of ['before','after']){
+   await clear();const row=await store.enqueue(a,approval);
+   const child=fork(fileURLToPath(new URL('./postgres-crash-child.mjs',import.meta.url)),[phase],{stdio:['ignore','ignore','pipe','ipc']});
+   const exited=new Promise(resolve=>child.once('exit',(code,signal)=>resolve({code,signal})));
+   let timeout;
+   try{
+    const received=await new Promise((resolve,reject)=>{
+     timeout=setTimeout(()=>reject(Error('child did not reach dispatch boundary')),15000);
+     child.once('message',resolve);child.once('error',reject);child.once('exit',()=>reject(Error('worker exited before ready')));
+    });
+    assert.equal(received.sessionId,row.sessionId);assert.equal(received.phase,phase);
+    const persisted=(await pool.query('SELECT checkpoint_pending,state,generation,lease_token FROM sutra_research.sessions WHERE session_id=$1',[row.sessionId])).rows[0];
+    assert.equal(persisted.state,'running');assert.equal(persisted.checkpoint_pending,phase==='after');
+    child.kill('SIGKILL');assert.equal((await exited).signal,'SIGKILL');
+    assert.equal(await store.claimNext(),null,'killed worker must not be resumed');
+    await pool.query("UPDATE sutra_research.sessions SET lease_expires_at=clock_timestamp()-interval '1 second' WHERE session_id=$1",[row.sessionId]);
+    assert.equal((await store.sweep()).find(x=>x.sessionId===row.sessionId).state,'reconciliation_required');
+    assert.equal(await store.claimNext(),null,'expired running work cannot be reclaimed');
+    const current=await store.read(a,row.sessionId);assert.equal(current.state,'reconciliation_required');assert.equal(await store.report(a,row.sessionId),null);
+   }finally{clearTimeout(timeout);if(child.exitCode===null&&child.signalCode===null)child.kill('SIGKILL');await exited;}
+  }
   await clear();const job=await store.enqueue(a,approval);let calls=0;
   const result=await runNextResearchJob({store,allowManifest:async()=>true,configure:async auth=>({providers:{brave:{search:async()=>{calls++;return [{url:'https://example.org/report'}];}}},readDocument:async url=>{auth.reserve('document',{bytes:100});const text='Battery costs were USD 100 million in 2025.';return {url,text,textDigest:digest(text),rawDigest:digest(text),links:[],mediaType:'text/plain'};}})});
   assert.equal(result.state,'closed',JSON.stringify(result));assert.equal(result.sessionId,job.sessionId);assert.ok(calls>=1&&calls<=2);assert.ok(await store.report(a,job.sessionId));assert.equal(await store.claimNext(),null);
