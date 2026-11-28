@@ -73,6 +73,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
  }
  async function execute(session,proposal){
   let a;
+  const operationStartedAt=performance.now();
   try{
    a=authorizeResearch(proposal.raw,{approvedPlanPin:proposal.planPin,approvePublicContact:true,approveEstimatedCost:true,signal:session.controller.signal});
    a.assertActive();
@@ -94,7 +95,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
     report={schema:'sutra-web-access-result/v1',actor:proposal.actor,operation:'fetch',request:proposal.request,results:[],documents:[sanitizedDocument(doc,proposal.request.resource)],qualification:'Exact public source extraction, not empirical truth, source authenticity, or permission for external action.'};
    }
    a.assertActive();if(session.controller.signal.aborted||session.state!=='running')return;
-   report={...report,usage:a.usage(),retrievedAt:new Date(clock()).toISOString(),authority:'NONE'};
+   report={...report,usage:a.usage(),metrics:{durationMs:Math.max(0,Math.round(performance.now()-operationStartedAt)),reservedResponseBytes:a.usage().reservedBytes,actualNetworkBytes:null,cacheStatus:'not_used',browserSubresourceBytesMeasured:false},retrievedAt:new Date(clock()).toISOString(),authority:'NONE'};
    const bytes=JSON.stringify(report);if(Buffer.byteLength(bytes)>524288)fail('WEB_REPORT_SIZE');
    session.report=report;session.reportPin=digest(bytes);session.state='closed';
   }catch(e){
