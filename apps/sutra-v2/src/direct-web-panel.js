@@ -14,19 +14,20 @@ const reason=e=>typeof e?.message==='string'&&/^[A-Z_]{1,60}$/.test(e.message)?e
 export function createDirectWebPanel(root,{saveFile,stageSource}={}){
  let token=null,cap=null,preview=null,session=null,report=null,timer=null,epoch=0,busy=false,running=false,closed=false;
  const box=E('details',undefined,'orb-event');box.id='orb-direct-web';
- box.append(E('summary','Open the public web — no model required'));
- const intro=E('p','Fetch an exact public HTTPS source or search for candidate links. This uses the local trusted host, not a browser proxy. Every external contact requires approval.','orb-muted');
+ box.append(E('summary','Automatic public web tools — no model required'));
+ const intro=E('p','Fetch an exact public HTTPS source or search for candidate links. This uses the local trusted host, not a browser proxy. Within the configured public-web capability, Sutra dispatches automatically. Manual exact approval remains available as an advanced option.','orb-muted');
  const mode=E('select');mode.id='orb-direct-web-mode';
  for(const [value,label] of [['fetch','Read a public URL'],['search','Search the web']]){const option=E('option',label);option.value=value;mode.append(option);}
  const resource=E('input');resource.id='orb-direct-web-resource';resource.type='text';resource.maxLength=1200;resource.placeholder='https://example.org/public-report';
  const backend=E('select');backend.id='orb-direct-web-backend';
  const render=E('input');render.type='checkbox';render.id='orb-direct-web-render';
  const renderField=field('Try JavaScript rendering (local experimental only)',render);
- const prepare=button('orb-direct-web-preview','Review exact web request'),start=button('orb-direct-web-start','Approve and run'),cancel=button('orb-direct-web-cancel','Cancel'),download=button('orb-direct-web-export','Export source or discovery JSON');
+ const auto=button('orb-direct-web-auto','Run automatically — no repeated approvals'),prepare=button('orb-direct-web-preview','Review exact web request'),start=button('orb-direct-web-start','Approve and run'),cancel=button('orb-direct-web-cancel','Cancel'),download=button('orb-direct-web-export','Export source or discovery JSON');
+ auto.classList.add('orb-primary');
  start.classList.add('orb-primary');
  const approve=E('input');approve.type='checkbox';approve.id='orb-direct-web-approve';
  const approval=field('I approve contacting the displayed public destination, scope and resource budget.',approve);
- const controls=E('div',undefined,'orb-controls');controls.append(prepare,start,cancel,download);
+ const controls=E('div',undefined,'orb-controls');controls.append(auto,prepare,start,cancel,download);
  const plan=E('div',undefined,'orb-event');plan.id='orb-direct-web-plan';plan.hidden=true;
  const status=E('p','No external contact has been requested.','orb-muted');status.id='orb-direct-web-status';status.setAttribute('role','status');
  const output=E('div',undefined,'orb-list');output.id='orb-direct-web-result';
@@ -34,13 +35,13 @@ export function createDirectWebPanel(root,{saveFile,stageSource}={}){
  root.append(box);
  function sync(){
   const fetchMode=mode.value==='fetch';backend.parentElement.hidden=fetchMode;renderField.hidden=!fetchMode||cap?.jsRendering!=='local_experimental';
-  prepare.disabled=busy||running||!resource.value.trim();start.disabled=busy||running||!preview||!approve.checked;cancel.disabled=!running;
+  prepare.disabled=busy||running||!resource.value.trim();auto.disabled=prepare.disabled;start.disabled=busy||running||!preview||!approve.checked;cancel.disabled=!running;
   download.disabled=!report;mode.disabled=busy||running;resource.disabled=busy||running;backend.disabled=busy||running;render.disabled=busy||running;approve.disabled=busy||running||!preview;
  }
  function reset(){
   if(running||busy)return;
   epoch++;preview=null;session=null;report=null;plan.hidden=true;plan.replaceChildren();output.replaceChildren();approve.checked=false;
-  status.textContent='Review an exact public request before contacting a site.';sync();
+  status.textContent='SUTRA can dispatch an eligible public read or search automatically.';sync();
  }
  async function call(path,{data,publicCall=false}={}){
   const response=await fetch('/api/research/web/'+path,{method:data?'POST':'GET',cache:'no-store',credentials:'same-origin',
@@ -107,6 +108,26 @@ export function createDirectWebPanel(root,{saveFile,stageSource}={}){
  }
  mode.onchange=()=>{resource.placeholder=mode.value==='search'?'Search terms for public sources':'https://example.org/public-report';reset();};
  resource.oninput=reset;backend.onchange=reset;render.onchange=reset;approve.onchange=sync;
+ auto.onclick=async()=>{
+  if(auto.disabled)return;
+  reset();const ticket=epoch;busy=true;sync();
+  try{
+   cap=await call('capabilities',{publicCall:true});
+   if(ticket!==epoch||cap.schema!=='sutra-web-access-capabilities/v1'||!/^[0-9a-f]{64}$/.test(cap.sessionToken))throw Error('HOST_UNAVAILABLE');
+   token=cap.sessionToken;
+   const selected=backend.value;
+   backend.replaceChildren();
+   for(const id of cap.searchBackends){const option=E('option',id);option.value=id;backend.append(option);}
+   if(selected&&cap.searchBackends.includes(selected))backend.value=selected;
+   // Prefer configured general-web search where available; Wikipedia is a limited free fallback.
+   const type=mode.value,chosen=type==='search'?(backend.value||cap.searchBackends[0]):null;
+   if(type==='search'&&!chosen)throw Error('SEARCH_UNAVAILABLE');
+   const run=await call('auto/start',{data:{operation:type,resource:resource.value.trim(),backend:chosen,render:type==='fetch'&&cap.jsRendering==='local_experimental'&&render.checked}});
+   if(ticket!==epoch)return;
+   session=run;running=true;status.textContent='Trusted Sutra runtime dispatched public web request automatically.';void poll(ticket);
+  }catch(e){if(ticket===epoch)status.textContent='Automatic web operation refused: '+reason(e)+'. No completed result claimed.';}
+  finally{if(ticket===epoch){busy=false;sync();}}
+ };
  prepare.onclick=async()=>{
   if(prepare.disabled)return;
   reset();const ticket=epoch;busy=true;sync();
