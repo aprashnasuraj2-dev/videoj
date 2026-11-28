@@ -6,6 +6,7 @@ import {createSearchProviders} from './providers.js';
 import {createDocumentReader} from './document-reader.js';
 import {createObscuraRenderer,createObscuraEnhancedReader} from './obscura-adapter.js';
 import {runAutonomousResearch} from './research-supervisor.js';
+import {createOnDemandWebAccess} from './on-demand-web.js';
 const fail=code=>{throw Object.assign(Error('Local research gateway refused: '+code),{code});};
 const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const keyPresent=x=>typeof x==='string'&&/^[\x21-\x7e]{8,512}$/.test(x);
@@ -18,10 +19,11 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  const vendors=Object.keys(modelKeys),searchBackends=Object.keys(searchKeys),mode=configure?'injected_fixture':'local_host_transport';
   const obscuraRenderer=enableObscura===true?createObscuraRenderer({binaryPath:obscuraBinaryPath}):null;
  let previewed=null,current=null,closed=false;
+ const web=createOnDemandWebAccess({searchCredentials:searchKeys,renderer:obscuraRenderer,clock,isBusy:()=>active(current)});
  const check=()=>{if(closed)fail('GATEWAY_CLOSED');};
- const caps=()=>({schema:'sutra-local-research-capabilities/v1',mode,configuredModelVendors:[...vendors],searchBackends:[...searchBackends],directPublicUrls:true,jsRendering:obscuraRenderer?'operator_enabled_experimental':'unavailable',maxSelectedModels:3,authority:'NONE'});
+ const caps=()=>({schema:'sutra-local-research-capabilities/v1',mode,configuredModelVendors:[...vendors],searchBackends:[...searchBackends],directPublicUrls:true,jsRendering:obscuraRenderer?'operator_enabled_experimental':'unavailable',maxSelectedModels:3,webTools:web.capabilities(),authority:'NONE'});
  function preview(input){
-  check();if(active(current))fail('RUN_ACTIVE');
+  check();if(active(current)||web.isBusy())fail('RUN_ACTIVE');
   if(!exact(input,['objective','models',...(Object.hasOwn(input??{},'reviewEnabled')?['reviewEnabled']:[]),...(Object.hasOwn(input??{},'browserScheduled')?['browserScheduled']:[])])||(Object.hasOwn(input,'reviewEnabled')&&typeof input.reviewEnabled!=='boolean')||(Object.hasOwn(input,'browserScheduled')&&typeof input.browserScheduled!=='boolean')||typeof input.objective!=='string'||!Array.isArray(input.models)||input.models.length<1||input.models.length>3||input.models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model)))fail('MODEL_SELECTION');
   if(secretLike(JSON.stringify(input))||[...Object.values(modelKeys),...Object.values(searchKeys)].some(key=>JSON.stringify(input).includes(key)))fail('SENSITIVE_INPUT');
   const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true,...(obscuraRenderer?{allowJsRendering:true}:{})},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,...(input.reviewEnabled===false?{reviewEnabled:false}:{}),models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
@@ -44,7 +46,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   finally{host?.modelBroker?.close();try{await host?.close?.();}catch{}a?.close();}
  }
  function start(input){
-  check();if(active(current))fail('RUN_ACTIVE');
+  check();if(active(current)||web.isBusy())fail('RUN_ACTIVE');
   if(!exact(input,['approvedPlanPin','approvalId','approvePublicContact','approveEstimatedCost','approveModelDisclosure'])||input.approvePublicContact!==true||input.approveEstimatedCost!==true||input.approveModelDisclosure!==true||!previewed||input.approvedPlanPin!==previewed.pin||input.approvalId!==previewed.approvalId||clock()>=previewed.expiresAt)fail('APPROVAL');
   const {raw,browserScheduled}=previewed;previewed=null;
   const s={browserScheduled,permit:null,permitSequence:0,sessionId:'research_'+randomUUID(),planPin:input.approvedPlanPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
@@ -74,5 +76,5 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   if(current.state==='running'){current.state='cancelling';current.controller.abort();}
   return {sessionId:id,state:current.state};
  }
- return Object.freeze({capabilities:caps,preview,start,status,advance,cancel,close(){closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
+ return Object.freeze({capabilities:caps,preview,start,status,advance,cancel,web,close(){web.close();closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
 }
