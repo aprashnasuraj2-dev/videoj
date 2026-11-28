@@ -112,3 +112,24 @@ test('red-team exact browser permit, origin, duplicate JSON, oversized payload a
   assert.equal(row.state,'closed');assert.equal(calls.length,1);assert.equal(row.pendingOperation,null);assert.doesNotMatch(JSON.stringify(row),/fixture-groq-key/);
  }finally{await app.close();await rm(dir,{recursive:true,force:true});}
 });
+
+test('model-free engine objective autonomously plans multiple scholarly providers and finishes without per-source approval',async()=>{
+ let observed=[],modelCalled=false;
+ const g=createLocalResearchGateway({
+  configure:a=>{
+   observed=a.plan.providers.map(p=>p.id);
+   return {providers:Object.fromEntries(observed.map(id=>[id,{async search(){return [];}}])),readDocument:async()=>{throw Error('UNEXPECTED_SOURCE');},
+    ...(a.plan.modelPolicy?{modelBroker:{async consult(){modelCalled=true;throw Error('UNEXPECTED_MODEL');},close(){}}}:{})};
+  }
+ });
+ try{
+  const start=g.startAutonomous({objective:'clinical trials systematic review'}, {actor:'engine'});
+  assert.equal(start.autonomous,true);assert.equal(start.modelCallsEnabled,false);assert.equal(start.actor,'engine');
+  assert.ok(start.discoveryProviders.includes('europepmc'));assert.ok(start.discoveryProviders.includes('crossref'));
+  let r;for(let i=0;i<250;i++){r=g.status(start.sessionId);if(!['running','cancelling'].includes(r.state))break;await delay(10);}
+  assert.equal(r.state,'closed',r.reason??'not finished');
+  assert.equal(modelCalled,false);
+  assert.ok(observed.length>=4);assert.ok(r.report.usage.searches>=2);
+  assert.equal(r.autonomous,true);assert.equal(r.actor,'engine');
+ }finally{g.close();}
+});
