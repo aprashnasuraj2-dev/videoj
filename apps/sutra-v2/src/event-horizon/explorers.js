@@ -1,4 +1,4 @@
-import {quantityUnits,convertQuantity} from './local-computation.js';
+import {quantityUnits,convertQuantity,conversionGraph} from './local-computation.js';
 import {knowledgeProjection,knowledgeRelations,declaredLineageGroups} from './knowledge-model.js';
 const E=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const human=s=>String(s??'Unknown').replaceAll('_',' ').toLowerCase();
@@ -40,7 +40,7 @@ export function mountComputationView(root,{onStart,onEnd}){
  function invalidate(){if(busy)return;current=null;output();status.textContent='Inputs changed. Compute a new result.';sync();}
  kind.addEventListener('change',()=>{options(from,quantityUnits[kind.value]);options(to,quantityUnits[kind.value]);invalidate();});
  for(const c of [from,to])c.addEventListener('change',invalidate);value.addEventListener('input',invalidate);
- sync();return section;
+ sync();return Object.freeze({section,stage(input){if(busy)return false;try{conversionGraph(input);}catch{return false;}kind.value=input.kind;options(from,quantityUnits[input.kind]);options(to,quantityUnits[input.kind]);from.value=input.from;to.value=input.to;value.value=input.value;invalidate();status.textContent='Exact conversion staged. Compute explicitly when ready.';return true;}});
 }
 export function mountKnowledgeView(root,{openTool}){
  const section=E('section',undefined,'eh-knowledge');section.id='eh-knowledge';

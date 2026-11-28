@@ -324,3 +324,27 @@ test('notebook export/import preserves annotations, not evidence authority',asyn
  s.remove(n.id);
  assert.equal(s.snapshot().notes.length,1);
 });
+
+import {analyzeObjective,parseExactConversion,confirmRequirements} from '../src/event-horizon/objective-intake.js';
+test('whole objective conversion routes only supported typed candidates',()=>{
+ const p=analyzeObjective('Convert 2.5 kN to N');
+ assert.equal(p.status,'closed_conversion');
+ assert.deepEqual(p.conversion.candidates,[{kind:'force',value:'5/2',from:'kN',to:'N'}]);
+ assert.equal(analyzeObjective('1000 kPa to MPa').conversion.candidates[0].kind,'pressure');
+ assert.equal(analyzeObjective('1 MPa to Pa').status,'clarify_quantity');
+ assert.equal(analyzeObjective('1 MPa to Pa as stress').status,'closed_conversion');
+ assert.equal(analyzeObjective('1 m to kg').status,'unsupported_conversion');
+ assert.equal(parseExactConversion('1 N*m to J as torque').status,'refused');
+ assert.equal(parseExactConversion('1000 mm to m and find sources'),null);
+ assert.equal(parseExactConversion('Do not convert 1000 mm to m'),null);
+});
+test('broad objective suggestions never silently grant authority',()=>{
+ const a=analyzeObjective('Find a public source and challenge the interpretation.');
+ assert.equal(a.status,'review_required');
+ assert.ok(a.hints.some(h=>h.id==='public_sources'));
+ assert.ok(a.hints.some(h=>h.id==='challenge'));
+ assert.equal(confirmRequirements(a,[]).requirements.length,0);
+ assert.equal(confirmRequirements(a,['challenge']).authority,'NONE');
+ assert.throws(()=>confirmRequirements(a,['constructor']));
+ assert.equal(analyzeObjective('hello').status,'unclassified');
+});

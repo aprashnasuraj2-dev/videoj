@@ -1,11 +1,12 @@
 import {capabilityCatalog,composeAlternatives} from './capabilities.js';
+import {mountObjectiveIntake} from './objective-view.js';
 const E=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(text,fn)=>{const b=E('button',text);b.type='button';b.addEventListener('click',fn);return b;};
 function checkbox(label,description,checked=false){
  const input=E('input');input.type='checkbox';input.checked=checked;
  const box=E('label',undefined,'eh-check');const text=E('span');text.append(E('strong',label));if(description)text.append(E('small',description));box.append(input,text);return {box,input};
 }
-export function mountCompositionView(root,{openWorkflow}){
+export function mountCompositionView(root,{openWorkflow,readObjective,onConversion}){
  const section=E('section',undefined,'eh-compose');section.id='eh-compose';
  section.append(E('p','CAPABILITY COMPOSITION / ADVISORY','eh-kicker'),E('h2','What work does the objective require?'),E('p','Select explicit capabilities rather than a fixed team. Compare minimal existing workflow combinations; each actual execution still requires its own validated plan.','eh-copy'));
  const selectors=E('div',undefined,'eh-capability-grid'),requirements=new Map();
@@ -40,5 +41,6 @@ export function mountCompositionView(root,{openWorkflow}){
   results.append(E('p',result.qualification,'eh-copy'));
  }
  for(const input of [...requirements.values(),model.input,host.input,peer.input])input.addEventListener('change',render);
+ mountObjectiveIntake(section,{readObjective,onConversion,onRequirements(ids){for(const [id,input] of requirements)input.checked=ids.includes(id);render();}});
  render();return section;
 }

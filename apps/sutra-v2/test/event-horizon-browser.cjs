@@ -30,6 +30,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   await page.locator('.eh-tabs').getByRole('button',{name:'Compose',exact:true}).click();await page.locator('#eh-compose').getByRole('button',{name:'Exact calculation',exact:true}).click();assert.match(await page.locator('#eh-compose-status').innerText(),/1 candidate composition/);await page.locator('#eh-compose').getByRole('button',{name:'Open Direct quantity kernel',exact:true}).click();assert.equal(await page.locator('#eh-compute-value').innerText(),'1 m');
   await page.locator('.eh-tabs').getByRole('button',{name:'Agent Atlas',exact:true}).click();assert.match(await page.locator('#eh-atlas-status').innerText(),/No publisher has been contacted/);await page.locator('#eh-atlas-read').click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('declared networks found'));await page.locator('#eh-atlas').getByRole('button',{name:'Inspect investigation',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('Network definition inspected'));assert.equal(await page.locator('#eh-atlas .eh-definition').count(),2);assert.match(await page.locator('#eh-atlas .eh-atlas-passport').innerText(),/None instantiated by inspection/);await page.screenshot({path:path.join(out,'event-horizon-atlas-'+width+'.png'),fullPage:false});
   if(width===1440){
+   await page.locator('.eh-tabs').getByRole('button',{name:'Compose',exact:true}).click();
+   await page.locator('#eh-objective-intake').getByLabel('Objective to interpret').fill('Convert 2.5 kN to N');
+   await page.locator('#eh-objective-intake').getByRole('button',{name:'Analyze objective locally',exact:true}).click();
+   assert.match(await page.locator('#eh-intake-status').innerText(),/Closed conversion candidate/);
+   await page.locator('#eh-objective-intake').getByRole('button',{name:'Stage force conversion',exact:true}).click();
+   await page.locator('#eh-compute-run').click();
+   await page.waitForFunction(()=>document.querySelector('#eh-compute-value')?.textContent==='2500 N');
    await page.locator('.eh-tabs').getByRole('button',{name:'Proof workbench',exact:true}).click();
    await page.locator('#eh-proof-evaluate').click();
    await page.waitForFunction(()=>document.querySelector('#eh-proof-status').textContent.includes('4 receipts'));

@@ -400,3 +400,33 @@
   grid-template-columns:repeat(2,minmax(0,1fr));
  }
 }
+
+#eh-workspace .eh-objective-intake{
+ border:1px solid var(--eh-line);
+ border-radius:8px;
+ padding:12px;
+ margin:12px 0;
+ background:var(--eh-panel);
+}
+#eh-workspace .eh-objective-intake textarea{
+ width:100%;
+ resize:vertical;
+ background:#101d25;
+ border:1px solid var(--eh-line);
+ border-radius:6px;
+ color:var(--eh-ink);
+ padding:8px;
+ font:inherit;
+}
+#eh-workspace .eh-intake-conversions{
+ display:grid;
+ gap:8px;
+}
+#eh-workspace .eh-intake-candidate{
+ display:grid;
+ gap:5px;
+ border:1px solid var(--eh-line);
+ border-radius:7px;
+ background:#101d25;
+ padding:10px;
+}
