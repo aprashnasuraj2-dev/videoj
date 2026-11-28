@@ -28,14 +28,15 @@ export function admitModelQueries(value,objective,history){
  }
  return out;
 }
-// Model-directed web access is a proposal, never direct network authority.
-export function admitWebDecision(value,objective,history,{allowPublicUrls=false,webAttempted=history.length>0}={}){
+// The model selects public web actions autonomously inside a preconfigured runtime grant;
+// host validation enforces URL admission and budget without per-URL human prompts.
+export function admitWebDecision(value,objective,history,{allowPublicUrls=false,allowQuery=false,webAttempted=history.length>0}={}){
  if(!value||!['search','open_public_urls','answer_without_web','finish_research'].includes(value.webAction))fail('WEB_DECISION');
  if(value.webAction==='open_public_urls'){
   if(!allowPublicUrls||!exact(value,['webAction','urls'])||!Array.isArray(value.urls)||value.urls.length<1||value.urls.length>3)fail('WEB_URL_SCOPE');
   const urls=[];for(const raw of value.urls){
    if(typeof raw!=='string'||raw.length>2048||secretLike(raw))fail('WEB_URL');
-   let url;try{url=admitDocumentURL(raw,{allowQuery:false});}catch{fail('WEB_URL');}
+   let url;try{url=admitDocumentURL(raw,{allowQuery});}catch{fail('WEB_URL');}
    if(!urls.includes(url))urls.push(url);
   }
   return {action:'open_public_urls',urls};
