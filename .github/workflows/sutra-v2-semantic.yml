@@ -89,9 +89,11 @@ jobs:
           SUTRA_SEMANTIC_CORPUS_REPORT: sutra-semantic-corpus.json
           SUTRA_SEMANTIC_CONTRAST_REPORT: sutra-semantic-contrast.json
           SUTRA_TEMPORAL_CORPUS_REPORT: sutra-temporal-corpus.json
+          SUTRA_SCENARIO_SPLIT_REPORT: sutra-scenario-assignments.json
         run: |
           node --test packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs packages/sutra-knowledge/test/semantic-split-v2.test.mjs packages/sutra-knowledge/test/semantic-temporal-selector-v3.test.mjs
           node packages/sutra-knowledge/evaluation/semantic-scenario-v2.mjs > sutra-scenario-split.json
+          node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

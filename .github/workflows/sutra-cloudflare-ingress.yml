@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs deploy/sutra-pages/candidate-fingerprint.test.mjs
+      - name: Validate strict quota wire boundary
+        run: node --test services/sutra-api/test/quota-wire.test.mjs services/sutra-api/test/inference.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
         run: node services/sutra-api/test-local/quota-runtime.mjs
       - name: Build independent static candidates with synthetic credential-leak canaries

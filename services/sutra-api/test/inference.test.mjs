@@ -612,3 +612,12 @@ test('client cannot override provider or reuse stale route pin after provider sw
  assert.equal((await handleInference(request({...payload(),provider:'gemini'}),switched,{fetchImpl})).status,400);
  assert.equal(contacts,0);
 });
+
+test('quota rejects ambiguous wire messages before any storage transaction',async()=>{
+ let transactions=0;const store={transaction(){transactions++;throw Error('must not reach storage');}};
+ const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'3',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2',SUTRA_MAX_DAILY_SOURCE_READS:'3',SUTRA_MAX_CLIENT_SOURCE_READS:'2'});
+ for(const route of ['/reserve','/release','/source-read'])for(const body of ['{"x":1,"x":2}','{"x":1,"\\u0078":2}','{"x":"'+('é'.repeat(256))+'"}']){
+  assert.equal((await q.fetch(new Request('https://quota.internal'+route,{method:'POST',body}))).status,400);
+ }
+ assert.equal(transactions,0);
+});
