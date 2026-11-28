@@ -22,7 +22,7 @@ function fixture({responseFailure,reviewEnabled=true,failSource=false,hold=false
  }})})})});
  const p=gateway.preview({objective:'Compare battery costs',models:[{vendor:'groq',model}],reviewEnabled,browserScheduled:true});const s=gateway.start({approvedPlanPin:p.planPin,approvalId:p.approvalId,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true});
  const status=()=>gateway.status(s.sessionId);const permit=async()=>{for(let i=0;i<200;i++){const v=status();if(v.pendingOperation)return v.pendingOperation;if(v.state!=='running')return null;await wait(5);}throw Error('permit timeout');};
- const advance=o=>gateway.advance({sessionId:s.sessionId,planPin:s.planPin,operationId:o.id,sequence:o.sequence});
+ const advance=o=>gateway.advance({sessionId:s.sessionId,planPin:s.planPin,operationId:o.id,sequence:o.sequence,...(['select_query','select_document'].includes(o.kind)?{selectionId:o.choices[0].id}:{})});
  const drain=async()=>{for(let i=0;i<20;i++){const o=await permit();if(!o)return status();advance(o);}throw Error('wave limit');};
  return {gateway,p,s,status,permit,advance,drain,calls,reads,release:()=>release?.()};
 }

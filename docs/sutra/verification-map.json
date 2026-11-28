@@ -368,7 +368,10 @@
         ".github/workflows/sutra-v2-operator-browser.yml",
         ".github/workflows/sutra-v2-finqa-benchmark.yml",
         "docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md",
-        "docs/sutra-v2/release-ref-snapshot-20261128.json"
+        "docs/sutra-v2/release-ref-snapshot-20261128.json",
+        "docs/sutra-v2/deployment-baseline-recheck-20261128.json",
+        "docs/sutra-v2/evaluation/critical-semantic-execution-20261128.json",
+        "docs/sutra-v2/evaluation/dependency-inventory-20261128.json"
       ],
       "requiredWorkflows": [
         "Validate SUTRA knowledge kernel"
