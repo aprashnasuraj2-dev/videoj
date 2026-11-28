@@ -31,3 +31,9 @@ test('refuse split Unicode, stale source digest, unknown source, duplicate spans
  assert.throws(()=>verifyEvidence([{...pdf,pageMap:[...pdf.pageMap,...pdf.pageMap]}],[pp]),/PASSAGE_INTEGRITY/);
  assert.throws(()=>verifyEvidence([pdf],[{...pp,locator:{...pp.locator,page:2}}]),/PASSAGE_INTEGRITY/);
 });
+
+test('short exact mirror cannot create extra independent support even across different hosts',()=>{
+ const documents=[doc('a','Battery cost USD 100 million.'),doc('b','Battery cost USD 100 million.'),doc('c','Battery cost USD 125 million.')];
+ const lineage=compareSourceLineage(documents);assert.equal(lineage.exactTextGroups.length,1);assert.deepEqual(lineage.exactTextGroups[0].sourceIds,['a','b']);assert.equal(lineage.independenceStatus,'NOT_ESTABLISHED');
+ const graph=createEvidenceGraph(documents,[],[],[],lineage);assert.deepEqual(graph.edges,[{from:'b',to:'a',relationship:'IDENTICAL_EXTRACTED_TEXT'}]);assert.equal(graph.authority,'NONE');
+});

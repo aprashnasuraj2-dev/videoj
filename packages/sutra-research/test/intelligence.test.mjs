@@ -27,7 +27,7 @@ test('numeric and semantic conflict assessments require exact evidence on both s
  const reviews=admitReviews({reviews:[{claimId:s.claims[0].id,verdict:'supported',reason:'The first source gives this figure.',citations:[{passageId:a.passageId,quote:'USD 100 million'}]}]},s,packet);
  const omitted=admitConflictReviews({},candidates,packet);assert.equal(omitted[0].status,'unresolved');assert.equal(assembleIntelligence(s,reviews,[],packet,omitted).claims[0].publicationStatus,'withheld_from_findings');
  const entry={candidateId:candidates[0].id,relation:'different_scope',reason:'The model suggests different populations.',citations:[{passageId:a.passageId,quote:'USD 100 million'},{passageId:b.passageId,quote:'USD 125 million'}]};
- const explained=admitConflictReviews({conflicts:[entry]},candidates,packet);assert.equal(explained[0].status,'model_explanation_unverified');assert.equal(explained[0].authority,'NONE');
+ const explained=admitConflictReviews({conflicts:[entry]},candidates,packet);assert.equal(explained[0].status,'model_explanation_unverified');assert.equal(explained[0].authority,'NONE');assert.equal(assembleIntelligence(s,reviews,[],packet,explained).claims[0].publicationStatus,'withheld_from_findings');
  assert.throws(()=>admitConflictReviews({conflicts:[{...entry,citations:[entry.citations[0]]}]},candidates,packet),/CITATION_COUNT/);
  assert.throws(()=>admitConflictReviews({conflicts:[{...entry,candidateId:'invented'}]},candidates,packet),/CONFLICT_CANDIDATE/);
 });
@@ -50,4 +50,16 @@ test('overlapping distinct passages cannot count the same absolute citation twic
  assert.equal(packet.excerpts.length,2);
  const citations=packet.excerpts.map(e=>({passageId:e.passageId,quote:'USD 100 million'}));
  assert.throws(()=>admitSynthesis({claims:[{statement:'One absolute span.',kind:'reported',citations}],gaps:[]},packet),/CITATION_DUPLICATE/);
+});
+
+test('unverified scope explanation cannot clear inference supported by exact copied source',()=>{
+ const sources=[...docs,{...docs[0],id:'s3',url:'https://mirror.org/copy'}],passages=[...ps,{...ps[0],sourceId:'s3'}],packet=makeEvidencePacket(sources,passages);
+ const candidates=conflictCandidates(packet),a=packet.excerpts.find(e=>e.sourceId==='s1'),b=packet.excerpts.find(e=>e.sourceId==='s2'),copy=packet.excerpts.find(e=>e.sourceId==='s3');
+ const s=admitSynthesis({claims:[{statement:'Cost is established as 100 million.',kind:'inference',citations:[{passageId:copy.passageId,quote:'USD 100 million'}]}],gaps:[]},packet);
+ const review=admitReviews({reviews:[{claimId:s.claims[0].id,verdict:'supported',reason:'The copy says so.',citations:[{passageId:copy.passageId,quote:'USD 100 million'}]}]},s,packet);
+ const pair=candidates.find(c=>[c.leftPassageId,c.rightPassageId].includes(a.passageId)&&[c.leftPassageId,c.rightPassageId].includes(b.passageId));assert.ok(pair);
+ for(const relation of ['different_scope','different_period','different_unit','different_definition','insufficient','conflicting']){
+  const conflict=admitConflictReviews({conflicts:[{candidateId:pair.id,relation,reason:'Model opinion only.',citations:[{passageId:a.passageId,quote:'USD 100 million'},{passageId:b.passageId,quote:'USD 125 million'}]}]},[pair],packet);
+  const result=assembleIntelligence(s,review,[],packet,conflict).claims[0];assert.equal(result.publicationStatus,'withheld_from_findings');assert.equal(result.empiricalStatus,'NOT_ESTABLISHED');assert.equal(result.independenceStatus,'NOT_ESTABLISHED');
+ }
 });

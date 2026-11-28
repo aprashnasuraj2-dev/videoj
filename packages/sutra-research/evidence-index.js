@@ -70,7 +70,8 @@ function shingles(text){
  return set;
 }
 export function compareSourceLineage(documents){
- const sameHost=new Map(),nearDuplicates=[],sh=documents.map(d=>shingles(d.text));
+ const sameHost=new Map(),sameDigest=new Map(),nearDuplicates=[],sh=documents.map(d=>shingles(d.text));
+ for(const d of documents){if(!sameDigest.has(d.textDigest))sameDigest.set(d.textDigest,[]);sameDigest.get(d.textDigest).push(d.id);}
  for(const d of documents){const host=new URL(d.finalUrl??d.url).hostname;if(!sameHost.has(host))sameHost.set(host,[]);sameHost.get(host).push(d.id);}
  for(let i=0;i<documents.length;i++)for(let j=i+1;j<documents.length&&nearDuplicates.length<100;j++){
   const a=sh[i],b=sh[j];if(a.size<20||b.size<20)continue;
@@ -78,7 +79,7 @@ export function compareSourceLineage(documents){
   const similarity=common/(a.size+b.size-common);
   if(similarity>=0.9)nearDuplicates.push({left:documents[i].id,right:documents[j].id,similarity:Number(similarity.toFixed(4)),status:'potential_common_origin'});
  }
- return {sameHostGroups:[...sameHost].filter(([,ids])=>ids.length>1).map(([host,sourceIds])=>({host,sourceIds})),nearDuplicates,independenceStatus:'NOT_ESTABLISHED',method:'bounded lexical trigram similarity; not a citation-lineage proof'};
+ return {exactTextGroups:[...sameDigest].filter(([,ids])=>ids.length>1).map(([textDigest,sourceIds])=>({textDigest,sourceIds,status:'identical_extracted_text_not_independent'})),sameHostGroups:[...sameHost].filter(([,ids])=>ids.length>1).map(([host,sourceIds])=>({host,sourceIds})),nearDuplicates,independenceStatus:'NOT_ESTABLISHED',method:'bounded lexical trigram similarity; not a citation-lineage proof'};
 }
 export function createEvidenceGraph(documents,refs,observations,comparisons,lineage){
  const nodes=[],edges=[],byUrl=new Map(documents.flatMap(d=>[[d.url,d.id],...(d.finalUrl?[[d.finalUrl,d.id]]:[])]));
@@ -87,6 +88,7 @@ export function createEvidenceGraph(documents,refs,observations,comparisons,line
  for(const o of observations){nodes.push({id:o.id,kind:'numeric_observation'});edges.push({from:o.id,to:o.passageId,relationship:'DERIVED_FROM'});}
  for(const d of documents)for(const u of d.links??[]){const id=byUrl.get(u);if(id&&id!==d.id&&edges.length<1000)edges.push({from:d.id,to:id,relationship:'LINKS_TO'});}
  for(const c of comparisons)edges.push({from:c.left,to:c.right,relationship:'POTENTIAL_CONTRADICTION'});
+ for(const group of lineage.exactTextGroups??[])for(const sourceId of group.sourceIds.slice(1))edges.push({from:sourceId,to:group.sourceIds[0],relationship:'IDENTICAL_EXTRACTED_TEXT'});
  for(const n of lineage.nearDuplicates)edges.push({from:n.left,to:n.right,relationship:'POTENTIAL_DUPLICATE'});
  return {nodes,edges,authority:'NONE'};
 }

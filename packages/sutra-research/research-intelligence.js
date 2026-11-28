@@ -140,10 +140,13 @@ export function admitConflictReviews(value,candidates,packet){
 export function assembleIntelligence(synthesis,reviews,receipts,packet,conflicts=[],reviewMode='independence_unproven'){
  const byId=new Map(reviews.map(r=>[r.claimId,r]));
  const claims=synthesis.claims.map(c=>{
-  const r=byId.get(c.id),cited=new Set(c.citations.map(x=>x.passageId));
-  const affected=conflicts.filter(x=>x.status==='unresolved'&&(x.citations.some(k=>cited.has(k.passageId))||cited.has(x.leftPassageId)||cited.has(x.rightPassageId))).map(x=>x.id);
+  const r=byId.get(c.id),cited=new Set(c.citations.map(x=>x.passageId)),sources=new Set(c.citations.map(x=>x.sourceId)),digests=new Set(c.citations.map(x=>x.sourceDigest));
+  // Model explanations of scope, definition, unit and period do not resolve a conflict.
+  // Include other passages of the same source and exact extracted-text copies.
+  const related=p=>{const e=packet.map.get(p);return cited.has(p)||!!e&&(sources.has(e.ref.sourceId)||digests.has(e.ref.sourceDigest));};
+  const affected=conflicts.filter(x=>x.citations.some(k=>related(k.passageId))||related(x.leftPassageId)||related(x.rightPassageId)).map(x=>x.id);
   const publicationStatus=c.kind==='inference'&&affected.length?'withheld_from_findings':r?.verdict==='supported'?(affected.length?'candidate_qualified':'candidate_reviewed'):r?.verdict==='qualified'?'candidate_qualified':'withheld_from_findings';
-  return {...c,reviewStatus:r?.verdict??'not_reviewed',review:r??null,conflictIds:affected,publicationStatus};
+  return {...c,reviewStatus:r?.verdict??'not_reviewed',review:r??null,conflictIds:affected,empiricalStatus:'NOT_ESTABLISHED',independenceStatus:'NOT_ESTABLISHED',publicationStatus};
  });
  return {schema:'sutra-research-intelligence/v1',claims,gaps:synthesis.gaps,conflicts,receipts,reviewMode,packet:{disclosedPassages:packet.excerpts.length,availablePassages:packet.availablePassages,disclosedBytes:packet.disclosedBytes},authority:'NONE',qualification:'Exact quotations were validated against acquired extraction. Model review is a semantic opinion, not proof of truth, entailment, independence or completeness. Disputed, insufficient and unreviewed claims are excluded from findings.'};
 }
