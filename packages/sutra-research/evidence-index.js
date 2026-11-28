@@ -2,8 +2,14 @@
 import {digest,secretLike} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Evidence refused: '+code),{code});};
 const refId=(prefix,parts)=>prefix+'_'+digest(JSON.stringify(parts)).slice(7,31);
+const boundary=(s,n)=>Number.isSafeInteger(n)&&n>=0&&!Object.is(n,-0)&&n<=s.length&&!(n>0&&n<s.length&&/[\ud800-\udbff]/.test(s[n-1])&&/[\udc00-\udfff]/.test(s[n]));
 export function verifyPassage(p,doc){
- return Boolean(p&&doc&&p.sourceId===doc.id&&p.sourceDigest===doc.textDigest&&doc.textDigest===digest(doc.text)&&p.locator?.coordinateSystem==='utf16-extracted-text'&&Number.isSafeInteger(p.locator.startOffset)&&Number.isSafeInteger(p.locator.endOffset)&&p.locator.startOffset>=0&&p.locator.endOffset>p.locator.startOffset&&p.locator.endOffset<=doc.text.length&&doc.text.slice(p.locator.startOffset,p.locator.endOffset)===p.supportingText&&(doc.mediaType!=='application/pdf'||Number.isSafeInteger(p.locator.page)&&Array.isArray(doc.pageMap)&&doc.pageMap.some(x=>x.page===p.locator.page&&p.locator.startOffset>=x.startOffset&&p.locator.endOffset<=x.endOffset)));
+ if(!p||!doc||typeof doc.text!=='string'||p.sourceId!==doc.id||p.sourceDigest!==doc.textDigest||doc.textDigest!==digest(doc.text))return false;
+ const l=p.locator;if(!l||l.coordinateSystem!=='utf16-extracted-text'||!boundary(doc.text,l.startOffset)||!boundary(doc.text,l.endOffset)||l.endOffset<=l.startOffset||doc.text.slice(l.startOffset,l.endOffset)!==p.supportingText)return false;
+ if(doc.mediaType!=='application/pdf')return l.page===undefined||l.page===null;
+ if(!Number.isSafeInteger(l.page)||l.page<1||!Array.isArray(doc.pageMap))return false;
+ const rows=doc.pageMap.filter(x=>x.page===l.page);
+ return rows.length===1&&boundary(doc.text,rows[0].startOffset)&&boundary(doc.text,rows[0].endOffset)&&l.startOffset>=rows[0].startOffset&&l.endOffset<=rows[0].endOffset;
 }
 export function verifyEvidence(documents,passages){
  if(!Array.isArray(documents)||documents.length>60||!Array.isArray(passages)||passages.length>480)fail('EVIDENCE_SIZE');
