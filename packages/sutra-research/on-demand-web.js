@@ -5,6 +5,7 @@ import {admitDocumentURL} from './dynamic-public-route-policy.js';
 import {admitManifest,authorizeResearch,digest,secretLike} from './research-session.js';
 import {createDocumentReader} from './document-reader.js';
 import {createSearchProviders,SEARCH_BYTES} from './providers.js';
+import {selectResearchBackends} from './research-source-router.js';
 import {createObscuraEnhancedReader} from './obscura-adapter.js';
 
 const fail=c=>{throw Object.assign(Error('SUTRA web access refused: '+c),{code:c});};
@@ -12,7 +13,7 @@ const EXACT=(v,fields)=>v!==null&&typeof v==='object'&&!Array.isArray(v)&&Object
 const active=s=>s&&['running','cancelling'].includes(s.state);
 const safeCode=e=>typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'WEB_OPERATION_FAILED';
 const actors=Object.freeze(['user','engine','agent']);
-const budget=Object.freeze({maxSearches:2,maxDocuments:3,maxLinkDepth:0,maxDurationSeconds:45,maxDownloadBytes:2097152,maxCostMicros:100000});
+const budget=Object.freeze({maxSearches:5,maxDocuments:3,maxLinkDepth:0,maxDurationSeconds:90,maxDownloadBytes:2097152,maxCostMicros:100000});
 const SAFE_TYPES=new Set(['text/html','text/plain','application/json','text/csv']);
 const MAX_RESULT_CHARS=100000;
 const readInput=(input,actor,backends,hasRenderer)=>{
@@ -22,7 +23,7 @@ const readInput=(input,actor,backends,hasRenderer)=>{
   if(input.backend!==null||input.render&&!hasRenderer)fail('WEB_CAPABILITY');
   return Object.freeze({...input,resource:admitDocumentURL(input.resource,{allowQuery:true})});
  }
- if(input.backend===null||!backends.includes(input.backend)||input.render||input.resource.length>1000)fail('WEB_CAPABILITY');
+ if(!['auto',...backends].includes(input.backend)||input.render||input.resource.length>1000)fail('WEB_CAPABILITY');
  return Object.freeze({...input});
 };
 function sanitizedDocument(doc,request){
@@ -51,11 +52,12 @@ function sanitizedDiscovery(rows,backend){
  return out;
 }
 export function createOnDemandWebAccess({searchCredentials={},renderer=null,makeReader,makeProviders=createSearchProviders,clock=()=>Date.now(),isBusy=()=>false}={}){
- const available=Object.freeze([...['brave','tavily'].filter(id=>typeof searchCredentials[id]==='string'&&/^[\x21-\x7e]{8,512}$/.test(searchCredentials[id])),'wikipedia']);
+ const available=Object.freeze(Object.keys(createSearchProviders({credentials:searchCredentials})));
+
  if(makeReader!==undefined&&typeof makeReader!=='function'||typeof makeProviders!=='function'||typeof clock!=='function'||typeof isBusy!=='function')fail('WEB_CONFIG');
  let previewed=null,current=null,closed=false;
  const check=()=>{if(closed)fail('WEB_CLOSED');};
- const capabilities=()=>Object.freeze({schema:'sutra-web-access-capabilities/v1',actors,operations:['fetch','search'],searchBackends:[...available],staticHttp:'pinned_https_robots',jsRendering:renderer?'local_experimental':'unavailable',maxConcurrentOperations:1,authority:'NONE'});
+ const capabilities=()=>Object.freeze({schema:'sutra-web-access-capabilities/v1',actors,operations:['fetch','search'],searchBackends:['auto',...available],staticHttp:'pinned_https_robots',jsRendering:renderer?'local_experimental':'unavailable',maxConcurrentOperations:1,authority:'NONE'});
  function preview(input,{actor='user'}={}){
   check();if(isBusy()||active(current))fail('WEB_BUSY');
   const q=readInput(input,actor,available,Boolean(renderer));
@@ -63,7 +65,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
    schema:'sutra-autonomous-research/v1',
    objective:isSearch?q.resource:'Operator-reviewed public source retrieval',
    scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,allowDirectPublicUrls:true,...(q.render?{allowJsRendering:true}:{})},
-   budget:{...budget},providers:isSearch?[{id:q.backend,estimatedMaxCostMicros:q.backend==='wikipedia'?1:10000}]:[]
+   budget:{...budget},providers:isSearch?(q.backend==='auto'?selectResearchBackends(q.resource,available,{max:5}).providers:[q.backend]).map(id=>({id,estimatedMaxCostMicros:['brave','tavily'].includes(id)?5000:1})):[]
   });
   const manifest=admitManifest(raw),expiresAt=clock()+120000;
   if(!Number.isSafeInteger(expiresAt))fail('WEB_CLOCK');
@@ -79,13 +81,30 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
    a.assertActive();
    let report;
    if(proposal.request.operation==='search'){
-    const providers=makeProviders({credentials:searchCredentials}),provider=providers[proposal.request.backend];
-    if(!provider||typeof provider.search!=='function')fail('WEB_PROVIDER');
-    a.reserve('search',{bytes:SEARCH_BYTES,costMicros:proposal.request.backend==='wikipedia'?1:10000});
-    session.dispatchAttempted=true;
-    const rows=await provider.search(proposal.request.resource,{signal:a.signal});
-    a.assertActive();
-    report={schema:'sutra-web-access-result/v1',actor:proposal.actor,operation:'search',request:proposal.request,results:sanitizedDiscovery(rows,proposal.request.backend),documents:[],qualification:'Search results are discovery candidates, not independent evidence or source verification.'};
+    const providers=makeProviders({credentials:searchCredentials});
+    const selected=proposal.request.backend==='auto'
+     ?selectResearchBackends(proposal.request.resource,available,{max:5}).providers
+     :[proposal.request.backend];
+    const failures=[],results=[],seen=new Set(),used=[];
+    for(const id of selected){
+     a.assertActive();
+     const provider=providers[id];
+     if(!provider||typeof provider.search!=='function'){failures.push({provider:id,code:'WEB_PROVIDER'});continue;}
+     a.reserve('search',{bytes:SEARCH_BYTES,costMicros:['brave','tavily'].includes(id)?5000:1});
+     used.push(id);session.dispatchAttempted=true;
+     try{
+      const rows=await provider.search(proposal.request.resource,{signal:a.signal});
+      a.assertActive();
+      const found=sanitizedDiscovery(rows,id);
+      for(const row of found.slice(0,proposal.request.backend==='auto'?3:10)){
+       if(!seen.has(row.url)&&results.length<15){seen.add(row.url);results.push(row);}
+      }
+     }catch(e){
+      a.assertActive();failures.push({provider:id,code:safeCode(e)});
+     }
+    }
+    if(!results.length&&failures.length===selected.length)fail('WEB_SEARCH_UNAVAILABLE');
+    report={schema:'sutra-web-access-result/v1',actor:proposal.actor,operation:'search',request:proposal.request,results:results.slice(0,15),documents:[],searchedBackends:used,providerFailures:failures,qualification:'Federated searches are discovery candidates; publishers and full texts require subsequent public retrieval.'};
    }else{
     const reader=makeReader?makeReader({authorization:a,render:proposal.request.render}):proposal.request.render?createObscuraEnhancedReader({authorization:a,renderer,renderPolicy:'always'}):createDocumentReader({authorization:a});
     if(typeof reader!=='function')fail('WEB_READER');
