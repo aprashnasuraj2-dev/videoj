@@ -72,7 +72,7 @@ test('refuses dangerous URLs, secret-bearing input, search without provider and 
   assert.equal(contacts.length,0);
  }finally{g.close();}
  const {gateway:noSearch}= {gateway:createOnDemandWebAccess()};
- try{assert.throws(()=>noSearch.preview(searchRequest),/WEB_CAPABILITY/);assert.equal(noSearch.capabilities().searchBackends.length,0);}finally{noSearch.close();}
+ try{assert.ok(noSearch.capabilities().searchBackends.includes('crossref'));assert.ok(noSearch.capabilities().searchBackends.includes('openalex'));assert.equal(noSearch.preview({...searchRequest,backend:'crossref'}).request.backend,'crossref');}finally{noSearch.close();}
 });
 test('busy, aborted, failed post-dispatch and failed before-dispatch cases remain explicit',async()=>{
  let release;const g=createOnDemandWebAccess({makeReader:()=>async(_,opts)=>new Promise((yes,no)=>{release={yes,no};opts.signal.addEventListener('abort',()=>no(Error('aborted')),{once:true});})});
