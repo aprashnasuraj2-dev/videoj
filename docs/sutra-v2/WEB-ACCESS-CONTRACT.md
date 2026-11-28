@@ -23,7 +23,7 @@ The loopback HTTP bridge binds an authenticated, same-origin session and **alway
 
 **Publisher coverage is intentionally unbounded.** Search indexes and DOI metadata can point at individual journal and research pages on Nature, Science/AAAS, Springer Nature, Elsevier/ScienceDirect, Wiley, Taylor & Francis, SAGE, IEEE, ACM, PLOS, SciELO, ResearchGate and any other public HTTPS publisher. A public URL is eligible for ordinary retrieval regardless of its brand, provided it passes the dynamic URL policy, public DNS/TLS pinning, robots policy and response limits. Inclusion is **not** a claim that every site is indexed or accessible. Special subscription-only services (for example SciFinder) require legitimately configured licensed integrations; no credential/paywall bypass exists.
 
-OpenAlex and Crossref metadata identify publications; they do not confer article/full-text access. A ResearchGate record may be publicly visible while its full text is restricted. DOI redirects may lead to paywalled journals, in which case the failure is recorded and SUTRA can seek independently available sources. Never represent indexing metadata or abstract snippets as a full extracted journal article.
+OpenAlex open-access landing pages and Europe PMC free-to-read records are preferred over paywalled publisher redirects when the respective index supplies such a location. Open-access status is index-reported, not a guarantee that a file downloads. OpenAlex and Crossref metadata identify publications; they do not confer article/full-text access. A ResearchGate record may be publicly visible while its full text is restricted. DOI redirects may lead to paywalled journals, in which case the failure is recorded and SUTRA can seek independently available sources. Never represent indexing metadata or abstract snippets as a full extracted journal article.
 
 ### Autonomous routing and resource controls
 
@@ -31,7 +31,7 @@ OpenAlex and Crossref metadata identify publications; they do not confer article
 
 Default model-free objective budget: **5 search reservations, 10 document reservations, 8 MiB of reserved transport/download bytes, 180 seconds, one link depth**. Each direct web operation is separately bounded (up to 5 search providers, 3 document reservations, 2 MiB and 90 seconds). Operation failure does not turn into positive evidence. Cancellations abort execution; actual external contact may remain uncertain where dispatch has occurred. The search-to-source admission step is explicit in the report, **not** an approval popup.
 
-Provider-specific APIs retain their own rate limits and might return 429/403; report provider errors. No hidden scraping of logins, captcha evasion, private networks, cookies, secrets or third-party POST/PUT writes. Browser-based JavaScript rendering through Obscura stays optional and local; static pinned HTTPS extraction remains the low-resource default.
+Provider-specific APIs retain their own rate limits and might return 429/403; report provider errors. No hidden scraping of logins, captcha evasion, private networks, cookies, secrets or third-party POST/PUT writes. Browser-based JavaScript rendering through Obscura stays optional and local; static pinned HTTPS extraction remains the low-resource default. Academic PDF retrieval is optional via `SUTRA_ENABLE_PDF=1` on a Linux host with the existing `prlimit` + `bubblewrap` + `pdftotext` sandbox; a sandbox probe must succeed before contact, and PDF text retains page-offset provenance. No unsandboxed PDF fallback.
 
 ### Reusable code and tests
 
