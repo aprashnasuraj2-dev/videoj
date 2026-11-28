@@ -2,8 +2,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {stat} from 'node:fs/promises';
-import {createServer} from 'node:net';
+import {stat,readFile} from 'node:fs/promises';
+import {createServer,createConnection} from 'node:net';
 import {fileURLToPath} from 'node:url';
 import {probePdfSandbox,runSandboxedPdf,extractPdfDocument,PDF_INPUT_BYTES} from '../pdf-parser.js';
 function hostileFixture(){
@@ -25,10 +25,13 @@ test('actual isolated PDF sandbox probe and active-content fixture extraction',a
 });
 
 test('actual parser envelope hides host filesystem and network, drops capabilities and enforces hard limits',async()=>{
+ // Positive controls: a missing fixture or an unreachable host listener cannot prove isolation.
+ assert.equal((await readFile('/tmp/sutra-pdf-ci/host-canary','utf8')).trim(),'synthetic-host-canary');
  const helper=fileURLToPath(new URL('./pdf-isolation-probe',import.meta.url));
  const net=(await stat('/proc/self/ns/net')).ino,pid=(await stat('/proc/self/ns/pid')).ino;
  const listener=createServer(c=>c.destroy());await new Promise((resolve,reject)=>{listener.once('error',reject);listener.listen(0,'127.0.0.1',resolve);});
  try{
+  await new Promise((resolve,reject)=>{const socket=createConnection({host:'127.0.0.1',port:listener.address().port});socket.setTimeout(1000,()=>socket.destroy(new Error('Host loopback positive control timed out')));socket.once('error',reject);socket.once('connect',()=>{socket.destroy();resolve();});});
   const diagnostics=[];const result=await runSandboxedPdf(hostileFixture(),{spawnProcess:(cmd,args,options)=>{
    const i=args.lastIndexOf('--');assert.equal(args[i+1],'/usr/bin/pdftotext');
    const probeArgs=[...args.slice(0,i),'--ro-bind',helper,'/usr/bin/sutra-pdf-isolation-probe','--','/usr/bin/sutra-pdf-isolation-probe',String(net),String(pid),String(listener.address().port)];
