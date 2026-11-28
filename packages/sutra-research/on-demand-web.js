@@ -47,7 +47,11 @@ function sanitizedDiscovery(rows,backend){
   let url;try{url=admitDocumentURL(row.url,{allowQuery:true});}catch{continue;}
   if(seen.has(url))continue;seen.add(url);
   const t=typeof row.title==='string'&&!secretLike(row.title)?row.title.replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,300):'';
-  out.push({url,title:t,provider:backend,rank:out.length+1,verificationStatus:'discovery_only_not_evidence'});
+  const doi=typeof row.doi==='string'&&/^10\.\d{4,9}\/[A-Za-z0-9._;()\/+:-]{1,190}$/i.test(row.doi)?row.doi:null;
+  const publisher=typeof row.publisher==='string'&&!secretLike(row.publisher)?row.publisher.slice(0,120):'';
+  const publicationYear=Number.isSafeInteger(row.publicationYear)&&row.publicationYear>=1500&&row.publicationYear<=2200?row.publicationYear:null;
+  const sourceFamily=['general_web','scholarly_metadata','scholarly_index','citation_index','biomedical_index','preprint','encyclopedia'].includes(row.sourceFamily)?row.sourceFamily:'discovery';
+  out.push({url,title:t,provider:backend,rank:out.length+1,doi,publisher,publicationYear,sourceFamily,openAccessReported:row.openAccessReported===true,verificationStatus:'discovery_only_not_evidence'});
  }
  return out;
 }
@@ -97,7 +101,8 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
       a.assertActive();
       const found=sanitizedDiscovery(rows,id);
       for(const row of found.slice(0,proposal.request.backend==='auto'?3:10)){
-       if(!seen.has(row.url)&&results.length<15){seen.add(row.url);results.push(row);}
+       const identity=row.doi?'doi:'+row.doi.toLowerCase():'url:'+row.url;
+       if(!seen.has(identity)&&results.length<15){seen.add(identity);results.push(row);}
       }
      }catch(e){
       a.assertActive();failures.push({provider:id,code:safeCode(e)});
