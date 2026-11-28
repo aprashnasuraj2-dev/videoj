@@ -544,3 +544,9 @@ No main modification, deployment, production permission, credentials, real comme
 - **REL-S14 partial**: 467a94f/60da3ef add separate 20 distinct-client concurrent run through actual local Workerd HTTP and SQLite quota with injected provider, exact source revision, status/provider-contact counts and P50/P95 by outcome, fresh stop probes and no automatic retry. Await CI. No deployed invocation count or live provider claim.
 
 Final-head CI still queued. Six scoped closures this session. No merge or release.
+
+### Tranche 9 PDF native confirmation
+
+Exact revision 53ec31d (run [46109033505, job 140868189395](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46109033505/job/140868189395)) passed **2/2 actual PDF integration tests**: isolated parser with active-content sample, malformed/oversized/aborted input checks; and actual parser-envelope native isolation probe, including positive controls outside sandbox, network/PID isolation, hidden host file, unreachable host listener, environment cleared, zero effective caps, no-new-privileges, denied nested user namespace and all specified hard limits. Global user namespace restriction remained 1. Reproduction instructions in research README at 6ec2b45. This closes the compatibility defect on the disposable Linux CI host; not permission to enable PDF on an unreviewed deployment host. 
+
+Other historical research runs d5bb293 and 444f565 failed one on-demand-web test after parallel contributor changes; newest test expectations and implementation changed, latest revalidation remains queued. 670d4dd's 101/101 result is not final-head certification. No release or merge.
