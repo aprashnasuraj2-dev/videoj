@@ -357,5 +357,5 @@ export function mountNetworkDesigner(root,executionHooks={}){
  }
  count.disabled=true;
  render();
- return Object.freeze({section,cancel:()=>execution.cancel()});
+ return Object.freeze({section,cancel:()=>execution.cancel(),stage(definition,maxCalls){if(busy||execution.isRunning())return false;if(!mutate(()=>designer.replace(definition),'Responsibility arrangement staged. Review the graph and approve a separate execution plan.',definition.tools[0].name))return false;execution.stageBudget(maxCalls);return true;}});
 }

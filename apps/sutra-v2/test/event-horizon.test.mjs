@@ -559,3 +559,20 @@ test('designed runtime performs two arbitrary named invocations and refuses unde
  }});
  await assert.rejects(denied.run({approvedPlanPin:denied.planPin}),e=>e.code==='TOOL_UNAVAILABLE'&&e.dispatch.attempted===1);
 });
+
+import {composeResponsibilities} from '../src/event-horizon/responsibility-composer.js';
+test('responsibility-first composition creates variable definitions from task-specific identities',()=>{
+ const duties=Array.from({length:10},(_,i)=>({id:'duty_'+i,label:'Responsibility '+i,instructions:'Assess the declared requirement '+i}));
+ const result=composeResponsibilities(duties,{maxModelCalls:8});
+ assert.equal(result.alternatives.length,10);
+ for(const a of result.alternatives){
+  assert.equal(a.definition.tools.length,a.definitionCount);
+  assert.equal(a.assignments.flatMap(x=>x.duties).length,10);
+  assert.equal(new Set(a.assignments.flatMap(x=>x.duties)).size,10);
+  assert.equal(a.minFullVisitModelCalls,2*a.definitionCount-1);
+  assert.equal(a.fullVisitFeasible,a.definitionCount<=4);
+ }
+ assert.equal(result.alternatives[0].definition.tools[0].name,'duty_0');
+ assert.equal(result.alternatives[9].minFullVisitModelCalls,19);
+ assert.throws(()=>composeResponsibilities([duties[0],duties[0]]));
+});

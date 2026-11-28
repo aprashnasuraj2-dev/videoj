@@ -132,5 +132,5 @@ export function mountDesignedExecution(root,{snapshot,isDirty,onStart,onEvent,on
  budget.addEventListener('change',invalidate);
  approval.addEventListener('change',sync);
  sync();
- return Object.freeze({invalidate,sync,cancel(){controller?.abort();},isRunning:()=>!!controller});
+ return Object.freeze({invalidate,sync,cancel(){controller?.abort();},isRunning:()=>!!controller,stageBudget(value){if(controller||!Number.isInteger(value)||value<1||value>8)return false;budget.value=String(value);invalidate();return true;}});
 }
