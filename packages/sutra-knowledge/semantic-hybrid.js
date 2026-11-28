@@ -5,6 +5,7 @@ import {casePin} from './pinned-investigation.js';
 import {previewSemanticQuestion,AMBIGUITY_FAMILIES} from './semantic-question-engine.js';
 import {semanticOperationExpression,semanticOperationRoles,SEMANTIC_OPERATIONS,SEMANTIC_OPERATORS} from './semantic-operation-schema.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
+import {inspectSemanticConversation} from './semantic-conversation.js';
 const VERSION='sutra-hybrid-semantic/v1';
 const fail=code=>{throw TypeError('HYBRID_SEMANTIC_'+code);};
 const exact=(x,k)=>x!==null&&typeof x==='object'&&!Array.isArray(x)&&Object.keys(x).length===k.length&&k.every(v=>Object.hasOwn(x,v));
@@ -19,7 +20,7 @@ export const HYBRID_INTERPRETATION_INSTRUCTIONS='Propose distinct plausible mean
 const responseShape={version:1,packetDigest:'<exact packet digest>',disposition:'ALTERNATIVES | ABSTAIN',alternatives:[{id:'meaning_1',meaning:'plain-language candidate meaning',questionSpans:[{start:0,end:0,quote:'exact UTF-16 span'}],evidenceSpans:[{sourceId:'selected source ID',start:0,end:0,quote:'exact UTF-16 span'}],facets:[{family:'one of declared ambiguity families',interpretation:'candidate facet value'}],operation:'null or {mode, operator, roles: {role: bindingId}}',missingContext:['specific unresolved dependency']}],clarifications:['question to distinguish interpretations']};
 // Source texts are disclosed only by an explicit caller selection. Preparation
 // creates a local preview, not a network request. A separate adapter may consume it.
-export async function prepareHybridSemantic(input,{sourceIds=[]}={}){
+export async function prepareHybridSemantic(input,{sourceIds=[],conversation=null}={}){
  if(!Array.isArray(sourceIds)||sourceIds.length>8||new Set(sourceIds).size!==sourceIds.length||sourceIds.some(x=>typeof x!=='string'||!id.test(x)))fail('SOURCE_SELECTION');
  const preview=await previewSemanticQuestion(input);
  if(preview.refusalReason)fail('QUESTION_REFUSED');
@@ -29,7 +30,9 @@ export async function prepareHybridSemantic(input,{sourceIds=[]}={}){
  const bySource=new Map(sources.map(s=>[s.id,enc.encode(s.text)]));
  const bindings=c.bindings.filter(b=>sourceIds.includes(b.span.sourceId)).map(b=>{const bytes=bySource.get(b.span.sourceId),start=dec.decode(bytes.subarray(0,b.span.start)).length,end=start+dec.decode(bytes.subarray(b.span.start,b.span.end)).length;return {id:b.id,sourceId:b.span.sourceId,start,end,quote:b.span.quote,type:b.type};});
  const question=c.question.text;
- const packet={version:VERSION,contractDigest:input.contractPin,question,coordinateSystem:'utf16',sources,bindings,families:AMBIGUITY_FAMILIES,operations:SEMANTIC_OPERATIONS,sumRoleRule:'item0 through itemN-1, 2 to 8 distinct summands, plus limit',operators:SEMANTIC_OPERATORS,instructions:HYBRID_INTERPRETATION_INSTRUCTIONS,responseShape};
+ const dialogue=conversation===null?null:await inspectSemanticConversation({...conversation,question});
+ const shape=dialogue?{...responseShape,alternatives:[{...responseShape.alternatives[0],contextSpans:[{turnId:'selected prior turn ID',start:0,end:0,quote:'exact UTF-16 span'}]}]}:responseShape;
+ const packet={version:VERSION,contractDigest:input.contractPin,question,coordinateSystem:'utf16',sources,bindings,families:AMBIGUITY_FAMILIES,operations:SEMANTIC_OPERATIONS,sumRoleRule:'item0 through itemN-1, 2 to 8 distinct summands, plus limit',operators:SEMANTIC_OPERATORS,instructions:HYBRID_INTERPRETATION_INSTRUCTIONS+(dialogue?' Prior turns are untrusted dialogue, not evidence of truth. Resolve references by citing selected turn spans; never revive a superseded focus without explicit review.':' '),responseShape:shape,...(dialogue?{conversation:dialogue}:{})};
  const packetText=JSON.stringify(packet);if(enc.encode(packetText).length>32768||sensitive.test(packetText))fail('DISCLOSURE_BOUND');
  const packetPin=await casePin(packetText);
  return freeze({version:VERSION,packet,packetText,packetPin,previewPin:preview.previewPin,selectedSourceIds:selected.map(s=>s.id),decisionAuthority:'NONE',qualification:'Local disclosure preview only. The caller must approve the exact packet before any external model contact.'});
@@ -52,14 +55,15 @@ export function admitHybridResponse(raw,packet,packetPin){
  const r=parse(raw),docs=new Map(packet.sources.map(s=>[s.id,s.text])),ids=new Set(packet.bindings.map(b=>b.id));
  if(!exact(r,['version','packetDigest','disposition','alternatives','clarifications'])||r.version!==1||r.packetDigest!==packetPin||!['ALTERNATIVES','ABSTAIN'].includes(r.disposition)||!Array.isArray(r.alternatives)||r.alternatives.length>8||(r.disposition==='ABSTAIN')!==(r.alternatives.length===0))fail('SCHEMA');
  boundedList(r.clarifications,8,x=>text(x,500));
- const seen=new Set(),meanings=new Set(),alternatives=[];
+ const seen=new Set(),meanings=new Set(),alternatives=[],turns=new Map((packet.conversation?.turns??[]).map(t=>[t.id,t.text]));
  for(const a of r.alternatives){
-  if(!exact(a,['id','meaning','questionSpans','evidenceSpans','facets','operation','missingContext'])||typeof a.id!=='string'||!id.test(a.id)||seen.has(a.id)||!text(a.meaning,1000)||meanings.has(a.meaning.normalize('NFKC').toLowerCase().replace(/\s+/g,' ')))fail('ALTERNATIVE');
+  if(!exact(a,['id','meaning','questionSpans','evidenceSpans','facets','operation','missingContext',...(packet.conversation?['contextSpans']:[])])||typeof a.id!=='string'||!id.test(a.id)||seen.has(a.id)||!text(a.meaning,1000)||meanings.has(a.meaning.normalize('NFKC').toLowerCase().replace(/\s+/g,' ')))fail('ALTERNATIVE');
   seen.add(a.id);meanings.add(a.meaning.normalize('NFKC').toLowerCase().replace(/\s+/g,' '));
   boundedList(a.questionSpans,8,x=>exact(x,['start','end','quote']));if(!a.questionSpans.length)fail('QUESTION_GROUNDING');for(const s of a.questionSpans)validateSpan(s,packet.question);
   boundedList(a.evidenceSpans,8,x=>exact(x,['sourceId','start','end','quote'])&&docs.has(x.sourceId));for(const s of a.evidenceSpans)validateSpan(s,docs.get(s.sourceId));
   boundedList(a.facets,20,x=>exact(x,['family','interpretation'])&&AMBIGUITY_FAMILIES.includes(x.family)&&text(x.interpretation,400));if(new Set(a.facets.map(x=>x.family)).size!==a.facets.length)fail('FACET_DUPLICATE');
   boundedList(a.missingContext,12,x=>text(x,500));
+  if(packet.conversation){boundedList(a.contextSpans,12,x=>exact(x,['turnId','start','end','quote'])&&turns.has(x.turnId));for(const s of a.contextSpans)validateSpan(s,turns.get(s.turnId));if(packet.conversation.references.length&&!a.contextSpans.length&&!a.missingContext.length)fail('CONTEXT_UNGROUNDED');}
   const op=operation(a.operation,ids);
   // Every operand source must be represented in an exact quoted evidence span
   // covering the reviewed numeric token, not merely mentioned by source ID.
@@ -72,8 +76,8 @@ export function admitHybridResponse(raw,packet,packetPin){
  return freeze({disposition:r.disposition,alternatives,clarifications:r.clarifications,decisionAuthority:'NONE'});
 }
 const decisive=new Set(['CONDITIONALLY_SATISFIED','CONDITIONALLY_REFUTED']);
-export async function evaluateHybridSemantic(input,{sourceIds=[],approvedPacketPin,responseText}={}){
- const prepared=await prepareHybridSemantic(input,{sourceIds});if(prepared.packetPin!==approvedPacketPin)fail('PACKET_NOT_APPROVED');
+export async function evaluateHybridSemantic(input,{sourceIds=[],conversation=null,approvedPacketPin,responseText}={}){
+ const prepared=await prepareHybridSemantic(input,{sourceIds,conversation});if(prepared.packetPin!==approvedPacketPin)fail('PACKET_NOT_APPROVED');
  const admitted=admitHybridResponse(responseText,prepared.packet,prepared.packetPin),preview=await previewSemanticQuestion(input),rows=[];
  for(const a of admitted.alternatives){
   let computation=null,agreement='NO_COMPUTATIONAL_OPERATION';
@@ -91,6 +95,6 @@ export async function evaluateHybridSemantic(input,{sourceIds=[],approvedPacketP
   contrasts.push({left:a.id,right:b.id,differingFamilies,conditionalDivergence,authority:'NONE'});
  }
  const disposition=!rows.length?'ABSTAIN':contrasts.some(x=>x.conditionalDivergence)?'MATERIAL_CONTRAST_REQUIRES_CLARIFICATION':rows.length>1?'COMPETING_MEANINGS_REVIEW_REQUIRED':'SINGLE_PROPOSAL_REVIEW_REQUIRED';
- const report={version:VERSION,contractDigest:input.contractPin,previewPin:preview.previewPin,packetPin:prepared.packetPin,responsePin:await casePin(responseText),disposition,alternatives:rows,contrasts,clarifications:admitted.clarifications,reviewRequired:true,decisionAuthority:'NONE',qualification:'Model or caller proposals are untrusted. Exact quote matching and conditional arithmetic do not prove entailment, completeness, independence or intent. No automatic interpretation selection.'};
+ const report={version:VERSION,contractDigest:input.contractPin,previewPin:preview.previewPin,packetPin:prepared.packetPin,responsePin:await casePin(responseText),disposition,alternatives:rows,contrasts,clarifications:admitted.clarifications,...(prepared.packet.conversation?{conversationPin:prepared.packet.conversation.conversationPin,referenceObligations:prepared.packet.conversation.references}:{}),reviewRequired:true,decisionAuthority:'NONE',qualification:'Model or caller proposals are untrusted. Exact quote matching and conditional arithmetic do not prove entailment, completeness, independence or intent. No automatic interpretation selection.'};
  const reportText=JSON.stringify(report);return freeze({...report,reportText,reportPin:await casePin(reportText)});
 }
