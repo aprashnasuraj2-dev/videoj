@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sched.h>
 #include <sys/stat.h>
 #include <sys/resource.h>
@@ -26,10 +27,19 @@ int main(int argc,char **argv){
  FILE *status=fopen("/proc/self/status","r");check(status!=NULL,"proc status");
  char line[256];int caps=0,nnp=0;
  while(fgets(line,sizeof line,status)){
-  if(!strncmp(line,"CapEff:",7))caps=strtoull(line+7,NULL,16)==0;
+  if(!strncmp(line,"CapEff:",7)&&strtoull(line+7,NULL,16)==0)caps|=1;
+  if(!strncmp(line,"CapPrm:",7)&&strtoull(line+7,NULL,16)==0)caps|=2;
+  if(!strncmp(line,"CapInh:",7)&&strtoull(line+7,NULL,16)==0)caps|=4;
+  if(!strncmp(line,"CapAmb:",7)&&strtoull(line+7,NULL,16)==0)caps|=8;
   if(!strncmp(line,"NoNewPrivs:",11))nnp=atoi(line+11)==1;
  }
- fclose(status);check(caps,"effective caps zero");check(nnp,"no new privileges");
+ fclose(status);check(caps==15,"effective/permitted/inheritable/ambient caps zero");check(nnp,"no new privileges");
+ /* Test write admission without modifying the target, even if isolation is broken. */
+ int ro=open("/usr/bin/pdftotext",O_WRONLY|O_CLOEXEC);
+ if(ro>=0){close(ro);check(0,"parser executable not writable");}
+ check(errno==EROFS||errno==EACCES||errno==EPERM,"parser executable write refused");
+ int scratch=open("/tmp/sutra-probe-scratch",O_WRONLY|O_CREAT|O_EXCL|O_CLOEXEC,0600);
+ check(scratch>=0,"private temporary directory writable");close(scratch);check(unlink("/tmp/sutra-probe-scratch")==0,"private scratch cleanup");
  limit(RLIMIT_AS,268435456,"address space");limit(RLIMIT_CPU,5,"CPU");limit(RLIMIT_FSIZE,1048576,"file size");limit(RLIMIT_NOFILE,64,"file descriptors");limit(RLIMIT_NPROC,32,"process count");
  struct if_nameindex *interfaces=if_nameindex();check(interfaces!=NULL,"network interfaces");
  for(struct if_nameindex *i=interfaces;i->if_index;i++)check(!strcmp(i->if_name,"lo"),"no external interface");
