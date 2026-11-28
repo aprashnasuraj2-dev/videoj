@@ -45,9 +45,9 @@ function validateRestored(s,b,scope){
  const domains=new Map(s.domainAttempts);if(domains.size!==s.domainAttempts.length||s.domainAttempts.some(x=>!Array.isArray(x)||x.length!==2||typeof x[0]!=='string'||!Number.isSafeInteger(x[1])||x[1]<1||x[1]>3))fail('RESUME_FRONTIER');
  return {seen,domains,digests};
 }
-export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity,modelBroker,assignedSessionId}){
+export async function runAutonomousResearch({authorization,providers,readDocument,onEvent=()=>{},onCheckpoint=async()=>{},pauseAfterOperations=Infinity,modelBroker,assignedSessionId,beforeOperation=async()=>{}}){
  assertResearchAuthorization(authorization);const a=authorization,plan=a.plan,b=plan.budget,prior=researchResumeState(a);
- if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||plan.modelPolicy?.webAccess!=='on_demand'&&plan.providers.some(p=>typeof providers?.[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
+ if(typeof readDocument!=='function'||typeof onEvent!=='function'||typeof onCheckpoint!=='function'||typeof beforeOperation!=='function'||plan.modelPolicy?.webAccess!=='on_demand'&&plan.providers.some(p=>typeof providers?.[p.id]?.search!=='function')||pauseAfterOperations!==Infinity&&(!Number.isSafeInteger(pauseAfterOperations)||pauseAfterOperations<1||pauseAfterOperations>200))fail('CONFIG');
  if(plan.modelPolicy&&(!modelBroker||typeof modelBroker.consult!=='function'||pauseAfterOperations!==Infinity||prior))fail('MODEL_RUN_CONFIG');
  if(!plan.modelPolicy&&modelBroker)fail('MODEL_SCOPE');
  const restored=prior?validateRestored(prior,b,plan.scope):null;claimResearchRun(a);const researchPlan=createResearchPlan(plan.objective);
@@ -63,7 +63,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
  const snapshot=()=>({schema:'sutra-autonomous-research-checkpoint/v1',sessionId,planPin:a.planPin,sequence:seq,startedAt:a.startedAt,expiresAt:a.expiresAt,state,phase,slots,queries:structuredClone(queries),documents:structuredClone(documents),passages:structuredClone(passages),frontier:structuredClone(frontier),failures:structuredClone(failures),seen:[...seen],domainAttempts:[...domainAttempts],usage:a.usage(),...(plan.modelPolicy?{modelReceipts:structuredClone(modelReceipts),modelQueries:structuredClone(modelQueries),modelWebActions:structuredClone(modelWebActions),modelOnlyAnswer}:{}),pending:pending&&structuredClone(pending),authority:'NONE',resumePolicy:'fresh exact approval and retained checkpoint digest required; unknown dispatch is not replayed'});
  async function checkpoint(){await onCheckpoint(snapshot());}
  async function operation(kind,role,detail,fn){
-  a.assertActive();pending={kind,role,detail,state:'dispatch_unknown'};emit('operation.pending',{operation:kind,role});await checkpoint();a.assertActive();
+  a.assertActive();await beforeOperation(Object.freeze({kind,role}));a.assertActive();pending={kind,role,detail,state:'dispatch_unknown'};emit('operation.pending',{operation:kind,role});await checkpoint();a.assertActive();
   const task={id:'work',kind:'research_operation',agentId:role,dependsOn:[]};
   let error;
   const result=await runTaskGraph({tasks:[task],handlers:{research_operation:{execute:async({signal:taskSignal})=>{try{return await fn(taskSignal);}catch(e){error=safeCode(e);throw e;}},admit:x=>x}},runId:'wave_'+(++wave)+'_'+randomUUID(),version:a.planPin,signal:a.signal,timeoutMs:30000,concurrency:1,maxPerAgent:1,onEvent:e=>emit('runtime.task',{wave:e.runId,role:e.agentId,status:e.status,taskKind:e.kind})});
@@ -91,7 +91,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
     if(queries.length>=3&&queries.some(q=>q.role==='spark')&&queries.slice(-2).every(q=>q.waveOutcome?.newDocuments===0&&q.waveOutcome?.newPassages===0)){reason='diminishing_returns_unverified';break;}
     if(onDemand&&!modelQueries.some(q=>!queries.some(h=>h.query===q.query))){
      const bot=plan.modelPolicy.roles.find(r=>r.role==='bot');
-     if(a.usage().modelCalls+2>=b.maxModelCalls||!canAcquire(bot.estimatedMaxCostMicros,262144)){reason='model_web_decision_budget';break;}
+     if(a.usage().modelCalls+finalRoles.length>=b.maxModelCalls||!canAcquire(bot.estimatedMaxCostMicros,262144)){reason='model_web_decision_budget';break;}
      const covered=new Set(passages.flatMap(p=>p.matched)),missing=terms(plan.objective).filter(w=>!covered.has(w));
      const webAttempted=queries.length>0||modelWebActions.length>0;
      const raw=await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing,{searchAvailable:availableProviders.length>0,openPublicUrls:plan.scope.allowModelPublicUrls===true,webAttempted}));
@@ -110,7 +110,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
      modelQueries.push(...decision.queries);
     }
     // Always mode preserves the original mandatory objective search and deterministic fallback.
-    if(plan.modelPolicy&&!onDemand&&queries.length>0&&documents.length>lastModelPlanDocumentCount&&!modelQueries.some(q=>!queries.some(h=>h.query===q.query))&&a.usage().modelCalls+2<b.maxModelCalls){
+    if(plan.modelPolicy&&!onDemand&&queries.length>0&&documents.length>lastModelPlanDocumentCount&&!modelQueries.some(q=>!queries.some(h=>h.query===q.query))&&a.usage().modelCalls+finalRoles.length<b.maxModelCalls){
      const bot=plan.modelPolicy.roles.find(r=>r.role==='bot');
      lastModelPlanDocumentCount=documents.length;
      const missing=terms(plan.objective).filter(w=>!new Set(passages.flatMap(p=>p.matched)).has(w));
@@ -162,7 +162,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
   // context for the independent reviewer to inspect competing evidence.
   try{
    const orb=plan.modelPolicy.roles.find(r=>r.role==='orb'),spark=plan.modelPolicy.roles.find(r=>r.role==='spark');
-   const packet=makeEvidencePacket(documents,passages,{maxTextBytes:Math.max(256,Math.min(16000,Math.floor(Math.min(orb.maxInputBytes,spark.maxInputBytes)/3)))});
+   const packet=makeEvidencePacket(documents,passages,{maxTextBytes:Math.max(256,Math.min(16000,Math.floor(Math.min(orb.maxInputBytes,spark?.maxInputBytes??orb.maxInputBytes)/3)))});
    if(packet.excerpts.length){
     const raw=await consult('orb',{objective:plan.objective,evidence:packet.excerpts});
     if(raw!==null){
@@ -170,7 +170,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
      let reviews=[];
      const candidates=conflictCandidates(packet);
      let conflicts=admitConflictReviews({},candidates,packet);
-     if(synthesis.claims.length||candidates.length){
+     if(spark&&(synthesis.claims.length||candidates.length)){
       const candidateClaims=synthesis.claims.map(c=>({claimId:c.id,statement:c.statement,kind:c.kind,citations:c.citations.map(x=>({passageId:x.passageId,quote:x.quote}))}));
       const review=await consult('spark',{objective:plan.objective,claims:candidateClaims,evidence:packet.excerpts,conflictCandidates:candidates});
       if(review!==null)try{const admitted=admitReviews(review,synthesis,packet),assessed=admitConflictReviews(review,candidates,packet);reviews=admitted;conflicts=assessed;}catch(e){failures.push({operation:'model_review_admission',reason:safeCode(e)});}

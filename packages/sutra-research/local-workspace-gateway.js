@@ -22,12 +22,12 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  const caps=()=>({schema:'sutra-local-research-capabilities/v1',mode,configuredModelVendors:[...vendors],searchBackends:[...searchBackends],directPublicUrls:true,jsRendering:obscuraRenderer?'operator_enabled_experimental':'unavailable',maxSelectedModels:3,authority:'NONE'});
  function preview(input){
   check();if(active(current))fail('RUN_ACTIVE');
-  if(!exact(input,['objective','models'])||typeof input.objective!=='string'||!Array.isArray(input.models)||input.models.length<1||input.models.length>3||input.models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model)))fail('MODEL_SELECTION');
+  if(!exact(input,['objective','models',...(Object.hasOwn(input??{},'reviewEnabled')?['reviewEnabled']:[]),...(Object.hasOwn(input??{},'browserScheduled')?['browserScheduled']:[])])||(Object.hasOwn(input,'reviewEnabled')&&typeof input.reviewEnabled!=='boolean')||(Object.hasOwn(input,'browserScheduled')&&typeof input.browserScheduled!=='boolean')||typeof input.objective!=='string'||!Array.isArray(input.models)||input.models.length<1||input.models.length>3||input.models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model)))fail('MODEL_SELECTION');
   if(secretLike(JSON.stringify(input))||[...Object.values(modelKeys),...Object.values(searchKeys)].some(key=>JSON.stringify(input).includes(key)))fail('SENSITIVE_INPUT');
-  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true,...(obscuraRenderer?{allowJsRendering:true}:{})},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
+  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true,...(obscuraRenderer?{allowJsRendering:true}:{})},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,...(input.reviewEnabled===false?{reviewEnabled:false}:{}),models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
   const p=admitManifest(raw),expiresAt=clock()+120000;
-  const approvalId=randomUUID();previewed={raw,pin:p.planPin,approvalId,expiresAt};
-  return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,approvalId,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,authority:'NONE'};
+  const approvalId=randomUUID();previewed={raw,pin:p.planPin,approvalId,expiresAt,browserScheduled:input.browserScheduled===true};
+  return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,approvalId,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,browserScheduled:previewed.browserScheduled,authority:'NONE'};
  }
  async function execute(s,raw){
   let a,host;
@@ -36,7 +36,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
    if(configure)host=await configure(a);
    else host={providers:createSearchProviders({credentials:searchKeys}),readDocument:obscuraRenderer?createObscuraEnhancedReader({authorization:a,renderer:obscuraRenderer}):createDocumentReader({authorization:a}),modelBroker:createResearchModelBroker({authorization:a,credentials:modelKeys})};
    a.assertActive();
-   const result=await runAutonomousResearch({authorization:a,...host,assignedSessionId:s.sessionId,onEvent:e=>{if(s.state==='running'&&s.events.length<2000)s.events.push(e);}});
+   const result=await runAutonomousResearch({authorization:a,...host,assignedSessionId:s.sessionId,beforeOperation:s.browserScheduled?op=>awaitBrowserPermit(s,op,a.signal):undefined,onEvent:e=>{if(s.state==='running'&&s.events.length<2000)s.events.push(e);}});
    if(s.controller.signal.aborted||s.state!=='running'){s.state='cancelled';return;}
    const text=JSON.stringify(result);if(Buffer.byteLength(text)>32*1024*1024)fail('REPORT_SIZE');
    s.report=result;s.reportPin=digest(text);s.state='closed';
@@ -46,20 +46,33 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  function start(input){
   check();if(active(current))fail('RUN_ACTIVE');
   if(!exact(input,['approvedPlanPin','approvalId','approvePublicContact','approveEstimatedCost','approveModelDisclosure'])||input.approvePublicContact!==true||input.approveEstimatedCost!==true||input.approveModelDisclosure!==true||!previewed||input.approvedPlanPin!==previewed.pin||input.approvalId!==previewed.approvalId||clock()>=previewed.expiresAt)fail('APPROVAL');
-  const raw=previewed.raw;previewed=null;
-  const s={sessionId:'research_'+randomUUID(),planPin:input.approvedPlanPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
+  const {raw,browserScheduled}=previewed;previewed=null;
+  const s={browserScheduled,permit:null,permitSequence:0,sessionId:'research_'+randomUUID(),planPin:input.approvedPlanPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
   current=s;void execute(s,raw);return {sessionId:s.sessionId,planPin:s.planPin,state:s.state,mode};
  }
  function status(id,after=0){
   check();if(!current||id!==current.sessionId)fail('SESSION_NOT_FOUND');
   if(!Number.isSafeInteger(after)||after<0||after>current.events.length)fail('EVENT_CURSOR');
   const s=current;
-  return {sessionId:s.sessionId,planPin:s.planPin,state:s.state,mode,events:s.events.slice(after),nextCursor:s.events.length,reason:s.reason,report:s.state==='closed'?s.report:null,reportPin:s.state==='closed'?s.reportPin:null};
+  return {sessionId:s.sessionId,planPin:s.planPin,state:s.state,mode,events:s.events.slice(after),nextCursor:s.events.length,reason:s.reason,report:s.state==='closed'?s.report:null,reportPin:s.state==='closed'?s.reportPin:null,pendingOperation:s.permit?.descriptor??null};
+ }
+ function awaitBrowserPermit(s,op,signal){
+  if(signal.aborted||s.state!=='running'||s.permit)fail('OPERATION_STATE');
+  const descriptor=Object.freeze({id:randomUUID(),sequence:++s.permitSequence,kind:op.kind,role:op.role});
+  return new Promise((resolve,reject)=>{
+   const abort=()=>{if(s.permit?.descriptor===descriptor)s.permit=null;reject(Object.assign(Error('OPERATION_CANCELLED'),{code:'OPERATION_CANCELLED'}));};
+   s.permit={descriptor,release:()=>{signal.removeEventListener('abort',abort);s.permit=null;resolve();}};
+   signal.addEventListener('abort',abort,{once:true});if(signal.aborted)abort();
+  });
+ }
+ function advance(input){
+  check();if(!exact(input,['sessionId','planPin','operationId','sequence'])||!current||input.sessionId!==current.sessionId||input.planPin!==current.planPin||current.state!=='running'||!current.permit||input.operationId!==current.permit.descriptor.id||input.sequence!==current.permit.descriptor.sequence)fail('OPERATION_PERMIT');
+  current.permit.release();return {accepted:true,operationId:input.operationId,sequence:input.sequence};
  }
  function cancel(id){
   check();if(!current||id!==current.sessionId)fail('SESSION_NOT_FOUND');
   if(current.state==='running'){current.state='cancelling';current.controller.abort();}
   return {sessionId:id,state:current.state};
  }
- return Object.freeze({capabilities:caps,preview,start,status,cancel,close(){closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
+ return Object.freeze({capabilities:caps,preview,start,status,advance,cancel,close(){closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
 }

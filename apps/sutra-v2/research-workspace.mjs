@@ -54,6 +54,7 @@ export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPe
      const id=u.searchParams.get('id');if(sessionOwner?.token!==supplied||sessionOwner.id!==id)return send(res,403,{error:'LOCAL_SESSION_OWNER'});
      return send(res,200,gateway.status(id,Number(u.searchParams.get('after')??0)));
     }
+    if(path==='/api/research/advance'&&req.method==='POST'){const b=await body(req);active();if(sessionOwner?.token!==supplied||sessionOwner.id!==b?.sessionId)return send(res,403,{error:'LOCAL_SESSION_OWNER'});return send(res,200,gateway.advance(b));}
     if(path==='/api/research/cancel'&&req.method==='POST'){const b=await body(req);active();if(!b||Object.keys(b).length!==1||typeof b.sessionId!=='string')throw err('SESSION_ID');if(sessionOwner?.token!==supplied||sessionOwner.id!==b.sessionId)return send(res,403,{error:'LOCAL_SESSION_OWNER'});return send(res,200,gateway.cancel(b.sessionId));}
     return send(res,404,{error:'API_ROUTE'});
    }

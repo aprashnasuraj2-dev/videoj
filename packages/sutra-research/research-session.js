@@ -30,8 +30,8 @@ export function admitManifest(text){
  let modelPolicy;
  if(hasModels){
   const m=p.modelPolicy,pool=Object.hasOwn(m??{},'models'),compact=Object.hasOwn(m??{},'defaultModel'),explicitWeb=Object.hasOwn(m??{},'webAccess'),roleKeys=['bot','orb','spark'];
-  const keys=['allowPublicEvidenceDisclosure',...(pool?['models']:[]),...(compact?['defaultModel']:[]),...(Object.hasOwn(m??{},'roles')?['roles']:[]),...(explicitWeb?['webAccess']:[])];
-  if(!exact(m,keys)||m.allowPublicEvidenceDisclosure!==true||pool&&(compact||Object.hasOwn(m,'roles'))||!pool&&!compact&&!Object.hasOwn(m,'roles'))fail('MODEL_POLICY');
+  const keys=['allowPublicEvidenceDisclosure',...(pool?['models']:[]),...(compact?['defaultModel']:[]),...(Object.hasOwn(m??{},'roles')?['roles']:[]),...(explicitWeb?['webAccess']:[]),...(Object.hasOwn(m??{},'reviewEnabled')?['reviewEnabled']:[])];
+  if(!exact(m,keys)||(Object.hasOwn(m,'reviewEnabled')&&(!pool||typeof m.reviewEnabled!=='boolean'))||m.allowPublicEvidenceDisclosure!==true||pool&&(compact||Object.hasOwn(m,'roles'))||!pool&&!compact&&!Object.hasOwn(m,'roles'))fail('MODEL_POLICY');
   const webAccess=m.webAccess??(pool||compact?'on_demand':'always');
   if(!['on_demand','always'].includes(webAccess))fail('MODEL_WEB_ACCESS');
   const fields=['vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'];
@@ -58,7 +58,8 @@ export function admitManifest(text){
    models=[...new Map(resolved.map(({role,...r})=>[r.vendor+'\0'+r.model,Object.freeze(r)])).values()];
   }
   const orb=resolved.find(r=>r.role==='orb'),spark=resolved.find(r=>r.role==='spark');
-  const reviewMode=orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':'different_configured_models_independence_unproven';
+  const reviewMode=m.reviewEnabled===false?'review_disabled':orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':'different_configured_models_independence_unproven';
+  if(m.reviewEnabled===false)resolved=resolved.filter(r=>r.role!=='spark');
   modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,webAccess,models:Object.freeze(models),roles:Object.freeze(resolved),reviewMode});
  }
  const plan=Object.freeze({...p,...(modelPolicy?{modelPolicy}:{}),scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
