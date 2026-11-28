@@ -1,11 +1,5 @@
 name: Observe SUTRA open-weight semantic pilot V2
 on:
-  pull_request:
-    branches: ['main']
-    paths:
-      - 'packages/sutra-knowledge/evaluation/semantic-qwen-pilot-*'
-      - 'packages/sutra-knowledge/semantic-reading-only.js'
-      - '.github/workflows/sutra-semantic-qwen-pilot.yml'
   workflow_dispatch:
 permissions:
   contents: read

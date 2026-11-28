@@ -1,11 +1,5 @@
 name: Observe SUTRA open-weight semantic pilot
 on:
-  pull_request:
-    branches: ['main']
-    paths:
-      - 'packages/sutra-knowledge/evaluation/semantic-open-model-*'
-      - 'packages/sutra-knowledge/semantic-compact-response.js'
-      - '.github/workflows/sutra-semantic-open-model.yml'
   workflow_dispatch:
 permissions:
   contents: read
