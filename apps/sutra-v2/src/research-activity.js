@@ -25,7 +25,7 @@ export function createResearchActivityProjector(){
     else return null;
    }else if(e.kind==='browser.model_call'){
     role=parent;if(role===null)return null;
-    if(phase==='start')detail='Model transport started; outcome not yet known.';
+    if(phase==='start')detail='Model-call boundary entered; transport outcome not yet known.';
     else if(phase==='end')detail=e.status==='ok'?'Model transport response admitted; not verification.':'Model transport stopped; billing unverified.';
     else return null;
    }else if(e.kind==='browser.peer_consent'){
