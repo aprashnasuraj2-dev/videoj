@@ -60,7 +60,7 @@ jobs:
         run: |
           sudo useradd --system --no-create-home sutra-pdf-ci
           sudo install -d -m 0755 /tmp/sutra-pdf-ci
-          sudo cp -R packages/sutra-research /tmp/sutra-pdf-ci/
+          sudo cp -R packages/sutra-research packages/sutra-consent /tmp/sutra-pdf-ci/
           sudo chmod -R a+rX /tmp/sutra-pdf-ci
           sudo install -m 0755 "$(command -v node)" /tmp/sutra-pdf-ci/node
           sudo runuser -u sutra-pdf-ci -- /tmp/sutra-pdf-ci/node --test /tmp/sutra-pdf-ci/sutra-research/test/pdf-sandbox.integration.mjs
