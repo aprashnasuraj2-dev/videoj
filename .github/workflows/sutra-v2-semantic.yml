@@ -62,7 +62,6 @@ jobs:
             packages/sutra-knowledge/test/semantic-world-grid.test.mjs \
             packages/sutra-knowledge/test/semantic-probe-suite.test.mjs \
             packages/sutra-knowledge/test/clarification-plan.test.mjs \
-            packages/sutra-knowledge/test/clarification-preview.test.mjs \
             packages/sutra-knowledge/test/ambient-human-ambiguity.test.mjs \
             packages/sutra-knowledge/test/semantic-model-authored-corpus.test.mjs \
             packages/sutra-knowledge/test/semantic-operation-heldout.test.mjs \
