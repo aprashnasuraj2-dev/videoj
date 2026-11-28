@@ -576,3 +576,25 @@
   grid-template-columns:minmax(0,1fr);
  }
 }
+
+#eh-workspace .eh-designed-execution{
+ margin-top:16px;
+ padding:14px;
+ border:1px solid var(--eh-line);
+ border-radius:10px;
+ background:var(--eh-panel);
+ display:grid;
+ gap:8px;
+}
+#eh-workspace .eh-designed-preview{
+ min-width:0;
+ overflow-wrap:anywhere;
+}
+#eh-workspace .eh-designed-execution input[type=checkbox]{
+ width:auto;
+ justify-self:start;
+}
+#eh-workspace .eh-designed-result pre{
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}

@@ -458,3 +458,58 @@ test('archive comparison distinguishes status and unknown post-dispatch outcome'
  const diff=compareRunRecords(before,after);
  assert.equal(diff.tasks[0].relation,'status_changed');assert.equal(diff.sameVersion,true);
 });
+
+import {prepareDesignedExecution} from '../src/event-horizon/designed-execution.js';
+function designedFixture(){
+ const requests=[];
+ const origin='http://127.0.0.1:8000';
+ const route={inference:'configured',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',provider:'groq',model:'fixture-model',inferenceContractId:'a'.repeat(64)};
+ const fetchImpl=async(url,init)=>{
+  requests.push({url,init});
+  if(url===origin+'/api/status')return new Response(JSON.stringify(route),{headers:{'content-type':'application/json'}});
+  assert.equal(url,origin+'/api/v1/chat/completions');
+  const body=JSON.parse(init.body);
+  assert.equal(body.model,'fixture-model');
+  assert.equal(init.headers['X-Sutra-Inference-Contract'],'a'.repeat(64));
+  const chunk={choices:[{index:0,delta:{content:'A bounded fixture candidate.'},finish_reason:'stop'}]};
+  return new Response('data: '+JSON.stringify(chunk)+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+ };
+ return {origin,fetchImpl,requests,route};
+}
+test('designed execution requires exact approval and performs actual bounded runtime calls',async()=>{
+ const f=designedFixture(),definition=composeProfile('single',1),events=[];
+ const p=await prepareDesignedExecution({...f,definition,objective:'Explain a candidate',maxModelCalls:1});
+ assert.equal(f.requests.length,1);
+ assert.equal(f.requests[0].init.method,'GET');
+ assert.equal(f.requests[0].init.body,undefined);
+ await assert.rejects(p.run({approvedPlanPin:'wrong'}),e=>e.code==='DESIGN_APPROVAL_REQUIRED');
+ assert.equal(f.requests.length,1);
+ const result=await p.run({approvedPlanPin:p.planPin,onEvent:e=>events.push(e)});
+ assert.equal(result.receipt.agentCalls,1);
+ assert.equal(result.receipt.modelCalls,1);
+ assert.equal(result.receipt.attempted,1);
+ assert.equal(result.receipt.authority,'NONE');
+ assert.ok(events.some(e=>e.kind==='agent'&&e.agent==='specialist'));
+ assert.equal(f.requests.length,2);
+ await assert.rejects(p.run({approvedPlanPin:p.planPin}),e=>e.code==='DESIGN_PLAN_CONSUMED');
+});
+test('stale design and pre-cancelled run dispatch no model requests',async()=>{
+ const f=designedFixture();let current=true;
+ const p=await prepareDesignedExecution({...f,definition:composeProfile('single',1),objective:'Draft',isCurrent:()=>current});
+ current=false;
+ await assert.rejects(p.run({approvedPlanPin:p.planPin}),e=>e.code==='DESIGN_STALE'&&e.dispatch.attempted===0);
+ assert.equal(f.requests.length,1);
+ const q=await prepareDesignedExecution({...f,definition:composeProfile('single',1),objective:'Draft'});
+ const abort=new AbortController();abort.abort();
+ await assert.rejects(q.run({approvedPlanPin:q.planPin,signal:abort.signal}),e=>e.code==='CANCELLED'&&e.dispatch.attempted===0);
+ assert.equal(f.requests.length,2);
+});
+test('external tools and unconfigured routes are refused before model calls',async()=>{
+ const f=designedFixture(),definition=JSON.parse(JSON.stringify(composeProfile('single',1)));
+ definition.tools[0].tools=['https://example.com/agents/peer'];
+ await assert.rejects(prepareDesignedExecution({...f,definition,objective:'Draft'}));
+ assert.equal(f.requests.length,0);
+ f.route.inference='disabled';
+ await assert.rejects(prepareDesignedExecution({...f,definition:composeProfile('single',1),objective:'Draft'}));
+ assert.equal(f.requests.length,1);
+});

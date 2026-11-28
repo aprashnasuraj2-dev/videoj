@@ -66,10 +66,11 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const runtime=E('div');runtime.id='eh-runtime';runtime.append(controls,counters,status,qualification,split,timeline,footer);
  section.append(head,objectiveSlot,tabs,runtime);root.prepend(section);
  let selection=null,selectedRun='empty',latestObservedId=null,autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
- const localRuns=new Map(),placements=[];
+ const localRuns=new Map(),designedRuns=new Map(),placements=[];
+ let designedSequence=0;
  let pageIndex=0,viewport=null,currentSvg=null,viewportKey=null,currentPositions=new Map(),drag=null,replaySequence=null,replayEvents=[],liveGraph=emptyGraph();
  const research=createResearchProjection();
- const snapshots=()=>{const list=feed.runs().map(r=>projectTaskRun(r,feed.events(r.runId))).filter(Boolean);const trace=research.snapshot();if(trace)list.push(trace);list.push(...localRuns.values());return list;};
+ const snapshots=()=>{const list=feed.runs().map(r=>projectTaskRun(r,feed.events(r.runId))).filter(Boolean);const trace=research.snapshot();if(trace)list.push(trace);list.push(...localRuns.values(),...[...designedRuns.values()].map(r=>r.snapshot()));return list;};
  function visibleGraph(){return projectGraphFilter(graph,{query:filter.value,kind:kindFilter.value,relation:relationFilter.value});}
  function applyViewport(){if(!viewport||!currentSvg)return;currentSvg.setAttribute('viewBox',viewBox(viewport));zoomText.textContent=Math.round(viewport.zoom*100)+'%';}
  function fit(){if(!viewport)return;viewport=fitViewport(viewport.extentWidth,viewport.extentHeight);applyViewport();}
@@ -169,7 +170,12 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   {id:'atlas',name:'Agent Atlas',panelId:'eh-atlas',mount:()=>mountAtlasView(section)},
   {id:'batch',name:'Task workshop',panelId:'eh-batch',mount:()=>mountBatchWorkshop(section,{publish:publishTaskExecution,onObserve(runId){autoFollow=false;selectedRun='task/'+encodeURIComponent(runId);selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}})},
   {id:'proof',name:'Proof workbench',panelId:'eh-proof',mount:()=>mountProofView(section,{onScenario(nodes){const v=registry.ensure('scenarios');if(v?.stage(nodes,'Current proof workbench declarations'))switchView('scenarios');}})},
-  {id:'designer',name:'Network designer',panelId:'eh-network-designer',mount:()=>mountNetworkDesigner(section)},
+  {id:'designer',name:'Network designer',panelId:'eh-network-designer',mount:()=>mountNetworkDesigner(section,{
+   onStart(){const id='designed_'+(++designedSequence),p=createResearchProjection();p.begin();const record={projection:p,snapshot(){const g=p.snapshot();return {...g,id,runId:id,label:'Designed network trace'};}};designedRuns.set(id,record);if(designedRuns.size>8)designedRuns.delete(designedRuns.keys().next().value);refresh(id);return id;},
+   onEvent(id,e){const p=designedRuns.get(id)?.projection;if(p?.accept({...e,kind:'browser.'+e.kind,operation:e.phase},'browser_runtime'))refresh(id);},
+   onEnd(id,status){const p=designedRuns.get(id)?.projection;if(p){p.end(status);refresh(id);}},
+   onObserve(id){autoFollow=false;selectedRun=id;selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}
+  })},
   {id:'scenarios',name:'Scenario matrix',panelId:'eh-scenarios',mount:()=>mountScenarioView(section)},
   {id:'archive',name:'Run archive',panelId:'eh-run-archive',mount:()=>mountRunArchive(section,{feed})},
   {id:'notebook',name:'Notebook',panelId:'eh-notebook',mount:()=>{const instance=mountNotebook(section);if(latestKnowledge)instance.update(latestKnowledge);return instance;}}

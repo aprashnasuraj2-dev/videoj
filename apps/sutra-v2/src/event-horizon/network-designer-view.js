@@ -1,5 +1,6 @@
 import {createNetworkDesigner,composeProfile,parseDesign,designGraph,DESIGN_LIMITS} from './network-designer.js';
 import {layoutGraph} from './layout.js';
+import {mountDesignedExecution} from './designed-execution-view.js';
 
 const E=(tag,text,cls)=>{
  const n=document.createElement(tag);
@@ -66,10 +67,10 @@ function download(name,text){
  a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export function mountNetworkDesigner(root){
+export function mountNetworkDesigner(root,executionHooks={}){
  const section=E('section');
  section.id='eh-network-designer';
- section.append(E('p','OPEN AGENTIC WEB / LOCAL AUTHORING','eh-kicker'),E('h2','Network designer'),E('p','Create portable declarative agent definitions and connect optional delegation paths. The existing runtime compiler checks every accepted edit. This screen never executes a model, publishes an artifact, or grants authority.','eh-copy'));
+ section.append(E('p','OPEN AGENTIC WEB / LOCAL AUTHORING','eh-kicker'),E('h2','Network designer'),E('p','Create portable declarative agent definitions and connect optional delegation paths. The existing runtime compiler checks every accepted edit. Run the validated graph only through a separate exact approval. Nothing is published.','eh-copy'));
  const designer=createNetworkDesigner();
  let selected='specialist';
  let imported=null;
@@ -189,12 +190,14 @@ export function mountNetworkDesigner(root){
  rawPanel.append(raw);
  section.append(toolbar,status,digest,summary,presets,metadata,layout,importPanel,rawPanel);
  root.append(section);
+ const execution=mountDesignedExecution(section,{snapshot:designer.snapshot,isDirty:()=>dirty,...executionHooks});
  function mutate(fn,message,choose){
   if(busy)return false;
   try{
    const next=fn();
    selected=next.definition.tools.some(a=>a.name===(choose??selected))?choose??selected:next.front;
    dirty=false;
+   execution.invalidate();
    digest.textContent='';
    status.textContent=message;
    render();
@@ -310,6 +313,7 @@ export function mountNetworkDesigner(root){
   for(const el of [description,instructions,steps,schemaText]){
    el.addEventListener('input',()=>{
     dirty=true;
+    execution.invalidate();
     status.textContent='Unapplied field edits. Apply or select a definition to discard.';
     sync();
    });
@@ -333,6 +337,7 @@ export function mountNetworkDesigner(root){
   networkSteps.disabled=busy;
   nameInput.disabled=busy;
   inspector.inert=busy;
+  execution.sync();
  }
  function render(){
   const state=designer.snapshot();
@@ -352,5 +357,5 @@ export function mountNetworkDesigner(root){
  }
  count.disabled=true;
  render();
- return section;
+ return Object.freeze({section,cancel:()=>execution.cancel()});
 }
