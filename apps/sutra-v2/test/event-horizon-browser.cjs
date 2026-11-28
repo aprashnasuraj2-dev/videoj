@@ -42,6 +42,18 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.waitForFunction(()=>document.querySelector('#eh-proof .eh-proof-diff').textContent.includes('constraint refuted'));
    assert.match(await page.locator('#eh-proof .eh-proof-diff').innerText(),/3 affected nodes/);
    await page.screenshot({path:path.join(out,'event-horizon-proof-revision.png'),fullPage:false});
+   await page.locator('.eh-tabs').getByRole('button',{name:'Network designer',exact:true}).click();
+   await page.locator('#eh-network-designer').getByLabel('New definition ID').fill('evidence');
+   await page.locator('#eh-network-designer').getByRole('button',{name:'Add definition',exact:true}).click();
+   await page.locator('[data-definition=specialist]').click();
+   await page.locator('#eh-network-designer').getByLabel('Delegate to').selectOption('evidence');
+   await page.locator('#eh-network-designer').getByRole('button',{name:'Connect selected definition',exact:true}).click();
+   assert.match(await page.locator('#eh-design-status').innerText(),/delegation admitted/);
+   await page.locator('[data-definition=evidence]').click();
+   await page.locator('#eh-network-designer').getByLabel('Delegate to').selectOption('specialist');
+   await page.locator('#eh-network-designer').getByRole('button',{name:'Connect selected definition',exact:true}).click();
+   assert.match(await page.locator('#eh-design-status').innerText(),/CYCLE/);
+   await page.screenshot({path:path.join(out,'event-horizon-network-designer.png'),fullPage:false});
    await page.locator('.eh-tabs').getByRole('button',{name:'Task workshop',exact:true}).click();
    for(let i=1;i<10;i++)await page.locator('#eh-batch').getByRole('button',{name:'Add task',exact:true}).click();
    for(let i=0;i<10;i++)await page.locator('#eh-batch .eh-batch-row').nth(i).getByLabel('Task owner').fill('owner_'+i);

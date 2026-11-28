@@ -8,6 +8,7 @@ import {fitViewport,zoomViewport,panViewport,centerViewport,viewBox,entityPage,p
 import {replayJournalPrefix} from './replay.js';
 import {mountBatchWorkshop} from './batch-workshop.js';
 import {mountProofView} from './proof-view.js';
+import {mountNetworkDesigner} from './network-designer-view.js';
 import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -161,7 +162,8 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const atlas=mountAtlasView(section);
  const batch=mountBatchWorkshop(section,{publish:publishTaskExecution,onObserve(runId){autoFollow=false;selectedRun='task/'+encodeURIComponent(runId);selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}});
  const proof=mountProofView(section);
- const views=[['runtime','Runtime',runtime],['composition','Compose',composition],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation],['atlas','Agent Atlas',atlas],['batch','Task workshop',batch.section],['proof','Proof workbench',proof]];
+ const designer=mountNetworkDesigner(section);
+ const views=[['runtime','Runtime',runtime],['composition','Compose',composition],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation],['atlas','Agent Atlas',atlas],['batch','Task workshop',batch.section],['proof','Proof workbench',proof],['designer','Network designer',designer]];
  function switchView(next){viewMode=next;for(const [id,,panel] of views)panel.hidden=id!==next;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));knowledge.setActive(active&&next==='knowledge');if(next==='runtime')refresh();}
  for(const [id,name,panel] of views){const b=button(name,()=>switchView(id));b.dataset.view=id;b.setAttribute('aria-controls',panel.id);tabs.append(b);}
  function setActive(value){active=!!value;for(const {node,marker} of placements){if(active)objectiveSlot.append(node);else marker.after(node);}objectiveSlot.hidden=!active||!placements.length;knowledge.setActive(active&&viewMode==='knowledge');if(active)refresh();}

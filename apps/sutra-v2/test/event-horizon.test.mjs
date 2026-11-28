@@ -244,3 +244,49 @@ test('proof archive alteration is refused and inspection has no execution author
  await assert.rejects(inspectProofArchive(JSON.stringify(archive)));
  assert.equal(s.snapshot().current.report.graphDigest,r.report.graphDigest);
 });
+
+import {createNetworkDesigner,composeProfile,parseDesign,networkText,delegationAnalysis} from '../src/event-horizon/network-designer.js';
+test('network designer admits variable topology definitions and exports actual compiler-compatible JSON',async()=>{
+ for(const count of [1,2,6,10,12]){
+  for(const profile of count===1?['single']:['parallel','hierarchy','challenge']){
+   const d=composeProfile(profile,count);
+   const a=delegationAnalysis(d);
+   assert.equal(a.definitionCount,count);
+   assert.equal(a.reachable.length,count);
+   assert.equal(a.edgeCount,count-1);
+   assert.ok(a.maxDepth<=3);
+   const s=createNetworkDesigner(d);
+   const out=await s.exportBundle();
+   const passport=await inspectImportedNetwork(new TextEncoder().encode(out.text),{front:out.front});
+   assert.equal(passport.definitionCount,count);
+   assert.equal(passport.digests.definition,out.digest);
+  }
+ }
+});
+test('network edits are transactional; rename, undo, redo and invalid cycle',()=>{
+ const d=createNetworkDesigner();
+ d.edit({type:'add',name:'research'});
+ d.edit({type:'connect',from:'specialist',to:'research'});
+ assert.deepEqual(d.snapshot().analysis.reachable,['specialist','research']);
+ const before=JSON.stringify(d.snapshot().definition);
+ assert.throws(()=>d.edit({type:'connect',from:'research',to:'specialist'}));
+ assert.equal(JSON.stringify(d.snapshot().definition),before);
+ d.edit({type:'rename',name:'research',nextName:'evidence'});
+ assert.deepEqual(d.snapshot().definition.tools[0].tools,['evidence']);
+ d.undo();
+ assert.deepEqual(d.snapshot().definition.tools[0].tools,['research']);
+ d.redo();
+ assert.deepEqual(d.snapshot().definition.tools[0].tools,['evidence']);
+ d.edit({type:'remove',name:'evidence'});
+ assert.equal(d.snapshot().analysis.edgeCount,0);
+});
+test('network designer refuses external references and executable or permissive schemas',()=>{
+ const d=createNetworkDesigner();
+ const before=d.snapshot().definition;
+ assert.throws(()=>d.edit({type:'parameters',name:'specialist',text:'{"type":"object","additionalProperties":true}'}));
+ const raw=JSON.parse(networkText(before));
+ raw.tools[0].tools=['https://example.com/agents/peer'];
+ assert.throws(()=>parseDesign(JSON.stringify(raw)));
+ assert.throws(()=>parseDesign('{"tools":[],"tools":[]}'));
+ assert.deepEqual(d.snapshot().definition,before);
+});
