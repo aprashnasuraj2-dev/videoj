@@ -44,7 +44,7 @@ function pair(left,right){
 async function contrastWithCompiler(contractText,contractPin,batchText,compile){
  const contract=await prepareReviewedCompilerContract(contractText,contractPin);
  const b=parseUniqueJson(batchText,{maxChars:262144,maxDepth:5});
- if(!keys(b,['version','contractDigest','proposals'])||b.version!==1||b.contractDigest!==contractPin||!Array.isArray(b.proposals)||b.proposals.length<2||b.proposals.length>8)fail('CONTRAST_BATCH');
+ if(!keys(b,['version','contractDigest','proposals'])||b.version!==1||b.contractDigest!==contractPin||!Array.isArray(b.proposals)||b.proposals.length<1||b.proposals.length>8)fail('CONTRAST_BATCH');
  const ids=new Set();
  for(const x of b.proposals){
   if(!keys(x,['id','proposalText'])||typeof x.id!=='string'||!ID.test(x.id)||ids.has(x.id)||typeof x.proposalText!=='string'||!x.proposalText.length||x.proposalText.length>65536)fail('CONTRAST_ENTRY');

@@ -44,3 +44,8 @@ test('shared repeated-operand DAG at depth 24 visits only 24 unique signature no
  assert.equal(r.counts.admitted,2);assert.equal(r.counts.selfComparisons,2);assert.equal(r.counts.distinctTypedStructures,1);
  assert.ok(r.entries.every(e=>e.computation.signatureNodes===24));
 });
+
+test('single supplied candidate is admissible for investigation without fabricating contrast evidence',async()=>{
+ const f=await compilerFinanceFixture(),r=await run(f,[entry('only',f.proposalText)]);
+ assert.equal(r.entries.length,1);assert.equal(r.pairs.length,0);assert.equal(r.counts.admitted,1);assert.equal(r.counts.distinctTypedStructures,1);assert.equal(r.decisionAuthority,'NONE');
+});
