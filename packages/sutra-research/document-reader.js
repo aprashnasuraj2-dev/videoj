@@ -1,6 +1,6 @@
 import {setTimeout as delay} from 'node:timers/promises';
 import {admitDocumentURL} from './dynamic-public-route-policy.js';
-import {extractPdfDocument,PDF_INPUT_BYTES} from './pdf-parser.js';
+import {extractPdfDocument,PDF_INPUT_BYTES,probePdfSandbox} from './pdf-parser.js';
 import {scanHtml} from './html-parser.js';
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {pinnedPublicHttp} from './pinned-public-http.js';
@@ -44,6 +44,7 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
  if(!Number.isSafeInteger(minIntervalMs)||minIntervalMs<0||minIntervalMs>5000)fail('THROTTLE_CONFIG');
  const scope=authorization.plan.scope,allowQuery=scope.allowPublicQueryParameters===true,allowRedirects=scope.allowRedirects===true,routeOptions={allowQuery};
  const robots=new Map(),lastRequest=new Map(),documentRequests=new Map(),throttleTail=new Map();
+ const allowPdf=scope.allowPdf===true;let pdfPreflight=null;
  const activeCheck=signal=>{authorization.assertActive();if(signal?.aborted)fail('CANCELLED');};
  async function throttle(origin,signal){
   const prior=throttleTail.get(origin)??Promise.resolve();
@@ -57,7 +58,12 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
  }
  async function readRobots(origin,signal,beforeDispatch){
   activeCheck(signal);
-  if(robots.has(origin))return robots.get(origin);
+  // Coalesce the first policy request for an origin, including a failed/uncertain
+  // result. A second caller must not implicitly retry a policy dispatch.
+  if(!robots.has(origin))robots.set(origin,fetchRobots(origin,signal,beforeDispatch));
+  const rules=await robots.get(origin);activeCheck(signal);return rules;
+ }
+ async function fetchRobots(origin,signal,beforeDispatch){
   let current=new URL('/robots.txt',origin).href;const seen=new Set();
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('ROBOTS_REDIRECT_LOOP');seen.add(current);
@@ -66,7 +72,7 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
    activeCheck(signal);
    if([301,302,303,307,308].includes(r.status)){if(hop===3)fail('ROBOTS_REDIRECT_LIMIT');current=redirectTarget(current,r.location);continue;}
    if(![200,404,410].includes(r.status))fail('ROBOTS_RESPONSE');
-   const text=r.status===200?utf8(r.body):'';robots.set(origin,text);return text;
+   return r.status===200?utf8(r.body):'';
   }
   fail('ROBOTS_REDIRECT_LIMIT');
  }
@@ -74,7 +80,11 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
   if(typeof beforeDispatch!=='function')fail('DISPATCH_FENCE');
   const signal=callerSignal?AbortSignal.any([authorization.signal,callerSignal]):authorization.signal;
   activeCheck(signal);const requested=admitDocumentURL(raw,routeOptions);let current=requested;
-  const chain=[],seen=new Set(),allowPdf=scope.allowPdf===true,maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
+  // All reader entrypoints, including workers, refuse PDF-enabled acquisition
+  // before any robots/document contact if the exact parser cannot be sandboxed.
+  // The per-authorization preflight is single-flight and never auto-retried.
+  if(allowPdf){pdfPreflight??=probePdfSandbox({signal:authorization.signal,parse:parsePdf});await pdfPreflight;activeCheck(signal);}
+  const chain=[],seen=new Set(),maxBytes=allowPdf?PDF_INPUT_BYTES:DOCUMENT_BYTES,acceptedTypes=['text/html','text/plain','application/json','text/csv'];
   if(allowPdf)acceptedTypes.push('application/pdf');
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('REDIRECT_LOOP');seen.add(current);
