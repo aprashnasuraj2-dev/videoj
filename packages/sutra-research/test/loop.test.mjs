@@ -46,3 +46,10 @@ test('search backend outage preserves independently acquired evidence and bounde
  assert.ok(report.failures.some(x=>x.reason==='RATE_LIMIT'));assert.equal(report.documents.length,1);assert.equal(reads.length,1);assert.ok(calls.length<=3);assert.equal(new Set(calls.map(x=>JSON.stringify(x))).size,calls.length);assert.doesNotMatch(JSON.stringify(report),/private provider message/);
  }finally{a.close();}
 });
+
+test('forged browser query selection cannot dispatch a second search',async()=>{
+ const a=grant(),calls=[],events=[];try{
+ const r=await runAutonomousResearch({authorization:a,providers:{brave:{search:async q=>{calls.push(q);return [];}},tavily:{search:async q=>{calls.push(q);return [];}}},readDocument:async()=>{throw Error('UNEXPECTED_DOCUMENT');},selectQuery:async choices=>{assert.ok(choices.length>1);assert.ok(choices.every(c=>!Object.hasOwn(c,'query')));return 'query_99';},onEvent:e=>events.push(e)});
+ assert.equal(calls.length,1);assert.equal(r.usage.searches,1);assert.equal(r.terminationReason,'operation_interrupted');assert.ok(r.failures.some(x=>x.reason==='QUERY_SELECTION'));assert.equal(events.filter(e=>e.kind==='browser.query_selected').length,0);
+ }finally{a.close();}
+});

@@ -43,7 +43,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
    if(configure)host=await configure(a);
    else host={providers:createSearchProviders({credentials:searchKeys}),readDocument:obscuraRenderer?createObscuraEnhancedReader({authorization:a,renderer:obscuraRenderer}):createDocumentReader({authorization:a}),...(a.plan.modelPolicy?{modelBroker:createResearchModelBroker({authorization:a,credentials:modelKeys})}:{})};
    a.assertActive();
-   const result=await runAutonomousResearch({authorization:a,...host,assignedSessionId:s.sessionId,beforeOperation:s.browserScheduled?op=>awaitBrowserPermit(s,op,a.signal):undefined,selectDocument:s.browserScheduled?(choices,signal)=>awaitBrowserPermit(s,{kind:'select_document',role:'drone',choices},signal):undefined,onEvent:e=>{if(s.state==='running'&&s.events.length<2000)s.events.push(e);}});
+   const result=await runAutonomousResearch({authorization:a,...host,assignedSessionId:s.sessionId,beforeOperation:s.browserScheduled?op=>awaitBrowserPermit(s,op,a.signal):undefined,selectDocument:s.browserScheduled?(choices,signal)=>awaitBrowserPermit(s,{kind:'select_document',role:'drone',choices},signal):undefined,selectQuery:s.browserScheduled?(choices,signal)=>awaitBrowserPermit(s,{kind:'select_query',role:'bot',choices},signal):undefined,onEvent:e=>{if(s.state==='running'&&s.events.length<2000)s.events.push(e);}});
    if(s.controller.signal.aborted||s.state!=='running'){s.state='cancelled';return;}
    const text=JSON.stringify(result);if(Buffer.byteLength(text)>32*1024*1024)fail('REPORT_SIZE');
    s.report=result;s.reportPin=digest(text);s.state='closed';
@@ -89,7 +89,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  }
  function awaitBrowserPermit(s,op,signal){
   if(signal.aborted||s.state!=='running'||s.permit)fail('OPERATION_STATE');
-  const descriptor=Object.freeze({id:randomUUID(),sequence:++s.permitSequence,kind:op.kind,role:op.role,...(op.kind==='select_document'?{choices:op.choices}:{})});
+  const descriptor=Object.freeze({id:randomUUID(),sequence:++s.permitSequence,kind:op.kind,role:op.role,...(['select_document','select_query'].includes(op.kind)?{choices:op.choices}:{})});
   return new Promise((resolve,reject)=>{
    const abort=()=>{if(s.permit?.descriptor===descriptor)s.permit=null;reject(Object.assign(Error('OPERATION_CANCELLED'),{code:'OPERATION_CANCELLED'}));};
    s.permit={descriptor,release:selectionId=>{signal.removeEventListener('abort',abort);s.permit=null;resolve(selectionId);}};
@@ -97,7 +97,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   });
  }
  function advance(input){
-  check();const op=current?.permit?.descriptor,selection=op?.kind==='select_document';
+  check();const op=current?.permit?.descriptor,selection=['select_document','select_query'].includes(op?.kind);
   if(!exact(input,['sessionId','planPin','operationId','sequence',...(selection?['selectionId']:[])])||!current||input.sessionId!==current.sessionId||input.planPin!==current.planPin||current.state!=='running'||!op||input.operationId!==op.id||input.sequence!==op.sequence||selection&&!op.choices.some(c=>c.id===input.selectionId))fail('OPERATION_PERMIT');
   current.permit.release(selection?input.selectionId:undefined);return {accepted:true,operationId:input.operationId,sequence:input.sequence,...(selection?{selectionId:input.selectionId}:{})};
  }

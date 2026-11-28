@@ -156,3 +156,22 @@ test('browser selects only an admitted frontier candidate, then separately permi
   assert.equal(r.state,'cancelled');assert.equal(reads.length,1);assert.equal(calls.length,1);assert.equal(r.pendingOperation,null);
  }finally{g.close();}
 });
+
+test('browser selects only an admitted model query; search dispatch needs a new exact permit',async()=>{
+ const searches=[],calls=[];
+ const g=createLocalResearchGateway({modelCredentials,configure:a=>({providers:Object.fromEntries(a.plan.providers.map(p=>[p.id,{search:async q=>{searches.push(q);return [];}}])),readDocument:async()=>{throw Error('UNEXPECTED_DOCUMENT');},modelBroker:createResearchModelBroker({authorization:a,credentials:modelCredentials,exchangeFactory:()=>({close(){},async exchange(req){calls.push(req);return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({webAction:'search',queries:[{suffix:'primary data',questionId:'primary'},{suffix:'limitations',questionId:'counterevidence'}]})}}],usage:{completion_tokens:12}})};}})})})});
+ try{
+ const p=g.preview({...input,objective:'Compare battery storage costs',browserScheduled:true,reviewEnabled:false}),s=g.start(approval(p));
+ const next=async()=>{for(let i=0;i<200;i++){const r=g.status(s.sessionId);if(r.pendingOperation||r.state!=='running')return r;await delay(10);}throw Error('NO_PERMIT');};
+ const permit=op=>({sessionId:s.sessionId,planPin:s.planPin,operationId:op.id,sequence:op.sequence});
+ let r=await next();assert.equal(r.pendingOperation.kind,'model');g.advance(permit(r.pendingOperation));
+ r=await next();const select=r.pendingOperation;assert.equal(select.kind,'select_query');assert.equal(select.choices.length,2);assert.ok(select.choices.every(c=>!Object.hasOwn(c,'query')));assert.equal(searches.length,0);
+ assert.throws(()=>g.advance({...permit(select),selectionId:'query_99'}),/OPERATION_PERMIT/);
+ assert.throws(()=>g.advance({...permit(select),selectionId:'query_1',query:'forged'}),/OPERATION_PERMIT/);
+ g.advance({...permit(select),selectionId:'query_1'});assert.throws(()=>g.advance({...permit(select),selectionId:'query_1'}),/OPERATION_PERMIT/);
+ r=await next();assert.equal(r.pendingOperation.kind,'search');assert.equal(searches.length,0);g.advance(permit(r.pendingOperation));
+ r=await next();assert.equal(searches[0],'Compare battery storage costs limitations');assert.equal(r.pendingOperation.kind,'search');g.cancel(s.sessionId);
+ for(let i=0;i<200;i++){r=g.status(s.sessionId);if(!['running','cancelling'].includes(r.state))break;await delay(10);}
+ assert.equal(r.state,'cancelled');assert.equal(searches.length,1);assert.equal(calls.length,1);
+ }finally{g.close();}
+});
