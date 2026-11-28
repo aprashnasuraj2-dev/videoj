@@ -65,6 +65,24 @@ jobs:
           cp services/sutra-api/wrangler.private.jsonc "$dir/policy.jsonc"
           node deploy/sutra-pages/candidate-fingerprint.mjs verify "$revision" "$dir/fingerprint.json" "$dir/fingerprint.sha256" "$dir/pages" "$dir/guide" "$dir/worker" "$dir/functions.mjs" "$dir/policy.jsonc" > "$dir/restoration.json"
           cat "$dir/restoration.json"
+      - name: Rebuild static candidates from the same exact revision and compare every retained byte
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_PROVIDER00000000000000000001
+          VITE_SUTRA_BUILD_SECRET_CANARY: SUTRA_BUILD_SECRET_CANARY_VITE0000000000000000000001
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+          dir="$RUNNER_TEMP/sutra-retained-candidate"
+          { node --version; npm --version; rustc --version; python3 --version; sha256sum apps/sutra-v2/package-lock.json apps/sutra/package-lock.json; } > "$dir/toolchain.txt"
+          rm -rf apps/sutra-v2/dist apps/sutra-peer/dist deploy/sutra-pages/dist
+          node apps/sutra-v2/build.mjs
+          npm --prefix apps/sutra-peer run build
+          node deploy/sutra-pages/prepare.mjs
+          node deploy/sutra-pages/verify-build.mjs
+          node deploy/sutra-pages/candidate-fingerprint.mjs verify "$EXPECTED_REVISION" "$dir/fingerprint.json" "$dir/fingerprint.sha256" deploy/sutra-pages/dist apps/sutra-peer/dist "$dir/worker" "$dir/functions.mjs" "$dir/policy.jsonc" > "$dir/rebuild-verification.json"
+          cat "$dir/rebuild-verification.json"
       - uses: actions/upload-artifact@v4
         with:
           name: sutra-retained-candidate

@@ -63,3 +63,45 @@ jobs:
         with:
           name: sutra-engineering-evaluation
           path: ${{ runner.temp }}/sutra-engineering-evaluation.json
+  historical-source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d
+          path: historical-pr49
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: candidate
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reproduce frozen historical failures and validate unchanged expectations in candidate
+        shell: bash
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git -C historical-pr49 rev-parse HEAD)" = 1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d
+          test "$(git -C candidate rev-parse HEAD)" = "$EXPECTED_REVISION"
+          out="$RUNNER_TEMP/sutra-historical-source-regression"
+          mkdir -p "$out"
+          if (cd historical-pr49 && node --test --test-reporter=spec packages/sutra-runtime/test/source-tools.test.mjs) > "$out/historical-source.log" 2>&1; then echo 'Expected historical failure was not reproduced'; exit 1; fi
+          grep -F '1 !== 2' "$out/historical-source.log"
+          if (cd historical-pr49 && node --test --test-reporter=spec tools/sutra-evaluation/baseline.test.mjs) > "$out/historical-baseline.log" 2>&1; then echo 'Expected historical baseline failure was not reproduced'; exit 1; fi
+          grep -F '50 !== 90' "$out/historical-baseline.log"
+          cmp historical-pr49/packages/sutra-runtime/test/source-tools.test.mjs candidate/packages/sutra-runtime/test/source-tools.test.mjs
+          cmp historical-pr49/tools/sutra-evaluation/baseline.test.mjs candidate/tools/sutra-evaluation/baseline.test.mjs
+          (cd candidate && node --test --test-reporter=spec packages/sutra-runtime/test/source-tools.test.mjs tools/sutra-evaluation/baseline.test.mjs) | tee "$out/candidate.log"
+          printf '%s\n' "$EXPECTED_REVISION" > "$out/candidate-revision.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-historical-source-regression
+          path: ${{ runner.temp }}/sutra-historical-source-regression/
+          if-no-files-found: error
+          retention-days: 30
