@@ -158,3 +158,51 @@ test('material contrast corpus: preserve divergent readings without gold leakage
  if(process.env.SUTRA_SEMANTIC_CONTRAST_REPORT)writeFileSync(process.env.SUTRA_SEMANTIC_CONTRAST_REPORT,JSON.stringify({...result,rows:outcomes},null,2)+'\n');
  t.diagnostic(JSON.stringify(result));
 });
+
+test('external temporal corpus: pinned bytes, selective baseline and actual engine cue measurement',async t=>{
+ const {temporalCueBaseline}=await import('../evaluation/temporal-cue-baseline.mjs');
+ const m=JSON.parse(readFileSync(new URL('tempambiqa-human-manifest-v1.json',folder),'utf8'));
+ const raw=readFileSync(new URL(m.repositoryPath,folder));
+ assert.equal(raw.length,937488);assert.equal(m.bytes,raw.length);
+ assert.equal(createHash('sha256').update(raw).digest('hex'),'e71fa96f389e45d73c61915461f9b0b3f6207e956fd5b3eb72d19c66cfee9942');
+ assert.equal(createHash('sha1').update('blob '+raw.length+'\0').update(raw).digest('hex'),'b9432856685169dd40e884570ab511b1c129ba12');
+ assert.equal(m.sha256,createHash('sha256').update(raw).digest('hex'));assert.equal(m.upstreamGitBlob,createHash('sha1').update('blob '+raw.length+'\0').update(raw).digest('hex'));
+ assert.equal(m.humanAnnotation,true);assert.equal(m.hiddenTrainingExampleClaim,false);
+ const rows=JSON.parse(raw.toString('utf8'));
+ assert.equal(rows.length,8162);assert.equal(unique(rows,x=>x.question),8161);
+ const cache=new Map(),observations=[],goldByQuestion=new Map();
+ for(const [index,r] of rows.entries()){
+  assert.deepEqual(Object.keys(r).sort(),['is_ambiguous','question']);
+  assert.equal(typeof r.is_ambiguous,'boolean');assert.equal(typeof r.question,'string');
+  if(goldByQuestion.has(r.question))assert.equal(goldByQuestion.get(r.question),r.is_ambiguous);
+  goldByQuestion.set(r.question,r.is_ambiguous);
+  if(!cache.has(r.question))cache.set(r.question,await preview(r.question));
+  const p=cache.get(r.question),b=temporalCueBaseline(r.question);
+  observations.push({index,questionHash:sha(r.question),gold:r.is_ambiguous,prediction:b.state,reason:b.reason,
+   engineState:p.state,engineReportingPeriod:p.signals.reporting_period,previewPin:p.pin});
+ }
+ const score=rs=>{
+  const m={tp:0,tn:0,fp:0,fn:0,abstainAmbiguous:0,abstainUnambiguous:0};
+  for(const r of rs){
+   assert.ok(['ABSTAIN','PREDICT_AMBIGUOUS','PREDICT_UNAMBIGUOUS'].includes(r.prediction));
+   const k=r.prediction==='ABSTAIN'?(r.gold?'abstainAmbiguous':'abstainUnambiguous'):r.prediction==='PREDICT_AMBIGUOUS'?(r.gold?'tp':'fp'):(r.gold?'fn':'tn');
+   m[k]++;
+  }
+  const n=rs.length,resolved=m.tp+m.tn+m.fp+m.fn;
+  return {...m,n,resolved,coverage:rate(resolved,n),selectiveAccuracy:rate(m.tp+m.tn,resolved),
+   selectivePrecision:rate(m.tp,m.tp+m.fp),selectiveRecall:rate(m.tp,m.tp+m.fn),
+   allAmbiguousRecall:rate(m.tp,m.tp+m.fn+m.abstainAmbiguous),overallCorrect:rate(m.tp+m.tn,n)};
+ };
+ const scored=score(observations);
+ assert.deepEqual(Object.fromEntries(['tp','tn','fp','fn','abstainAmbiguous','abstainUnambiguous'].map(k=>[k,scored[k]])),{tp:313,tn:323,fp:62,fn:97,abstainAmbiguous:3469,abstainUnambiguous:3898});
+ assert.equal(scored.tp+scored.fn+scored.abstainAmbiguous,3879);
+ assert.equal(scored.tn+scored.fp+scored.abstainUnambiguous,4283);
+ const report={version:'sutra-temporal-corpus-execution/v1',rawSha256:m.sha256,
+  recordWeighted:scored,deduplicated:score([...new Map(observations.map(x=>[x.questionHash,x])).values()]),
+  engineStates:count(observations,x=>x.engineState),engineReportingPeriodSignals:count(observations,x=>x.engineReportingPeriod),
+  reasonCounts:count(observations,x=>x.reason),alwaysAmbiguousAccuracy:3879/8162,alwaysUnambiguousAccuracy:4283/8162,
+  authority:'NONE',boundary:'External human labels, but baseline developed with public dataset exposure. Selective accuracy excludes abstention. Engine reporting-period signals are cues, not ambiguity predictions. No context or gold labels supplied to engine.',
+  rows:observations};
+ if(process.env.SUTRA_TEMPORAL_CORPUS_REPORT)writeFileSync(process.env.SUTRA_TEMPORAL_CORPUS_REPORT,JSON.stringify(report,null,2)+'\n');
+ const {rows:_,...summary}=report;t.diagnostic(JSON.stringify(summary));
+});
