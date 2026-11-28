@@ -36,3 +36,13 @@ test('robots denial at redirected destination prevents document contact',async()
   await assert.rejects(read('https://public.org/start'),/ROBOTS/);assert.ok(!calls.includes('https://other.org/private'));
  }finally{a.close();}
 });
+
+test('URL adversaries and concurrent same-host document limit are refused',async()=>{
+ for(const url of ['http://public.org/','https://2130706433/','https://0x7f000001/','https://0177.0.0.1/','https://127.1/','https://[::ffff:127.0.0.1]/','https://[fe80::1]/','https://169.254.169.254/','https://metadata.google.internal/','https://user:password@public.org/','https://public.org:8443/','https://public.org/%0d%0aX-Evil','https://public.org/%2fprivate','https://public.org/?id='+ 'X'.repeat(80)])assert.throws(()=>admitDocumentURL(url,{allowQuery:true}),undefined,url);
+ const a=grant(),calls=[];try{
+  const read=createDocumentReader({authorization:a,minIntervalMs:20,transport:async o=>{assert.equal(o.documentOnly,true);calls.push({path:o.url.pathname,at:performance.now()});return o.url.pathname==='/robots.txt'?{status:404}:{status:200,mediaType:'text/plain',body:Buffer.from('Public evidence')};}});
+  const rows=await Promise.allSettled([1,2,3,4].map(i=>read('https://public.org/report'+i)));
+  assert.equal(rows.filter(x=>x.status==='fulfilled').length,3);assert.equal(rows.filter(x=>x.status==='rejected').length,1);assert.match(rows.find(x=>x.status==='rejected').reason.message,/DOMAIN_LIMIT/);assert.equal(calls.filter(x=>x.path!='/robots.txt').length,3);
+  assert.equal(a.usage().documents,3);
+ }finally{a.close();}
+});

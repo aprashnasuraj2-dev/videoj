@@ -33,3 +33,19 @@ test('redirect metadata is returned once only for explicitly credential-free GET
  assert.equal(r.location,'https://other.org/report');assert.equal(f.events.filter(x=>x.type==='request').length,1);
  const x=fixture();await assert.rejects(pinnedPublicHttp({...options,allowRedirectResponse:true,headers:{Authorization:'Bearer test-secret'}},x.io),/REDIRECT_CONFIG/);assert.equal(x.events.length,0);
 });
+
+test('SSRF matrix rejects every private or mixed DNS answer before a TLS dial',async()=>{
+ const bad=['0.0.0.0','10.1.2.3','100.64.0.1','127.1.2.3','169.254.169.254','172.16.0.1','192.168.1.1','198.18.0.1','224.0.0.1','255.255.255.255','::','::1','::ffff:127.0.0.1','::ffff:169.254.169.254','fc00::1','fe80::1','ff02::1','2001:db8::1','2002:7f00:1::1','64:ff9b::a00:1'];
+ for(const address of bad){const f=fixture({answers:[{address:'8.8.8.8',family:4},{address,family:address.includes(':')?6:4}]});await assert.rejects(pinnedPublicHttp(options,f.io),/DNS_ADDRESS/,address);assert.equal(f.events.length,0,address);}
+});
+test('DNS rebinding and TLS mismatch cannot dispatch HTTP; no fallback or second resolution',async()=>{
+ for(const socketOverrides of [{remoteAddress:'1.1.1.1'},{remoteAddress:'::ffff:8.8.8.8'},{remotePort:444},{authorized:false},{encrypted:false},{getProtocol:()=> 'TLSv1.1'},{alpnProtocol:'h2'},{getPeerCertificate:()=>({subjectaltname:'DNS:other.org'})}]){
+  let resolves=0;const f=fixture({socketOverrides,resolveAll:async()=>{resolves++;return [{address:'8.8.8.8',family:4}];}});
+  await assert.rejects(pinnedPublicHttp(options,f.io),/TLS_IDENTITY/);assert.equal(resolves,1);assert.equal(f.events.filter(x=>x.type==='dial').length,1);assert.equal(f.events.filter(x=>x.type==='request').length,0);
+ }
+});
+test('document transport denies arbitrary headers, auth, body and non-GET before contact',async()=>{
+ for(const patch of [{headers:{Cookie:'secret'}},{headers:{'X-Anything':'secret'}},{headers:{Referer:'https://private.org/'}},{headers:{Authorization:'Bearer secret'}},{headers:{Host:'evil.org'}},{method:'POST'},{body:''}]){
+  const f=fixture();await assert.rejects(pinnedPublicHttp({...options,documentOnly:true,...patch},f.io),/DOCUMENT_HEADERS/);assert.equal(f.events.length,0);
+ }
+});

@@ -219,3 +219,5 @@ test('release reconciliation inventory is exactly mapped and cannot exempt unkno
  assert.deepEqual(r.requiredWorkflows,['Validate SUTRA knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-inventory.json'],map).unmapped,['docs/sutra-v2/unknown-inventory.json']);
 });
+
+test('dated ref snapshot is explicitly mapped without a wildcard JSON exception',()=>{assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/release-ref-snapshot-20261128.json'],map).unmapped,[]);assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/release-ref-snapshot-unreviewed.json'],map).unmapped,['docs/sutra-v2/release-ref-snapshot-unreviewed.json']);});

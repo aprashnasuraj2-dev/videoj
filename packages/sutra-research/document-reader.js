@@ -40,9 +40,13 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
  assertResearchAuthorization(authorization);
  if(!Number.isSafeInteger(minIntervalMs)||minIntervalMs<0||minIntervalMs>5000)fail('THROTTLE_CONFIG');
  const scope=authorization.plan.scope,allowQuery=scope.allowPublicQueryParameters===true,allowRedirects=scope.allowRedirects===true,routeOptions={allowQuery};
- const robots=new Map(),lastRequest=new Map(),documentRequests=new Map();
+ const robots=new Map(),lastRequest=new Map(),documentRequests=new Map(),throttleTail=new Map();
  const activeCheck=signal=>{authorization.assertActive();if(signal?.aborted)fail('CANCELLED');};
- async function throttle(origin,signal){const wait=minIntervalMs-(performance.now()-(lastRequest.get(origin)??-Infinity));if(wait>0)await delay(wait,undefined,{signal});activeCheck(signal);lastRequest.set(origin,performance.now());}
+ async function throttle(origin,signal){
+  const prior=throttleTail.get(origin)??Promise.resolve();
+  const next=prior.catch(()=>{}).then(async()=>{activeCheck(signal);const wait=minIntervalMs-(performance.now()-(lastRequest.get(origin)??-Infinity));if(wait>0)await delay(wait,undefined,{signal});activeCheck(signal);lastRequest.set(origin,performance.now());});
+  throttleTail.set(origin,next);try{await next;}finally{if(throttleTail.get(origin)===next)throttleTail.delete(origin);}
+ }
  function redirectTarget(current,location){
   if(!allowRedirects||typeof location!=='string')fail('REDIRECT_SCOPE');
   let absolute;try{absolute=new URL(location,current).href;}catch{fail('REDIRECT_LOCATION');}
@@ -55,7 +59,7 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('ROBOTS_REDIRECT_LOOP');seen.add(current);
    authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin,signal);await beforeDispatch({kind:'robots',url:current});activeCheck(signal);
-   const r=await transport({url:new URL(current),signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects});
+   const r=await transport({url:new URL(current),signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects,documentOnly:true});
    activeCheck(signal);
    if([301,302,303,307,308].includes(r.status)){if(hop===3)fail('ROBOTS_REDIRECT_LIMIT');current=redirectTarget(current,r.location);continue;}
    if(![200,404,410].includes(r.status))fail('ROBOTS_RESPONSE');
@@ -75,8 +79,9 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
    if(count>=3)fail('DOMAIN_LIMIT');
    const rules=await readRobots(origin,signal,beforeDispatch);
    if(!robotsAllows(rules,target.pathname+target.search))fail('ROBOTS');
-   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,count+1);await throttle(origin,signal);await beforeDispatch({kind:'document',url:current});activeCheck(signal);
-   const r=await transport({url:target,signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects});
+   const latestCount=documentRequests.get(host)??0;if(latestCount>=3)fail('DOMAIN_LIMIT');
+   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,latestCount+1);await throttle(origin,signal);await beforeDispatch({kind:'document',url:current});activeCheck(signal);
+   const r=await transport({url:target,signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects,documentOnly:true});
    authorization.assertActive();
    if([301,302,303,307,308].includes(r.status)){
     if(hop===3)fail('REDIRECT_LIMIT');const next=redirectTarget(current,r.location);chain.push({from:current,to:next,status:r.status});current=next;continue;

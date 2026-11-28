@@ -6,8 +6,9 @@ import {BlockList,isIP} from 'node:net';
 import {resolvePublicPeer} from './dynamic-public-route-policy.js';
 const fail=code=>Object.assign(Error('Research transport refused: '+code),{code});
 function sameAddress(a,b,f){if(isIP(a)!==f)return false;const list=new BlockList(),kind=f===4?'ipv4':'ipv6';list.addAddress(b,kind);return list.check(a,kind);}
-export async function pinnedPublicHttp({url,method='GET',headers={},body,maxBytes,signal,acceptedTypes,allowMissing=false,allowRedirectResponse=false},{resolveAll=host=>lookup(host,{all:true,verbatim:true}),dialTls=connect,requestHttps=request}={}){
+export async function pinnedPublicHttp({url,method='GET',headers={},body,maxBytes,signal,acceptedTypes,allowMissing=false,allowRedirectResponse=false,documentOnly=false},{resolveAll=host=>lookup(host,{all:true,verbatim:true}),dialTls=connect,requestHttps=request}={}){
  if(!(url instanceof URL)||url.protocol!=='https:'||url.username||url.password||url.port||!['GET','POST'].includes(method)||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>1048576||!Array.isArray(acceptedTypes)||!acceptedTypes.length)throw fail('CONFIG');
+ if(documentOnly&&(method!=='GET'||body!==undefined||Reflect.ownKeys(headers).length!==0))throw fail('DOCUMENT_HEADERS');
  if(allowRedirectResponse&&(method!=='GET'||Object.keys(headers).some(k=>/^(?:authorization|cookie|proxy-authorization|x-api-key|x-subscription-token)$/i.test(k))))throw fail('REDIRECT_CONFIG');
  const active=signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000);
  return new Promise((resolve,reject)=>{
