@@ -97,3 +97,50 @@ test('knowledge projection preserves exact source spans and declared lineage',()
  const workspace={question:'Compare quantities',sources:[{id:'a',lineage:'shared',text:'Value: 100'},{id:'b',lineage:'shared',text:'Copy: 100'}],bindings:[{id:'q1',sourceId:'a',start:7,end:10,type:{kind:'length',unit:'m',scope:'same'}}]};
  const model=knowledgeProjection(workspace);assert.equal(model.nodes.find(n=>n.key==='binding:q1').binding.quote,'100');assert.deepEqual(declaredLineageGroups(model),[{lineage:'shared',sources:['a','b']}]);const rel=knowledgeRelations(model,'source:a');assert.ok(rel.upstream.has('lineage:shared'));assert.ok(rel.downstream.has('binding:q1'));assert.equal(model.version,null);
 });
+
+import {capabilityCatalog,composeAlternatives} from '../src/event-horizon/capabilities.js';
+import {admittedStaticUrl,inspectManifest,staticInspectorFetch,inspectImportedNetwork,readPublishedIndex,inspectPublishedNetwork} from '../src/event-horizon/passports.js';
+test('capability composition prefers no-model direct computation and leaves gaps explicit',()=>{
+ const a=composeAlternatives(['exact_quantity']);assert.equal(a.alternatives[0].workflows[0].id,'direct_compute');assert.equal(a.alternatives[0].definitions,0);
+ const b=composeAlternatives(['exact_quantity','peer_critique'],{allowPeer:false});assert.deepEqual(b.missing,['peer_critique']);assert.equal(b.alternatives[0].coverage,'partial');
+ const c=composeAlternatives(['candidate_plan','challenge'],{allowModel:false,allowHost:false});assert.equal(c.alternatives.length,0);assert.equal(c.missing.length,2);
+ assert.throws(()=>composeAlternatives(['constructor']));assert.throws(()=>composeAlternatives(['exact_quantity','exact_quantity']));
+});
+test('composition alternatives are coverage complete and inclusion minimal across every capability subset',()=>{
+ const ids=capabilityCatalog.map(c=>c.id);
+ for(let mask=0;mask<(1<<ids.length);mask++){
+  const requirements=ids.filter((_,i)=>mask&(1<<i)),result=composeAlternatives(requirements,{allowPeer:true});
+  for(const a of result.alternatives){
+   assert.ok(requirements.filter(x=>!result.missing.includes(x)).every(x=>a.workflows.some(w=>w.capabilities.includes(x))));
+   for(const w of a.workflows)assert.ok(requirements.some(x=>w.capabilities.includes(x)&&!a.workflows.some(o=>o!==w&&o.capabilities.includes(x))));
+  }
+ }
+});
+const passportOrigin='https://caller.example';
+const agentDef=name=>({name,function:{description:'Bounded candidate '+name,parameters:{type:'object',properties:{request:{type:'string',minLength:1,maxLength:100}},required:['request'],additionalProperties:false}},instructions:'Return a bounded candidate. No factual verification.',tools:[]});
+test('static artifact boundary refuses credential, route, redirect and cross-origin attempts',()=>{
+ assert.equal(admittedStaticUrl('./investigation.network.json',passportOrigin),passportOrigin+'/agents/investigation.network.json');
+ for(const u of ['/api/private','https://peer.example/agents/agent-manifest.json','./../api/private','./a.network.json?key=x','./a.network.json#x','https://user:pass@caller.example/agents/a.network.json'])assert.throws(()=>admittedStaticUrl(u,passportOrigin));
+ let contacts=0;const f=staticInspectorFetch(passportOrigin,()=>{contacts++;});
+ assert.throws(()=>f(passportOrigin+'/agents/agent-manifest.json',{method:'GET',credentials:'include',redirect:'error',referrerPolicy:'no-referrer',referrer:''}));assert.equal(contacts,0);
+});
+test('manifest index supports arbitrary exact network names; refuses duplicate and unsafe artifacts',()=>{
+ const n={name:'custom_science',front_man:'specialist',hocon:'./custom.network.json'};
+ assert.equal(inspectManifest({networks:[n]},passportOrigin).networks[0].name,'custom_science');
+ assert.throws(()=>inspectManifest({networks:[n,n]},passportOrigin));assert.throws(()=>inspectManifest({networks:[{...n,hocon:'/api/model'}]},passportOrigin));
+});
+test('ten-definition local import compiled without a fixed role cast, no execution',async()=>{
+ const agents=Array.from({length:10},(_,i)=>agentDef('specialist_'+i));agents[0].tools=agents.slice(1).map(a=>a.name);
+ const bytes=new TextEncoder().encode(JSON.stringify({metadata:{description:'Ten definitions'},max_steps:2,tools:agents}));
+ const p=await inspectImportedNetwork(bytes,{front:'specialist_0'});assert.equal(p.definitionCount,10);assert.equal(p.edges.length,9);assert.equal(p.origin,null);assert.match(p.digests.definition,/^sha256:[0-9a-f]{64}$/);
+ const cycle={metadata:{description:'Cycle'},tools:[{...agentDef('a'),tools:['b']},{...agentDef('b'),tools:['a']}]};
+ await assert.rejects(inspectImportedNetwork(new TextEncoder().encode(JSON.stringify(cycle)),{front:'a'}));
+ const external={metadata:{description:'Unapproved external'},tools:[{...agentDef('a'),tools:['https://peer.example/agents/p']}]};
+ await assert.rejects(inspectImportedNetwork(new TextEncoder().encode(JSON.stringify(external)),{front:'a'}));
+});
+test('publisher inspection reads only static JSON with credentialless GET and records exact digests',async()=>{
+ const calls=[],manifest={networks:[{name:'custom',front_man:'specialist',hocon:'./custom.network.json'}]},definition={metadata:{description:'Single definition'},tools:[agentDef('specialist')]};
+ const fetchImpl=async(url,init)=>{calls.push(url);assert.equal(init.credentials,'omit');assert.equal(init.redirect,'error');assert.equal(init.method,'GET');return new Response(JSON.stringify(url.endsWith('agent-manifest.json')?manifest:definition),{headers:{'Content-Type':'application/json'}});};
+ const i=await readPublishedIndex(passportOrigin,{fetchImpl});assert.equal(i.networks.length,1);assert.equal(calls.length,1);
+ const p=await inspectPublishedNetwork(passportOrigin,'custom',{fetchImpl});assert.equal(p.definitionCount,1);assert.match(p.digests.definition,/^sha256:[0-9a-f]{64}$/);assert.equal(calls.length,3);
+});

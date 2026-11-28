@@ -80,3 +80,23 @@
 #eh-workspace .eh-compute-result:not(:empty){padding:14px;border:1px solid var(--eh-line);border-radius:7px;background:var(--eh-panel)}
 @media(max-width:760px){#eh-workspace .eh-objective-slot{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-objective-slot .orb-field{grid-column:1/-1}#eh-workspace .eh-knowledge-grid,#eh-workspace .eh-knowledge-columns{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:390px){#eh-workspace .eh-objective-slot,#eh-workspace .eh-compute-fields{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-objective-slot .orb-field{grid-column:auto}}
+
+#eh-workspace .eh-capability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(215px,100%),1fr));gap:8px}
+#eh-workspace .eh-check{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--eh-line);border-radius:6px;background:var(--eh-panel);color:var(--eh-ink)}
+#eh-workspace .eh-check input[type=checkbox]{min-height:0;width:18px;height:18px;flex:0 0 18px;margin:3px 0;accent-color:#a9e5b3}
+#eh-workspace .eh-check span{display:grid;gap:4px}
+#eh-workspace .eh-check strong{font-size:.85rem}
+#eh-workspace .eh-check small{font-size:.73rem}
+#eh-workspace .eh-boundaries{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:6px;border:1px solid var(--eh-line);border-radius:7px;margin:12px 0;padding:10px}
+#eh-workspace .eh-boundaries legend{color:var(--eh-muted);font-size:.85rem;padding:0 5px}
+#eh-workspace .eh-alternatives,#eh-workspace .eh-atlas-index,#eh-workspace .eh-atlas-passport{display:grid;gap:10px;margin:12px 0}
+#eh-workspace .eh-alternative,#eh-workspace .eh-index-card,#eh-workspace .eh-atlas-passport:not(:empty){padding:14px;background:var(--eh-panel);border:1px solid var(--eh-line);border-radius:8px}
+#eh-workspace .eh-gap{padding:12px;border:1px dashed #c79c65;color:#f5d1a0;border-radius:7px}
+#eh-workspace .eh-workflow-lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:8px;margin:10px 0}
+#eh-workspace .eh-workflow-lanes>div,#eh-workspace .eh-definition{display:grid;gap:6px;padding:10px;background:#101d26;border:1px solid var(--eh-line);border-radius:6px}
+#eh-workspace .eh-alternative ul{color:var(--eh-muted);font-size:.83rem;padding-left:22px}
+#eh-workspace .eh-atlas-definitions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(185px,100%),1fr));gap:8px}
+#eh-workspace .eh-index-card button{display:block;margin-top:8px}
+#eh-workspace .eh-atlas .eh-field{flex:1 1 180px}
+#eh-workspace .eh-atlas input[type=file]{max-width:100%;width:100%;font-size:.8rem}
+#eh-workspace .eh-atlas .eh-timeline .eh-field{margin:8px 0}
