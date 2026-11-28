@@ -1166,6 +1166,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      assert.equal(await samplePage.locator('#review-history-digest').innerText(),localBeforeStale);assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/No retry/);
      await samplePage.locator('#review-history-durable-pin').fill(historyPin);await samplePage.locator('#review-history-durable-read').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
      assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);assert.equal(initializationWrites,1);assert.equal(appendWrites,1);assert.equal(historyReads,3);
+     // Explicit adoption and undo use real replayed bytes from the same disk store;
+     // neither may change the editable draft or publish anything to the host.
+     const draftQuestion=await samplePage.locator('#review-question').inputValue();
+     await samplePage.locator('#review-history-fork-name').fill('local_unsaved');
+     await samplePage.locator('#review-history-fork').click();await sampleState('history_ready');
+     const divergentPin=await samplePage.locator('#review-history-digest').innerText();assert.notEqual(divergentPin,historyPin);
+     await samplePage.locator('#review-history-durable-read').click();await sampleState('history_durable_ready');
+     assert.match(await samplePage.locator('#review-history-durable-detail').innerText(),/local_unsaved/);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),divergentPin);
+     await samplePage.locator('#review-history-durable-reload').click();
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);
+     assert.equal(await samplePage.locator('#review-question').inputValue(),draftQuestion);
+     await samplePage.locator('#review-history-durable-undo').focus();await samplePage.keyboard.press('Enter');
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),divergentPin);
+     assert.equal(await samplePage.locator('#review-question').inputValue(),draftQuestion);
+     assert.equal((await durableHistory.read(historyPin)).digest,historyPin);
+     assert.equal(appendWrites,1);assert.equal(historyReads,4);
      await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
      await samplePage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
      await samplePage.locator('#review-history-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-history-import').click();await sampleState('refused');assert.match(await samplePage.locator('#review-history-digest').innerText(),/No history/);
