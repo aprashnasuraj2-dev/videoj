@@ -96,7 +96,7 @@ export async function runAutonomousResearch({authorization,providers,readDocumen
      const webAttempted=queries.length>0||modelWebActions.length>0;
      const raw=await consult('bot',plannerInput(plan.objective,queries,documents,passages,missing,{searchAvailable:availableProviders.length>0,openPublicUrls:plan.scope.allowModelPublicUrls===true,webAttempted}));
      if(raw===null){reason='model_web_decision_unavailable';break;}
-     let decision;try{decision=admitWebDecision(raw,plan.objective,queries,{allowPublicUrls:plan.scope.allowModelPublicUrls===true,webAttempted});}catch(e){failures.push({operation:'model_web_decision',reason:safeCode(e)});reason='model_web_decision_invalid';break;}
+     let decision;try{decision=admitWebDecision(raw,plan.objective,queries,{allowPublicUrls:plan.scope.allowModelPublicUrls===true,allowQuery:plan.scope.allowPublicQueryParameters===true,webAttempted});}catch(e){failures.push({operation:'model_web_decision',reason:safeCode(e)});reason='model_web_decision_invalid';break;}
      if(decision.action==='answer_without_web'){modelOnlyAnswer={text:decision.answer,sourceStatus:'NO_WEB_EVIDENCE',truthStatus:'UNVERIFIED',authority:'NONE'};reason='model_answer_without_web';break;}
      if(decision.action==='finish_research'){reason='model_requested_synthesis';break;}
      if(decision.action==='open_public_urls'){
