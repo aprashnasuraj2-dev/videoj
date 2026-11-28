@@ -76,7 +76,24 @@ jobs:
           python3 packages/sutra-knowledge/action-protocol/formal/refine_pinned_policy_trace_mutants.py sutra-v2-pinned-policy-trace.json > sutra-v2-pinned-policy-refinement-mutants.json
           cat sutra-v2-pinned-policy-refinement-mutants.json
       - name: Run full JavaScript knowledge regression before external formal dependency
+        env:
+          SUTRA_SEMANTIC_CORPUS_REPORT: sutra-semantic-corpus-execution.json
+          SUTRA_SEMANTIC_CONTRAST_REPORT: sutra-semantic-contrast-execution.json
         run: node --test packages/sutra-knowledge/test/*.test.mjs
+      - name: Independently verify semantic corpus report and test pinned acquisition offline
+        run: |
+          python3 packages/sutra-knowledge/reference/verify-semantic-corpus-report.py sutra-semantic-corpus-execution.json sutra-semantic-contrast-execution.json > sutra-semantic-corpus-independent.json
+          cat sutra-semantic-corpus-independent.json
+          python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --self-test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-semantic-corpus-evidence
+          path: |
+            sutra-semantic-corpus-execution.json
+            sutra-semantic-contrast-execution.json
+            sutra-semantic-corpus-independent.json
+          if-no-files-found: ignore
       - name: Bounded recovery state model and unsafe counterexample
         run: sh packages/sutra-knowledge/action-protocol/formal/check.sh
       - name: Rust bounded support lattice and exhaustive reference controls
