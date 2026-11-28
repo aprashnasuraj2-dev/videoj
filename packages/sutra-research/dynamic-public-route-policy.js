@@ -3,7 +3,7 @@ import {isIP} from 'node:net';
 import {publicAddress} from '../sutra-inference/public-route-policy.js';
 import {secretLike} from './research-session.js';
 const fail=code=>{throw Object.assign(Error('Dynamic route refused: '+code),{code});};
-const SAFE_QUERY=new Set(['id','p','page','year','lang','format','article','report','version','v','offset','limit','start','end','sort']);
+const SAFE_QUERY=new Set(['id','p','page','year','lang','format','article','articleId','doi','pii','pmid','pmcid','report','version','v','offset','limit','start','end','sort']);
 const TRACKING=/^(?:utm_[a-z0-9_]+|gclid|fbclid|msclkid)$/i;
 export function admitDocumentURL(raw,{allowQuery=false}={}){
  if(typeof raw!=='string'||raw.length>2048||/[\u0000-\u0020\u007f\\]/.test(raw))fail('URL');
@@ -18,7 +18,7 @@ export function admitDocumentURL(raw,{allowQuery=false}={}){
   for(const [key,value] of u.searchParams){
    if(++n>12)fail('QUERY_PARAMETERS');
    if(TRACKING.test(key))continue;
-   if(!SAFE_QUERY.has(key)||seen.has(key)||!/^[A-Za-z0-9._-]{1,80}$/.test(value)||secretLike(value)||/^[A-Za-z0-9_-]{40,}$/.test(value))fail('QUERY_PARAMETERS');
+   if(!SAFE_QUERY.has(key)||seen.has(key)||!( /^[A-Za-z0-9._-]{1,80}$/.test(value)||(key==='id'||key==='doi'||key==='articleId')&&/^10\.\d{4,9}\/[A-Za-z0-9._;()\/+-]{1,120}$/i.test(value) )||secretLike(value)||/^[A-Za-z0-9_-]{40,}$/.test(value))fail('QUERY_PARAMETERS');
    seen.add(key);clean.append(key,value);
   }
   u.search=clean.toString();
