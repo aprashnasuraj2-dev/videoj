@@ -66,6 +66,7 @@ export async function prepareBrowserInvestigation({origin,objective,selection,ge
   else if(!result.events.some(e=>e.kind==='agent'&&e.phase==='end'&&e.agent==='critic'&&e.status==='ok'))fail('BROWSER_DELEGATION_MISSING');
   const reviewed=evidence?admitReviewedAnswer(result.text,evidence):null;
   const receipt=createBrowserRunReceipt({preview,result,consentEvents:inspector?.exportEvents()??[]});
+  if(peerUrl&&receipt.peerArtifacts?.length!==1)fail('BROWSER_PEER_ARTIFACT_MISSING');
   return Object.freeze({receipt,text:reviewed?.text??result.text,...(reviewed?{claims:reviewed.claims}:{}),modelCalls:result.modelCalls,agentCalls:result.agentCalls,graphPin,qualification:peerUrl?'Candidate peer critique; peer graph executed in this browser using caller router; no verified external evidence.':evidence?'Candidate interpretation of one approved span; no empirical verification or new evidence acquisition.':'Candidate investigation plan only; no external evidence acquired or verified.'});
   }catch(error){
    const code=signal?.aborted?'CANCELLED':typeof error?.code==='string'&&/^[A-Z_]{1,60}$/.test(error.code)?error.code:typeof error?.message==='string'&&/^[A-Z_]{1,60}$/.test(error.message)?error.message:'BROWSER_RUN_FAILED';

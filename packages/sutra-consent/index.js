@@ -145,7 +145,7 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
     exportEvents(){return events.map(event=>({...event,disclosure:[...event.disclosure]}));}
   });
 }
-async function readBoundedJson(response,maxBytes,signal){
+async function readBoundedJson(response,maxBytes,signal,withDigest=false){
   let reader;
   try{
     check(signal);
@@ -160,14 +160,19 @@ async function readBoundedJson(response,maxBytes,signal){
       if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       bytes.set(value,total);total+=value.byteLength;
     }
-    try{return parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,total)),{maxChars:maxBytes,maxDepth:32});}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
+    const exactBytes=bytes.subarray(0,total);let value;
+    try{value=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(exactBytes),{maxChars:maxBytes,maxDepth:32});}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
+    if(!withDigest)return value;
+    const hash=await raceAbort(()=>crypto.subtle.digest('SHA-256',exactBytes),signal);check(signal);
+    return Object.freeze({value,sha256:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join(''),bytes:total});
   } finally {
     if(reader){cancelBody(reader);try{reader.releaseLock();}catch{}}
     else cancelBody(response?.body);
   }
 }
-export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal,timeoutMs=5000}={}){
+export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal,timeoutMs=5000,withDigest=false}={}){
   if(!inspector||typeof inspector.perform!=='function')fail('INSPECTOR','A consent inspector is required.');
+  if(typeof withDigest!=='boolean')fail('CONTACT_DIGEST','Digest capture must be explicitly selected.');
   if(!Number.isInteger(maxBytes)||maxBytes<1||maxBytes>65536)fail('CONTACT_SIZE','Response limit must be within 1–65536 bytes.');
   if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>5000)fail('CONTACT_TIMEOUT','Approved GET timeout must be within 1–5000 ms.');
   check(signal);
@@ -192,7 +197,7 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
       }catch(error){if(active?.aborted||error instanceof ConsentError&&error.code==='CANCELLED')throw cancelled();fail('CONTACT_FETCH','Approved contact could not be fetched.');}
       check(active);
       if(response.redirected||response.url&&response.url!==target.href)fail('CONTACT_REDIRECT','Approved contact changed its exact resource.');
-      handedOff=true;return await readBoundedJson(response,maxBytes,active);
+      handedOff=true;return await readBoundedJson(response,maxBytes,active,withDigest);
     }catch(error){if(deadline.signal.aborted&&!parent?.aborted)fail('CONTACT_TIMEOUT','Approved GET exceeded its network deadline.');throw error;}
     finally{clearTimeout(timer);finished=true;if(!handedOff)cancelBody(received?.body);}
   },{signal});

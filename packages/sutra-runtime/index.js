@@ -168,7 +168,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
- const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,toolCalls=0,failure=null,closed=false,limitHit=null;const waiters=[];
+ const trace=new TraceBus(),events=[],peerArtifacts=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,toolCalls=0,failure=null,closed=false,limitHit=null;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;if(evidence&&evidenceCurrent()!==true){const e=new RuntimeError('EVIDENCE_STALE','Approved evidence selection changed.');failure??=e;controller.abort(e);throw e;}};
  const depthAt=parent=>{let depth=0,seen=new Set();while(parent){if(seen.has(parent))fail('DEPTH','Invalid trace ancestry.');seen.add(parent);const span=trace.spans.get(parent);if(!span)fail('DEPTH','Missing trace ancestry.');if(span.kind==='agent')depth++;parent=span.parent;}return depth;};
  const emit=event=>{
@@ -274,6 +274,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   try{
    loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
    check();assertPublicText(loaded.definition);peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:{...bounds,maxDepth:remainingDepth}});
+   peerArtifacts.push(Object.freeze({name:loaded.name,front:loaded.frontMan,origin:loaded.origin,artifacts:Object.freeze({...loaded.artifacts}),digests:loaded.artifactDigests,bytes:loaded.artifactBytes}));
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
@@ -327,7 +328,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
   assertPublicText(result.text);
-  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
+  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events,...(peerArtifacts.length?{peerArtifacts:Object.freeze([...peerArtifacts])}:{})};
  }catch(error){
   // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
   const source=failure??(controller.signal.aborted?controller.signal.reason:error);
@@ -505,12 +506,12 @@ export function resolveSymbolicPeerLinks(definition,document,networkName,callerO
 async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false,contactTimeoutMs}={}){
  const {base,networkName}=parsePeerNetworkReference(peerUrl);
  const manifestUrl=new URL('agent-manifest.json',base);
- let manifest;
- try{manifest=await fetchJsonWithConsent({
+ let manifest,manifestReceipt;
+ try{manifestReceipt=await fetchJsonWithConsent({
   inspector,
   contact:{origin:manifestUrl.origin,kind:'peer_manifest',purpose:'Resolve the exact published peer network',disclosure:['network name'],network:networkName},
-  url:manifestUrl.href,fetchImpl,maxBytes:16384,signal,timeoutMs:contactTimeoutMs
- });}
+  url:manifestUrl.href,fetchImpl,maxBytes:16384,signal,timeoutMs:contactTimeoutMs,withDigest:true
+ });manifest=manifestReceipt.value;}
  catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
  if(Object.hasOwn(manifest,'schema')||Object.hasOwn(manifest,'version'))fail('UNSUPPORTED_FIELD','Explicit manifest schema/version is unsupported by this unversioned resolved-JSON profile.');
@@ -524,15 +525,15 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
  if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.search||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
- let definition;
- try{definition=await fetchJsonWithConsent({
+ let definition,definitionReceipt;
+ try{definitionReceipt=await fetchJsonWithConsent({
   inspector,
   contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
-  url:graphUrl.href,fetchImpl,maxBytes:65536,signal,timeoutMs:contactTimeoutMs
- });}
+  url:graphUrl.href,fetchImpl,maxBytes:65536,signal,timeoutMs:contactTimeoutMs,withDigest:true
+ });definition=definitionReceipt.value;}
  catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
- return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
+ return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin,artifactDigests:Object.freeze({manifest:manifestReceipt.sha256,definition:definitionReceipt.sha256}),artifactBytes:Object.freeze({manifest:manifestReceipt.bytes,definition:definitionReceipt.bytes})};
 }
 
 /**

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {createHash} from 'node:crypto';
 import {runNetwork,loadPeerNetwork} from '../index.js';
 import {createScriptedModel} from '../testing.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
@@ -30,6 +31,7 @@ test('peer graph runs in the caller runtime under the caller model and one share
  assert.equal(result.mode,'scripted-test');
  assert.equal(result.agentCalls,3);
  assert.equal(result.modelCalls,5);
+ const sha=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');assert.deepEqual(result.peerArtifacts[0].digests,{manifest:sha(manifest()),definition:sha(sourceGraph)});assert.equal(result.peerArtifacts[0].artifacts.definition,calls[1]);
  assert.match(result.text,/Scripted orchestration test complete/);
  assert.deepEqual(intents,['peer_manifest','peer_graph']);
  assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json','https://peer.example/agents/transit.network.json']);
