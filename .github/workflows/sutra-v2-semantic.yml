@@ -68,7 +68,8 @@ jobs:
             packages/sutra-knowledge/test/ambient-human-ambiguity.test.mjs \
             packages/sutra-knowledge/test/semantic-model-authored-corpus.test.mjs \
             packages/sutra-knowledge/test/semantic-operation-heldout.test.mjs \
-            packages/sutra-knowledge/test/semantic-review-burden.test.mjs
+            packages/sutra-knowledge/test/semantic-review-burden.test.mjs \
+            packages/sutra-knowledge/test/semantic-gap-review-plan.test.mjs
       - name: Emit semantic review and residual-error measurement
         run: |
           node packages/sutra-knowledge/evaluation/semantic-review-burden.mjs > sutra-semantic-review-burden.json
@@ -94,6 +95,11 @@ jobs:
           node --test packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs packages/sutra-knowledge/test/semantic-split-v2.test.mjs packages/sutra-knowledge/test/semantic-temporal-selector-v3.test.mjs
           node packages/sutra-knowledge/evaluation/semantic-scenario-v2.mjs > sutra-scenario-split.json
           node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
+      - name: Emit blinded direct-human evidence gap plan
+        run: |
+          node packages/sutra-knowledge/evaluation/semantic-gap-review-plan.mjs > sutra-semantic-gap-review-plan.json
+          node packages/sutra-knowledge/evaluation/semantic-gap-review-plan.mjs --packet sutra-semantic-gap-review-packet.json
+          python3 packages/sutra-knowledge/evaluation/semantic-human-review.py --self-test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
