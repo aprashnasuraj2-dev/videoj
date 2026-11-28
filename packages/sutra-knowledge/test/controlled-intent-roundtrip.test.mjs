@@ -7,3 +7,18 @@ test('scope definition negation denominator and invented relation drift are expl
  const cases=[['DENOMINATOR_DRIFT',o=>o.denominatorBinding='now'],['NEGATION_DRIFT',o=>o.negated=!o.negated],['SCOPE_DRIFT',o=>o.declaredTypes.prior.scope='company_B'],['DEFINITION_DRIFT',o=>o.mode='SIGNED_DIFFERENCE'],['INVENTED_RELATION_DRIFT',o=>o.operator='<=']];
  for(const [kind,fn] of cases){const text=mutate(r.controlledText,fn),d=await detectControlledIntentDrift(a.intentText,a.intentPin,text,await casePin(text));assert.ok(d.classes.includes(kind),kind);}
 });
+
+test('re-pinning controlled text cannot hide baseline, type dimension, meaning, status or obligations drift',async()=>{
+ const a=await artifact(),r=await renderControlledIntent(a.intentText,a.intentPin);
+ function change(tag,mut){return r.controlledText.split('\n').map(row=>{if(!row.startsWith(tag+'\t'))return row;const value=JSON.parse(row.slice(tag.length+1));mut(value);return tag+'\t'+JSON.stringify(value);}).join('\n');}
+ for(const [tag,kind,fn] of [
+  ['RELATION','BASELINE_DRIFT',o=>o.baselineBinding='now'],
+  ['RELATION','DIMENSION_DRIFT',o=>o.declaredTypes.prior.dimension=[9,0,0]],
+  ['RELATION','TYPE_RECORD_DRIFT',o=>o.declaredTypes.prior.extra='invented'],
+  ['CANDIDATE','MEANING_DRIFT',o=>o.meaning='invented meaning'],
+  ['CANDIDATE','STATUS_DRIFT',o=>o.status='APPROVED'],
+  ['OBLIGATIONS','OBLIGATION_DRIFT',o=>o.obligations.empiricalValidity.state='VERIFIED']
+ ]){const text=change(tag,fn),d=await detectControlledIntentDrift(a.intentText,a.intentPin,text,await casePin(text));assert.equal(d.status,'DRIFT_DETECTED');assert.ok(d.classes.includes(kind),kind);assert.equal(d.decisionAuthority,'NONE');}
+ const rows=r.controlledText.trimEnd().split('\n'),duplicate=rows.concat(rows.slice(2)).join('\n')+'\n';
+ await assert.rejects(detectControlledIntentDrift(a.intentText,a.intentPin,duplicate,await casePin(duplicate)),/CONTROLLED_INTENT_CANDIDATE/);
+});
