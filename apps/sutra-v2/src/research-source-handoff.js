@@ -27,15 +27,18 @@ export async function prepareAutonomousSourceCandidate({report,reportPin,sourceI
  const provenance=validateSourceProvenance({version:1,reportPin,documentId:sourceId,sourceDigest:d.textDigest,rawDigest:d.rawDigest,requestedUrl:d.url,finalUrl:url,retrievedAt:d.retrievedAt,mediaType:d.mediaType,parser:d.parser,extractionTruncated:d.extractionTruncated===true,pages,passages},text,d.textDigest);
  let selection=null;
  if(selected){
-  const candidates=(report.intelligence?.claims??[]).filter(c=>c.id===selected.claimId&&c.publicationStatus!=='withheld_from_findings');
+  const keys=Object.keys(selected).sort().join(',');
+  const conflict=keys==='conflictId,index';
+  if(!conflict&&keys!=='claimId,index')fail('CLAIM');
+  const candidates=conflict?(report.intelligence?.conflicts??[]).filter(c=>c.id===selected.conflictId&&c.authority==='NONE'&&['unresolved','model_explanation_unverified'].includes(c.status)&&c.citations?.length===2&&c.citations[0].sourceId!==c.citations[1].sourceId):(report.intelligence?.claims??[]).filter(c=>c.id===selected.claimId&&c.publicationStatus!=='withheld_from_findings');
   if(candidates.length!==1||!Number.isSafeInteger(selected.index)||selected.index<0)fail('CLAIM');
   const cite=candidates[0].citations?.[selected.index],l=cite?.locator;
   if(!cite||cite.sourceId!==sourceId||cite.sourceDigest!==d.textDigest||l?.coordinateSystem!=='utf16-extracted-text'||!Number.isSafeInteger(l.startOffset)||!Number.isSafeInteger(l.endOffset)||l.startOffset<0||l.endOffset<=l.startOffset||l.endOffset>text.length||text.slice(l.startOffset,l.endOffset)!==cite.quote||!passages.some(p=>p.start<=l.startOffset&&p.end>=l.endOffset&&p.page===(l.page??null)))fail('CITATION');
   const matching=passages.filter(p=>p.start<=l.startOffset&&p.end>=l.endOffset&&p.page===(l.page??null));
   const passageIds=await Promise.all(matching.map(async p=>'passage_'+(await digest(JSON.stringify([sourceId,d.textDigest,p.start,p.end]))).slice(7,31)));
   const acquisitionPin=await digest(JSON.stringify([d.id,d.textDigest,d.rawDigest,d.url,url,d.retrievedAt,d.mediaType,d.parser,d.extractionTruncated===true,d.pageMap??[]]));
-  if(cite.acquisitionPin!==acquisitionPin||!passageIds.includes(cite.passageId)||cite.verification!=='exact_span_only'||candidates[0].truthStatus!=='UNVERIFIED'||!['candidate_reviewed','candidate_qualified'].includes(candidates[0].publicationStatus))fail('CITATION');
-  selection=Object.freeze({start:l.startOffset,end:l.endOffset,quote:cite.quote,claimId:selected.claimId});
+  if(cite.acquisitionPin!==acquisitionPin||!passageIds.includes(cite.passageId)||cite.verification!=='exact_span_only'||(!conflict&&(candidates[0].truthStatus!=='UNVERIFIED'||!['candidate_reviewed','candidate_qualified'].includes(candidates[0].publicationStatus))))fail('CITATION');
+  selection=Object.freeze({start:l.startOffset,end:l.endOffset,quote:cite.quote,...(conflict?{conflictId:selected.conflictId}:{claimId:selected.claimId})});
  }
  Object.freeze(provenance);for(const row of [...provenance.pages,...provenance.passages])Object.freeze(row);Object.freeze(provenance.pages);Object.freeze(provenance.passages);
  return Object.freeze({selection,provenance,id:'research_'+d.textDigest.slice(7,39),lineage:'unverified_external',text,sourceId,sourceDigest:d.textDigest,reportPin,url,extractionTruncated:d.extractionTruncated===true,truthStatus:'UNVERIFIED',adoption:'NONE'});

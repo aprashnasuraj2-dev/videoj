@@ -48,3 +48,15 @@ test('mutable original report and citation cannot change pinned source while asy
  f.report.documents[0].text='Different source';f.report.documents[0].textDigest=digest('Different source');f.report.documents[0].url='https://other.org/report';f.citation.claimId='unknown';
  const c=await promise;assert.equal(c.text,original);assert.equal(c.provenance.requestedUrl,'https://public.org/report');assert.equal(c.selection.claimId,'claim_1');
 });
+
+test('unresolved conflict citation enters review only, even when inference is withheld',async()=>{
+ const f=citationFixture(),a=f.report.intelligence.claims[0].citations[0],d={...f.report.documents[0],id:'source_2',url:'https://other.org/report',finalUrl:'https://other.org/report'};
+ f.report.documents.push(d);
+ f.report.intelligence.claims[0].publicationStatus='withheld_from_findings';
+ f.report.intelligence.conflicts=[{id:'conflict_1',authority:'NONE',status:'unresolved',citations:[a,{...a,sourceId:d.id}]}];
+ f.citation={conflictId:'conflict_1',index:0};f.reportPin=digest(JSON.stringify(f.report));
+ const c=await prepareAutonomousSourceCandidate(f);assert.equal(c.selection.conflictId,'conflict_1');assert.equal(c.adoption,'NONE');assert.equal(c.truthStatus,'UNVERIFIED');
+ for(const mutate of [x=>x.report.intelligence.conflicts[0].status='resolved',x=>x.report.intelligence.conflicts[0].authority='APPROVED',x=>x.report.intelligence.conflicts[0].citations[1].sourceId='source_1',x=>x.citation.claimId='claim_1',x=>x.report.intelligence.conflicts[0].citations[0].quote='forged']){
+  const x=structuredClone(f);mutate(x);x.reportPin=digest(JSON.stringify(x.report));await assert.rejects(prepareAutonomousSourceCandidate(x),/RESEARCH_HANDOFF_/);
+ }
+});
