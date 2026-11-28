@@ -3,7 +3,7 @@ import {assertV2StaticHeaders,guideCandidateHeaders,rootStaticPolicy,V2_STATIC_C
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-import {readFile,access} from 'node:fs/promises';
+import {readFile,access,readdir} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const here=dirname(fileURLToPath(import.meta.url)),app=resolve(here,'..');
@@ -42,3 +42,11 @@ test('CORS is restricted to exact public data artifacts, never private API or wi
 test('reviewed graph needs explicit owning-workspace capability',async()=>{const {compileNetwork}=await import('../../../packages/sutra-runtime/index.js');const graph=JSON.parse(await readFile(resolve(app,'dist/agents/reviewed-investigation.network.json'),'utf8'));assert.throws(()=>compileNetwork(graph,{name:'reviewed_investigation',frontMan:'planner'}),/bounded local tool list/);assert.equal(compileNetwork(graph,{name:'reviewed_investigation',frontMan:'planner',allowWorkspaceEvidence:true}).frontMan,'planner');});
 
 test('peer graph uses exactly the published guide binding',async()=>{const {compileNetwork,resolveSymbolicPeerLinks}=await import('../../../packages/sutra-runtime/index.js');const g=JSON.parse(await readFile(resolve(app,'dist/agents/peer-investigation.network.json'),'utf8')),l=JSON.parse(await readFile(resolve(app,'dist/agents/links.json'),'utf8'));const resolved=resolveSymbolicPeerLinks(g,l,'peer_investigation');assert.deepEqual(resolved.tools[0].tools,[GUIDE_ORIGIN+'/agents/checklist']);assert.throws(()=>compileNetwork(resolved,{name:'peer_investigation',frontMan:'planner'}));assert.equal(compileNetwork(resolved,{name:'peer_investigation',frontMan:'planner',allowPeers:true}).frontMan,'planner');});
+
+test('canonical artifact cannot include historical product entrypoints, source maps or old media assets',async()=>{
+ const root=resolve(app,'dist');
+ async function walk(dir){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=resolve(dir,e.name);if(e.isSymbolicLink())throw Error('Unexpected artifact symlink: '+p);if(e.isDirectory())out.push(...await walk(p));else out.push(p.slice(root.length+1));}return out;}
+ const paths=await walk(root);assert.ok(paths.includes('index.html'));assert.ok(paths.includes('agents/agent-manifest.json'));
+ for(const p of paths){assert.doesNotMatch(p,/(?:^|[/_.-])(?:dhago|detour|afterimage)(?:[/_.-]|$)/i);assert.doesNotMatch(p,/\.map$|^media\/|^transcripts\//i);}
+ const html=await readFile(resolve(root,'index.html'),'utf8');assert.doesNotMatch(html,/https?:\/\/(?:dhago|detour|afterimage)\./i);
+});

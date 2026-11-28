@@ -58,7 +58,7 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
   let current=new URL('/robots.txt',origin).href;const seen=new Set();
   for(let hop=0;hop<=3;hop++){
    if(seen.has(current))fail('ROBOTS_REDIRECT_LOOP');seen.add(current);
-   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await throttle(new URL(current).origin,signal);await beforeDispatch({kind:'robots',url:current});activeCheck(signal);
+   authorization.reserve('robots',{bytes:ROBOTS_BYTES});await beforeDispatch({kind:'robots',url:current});await throttle(new URL(current).origin,signal);activeCheck(signal);
    const r=await transport({url:new URL(current),signal,maxBytes:ROBOTS_BYTES,acceptedTypes:['text/plain'],allowMissing:true,allowRedirectResponse:allowRedirects,documentOnly:true});
    activeCheck(signal);
    if([301,302,303,307,308].includes(r.status)){if(hop===3)fail('ROBOTS_REDIRECT_LIMIT');current=redirectTarget(current,r.location);continue;}
@@ -80,7 +80,7 @@ export function createDocumentReader({authorization,transport=pinnedPublicHttp,p
    const rules=await readRobots(origin,signal,beforeDispatch);
    if(!robotsAllows(rules,target.pathname+target.search))fail('ROBOTS');
    const latestCount=documentRequests.get(host)??0;if(latestCount>=3)fail('DOMAIN_LIMIT');
-   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,latestCount+1);await throttle(origin,signal);await beforeDispatch({kind:'document',url:current});activeCheck(signal);
+   authorization.reserve('document',{bytes:maxBytes});documentRequests.set(host,latestCount+1);await beforeDispatch({kind:'document',url:current});await throttle(origin,signal);activeCheck(signal);
    const r=await transport({url:target,signal,maxBytes,acceptedTypes,allowRedirectResponse:allowRedirects,documentOnly:true});
    authorization.assertActive();
    if([301,302,303,307,308].includes(r.status)){
