@@ -1,4 +1,5 @@
 // Model-free, user-initiated access to the same approved local SUTRA web tool.
+import {prepareWebSourceCandidate} from './web-source-handoff.js';
 // The host, not untrusted browser/model content, decides actor = "user".
 const E=(tag,value,cls)=>{const el=document.createElement(tag);if(value!==undefined)el.textContent=value;if(cls)el.className=cls;return el;};
 const button=(id,label)=>{const b=E('button',label,'orb-button');b.id=id;b.type='button';return b;};
@@ -10,7 +11,7 @@ function link(url){
  }catch{return text;}
 }
 const reason=e=>typeof e?.message==='string'&&/^[A-Z_]{1,60}$/.test(e.message)?e.message:'HOST_UNAVAILABLE';
-export function createDirectWebPanel(root,{saveFile}={}){
+export function createDirectWebPanel(root,{saveFile,stageSource}={}){
  let token=null,cap=null,preview=null,session=null,report=null,timer=null,epoch=0,busy=false,running=false,closed=false;
  const box=E('details',undefined,'orb-event');box.id='orb-direct-web';
  box.append(E('summary','Open the public web — no model required'));
@@ -65,7 +66,25 @@ export function createDirectWebPanel(root,{saveFile}={}){
     E('small','Retrieved '+d.retrievedAt+' · '+d.mediaType+' · '+d.parser+' · '+d.textDigest,'orb-muted'),
     E('p',d.render?'Rendering: '+d.render.status+' (source remains unverified)':'Static HTTPS extraction'),
     E('pre',d.text.slice(0,3500)+(d.text.length>3500?'\n… truncated in preview; export report for the full extraction.':''))
-   );output.append(section);
+   );
+   if(typeof stageSource==='function'){
+    const stage=button('orb-direct-web-stage','Review exact extraction in evidence form');
+    const info=E('p','No claim is admitted automatically; source authenticity and truth remain unverified.','orb-muted');
+    const eligible=d.text.length<=16384&&new TextEncoder().encode(d.text).length<=16384;
+    stage.disabled=!eligible;
+    if(!eligible)info.textContent='Source exceeds the 16 KiB evidence-form limit. Export the full report for bounded/manual source selection.';
+    stage.onclick=async()=>{
+     if(stage.disabled||running||busy||report!==r)return;
+     const ticket=epoch;stage.disabled=true;
+     try{
+      const c=await prepareWebSourceCandidate({report:r,reportPin:pin,sourceId:d.id});
+      if(ticket!==epoch||report!==r)return;
+      info.textContent=stageSource(c)?'Exact web extraction staged for human review; no automatic claim admission.':'Staging refused: current workspace form is busy or has conflicting evidence.';
+     }catch{if(ticket===epoch&&report===r)info.textContent='Staging refused: report or source digest/provenance did not validate.';}
+     finally{stage.disabled=!eligible;}
+    };section.append(stage,info);
+   }
+   output.append(section);
   }
   for(const row of r.results??[]){const entry=E('article',undefined,'orb-event');entry.append(E('strong',row.title||'Untitled result'),E('p','Search discovery only — source not read or verified.','orb-muted'));const href=E('p');href.append(link(row.url));entry.append(href);output.append(entry);}
   output.append(E('small','Result SHA-256: '+pin,'mono'));
