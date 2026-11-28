@@ -9,7 +9,8 @@ on:
       - 'packages/sutra-knowledge/evaluation/ambient-*.jsonl'
       - 'packages/sutra-knowledge/evaluation/semantic-*.json'
       - 'packages/sutra-knowledge/evaluation/semantic-*.jsonl'
-      - 'packages/sutra-knowledge/evaluation/semantic-review-burden.mjs'
+      - 'packages/sutra-knowledge/evaluation/**'
+      - 'packages/sutra-knowledge/reference/**'
       - 'packages/sutra-knowledge/test/semantic-*.test.mjs'
       - 'packages/sutra-knowledge/test/controlled-intent-roundtrip.test.mjs'
       - 'packages/sutra-knowledge/test/ambient-human-ambiguity.test.mjs'
@@ -25,7 +26,8 @@ on:
       - 'packages/sutra-knowledge/evaluation/ambient-*.jsonl'
       - 'packages/sutra-knowledge/evaluation/semantic-*.json'
       - 'packages/sutra-knowledge/evaluation/semantic-*.jsonl'
-      - 'packages/sutra-knowledge/evaluation/semantic-review-burden.mjs'
+      - 'packages/sutra-knowledge/evaluation/**'
+      - 'packages/sutra-knowledge/reference/**'
       - 'packages/sutra-knowledge/test/semantic-*.test.mjs'
       - 'packages/sutra-knowledge/test/controlled-intent-roundtrip.test.mjs'
       - 'packages/sutra-knowledge/test/ambient-human-ambiguity.test.mjs'
@@ -52,6 +54,7 @@ jobs:
       - name: Run bounded semantic acceptance tests
         run: |
           node --test \
+            packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
             packages/sutra-knowledge/test/semantic-question-engine.test.mjs \
             packages/sutra-knowledge/test/semantic-intent-ir.test.mjs \
             packages/sutra-knowledge/test/controlled-intent-roundtrip.test.mjs \
