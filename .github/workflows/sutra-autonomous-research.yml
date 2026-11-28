@@ -103,6 +103,15 @@ jobs:
           sudo install -m 0755 "$RUNNER_TEMP/pdf-isolation-probe" /tmp/sutra-pdf-ci/sutra-research/test/pdf-isolation-probe
           echo synthetic-host-canary | sudo tee /tmp/sutra-pdf-ci/host-canary >/dev/null
           sudo install -m 0755 "$(command -v node)" /tmp/sutra-pdf-ci/node
+          # Negative control: the same probe must reject the unisolated process.
+          sudo runuser -u sutra-pdf-ci -- sh -c '
+            net=$(stat -Lc "%i" /proc/self/ns/net)
+            pid=$(stat -Lc "%i" /proc/self/ns/pid)
+            if /tmp/sutra-pdf-ci/sutra-research/test/pdf-isolation-probe "$net" "$pid" 1 >/tmp/sutra-pdf-negative.log 2>&1; then
+              echo "ERROR: native probe accepted an unisolated process"; exit 1
+            fi
+            grep -Fx "isolation failed: network namespace" /tmp/sutra-pdf-negative.log
+          '
           set -o pipefail
           sudo runuser -u sutra-pdf-ci -- sh -c 'cd /tmp/sutra-pdf-ci && exec ./node --test sutra-research/test/pdf-sandbox.integration.mjs' | tee "$RUNNER_TEMP/pdf-sandbox.tap"
       - name: Preserve host isolation test report
