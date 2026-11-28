@@ -87,7 +87,15 @@ export function createDirectWebPanel(root,{saveFile,stageSource}={}){
    }
    output.append(section);
   }
-  for(const row of r.results??[]){const entry=E('article',undefined,'orb-event');entry.append(E('strong',row.title||'Untitled result'),E('p','Search discovery only — source not read or verified.','orb-muted'));const href=E('p');href.append(link(row.url));entry.append(href);output.append(entry);}
+  for(const row of r.results??[]){
+   const entry=E('article',undefined,'orb-event');
+   entry.append(E('strong',row.title||'Untitled result'),E('p','Discovered via '+row.provider+' · '+(row.sourceFamily??'public search')+' · source not read or verified.','orb-muted'));
+   if(row.publisher||row.publicationYear||row.doi){
+    entry.append(E('small',[(row.publisher||'Publisher unknown'),(row.publicationYear??'year unknown'),...(row.doi?['DOI '+row.doi]:[])].join(' · '),'orb-muted'));
+   }
+   const href=E('p');href.append(link(row.url));entry.append(href);output.append(entry);
+  }
+  for(const f of r.providerFailures??[])output.append(E('p','Discovery provider '+f.provider+' unavailable: '+f.code+'. Coverage incomplete.','orb-muted'));
   output.append(E('small','Result SHA-256: '+pin,'mono'));
  }
  async function poll(ticket){
