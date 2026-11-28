@@ -1,4 +1,5 @@
 import {temporalContextEvidence} from './semantic-temporal-context.js';
+import {prioritizeSemanticReview} from './semantic-review-priority.js';
 // Bounded structural/contextual semantic review. This module does not compile answers or grant authority.
 export const VERSION='sutra-semantic-context-analyzer/v1';
 export const FAMILIES=Object.freeze(['entity_identity','metric_definition','numerator','denominator','reporting_period','population','geography','units','scaling','sign','absolute_vs_relative','percentage_vs_percentage_point','aggregation','negation_scope','quantifier_scope','conditional_scope','baseline_selection','measurement_assumptions','modality','causal_vs_observational']);
@@ -58,7 +59,7 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const hidden=INVISIBLE.test(q),injection=INJECTION.test(q),trailing=COMPUTATIONAL_TRAILING.test(lower);
  const admission=hidden||injection||trailing?'REFUSE':'REVIEW';
  const refusalReason=hidden?'INVISIBLE_CONTROL':injection?'INSTRUCTION_INJECTION':trailing?'COMPUTATIONAL_TRAILING_CLAUSE':null;
- const temporalEvidence=temporalContextEvidence(q,sources),absolute=[...new Set([...q.matchAll(ABSOLUTE_TIME)].filter(m=>!temporalEvidence.questionAnchors.some(a=>a.start>=m.index&&a.start<m.index+m[0].length&&['IDENTIFIER_OR_QUANTITY','INVALID_DATE'].includes(a.kind))).map(m=>m[0]))],relative=RELATIVE_TIME.test(lower);
+ const temporalEvidence=temporalContextEvidence(question,sources),absolute=[...new Set([...question.matchAll(ABSOLUTE_TIME)].filter(m=>!temporalEvidence.questionAnchors.some(a=>a.start>=m.index&&a.start<m.index+m[0].length&&['IDENTIFIER_OR_QUANTITY','INVALID_DATE'].includes(a.kind))).map(m=>m[0]))],relative=RELATIVE_TIME.test(lower);
  const dynamicRole=DYNAMIC_ROLE.test(lower),dynamicQuantity=DYNAMIC_QUANTITY.test(lower),superlative=SUPERLATIVE.test(lower);
  const implicitDynamic=!absolute.length&&!relative&&(dynamicRole||dynamicQuantity||superlative||temporalEvidence.implicitState||temporalEvidence.sourcePeriodContrast);
  const temporalAnchor=temporalEvidence.invalidDate?'INVALID_DATE':absolute.length&&relative?'MIXED_ABSOLUTE_RELATIVE':absolute.length?'EXPLICIT_ABSOLUTE':relative?'EXPLICIT_RELATIVE':implicitDynamic?'IMPLICIT_DYNAMIC':'UNSPECIFIED';
@@ -103,5 +104,7 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const reviewPrompts=diagnostics.filter(x=>reviewState(x.state)).map(x=>x.family).map(f=>({
   family:f,prompt:f==='reporting_period'?'Which time point or reporting period applies?':f==='entity_identity'?'Which entity does the reference denote?':f==='metric_definition'?'Which metric definition applies?':f==='population'?'Which population is included?':f==='baseline_selection'?'Which baseline is authoritative?':f==='causal_vs_observational'?'Is the claim observational or causal?':'Confirm '+f.replaceAll('_',' ')+' before adopting a meaning.'
  }));
- return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile:{temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,existential,universal,numberCount,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs,sourceContextFlags:sourceFlags,temporalEvidence},diagnostics,reviewPrompts,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
+ const profile={temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,existential,universal,numberCount,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs,sourceContextFlags:sourceFlags,temporalEvidence};
+ const reviewPriority=prioritizeSemanticReview({diagnostics,profile,aliasCollisions,typeCollisions,admission});
+ return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile,diagnostics,reviewPrompts,reviewPriority,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
 }

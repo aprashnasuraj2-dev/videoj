@@ -31,3 +31,5 @@ test('alternative entity context creates an entity-resolution obligation for ind
  const y=analyzeSemanticContext({question:'the older one',sources:[{text:'A general note without an alternative set.'}]});
  assert.equal(y.profile.sourceContextFlags.alternativeEntitySet,false);
 });
+
+test('prioritization never clears review and uses original question UTF-16 offsets',()=>{const q="Was  model  2025 available in   2024?",r=analyzeSemanticContext({question:q});for(const x of r.profile.temporalEvidence.questionAnchors)assert.equal(q.slice(x.start,x.end),x.text);assert.equal(r.reviewPriority.status,'REVIEW_REQUIRED');assert.equal(r.reviewPriority.rows.length,r.diagnostics.filter(x=>['REVIEW_REQUIRED','EXPLICIT_OR_REVIEW'].includes(x.state)).length);const a=analyzeSemanticContext({question:'Was the bridge clearance sufficient?',sources:[{text:'In 2023 bridge clearance was 1 metre; in 2024 bridge clearance was 2 metres.'}]});assert.ok(a.reviewPriority.rows.some(x=>x.family==='reporting_period'&&x.priority==='FIRST_PASS'));assert.equal(a.decisionAuthority,'NONE');});

@@ -21,6 +21,7 @@ export function temporalContextEvidence(question,sources=[]){
  let chars=0;
  for(const [i,s] of (Array.isArray(sources)?sources.slice(0,8):[]).entries()){
   if(typeof s?.text!=='string'||chars>=65536||observations.length>=32)continue;const t=s.text.slice(0,Math.min(16384,65536-chars));chars+=t.length;
+  if(!/(?:18|19|20)\d{2}/.test(t))continue;
   // Sentence and semicolon boundaries, preserving decimals. Only question-linked clauses.
   for(const m of t.matchAll(/[^;\n!?]+?(?:\.(?=\s|$)|[;\n!?]|$)/gu)){
    const clause=m[0],overlap=stems(clause).filter(x=>qSet.has(x));if(!overlap.length)continue;

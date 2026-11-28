@@ -1,0 +1,60 @@
+{
+  "version": "sutra-review-priority-pilot/v1",
+  "revision": "12481c50d0955d1d8a08ebf90b70c3aa28cc26c1",
+  "method": "Actual patched analyzer and selector executed before commit with module import translation; public human labels used only for scoring, prior exposure acknowledged.",
+  "human": {
+    "records": 3290,
+    "broad": {
+      "tp": 464,
+      "tn": 753,
+      "fp": 1918,
+      "fn": 155,
+      "precision": 0.19479429051217464,
+      "recall": 0.7495961227786753,
+      "specificity": 0.2819168850617746
+    },
+    "firstPass": {
+      "tp": 80,
+      "tn": 2309,
+      "fp": 362,
+      "fn": 539,
+      "precision": 0.18099547511312217,
+      "recall": 0.12924071082390953,
+      "specificity": 0.8644702358667166
+    },
+    "broadFlags": 4934,
+    "firstFlags": 681,
+    "reviewQueueReduction": 0.8619781110660721
+  },
+  "temporal": {
+    "v2": {
+      "tp": 610,
+      "tn": 330,
+      "fp": 94,
+      "fn": 98,
+      "abstainAmbiguous": 3171,
+      "abstainUnambiguous": 3859,
+      "n": 8162,
+      "coverage": 0.13869149718206322,
+      "selectiveAccuracy": 0.8303886925795053,
+      "precision": 0.8664772727272727,
+      "allAmbiguousRecall": 0.15725702500644495
+    },
+    "v3": {
+      "tp": 692,
+      "tn": 198,
+      "fp": 284,
+      "fn": 64,
+      "abstainAmbiguous": 3123,
+      "abstainUnambiguous": 3801,
+      "n": 8162,
+      "coverage": 0.1516785101690762,
+      "selectiveAccuracy": 0.7189014539579968,
+      "precision": 0.7090163934426229,
+      "allAmbiguousRecall": 0.17839649394173757
+    }
+  },
+  "contextPriorityTargetHits": 27,
+  "authority": "NONE",
+  "qualification": "FIRST_PASS is a review-order proxy, not a semantic ambiguity classifier. Unselected items retain review; v3 not unseen held-out."
+}
