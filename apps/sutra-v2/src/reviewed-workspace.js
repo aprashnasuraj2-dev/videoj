@@ -620,17 +620,29 @@ by('transaction-preview').onclick=()=>work(async ticket=>{
  const sealedDraft=await sealReviewedDraft(wire);if(sealedDraft.pin!==JSON.parse(parent.versionText).contractPin)throw Error('REVISION_TRANSACTION_BASELINE');
  const planText=JSON.stringify({version:1,parentDigest:parent.digest,operations:transactionQueue}),planPin=await casePin(planText);
  const exported=await exportEvidenceRevision(parent.versionText,parent.digest,planText,planPin),r=exported.revision;
+ // The portable transaction above independently computes the entire child.
+ // Fork the exact retained arithmetic state, replay the same child and
+ // require matching fresh report before offering adoption or reuse counts.
+ const anchor=baselineReplay?.head()===parent.digest?baselineReplay:createInvestigationReplaySession();
+ const warmup=anchor.head()===parent.digest?null:(await anchor.replay(parent.versionText,parent.digest)).stats;
+ const session=anchor.fork(),cached=await session.replay(r.child.versionText,r.child.digest);
+ if(JSON.stringify(cached.report)!==JSON.stringify(r.child.report))throw Error('REVISION_TRANSACTION_REPLAY_MISMATCH');
+ const stats=cached.stats;
  const restored=await restoreReviewedSourceDraft(r.child.versionText,r.child.digest);
  if(!restored.exactContractBytes)throw Error('REVISION_TRANSACTION_EDITABLE_CONTRACT');
  if(ticket!==epoch||parent!==baseline||wire!==draft()||planText!==JSON.stringify({version:1,parentDigest:parent.digest,operations:transactionQueue}))return;
- transactionPreview={parent,wire,planText,planPin,exported,draft:restored.draft};
+ transactionPreview={parent,wire,planText,planPin,exported,draft:restored.draft,anchor,session,stats,warmup};
  by('transaction-plan-pin').textContent=planPin;
  by('transaction-result').textContent=[
   'Proposed atomic child — '+r.sourceChanges.length+' source revision(s)',
   'Explicitly reselected: '+(r.reselectedBindingIds.join(', ')||'none'),
   'Missing after revision: '+(r.missingBindingIds.join(', ')||'none'),
   ...r.changes.map(c=>c.id+' · '+c.classification+' · '+c.before+' → '+c.after+' · removed links: '+c.removedReferences.length+' · removed quotations: '+c.removedClaims.length),
-  'No change applied. Confirmation replaces staged proposals; retained baseline remains intact.'
+  'Independent full child replay agrees with retained arithmetic replay.',
+  stats.totals.executed+' arithmetic operations executed · '+stats.totals.reusedOutcomes+' outcomes reused in cached replay.',
+  ...(warmup?['Historical anchor warm-up: '+warmup.totals.executed+' operations executed separately.']:[]),
+  ...stats.candidates.map(c=>c.id+': '+c.executed.length+' executed, '+c.reusedOutcomes.length+' reused'),
+  'Both paths executed for validation; counts are not wall-clock savings. No change applied. Confirmation replaces staged proposals; retained baseline remains intact.'
  ].join('\n');
  status('transaction_preview','Review all source and candidate changes before confirming.');
 });
@@ -640,6 +652,8 @@ by('transaction-apply').onclick=()=>work(async ticket=>{
  const r=p.exported.revision,e=p.exported;
  if(ticket!==epoch)return;
  adoptReviewedChild(r.child,p.draft,r.impact,'Atomic source revision confirmed; exact child evaluated.');
+ baselineReplay=p.anchor;currentReplay=p.session;
+ by('session-reuse-result').textContent='Verified cached child versus independent full replay. '+p.stats.totals.executed+' arithmetic operations executed · '+p.stats.totals.reusedOutcomes+' outcomes reused. '+(p.warmup?'Historical warm-up '+p.warmup.totals.executed+' operations. ':'')+'Both replay paths ran; no wall-clock savings claimed.';
  by('transaction-result').textContent='Confirmed '+r.sourceChanges.length+' source revision(s). Retained baseline unchanged. Review new conditional states and removed semantic links.';
  by('transaction-disclosure').textContent=e.byteLength+' report bytes; includes original and corrected source text, including withdrawals: '+r.sourceChanges.map(x=>x.sourceId+' ('+x.kind+')').join(', ')+'. '+(e.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no report download.');
  if(e.portable){transactionExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,planPin:p.planPin,card:makeEvidencePinCard('revision',[e.snapshotPin,r.parentDigest,p.planPin,r.child.digest])};by('transaction-snapshot-pin').textContent=e.snapshotPin;by('transaction-plan-pin').textContent=p.planPin;}
