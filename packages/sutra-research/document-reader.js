@@ -35,7 +35,7 @@ export function extractDocument(body,mediaType,url,{allowCrossOriginLinks=false,
  if(!['text/html','text/plain','application/json','text/csv'].includes(mediaType))fail('EXTRACTION_MEDIA');
  const original=utf8(body);let text=original,links=[],metadata={};
  if(mediaType==='text/html'){({text,links,metadata}=scanHtml(original,url,{allowCrossOriginLinks,allowQuery}));}
- else if(mediaType==='application/json'){try{parseUniqueJson(original,{maxChars:1048576,maxDepth:32});}catch{fail('EXTRACTION_JSON');}}
+ else if(mediaType==='application/json'){try{parseUniqueJson(original,{maxChars:262144,maxDepth:32});}catch{fail('EXTRACTION_JSON');}}
  if(!text.trim())fail('EMPTY');
  return Object.freeze({url,mediaType,rawDigest:digest(body),textDigest:digest(text),text,links:Object.freeze(links),metadata:Object.freeze(metadata),parser:mediaType==='text/html'?'bounded-html/v2':'bounded-text/v1',retrievedAt:new Date().toISOString()});
 }

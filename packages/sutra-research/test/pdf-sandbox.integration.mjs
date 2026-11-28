@@ -1,6 +1,7 @@
 // Actual Linux namespace / prlimit / Poppler integration, no network acquisition.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
 import {probePdfSandbox,runSandboxedPdf,extractPdfDocument,PDF_INPUT_BYTES} from '../pdf-parser.js';
 function hostileFixture(){
  const stream='BT /F1 12 Tf 72 720 Td (Visible synthetic evidence) Tj ET\n';
@@ -9,7 +10,9 @@ function hostileFixture(){
  const xref=Buffer.byteLength(text);text+='xref\n0 '+offsets.length+'\n0000000000 65535 f \n'+offsets.slice(1).map(x=>String(x).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<< /Size '+offsets.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';return Buffer.from(text);
 }
 test('actual isolated PDF sandbox probe and active-content fixture extraction',async()=>{
- assert.equal(await probePdfSandbox(),true);
+ // Diagnostics are restricted to the known synthetic probe, never a fetched PDF.
+ const diagnostics=[];const parse=(body,{signal}={})=>runSandboxedPdf(body,{signal,spawnProcess:(cmd,args,options)=>{const child=spawn(cmd,args,options);child.stderr.on('data',b=>{if(diagnostics.join('').length<2048)diagnostics.push(b.toString().slice(0,2048));});return child;}});
+ try{assert.equal(await probePdfSandbox({parse}),true);}catch(e){console.error('Synthetic sandbox probe diagnostics: '+diagnostics.join('').slice(0,2048));throw e;}
  const body=hostileFixture(),doc=await extractPdfDocument(body,'https://example.org/fixture.pdf');
  assert.match(doc.text,/Visible synthetic evidence/);assert.doesNotMatch(doc.text,/SUTRA_JS_CANARY/);
  assert.equal(doc.pageMap.length,1);assert.equal(doc.metadata.ocr,'not_performed');assert.deepEqual(doc.links,[]);
