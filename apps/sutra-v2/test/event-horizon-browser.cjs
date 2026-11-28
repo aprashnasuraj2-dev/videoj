@@ -81,20 +81,44 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.screenshot({path:path.join(out,'event-horizon-network-designer.png'),fullPage:false});
    let modelPosts=0;
    await page.route(origin+'/api/status',r=>r.fulfill({json:{inference:'configured',routerBase:'/api/v1',publisherFunded:true,byok:false,backend:'hosted',provider:'groq',model:'fixture-model',inferenceContractId:'a'.repeat(64)}}));
-   await page.route(origin+'/api/v1/chat/completions',r=>{modelPosts++;assert.equal(r.request().headers()['x-sutra-inference-contract'],'a'.repeat(64));return r.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta:{content:'Fixture candidate from custom network.'},finish_reason:'stop'}]})+'\n\ndata: [DONE]\n\n'});});
+   await page.route(origin+'/api/v1/chat/completions',r=>{
+    modelPosts++;
+    assert.equal(r.request().headers()['x-sutra-inference-contract'],'a'.repeat(64));
+    const body=r.request().postDataJSON();
+    assert.equal(body.model,'fixture-model');
+    let delta,finish_reason;
+    if(modelPosts===1){
+     assert.ok(body.tools.some(t=>t.function.name==='evidence'));
+     delta={tool_calls:[{index:0,id:'delegation_1',type:'function',function:{name:'evidence',arguments:JSON.stringify({request:'Assess the evidence requirement'})}}]};
+     finish_reason='tool_calls';
+    }else{
+     delta={content:modelPosts===2?'Fixture specialist evidence assessment.':'Fixture candidate from custom network.'};
+     finish_reason='stop';
+    }
+    return r.fulfill({contentType:'text/event-stream',body:'data: '+JSON.stringify({choices:[{index:0,delta,finish_reason}]})+'\n\ndata: [DONE]\n\n'});
+   });
    await page.locator('#eh-designed-execution').getByLabel('Network objective').fill('Explain a candidate');
    await page.locator('#eh-designed-prepare').click();
    await page.waitForFunction(()=>document.querySelector('#eh-designed-execution').dataset.phase==='previewed');
    assert.equal(modelPosts,0);
    assert.equal(await page.locator('#eh-designed-run').isDisabled(),true);
    await page.locator('#eh-designed-execution input[type=checkbox]').check();
+   await page.locator('[data-definition=evidence]').click();
+   await page.locator('#eh-network-designer').getByLabel('Public instructions').fill('Return a revised evidence assessment.');
+   await page.locator('#eh-network-designer').getByRole('button',{name:'Apply definition fields',exact:true}).click();
+   assert.equal(await page.locator('#eh-designed-run').isDisabled(),true);
+   assert.equal(modelPosts,0);
+   await page.locator('#eh-designed-prepare').click();
+   await page.waitForFunction(()=>document.querySelector('#eh-designed-execution').dataset.phase==='previewed');
+   await page.locator('#eh-designed-execution input[type=checkbox]').check();
    await page.locator('#eh-designed-run').click();
    await page.waitForFunction(()=>document.querySelector('#eh-designed-execution').dataset.phase==='completed');
-   assert.equal(modelPosts,1);
+   assert.equal(modelPosts,3);
    assert.match(await page.locator('#eh-designed-execution').innerText(),/Fixture candidate from custom network/);
    await page.locator('#eh-designed-execution').getByRole('button',{name:'Inspect recorded runtime'}).click();
    assert.match(await page.locator('#eh-status').innerText(),/Designed network trace · completed/);
-   assert.ok(await page.locator('#eh-workspace .eh-entity').count()>=2);
+   assert.ok(await page.locator('#eh-workspace .eh-entity').count()>=5);
+   assert.ok((await page.locator('#eh-workspace .eh-entity').allTextContents()).some(t=>t.includes('evidence')));
    await page.screenshot({path:path.join(out,'event-horizon-designed-run.png'),fullPage:false});
    await page.unroute(origin+'/api/status');await page.unroute(origin+'/api/v1/chat/completions');
    await page.locator('.eh-tabs').getByRole('button',{name:'Notebook',exact:true}).click();

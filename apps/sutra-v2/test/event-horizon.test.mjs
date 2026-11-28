@@ -524,3 +524,38 @@ test('workspace navigation preserves all registered tools and ranks exact local 
  assert.equal(searchWorkspaceCommands(commands,'impossible').length,0);
  assert.throws(()=>workspaceCommands([{id:'a',name:'A'},{id:'a',name:'B'}]));
 });
+
+test('designed runtime performs two arbitrary named invocations and refuses undeclared tool calls',async()=>{
+ const f=designedFixture(),design=createNetworkDesigner();
+ design.edit({type:'rename',name:'specialist',nextName:'mission_driver'});
+ design.edit({type:'add',name:'route_evaluator'});
+ design.edit({type:'connect',from:'mission_driver',to:'route_evaluator'});
+ let posts=0;
+ const fetchImpl=async(url,init)=>{
+  if(init.method==='GET')return f.fetchImpl(url,init);
+  posts++;
+  const body=JSON.parse(init.body);
+  let delta,finish_reason;
+  if(posts===1){
+   assert.deepEqual(body.tools.map(t=>t.function.name),['route_evaluator']);
+   delta={tool_calls:[{index:0,id:'call_1',type:'function',function:{name:'route_evaluator',arguments:'{"request":"Compare two candidate routes"}'}}]};
+   finish_reason='tool_calls';
+  }else{
+   delta={content:posts===2?'A route candidate':'A conditional route conclusion'};
+   finish_reason='stop';
+  }
+  return new Response('data: '+JSON.stringify({choices:[{index:0,delta,finish_reason}]})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+ };
+ const p=await prepareDesignedExecution({origin:f.origin,fetchImpl,definition:design.snapshot().definition,objective:'Compare two routes',maxModelCalls:3});
+ const r=await p.run({approvedPlanPin:p.planPin});
+ assert.equal(posts,3);
+ assert.equal(r.receipt.agentCalls,2);
+ assert.equal(r.receipt.events.filter(e=>e.kind==='agent'&&e.phase==='start').length,2);
+ assert.ok(r.receipt.events.some(e=>e.kind==='agent'&&e.agent==='route_evaluator'));
+ const denied=await prepareDesignedExecution({origin:f.origin,definition:design.snapshot().definition,objective:'Compare two routes',fetchImpl:async(url,init)=>{
+  if(init.method==='GET')return f.fetchImpl(url,init);
+  const delta={tool_calls:[{index:0,id:'bad',type:'function',function:{name:'unregistered_tool',arguments:'{}'}}]};
+  return new Response('data: '+JSON.stringify({choices:[{index:0,delta,finish_reason:'tool_calls'}]})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+ }});
+ await assert.rejects(denied.run({approvedPlanPin:denied.planPin}),e=>e.code==='TOOL_UNAVAILABLE'&&e.dispatch.attempted===1);
+});
