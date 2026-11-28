@@ -51,7 +51,7 @@ function sanitizedDiscovery(rows,backend){
  return out;
 }
 export function createOnDemandWebAccess({searchCredentials={},renderer=null,makeReader,makeProviders=createSearchProviders,clock=()=>Date.now(),isBusy=()=>false}={}){
- const available=Object.freeze(['brave','tavily'].filter(id=>typeof searchCredentials[id]==='string'&&/^[\x21-\x7e]{8,512}$/.test(searchCredentials[id])));
+ const available=Object.freeze([...['brave','tavily'].filter(id=>typeof searchCredentials[id]==='string'&&/^[\x21-\x7e]{8,512}$/.test(searchCredentials[id])),'wikipedia']);
  if(makeReader!==undefined&&typeof makeReader!=='function'||typeof makeProviders!=='function'||typeof clock!=='function'||typeof isBusy!=='function')fail('WEB_CONFIG');
  let previewed=null,current=null,closed=false;
  const check=()=>{if(closed)fail('WEB_CLOSED');};
@@ -63,7 +63,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
    schema:'sutra-autonomous-research/v1',
    objective:isSearch?q.resource:'Operator-reviewed public source retrieval',
    scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,allowDirectPublicUrls:true,...(q.render?{allowJsRendering:true}:{})},
-   budget:{...budget},providers:isSearch?[{id:q.backend,estimatedMaxCostMicros:10000}]:[]
+   budget:{...budget},providers:isSearch?[{id:q.backend,estimatedMaxCostMicros:q.backend==='wikipedia'?1:10000}]:[]
   });
   const manifest=admitManifest(raw),expiresAt=clock()+120000;
   if(!Number.isSafeInteger(expiresAt))fail('WEB_CLOCK');
@@ -81,7 +81,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
    if(proposal.request.operation==='search'){
     const providers=makeProviders({credentials:searchCredentials}),provider=providers[proposal.request.backend];
     if(!provider||typeof provider.search!=='function')fail('WEB_PROVIDER');
-    a.reserve('search',{bytes:SEARCH_BYTES,costMicros:10000});
+    a.reserve('search',{bytes:SEARCH_BYTES,costMicros:proposal.request.backend==='wikipedia'?1:10000});
     session.dispatchAttempted=true;
     const rows=await provider.search(proposal.request.resource,{signal:a.signal});
     a.assertActive();
