@@ -19,3 +19,8 @@ The upstream [Clarke prerelease](https://github.com/tlaplus/tlaplus/releases/tag
 For this development candidate only, explicitly migrate to the newly identified upstream asset. The script keeps a single statically pinned SHA-256, additionally requires exact byte length and the release page's published SHA-1, and runs the unchanged complete safe/unsafe formal suite only after all checks pass. No dynamic digest discovery or dual-pin fallback. The SHA-1 is supplemental release-page corroboration, not a substitute for SHA-256.
 
 Independent binary retrieval in the current operator environment was unavailable. Exact new CI must retrieve and verify the bytes and run all models; until then the candidate is unverified. Publisher metadata is not a signed reproducible-build attestation, the artifact is a prerelease, and upstream compromise is not ruled out. This is not a production dependency approval or a claim that the old and new binaries behave identically. If any size/hash/model check fails, retain the failure, do not execute the rejected artifact, and investigate. The old pin and its historical successful CI remain part of the audit record.
+
+
+## Stable gate and network availability fallback — 2026-11-28
+
+The formal gate now executes stable TLC v1.7.4 rather than a mutable prerelease URL. CI may fetch the pinned `tla2tools.jar` from the upstream GitHub release or the SourceForge mirror of that release. The fallback is availability-only: both paths are accepted only after exact size 2,274,532 bytes, SHA-256 `936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88`, and SHA-1 `bee4a54f3ee3d4afc347c3240ec2d9e93b075104` checks. No dynamic digest, alternative version, or mismatched executable is accepted.
