@@ -65,7 +65,9 @@ jobs:
       - name: Execute objective-first shared-model research bridge fixture
         run: node apps/sutra-v2/test/autonomous-workspace.cjs
       - name: Exercise research disagreement through reviewed revision and proof export
-        run: node apps/sutra-v2/test/research-revision.cjs
+        run: |
+          node apps/sutra-v2/test/research-revision.cjs
+          node apps/sutra-v2/test/research-revision.cjs --mobile
       - name: Consume canonical V2 build from independent browser origin
         run: node tools/sutra-neutral-consumer/browser.cjs --v2-dist
       - name: Preserve orbital viewport screenshots
