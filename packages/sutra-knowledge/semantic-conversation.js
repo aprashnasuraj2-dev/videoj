@@ -29,13 +29,13 @@ export async function inspectSemanticConversation({conversationText,conversation
  if(typeof conversationText!=='string'||enc.encode(conversationText).length>32768||await casePin(conversationText)!==conversationPin||!txt(question,2048))fail('PIN');
  const c=parseUniqueJson(conversationText,{maxChars:32768,maxDepth:10});
  if(!exact(c,['version','turns'])||c.version!==CONVERSATION_VERSION||!Array.isArray(c.turns)||c.turns.length<1||c.turns.length>24||!Array.isArray(selectedTurnIds)||selectedTurnIds.length>12||new Set(selectedTurnIds).size!==selectedTurnIds.length||selectedTurnIds.some(x=>!id(x)))fail('SCHEMA');
- const seen=new Set(),active=new Map(CONTEXT_FACETS.map(f=>[f,[]])),events=[];
+ const seen=new Set(),active=new Map(CONTEXT_FACETS.map(f=>[f,[]])),events=[],declared=new Set();
  for(const t of c.turns){
   if(!exact(t,['id','role','text','updates'])||!id(t.id)||seen.has(t.id)||!['user','assistant'].includes(t.role)||!txt(t.text,2048)||!Array.isArray(t.updates)||t.updates.length>16||t.role==='assistant'&&t.updates.length)fail('TURN');
   seen.add(t.id);const touched=new Set();
   for(const u of t.updates){
    if(!exact(u,['facet','action','anchors'])||!CONTEXT_FACETS.includes(u.facet)||touched.has(u.facet)||!['replace','append','clear'].includes(u.action)||!Array.isArray(u.anchors)||u.anchors.length>8||(u.action==='clear')!==(u.anchors.length===0))fail('UPDATE');
-   touched.add(u.facet);for(const a of u.anchors)span(a,t.text);
+   touched.add(u.facet);declared.add(u.facet);for(const a of u.anchors)span(a,t.text);
    const next=u.action==='append'?[...active.get(u.facet),...u.anchors.map(a=>({...a,turnId:t.id}))]:u.anchors.map(a=>({...a,turnId:t.id}));
    const unique=[...new Map(next.map(a=>[key(a),a])).values()];if(unique.length>8)fail('FOCUS_LIMIT');
    active.set(u.facet,unique);
@@ -56,6 +56,7 @@ export async function inspectSemanticConversation({conversationText,conversation
  // Don't automatically inherit the latest entity on bare 'and in 2025?'.
  const dependent=continuation.test(question)||correction.test(question);
  if(dependent&&!signals.some(s=>s.facet==='entity'))signals.push({facet:'entity',span:{start:0,end:question.length,quote:question},state:facets.entity.length===0?'MISSING_CONTEXT':facets.entity.length===1?'ONE_DECLARED_CANDIDATE_REVIEW_REQUIRED':'MULTIPLE_DECLARED_CANDIDATES',options:facets.entity});
+ if(signals.length>32)fail('REFERENCE_LIMIT');
  const currentTurnId=c.turns.at(-1).id;
- return freeze({version:CONVERSATION_VERSION,conversationPin,currentTurnId,turns,activeFacets:facets,references:signals.map((s,i)=>({id:'reference_'+(i+1),...s})),dependentContinuation:dependent,correctionCue:correction.test(question),decisionAuthority:'NONE',qualification:'User-declared anchors only. Historical assistant text is untrusted dialogue. Unselected or superseded anchors are not candidate values. References and declarations do not establish intent or factual truth.'});
+ return freeze({version:CONVERSATION_VERSION,conversationPin,currentTurnId,turns,activeFacets:facets,facetDeclarationStates:Object.fromEntries(CONTEXT_FACETS.map(f=>[f,declared.has(f)?facets[f].length?'ACTIVE_DECLARED':'EXPLICITLY_CLEARED_OR_UNDISCLOSED':'UNDECLARED'])),references:signals.map((s,i)=>({id:'reference_'+(i+1),...s})),dependentContinuation:dependent,correctionCue:correction.test(question),decisionAuthority:'NONE',qualification:'User-declared anchors only. Historical assistant text is untrusted dialogue. Unselected or superseded anchors are not candidate values. References and declarations do not establish intent or factual truth.'});
 }
