@@ -20,7 +20,7 @@ const input={objective:'Explain batteries',models:[{vendor:'groq',model:'chosen-
 test('one model in local workspace; exact one-shot approval and actual supervisor events',async()=>{
  const {gateway:g,calls}=fixture();try{
   assert.deepEqual(g.capabilities().configuredModelVendors,['groq']);assert.equal(g.capabilities().mode,'injected_fixture');assert.ok(!JSON.stringify(g.capabilities()).includes('fixture-groq-key'));
-  const p=g.preview(input);assert.equal(p.models.length,1);assert.equal(p.webAccess,'on_demand');assert.deepEqual(p.searchBackends,[]);
+  const p=g.preview(input);assert.equal(p.models.length,1);assert.equal(p.webAccess,'on_demand');assert.ok(p.searchBackends.includes('crossref'));assert.ok(p.searchBackends.includes('openalex'));
   assert.throws(()=>g.start({...approval(p),approveModelDisclosure:false}),/APPROVAL/);assert.equal(calls.length,0);
   const s=g.start(approval(p));let r;for(let i=0;i<100;i++){r=g.status(s.sessionId);if(r.state!=='running')break;await delay(10);}
   assert.equal(r.state,'closed');assert.equal(r.report.modelOnlyAnswer.sourceStatus,'NO_WEB_EVIDENCE');assert.equal(r.report.usage.searches,0);assert.equal(calls.length,1);
