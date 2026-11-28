@@ -70,6 +70,14 @@ jobs:
           node apps/sutra-v2/test/research-revision.cjs --mobile
       - name: Consume canonical V2 build from independent browser origin
         run: node tools/sutra-neutral-consumer/browser.cjs --v2-dist
+      - name: Preserve independent conformance assertion and network report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-neutral-conformance
+          path: apps/sutra-v2/test-output/neutral-conformance.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Preserve orbital viewport screenshots
         if: always()
         uses: actions/upload-artifact@v4
