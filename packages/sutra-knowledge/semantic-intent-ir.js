@@ -41,7 +41,7 @@ function validateObligations(o){
 export async function buildSemanticIntentIR(input){
  const preview=await previewSemanticQuestion(input),c=parse(input.contractText,10),types=new Map(c.bindings.map(b=>[b.id,b.type]));
  const sources=c.sources.map(s=>({id:s.id,digest:s.digest,lineage:s.lineage})).sort((a,b)=>sort(a.id,b.id));
- const bindings=c.bindings.map(b=>({id:b.id,sourceId:b.sourceId,span:b.span,type:b.type})).sort((a,b)=>sort(a.id,b.id));
+ const bindings=c.bindings.map(b=>({id:b.id,sourceId:b.span.sourceId,span:b.span,type:b.type})).sort((a,b)=>sort(a.id,b.id));
  const candidates=preview.candidates.map(x=>({id:x.id,meaning:x.mode.replaceAll('_',' ').toLowerCase(),mode:x.mode,status:x.status,expression:x.expression,
   relationship:relationship(x,c.question.text,types),obligations:obligations(x),decisionAuthority:'NONE'}));
  const intent={version:VERSION,contractDigest:input.contractPin,semanticPreviewDigest:preview.previewPin,originalQuestion:{text:c.question.text,digest:c.question.digest},
