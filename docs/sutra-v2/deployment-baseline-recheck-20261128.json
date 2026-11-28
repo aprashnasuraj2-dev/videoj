@@ -1,0 +1,55 @@
+{
+  "schema": "sutra-release-deployment-baseline/v1",
+  "observedDate": "2026-11-28",
+  "accountAlias": "CloudflareB",
+  "operation": "GET only",
+  "project": "sutra",
+  "subdomain": "sutra-c70.pages.dev",
+  "domains": [
+    "sutra-c70.pages.dev"
+  ],
+  "productionBranch": "sutra/caller-peer-failure-boundary",
+  "automaticProductionDeployments": false,
+  "previewDeploymentSetting": "none",
+  "build": {
+    "command": "npm ci && npm run build",
+    "destination": "dist",
+    "root": "apps/sutra"
+  },
+  "production": {
+    "compatibilityDate": "2026-11-26",
+    "compatibilityFlags": [],
+    "envNames": [],
+    "serviceBindings": [],
+    "kvBindingNames": [],
+    "durableObjectBindingNames": [],
+    "d1BindingNames": [],
+    "r2BindingNames": []
+  },
+  "preview": {
+    "compatibilityDate": "2026-11-26",
+    "compatibilityFlags": [],
+    "envNames": [],
+    "serviceBindings": [],
+    "kvBindingNames": [],
+    "durableObjectBindingNames": [],
+    "d1BindingNames": [],
+    "r2BindingNames": []
+  },
+  "canonicalDeployment": {
+    "id": "f2209727-cff2-4142-ad1d-966c42770e48",
+    "url": "https://f2209727.sutra-c70.pages.dev",
+    "environment": "production",
+    "createdOn": "2026-11-26T18:21:09.39231Z",
+    "modifiedOn": "2026-11-26T18:21:35.749677Z",
+    "latestStage": "success",
+    "branch": "sutra/caller-peer-failure-boundary",
+    "sourceCommit": "2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d",
+    "artifactByteDigest": null
+  },
+  "rollbackTarget": {
+    "deploymentId": "f2209727-cff2-4142-ad1d-966c42770e48",
+    "action": "Retain existing production until explicit authorized promotion; if subsequent authorized deployment fails, review this deployment for rollback. No rollback invoked."
+  },
+  "qualification": "Reconfirmed via Cloudflare Pages project and canonical deployment GET APIs. Source commit SHA is platform-reported; deployed artifact byte digest was not exposed. No account ID, secret value, deploy, settings change or DNS modification. D01 remains open if independently hashed deployed artifact is required; this is a rollback baseline, not V2 release approval."
+}
