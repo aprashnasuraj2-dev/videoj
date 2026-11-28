@@ -21,9 +21,9 @@ function send(res,status,value){
 export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPeerOrigin,clock=()=>Date.now(),tokenTtlMs=900000}={}){
  if(!gateway||typeof dist!=='string'||!Number.isSafeInteger(port)||port<0||port>65535||typeof clock!=='function'||!Number.isSafeInteger(tokenTtlMs)||tokenTtlMs<120000||tokenTtlMs>1800000)throw err('SERVER_CONFIG');
  let policy=csp;if(loopbackPeerOrigin!==undefined){const u=new URL(loopbackPeerOrigin);if(u.origin!==loopbackPeerOrigin||u.protocol!=='http:'||u.hostname!=='127.0.0.1'||!u.port)throw err('PEER_ORIGIN');policy=csp.replace("connect-src 'self';","connect-src 'self' "+u.origin+";");}
- const root=resolve(dist),tokens=new Map();let origin,previewOwner=null,sessionOwner=null,lastClock=-1;
+ const root=resolve(dist),tokens=new Map();let origin,previewOwner=null,sessionOwner=null,webPreviewOwner=null,webSessionOwner=null,lastClock=-1;
  const now=()=>{const t=clock();if(!Number.isSafeInteger(t)||t<lastClock||t<0||t>Number.MAX_SAFE_INTEGER-tokenTtlMs)throw err('LOCAL_CLOCK');lastClock=t;return t;};
- const prune=t=>{for(const [token,entry] of tokens){if(t>=entry.expiresAt){tokens.delete(token);if(previewOwner===token)previewOwner=null;if(sessionOwner?.token===token)sessionOwner=null;}}};
+ const prune=t=>{for(const [token,entry] of tokens){if(t>=entry.expiresAt){tokens.delete(token);if(previewOwner===token)previewOwner=null;if(sessionOwner?.token===token)sessionOwner=null;if(webPreviewOwner===token)webPreviewOwner=null;if(webSessionOwner?.token===token)webSessionOwner=null;}}};
  const readToken=req=>{const supplied=req.headers['x-sutra-session'];return typeof supplied==='string'&&/^[a-f0-9]{64}$/.test(supplied)?supplied:null;};
  const tokenFor=(req,t)=>{const existing=readToken(req);if(existing&&tokens.has(existing)&&tokens.get(existing).expiresAt-t>=120000)return existing;if(tokens.size>=32)throw err('LOCAL_TOKEN_CAPACITY');const token=randomBytes(32).toString('hex');tokens.set(token,{expiresAt:t+tokenTtlMs});return token;};
  const server=createServer(async(req,res)=>{
@@ -34,13 +34,33 @@ export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPe
    const path=u.pathname;
    if(path.startsWith('/api/research/')){
     const t=now();prune(t);
-    if(path!=='/api/research/status'&&u.search)return send(res,400,{error:'API_QUERY'});
+    if(!['/api/research/status','/api/research/web/status'].includes(path)&&u.search)return send(res,400,{error:'API_QUERY'});
     if(path==='/api/research/capabilities'&&req.method==='GET'){const token=tokenFor(req,t);return send(res,200,{...gateway.capabilities(),sessionToken:token,sessionTokenExpiresAt:tokens.get(token).expiresAt});}
+    if(path==='/api/research/web/capabilities'&&req.method==='GET'){const token=tokenFor(req,t);return send(res,200,{...gateway.web.capabilities(),sessionToken:token,sessionTokenExpiresAt:tokens.get(token).expiresAt});}
     const supplied=readToken(req);
     if(!supplied||!tokens.has(supplied))return send(res,403,{error:'LOCAL_TOKEN'});
     if(req.method==='POST'&&req.headers.origin!==origin)return send(res,403,{error:'LOCAL_ORIGIN'});
     // Recheck token expiry after asynchronous body reads, before any host action.
     const active=()=>{const at=now();prune(at);if(!tokens.has(supplied))throw err('LOCAL_TOKEN');return at;};
+    if(path==='/api/research/web/preview'&&req.method==='POST'){
+     const input=await body(req);active();const p=gateway.web.preview(input,{actor:'user'});webPreviewOwner=supplied;return send(res,200,p);
+    }
+    if(path==='/api/research/web/start'&&req.method==='POST'){
+     const input=await body(req),at=active();if(webPreviewOwner!==supplied)return send(res,403,{error:'LOCAL_APPROVAL_OWNER'});
+     if(tokens.get(supplied).expiresAt-at<120000)return send(res,403,{error:'LOCAL_TOKEN_EXPIRES'});
+     const s=gateway.web.start(input);webPreviewOwner=null;webSessionOwner={token:supplied,id:s.sessionId};return send(res,202,s);
+    }
+    if(path==='/api/research/web/status'&&req.method==='GET'){
+     if(u.searchParams.getAll('id').length!==1||[...u.searchParams.keys()].some(k=>k!=='id'))return send(res,400,{error:'API_QUERY'});
+     const id=u.searchParams.get('id');if(webSessionOwner?.token!==supplied||webSessionOwner.id!==id)return send(res,403,{error:'LOCAL_SESSION_OWNER'});
+     return send(res,200,gateway.web.status(id));
+    }
+    if(path==='/api/research/web/cancel'&&req.method==='POST'){
+     const input=await body(req);active();
+     if(!input||Object.keys(input).length!==1||typeof input.sessionId!=='string')throw err('SESSION_ID');
+     if(webSessionOwner?.token!==supplied||webSessionOwner.id!==input.sessionId)return send(res,403,{error:'LOCAL_SESSION_OWNER'});
+     return send(res,200,gateway.web.cancel(input.sessionId));
+    }
     if(path==='/api/research/preview'&&req.method==='POST'){
      const input=await body(req);active();const p=gateway.preview(input);previewOwner=supplied;return send(res,200,p);
     }
@@ -66,7 +86,7 @@ export function createResearchWorkspaceServer({gateway,dist,port=8787,loopbackPe
   }catch(e){if(!res.headersSent)send(res,e?.code==='ENOENT'?404:400,{error:typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.code:'REFUSED'});else res.end();}
  });
  server.requestTimeout=10000;server.headersTimeout=10000;server.maxHeadersCount=50;server.maxConnections=16;
- return Object.freeze({server,async listen(){await new Promise((ok,bad)=>{server.once('error',bad);server.listen(port,'127.0.0.1',()=>{server.removeListener('error',bad);ok();});});origin='http://127.0.0.1:'+server.address().port;return origin;},async close(){tokens.clear();previewOwner=null;sessionOwner=null;gateway.close();await new Promise(ok=>server.close(ok));}});
+ return Object.freeze({server,async listen(){await new Promise((ok,bad)=>{server.once('error',bad);server.listen(port,'127.0.0.1',()=>{server.removeListener('error',bad);ok();});});origin='http://127.0.0.1:'+server.address().port;return origin;},async close(){tokens.clear();previewOwner=null;sessionOwner=null;webPreviewOwner=null;webSessionOwner=null;gateway.close();await new Promise(ok=>server.close(ok));}});
 }
 if(process.argv[1]&&new URL(import.meta.url).pathname===resolve(process.argv[1])){
  const gateway=createLocalResearchGateway({modelCredentials:Object.fromEntries(Object.entries(MODEL_PROFILES).map(([v,p])=>[v,process.env[p.env]])),searchCredentials:{brave:process.env.SUTRA_SEARCH_BRAVE,tavily:process.env.SUTRA_SEARCH_TAVILY},enableObscura:process.env.SUTRA_ENABLE_OBSCURA==='1',obscuraBinaryPath:process.env.SUTRA_OBSCURA_BIN});
