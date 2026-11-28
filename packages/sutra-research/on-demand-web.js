@@ -28,13 +28,17 @@ const readInput=(input,actor,backends,hasRenderer)=>{
 function sanitizedDocument(doc,request){
  if(!doc||doc.url!==request||typeof doc.text!=='string'||doc.textDigest!==digest(doc.text)||typeof doc.rawDigest!=='string'||!/^sha256:[0-9a-f]{64}$/.test(doc.rawDigest)||!SAFE_TYPES.has(doc.mediaType)||!Array.isArray(doc.links))fail('WEB_DOCUMENT');
  const final=admitDocumentURL(doc.finalUrl??doc.url,{allowQuery:true});
- if(doc.links.length>40)fail('WEB_DOCUMENT');
+ const chain=doc.redirectChain??[];
+ if(!Array.isArray(chain)||chain.length>3||chain.some((hop,i)=>!hop||![301,302,303,307,308].includes(hop.status)||admitDocumentURL(hop.from,{allowQuery:true})!==(i?chain[i-1].to:request)||admitDocumentURL(hop.to,{allowQuery:true})!==hop.to)||(chain.length&&chain.at(-1).to!==final)||!chain.length&&final!==request)fail('WEB_DOCUMENT');
+ if(doc.links.length>40||typeof doc.retrievedAt!=='string'||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/.test(doc.retrievedAt)||!Number.isFinite(Date.parse(doc.retrievedAt)))fail('WEB_DOCUMENT');
  const links=[];
  for(const value of doc.links){const u=admitDocumentURL(value,{allowQuery:true});if(!links.includes(u))links.push(u);}
  const text=doc.text.slice(0,MAX_RESULT_CHARS),truncated=doc.text.length!==text.length;
- return Object.freeze({id:'source_1',url:request,finalUrl:final,redirectChain:doc.redirectChain??[],mediaType:doc.mediaType,rawDigest:doc.rawDigest,fullTextDigest:doc.textDigest,textDigest:digest(text),text,extractionTruncated:truncated,links,metadata:doc.metadata??{},parser:doc.parser??'unknown',retrievedAt:doc.retrievedAt,render:doc.render??null,verificationStatus:'unverified_public_extraction'});
+ const metadata={};for(const key of ['title','author','article:published_time','date','og:title'])if(typeof doc.metadata?.[key]==='string'&&!secretLike(doc.metadata[key]))metadata[key]=doc.metadata[key].slice(0,300);
+ const render=doc.render&&typeof doc.render==='object'?Object.fromEntries(['status','reason','engine','upstreamCommit','renderedDomDigest','staticTextDigest','binaryAttestation','durationMs','secondNavigation','secondNavigationPossible','subresourceBytesMetered','retrievedAt'].filter(k=>['string','boolean','number'].includes(typeof doc.render[k])&&String(doc.render[k]).length<=200).map(k=>[k,doc.render[k]])):null;
+ return Object.freeze({id:'source_1',url:request,finalUrl:final,redirectChain:chain,mediaType:doc.mediaType,rawDigest:doc.rawDigest,fullTextDigest:doc.textDigest,textDigest:digest(text),text,extractionTruncated:truncated,links,metadata,parser:typeof doc.parser==='string'?doc.parser.slice(0,80):'unknown',retrievedAt:doc.retrievedAt,render,verificationStatus:'unverified_public_extraction'});
 }
-function sanitizedDiscovery(rows){
+function sanitizedDiscovery(rows,backend){
  if(!Array.isArray(rows)||rows.length>10)fail('WEB_SEARCH_RESULT');
  const seen=new Set(),out=[];
  for(const row of rows){
@@ -42,7 +46,7 @@ function sanitizedDiscovery(rows){
   let url;try{url=admitDocumentURL(row.url,{allowQuery:true});}catch{continue;}
   if(seen.has(url))continue;seen.add(url);
   const t=typeof row.title==='string'&&!secretLike(row.title)?row.title.replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,300):'';
-  out.push({url,title:t,provider:row.provider,rank:row.rank,verificationStatus:'discovery_only_not_evidence'});
+  out.push({url,title:t,provider:backend,rank:out.length+1,verificationStatus:'discovery_only_not_evidence'});
  }
  return out;
 }
@@ -80,7 +84,7 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
     session.dispatchAttempted=true;
     const rows=await provider.search(proposal.request.resource,{signal:a.signal});
     a.assertActive();
-    report={schema:'sutra-web-access-result/v1',actor:proposal.actor,operation:'search',request:proposal.request,results:sanitizedDiscovery(rows),documents:[],qualification:'Search results are discovery candidates, not independent evidence or source verification.'};
+    report={schema:'sutra-web-access-result/v1',actor:proposal.actor,operation:'search',request:proposal.request,results:sanitizedDiscovery(rows,proposal.request.backend),documents:[],qualification:'Search results are discovery candidates, not independent evidence or source verification.'};
    }else{
     const reader=makeReader?makeReader({authorization:a,render:proposal.request.render}):proposal.request.render?createObscuraEnhancedReader({authorization:a,renderer,renderPolicy:'always'}):createDocumentReader({authorization:a});
     if(typeof reader!=='function')fail('WEB_READER');
