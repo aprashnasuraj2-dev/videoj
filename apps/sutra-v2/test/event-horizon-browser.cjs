@@ -54,6 +54,12 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.locator('#eh-network-designer').getByRole('button',{name:'Connect selected definition',exact:true}).click();
    assert.match(await page.locator('#eh-design-status').innerText(),/CYCLE/);
    await page.screenshot({path:path.join(out,'event-horizon-network-designer.png'),fullPage:false});
+   await page.locator('.eh-tabs').getByRole('button',{name:'Notebook',exact:true}).click();
+   await page.locator('#eh-notebook').getByLabel('Note text').fill('Check the alternate capacity assumption.');
+   await page.locator('#eh-notebook').getByLabel('Annotation kind').selectOption('counterexample');
+   await page.locator('#eh-notebook-save').click();
+   assert.match(await page.locator('[data-note=note_1]').innerText(),/Check the alternate capacity assumption/);
+   await page.screenshot({path:path.join(out,'event-horizon-notebook.png'),fullPage:false});
    await page.locator('.eh-tabs').getByRole('button',{name:'Task workshop',exact:true}).click();
    for(let i=1;i<10;i++)await page.locator('#eh-batch').getByRole('button',{name:'Add task',exact:true}).click();
    for(let i=0;i<10;i++)await page.locator('#eh-batch .eh-batch-row').nth(i).getByLabel('Task owner').fill('owner_'+i);

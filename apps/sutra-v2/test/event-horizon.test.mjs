@@ -290,3 +290,37 @@ test('network designer refuses external references and executable or permissive 
  assert.throws(()=>parseDesign('{"tools":[],"tools":[]}'));
  assert.deepEqual(d.snapshot().definition,before);
 });
+
+import {captureNotebookSources,anchorSelection,inspectAnchor,createNotebook,exportNotebook,parseNotebook,filterNotes,notebookSummary} from '../src/event-horizon/notebook-model.js';
+test('notebook source revisions never silently move exact selected annotations',async()=>{
+ const source={id:'report',lineage:'original',text:'Capacity is 120 units.'};
+ const a=await anchorSelection(source,12,15);
+ assert.equal(a.quote,'120');
+ assert.equal((await inspectAnchor(a,[source])).status,'exact_current');
+ const shifted={...source,text:'Updated: Capacity is 120 units.'};
+ const move=await inspectAnchor(a,[shifted]);
+ assert.equal(move.status,'changed_unique_match');
+ assert.deepEqual(move.positions,[21]);
+ assert.equal(a.start,12);
+ assert.equal((await inspectAnchor(a,[{...source,text:'120 and 120'}])).status,'changed_multiple_matches');
+ assert.equal((await inspectAnchor(a,[{...source,text:'Capacity is 90 units.'}])).status,'quote_missing');
+ assert.equal((await inspectAnchor(a,[])).status,'source_missing');
+ await assert.rejects(anchorSelection({...source,text:'x😀y'},2,3));
+});
+test('notebook export/import preserves annotations, not evidence authority',async()=>{
+ const s=createNotebook();
+ const source=captureNotebookSources({question:'Test question',sources:[{id:'r',lineage:'l',text:'Evidence 42'}]})[1];
+ const a=await anchorSelection(source,9,11);
+ const n=s.add({kind:'hypothesis',body:'Potential explanation',anchor:a});
+ s.update(n.id,{state:'reviewed'});
+ s.add({kind:'counterexample',body:'Alternative scenario'});
+ const saved=exportNotebook(s.snapshot().notes);
+ const restored=parseNotebook(saved);
+ assert.deepEqual(restored,s.snapshot().notes);
+ assert.equal(notebookSummary(restored).anchored,1);
+ assert.equal(filterNotes(restored,{state:'reviewed',query:'42'}).length,1);
+ assert.throws(()=>parseNotebook('{"schema":"sutra-evidence-notebook/v1","notes":[],"notes":[]}'));
+ assert.throws(()=>s.update(n.id,{authority:'approved'}));
+ s.remove(n.id);
+ assert.equal(s.snapshot().notes.length,1);
+});
