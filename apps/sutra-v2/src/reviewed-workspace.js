@@ -1,3 +1,4 @@
+import {installHybridSemanticPanel} from './hybrid-semantic-panel.js';
 import {updateMaster} from './master.js';
 import {openWorkspaceCheckpoint,exportWorkspaceCheckpoint} from '../../../packages/sutra-knowledge/workspace-checkpoint.js';
 import {createHistoryHostClient} from './history-host.js';
@@ -39,6 +40,7 @@ import {createInvestigationReplaySession,compareInvestigationVersions} from '../
 const by=id=>document.getElementById('review-'+id);
 let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null,sessionSaved=null,sessionPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
+let hybridControl=()=>{};
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
 let recoveryContext=null,recoveryQueue=[],recoverySelections=[],recoveryPreview=null,recoveryExport=null,recoveryImport=null;
@@ -67,7 +69,7 @@ function control(){
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
- semanticControl();tableControl();questionControl();textFileControl();
+ semanticControl();tableControl();questionControl();textFileControl();hybridControl();
 }
 function invalidate(message){epoch++;clearDraftCheckpoint();clearSessionCheckpoint();clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
@@ -1565,3 +1567,5 @@ by('handoff-confirm').onclick=()=>work(async ticket=>{
  by('semantic-pin').textContent=child.digest;by('semantic-result').textContent=semanticText(child);by('impact-result').textContent='';baselineState();
  investigationHandoff.clear(p.offer);status('semantic_ready','Exact offered root retained. Revise or withdraw evidence against this baseline; no semantic adoption or model call.');
 });
+
+hybridControl=installHybridSemanticPanel({anchor:by('question-path-panel'),getSealed:()=>sealed,isBusy:()=>busy,download});

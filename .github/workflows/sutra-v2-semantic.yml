@@ -56,6 +56,7 @@ jobs:
           node --test \
             packages/sutra-knowledge/test/semantic-operation-schema.test.mjs \
             packages/sutra-knowledge/test/semantic-hybrid.test.mjs \
+            packages/sutra-knowledge/test/semantic-readiness.test.mjs \
             packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
             packages/sutra-knowledge/test/semantic-question-engine.test.mjs \
             packages/sutra-knowledge/test/semantic-intent-ir.test.mjs \
