@@ -1,0 +1,1830 @@
+{
+  "schema": "sutra-event-horizon-register/v1",
+  "created": "2026-11-28",
+  "baseline": "2dfd08284d101ea809facef065672729ad1851a3",
+  "branch": "sutra/master-investigation-ui",
+  "pullRequest": 66,
+  "scope": "Enhancement overlay; does not supersede CHECKLIST.md, DEVPOST-PRE-RELEASE.md or canonical main authority.",
+  "statusPolicy": "All new enhancement gates remaining; existing historical evidence reused as input only. No automatic promotion. External acceptance stays open until observed.",
+  "counts": {
+    "total": 100,
+    "remaining": 100,
+    "accepted": 0
+  },
+  "categories": [
+    {
+      "id": "A",
+      "title": "Dynamic identity and truthful runtime projection",
+      "count": 12,
+      "phase": 1,
+      "existingImplementation": "orbit.js; research-activity.js; execution-channel.js; packages/sutra-runtime/execution-events.js; investigation-tasks.js"
+    },
+    {
+      "id": "B",
+      "title": "Capability registry and composition",
+      "count": 12,
+      "phase": 3,
+      "existingImplementation": "packages/sutra-runtime/index.js; investigation-tasks.js; public/agents; agent-studio.js; semantic-intake.js; operator-model-console.js"
+    },
+    {
+      "id": "C",
+      "title": "Adaptive topology and visual rendering",
+      "count": 12,
+      "phase": 2,
+      "existingImplementation": "orbit.js; orbit.css; master.css; frame-driver.js; investigation-graph.js"
+    },
+    {
+      "id": "D",
+      "title": "Objective-specific workspace and navigation",
+      "count": 10,
+      "phase": 4,
+      "existingImplementation": "main.js; master.js; reviewed-workspace.js; index.html; autonomous-research-panel.js; agent-studio.js"
+    },
+    {
+      "id": "E",
+      "title": "Open web discovery and interoperability",
+      "count": 12,
+      "phase": 5,
+      "existingImplementation": "public/agents; peer/agents; browser-investigation.js; packages/sutra-runtime/index.js; agent-studio.js; consent package"
+    },
+    {
+      "id": "F",
+      "title": "Live operations, revisions and recovery",
+      "count": 10,
+      "phase": 6,
+      "existingImplementation": "execution-events.js; execution-recovery.js; role-review-checkpoint.js; browser-run-receipt.js; reviewed-workspace.js"
+    },
+    {
+      "id": "G",
+      "title": "Evidence, knowledge and proof",
+      "count": 10,
+      "phase": 7,
+      "existingImplementation": "investigation-graph.js; impact-projection.js; pinned-workspace.js; reviewed-workspace.js; debugger.js; independent verifier"
+    },
+    {
+      "id": "H",
+      "title": "Mobile, accessibility and human experience",
+      "count": 8,
+      "phase": 8,
+      "existingImplementation": "workspace-accessibility.cjs; orbit.css; master.css; style.css; existing screenshot workflow"
+    },
+    {
+      "id": "I",
+      "title": "Performance and resource efficiency",
+      "count": 6,
+      "phase": 8,
+      "existingImplementation": "workspace-performance.cjs; build.mjs; Vite config; frame-driver.js; static packaging"
+    },
+    {
+      "id": "J",
+      "title": "Security, regression and release evidence",
+      "count": 8,
+      "phase": 8,
+      "existingImplementation": "sutra-consent; existing build-contract, browser, knowledge, workspace and browser-matrix workflows; DEVPOST-PRE-RELEASE.md"
+    }
+  ],
+  "crosswalk": [
+    {
+      "existing": "REL-U01, U02, U06, U10",
+      "eventHorizon": "D01–D03, D08–D10, H07",
+      "rule": "Objective-first and optional advanced paths; revalidate comprehension and existing model-picker behavior."
+    },
+    {
+      "existing": "REL-U03, R15",
+      "eventHorizon": "A03–A12, C07, D06, E09–E11, F01–F06",
+      "rule": "Truthful operation display; browser-native and host-mediated remain distinct."
+    },
+    {
+      "existing": "REL-U04, U05, R02, R03, I02",
+      "eventHorizon": "G01–G10, D06–D07",
+      "rule": "Retain source admission, lineage, research quality limitations and revision evidence."
+    },
+    {
+      "existing": "REL-U07, U09",
+      "eventHorizon": "H01–H08",
+      "rule": "Real human/device evidence still required."
+    },
+    {
+      "existing": "REL-U08, S14",
+      "eventHorizon": "I01–I06",
+      "rule": "Measure exact-head, distinguish lab from deployed telemetry."
+    },
+    {
+      "existing": "REL-C11, C19, S12, S13",
+      "eventHorizon": "E01–E12, J01–J08",
+      "rule": "Public HTTPS, neutral conformance, security and distribution obligations remain separate."
+    },
+    {
+      "existing": "REL-R07, S11, B09",
+      "eventHorizon": "F01–F10, G05–G10, J05–J08",
+      "rule": "Preserve atomic revision, failure recovery and integrated CI."
+    }
+  ],
+  "items": [
+    {
+      "id": "EH-A01",
+      "category": "A",
+      "title": "Inventory and migration map",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [],
+      "reuse": "existing ROLE/STATIONS, DOM IDs, commands and tests",
+      "acceptance": "Enumerate every fixed-slot assumption, dependent consumer and migration adapter; record exact source revision and existing screenshots; no lost feature.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A02",
+      "category": "A",
+      "title": "Participant identity contract",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A01"
+      ],
+      "reuse": "execution journal run.open and task manifest",
+      "acceptance": "Validate run-scoped stable IDs, definition IDs, invocation IDs, origin and entity kinds independently; reject collisions and malformed records.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A03",
+      "category": "A",
+      "title": "Generic task projection",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02"
+      ],
+      "reuse": "execution-events.js snapshot",
+      "acceptance": "Render arbitrary manifest agent IDs and dependencies; exercise 0 (tool-only path), 1, 2, 6, 10 and 12 participants without synthetic activity.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A04",
+      "category": "A",
+      "title": "Browser ancestry projection",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02"
+      ],
+      "reuse": "browser runtime trace spans and research-activity.js",
+      "acceptance": "Resolve recorded parent/child spans for unknown valid agent names; distinguish definition, invocation and task; never guess missing ancestry.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A05",
+      "category": "A",
+      "title": "Host research projection",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02"
+      ],
+      "reuse": "research-activity.js and autonomous research panel",
+      "acceptance": "Map real search/document/model/evidence events to their recorded actors or operation-only nodes; remove invented role-to-role handoffs.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A06",
+      "category": "A",
+      "title": "Concurrent invocation aggregation",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03",
+        "EH-A04"
+      ],
+      "reuse": "execution journal and task scheduler",
+      "acceptance": "Two concurrent tasks on one participant preserve independent states; finish one without falsely setting the other idle; count invocations separately.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A07",
+      "category": "A",
+      "title": "Unknown and terminal events",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03",
+        "EH-A04",
+        "EH-A05"
+      ],
+      "reuse": "execution event validator and journal",
+      "acceptance": "Duplicate, stale, out-of-order, invalid-origin and late-after-close events cannot mutate admitted state; present missing data as unknown.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A08",
+      "category": "A",
+      "title": "Legacy compatibility adapter",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03"
+      ],
+      "reuse": "investigation-role-review.js and recovery profile",
+      "acceptance": "Six-role review and hybrid fixtures run with original manifests, pins, recovery and exported bytes; old names are optional labels only.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A09",
+      "category": "A",
+      "title": "Selection and identity persistence",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03",
+        "EH-A06"
+      ],
+      "reuse": "orbit.js, master.js, investigation-graph.js",
+      "acceptance": "Selection uses stable typed keys across rerender, zoom, reorder and revision; deleted selection resets with explicit reason.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A10",
+      "category": "A",
+      "title": "Actor types and counters",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03",
+        "EH-A04",
+        "EH-A05"
+      ],
+      "reuse": "existing execution feeds and receipts",
+      "acceptance": "Distinguish agents, tools, humans, publishers, evidence and operations; zero-agent case reports zero agents; 10 shared-model agents do not imply ten models.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A11",
+      "category": "A",
+      "title": "Run isolation and replay labeling",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A07",
+        "EH-A08"
+      ],
+      "reuse": "execution checkpoints and browser receipts",
+      "acceptance": "Two retained runs with same agent names remain separate; fixture, local deterministic, host, authorized inference and historical replay are unmistakable.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-A12",
+      "category": "A",
+      "title": "Remove global fixed cast from primary UX",
+      "priority": "P0",
+      "phase": 1,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A08",
+        "EH-A09",
+        "EH-A10",
+        "EH-A11"
+      ],
+      "reuse": "orbit.js and master.js",
+      "acceptance": "No required six roles, twelve stations or named coordinator in default workspace; all existing reachable controls survive; run browser acceptance and compare inventory.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B01",
+      "category": "B",
+      "title": "Capability registry schema",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02"
+      ],
+      "reuse": "existing registered tools and network descriptors",
+      "acceptance": "Versioned closed schema for capability, inputs, outputs, constraints, publisher claims and execution kind; malformed or unsupported descriptor refused.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B02",
+      "category": "B",
+      "title": "Definition and instance separation",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B01",
+        "EH-A02"
+      ],
+      "reuse": "existing manifests, graph pins, route descriptors",
+      "acceptance": "Same definition instantiated twice has distinct instance identity; same display name or model route does not merge participants.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B03",
+      "category": "B",
+      "title": "Objective and requirement projection",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B01"
+      ],
+      "reuse": "semantic-intake.js and existing objective composer",
+      "acceptance": "Extract proposed requirements with evidence and unresolved ambiguity; untrusted model proposals remain unadmitted; manual override available.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B04",
+      "category": "B",
+      "title": "Deterministic-first routing",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B03"
+      ],
+      "reuse": "existing local kernel and exact quantity lab",
+      "acceptance": "Known unit conversion succeeds with zero model, peer or search calls; unsupported objective remains explicit, never silently routed to inference.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B05",
+      "category": "B",
+      "title": "Capability matching",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B01",
+        "EH-B03"
+      ],
+      "reuse": "existing validated tool registry and compiled networks",
+      "acceptance": "Match input/output compatibility and actual allowed tools; reject incompatible units, unsupported handlers, missing capability and claimed-but-unavailable execution.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B06",
+      "category": "B",
+      "title": "Alternative team generation",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B02",
+        "EH-B05"
+      ],
+      "reuse": "bounded DAG compiler and published graph templates",
+      "acceptance": "Produce minimal, specialist, deterministic-first and optional peer alternatives only where feasible; fixtures use materially different topology, not fixed roles.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B07",
+      "category": "B",
+      "title": "Feasibility and resource estimator",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B06"
+      ],
+      "reuse": "existing scheduler bounds and model reservations",
+      "acceptance": "Check mandatory capability coverage, depth, agent invocations, calls, tools, deadline and context bytes; estimate cost/latency with units and unknowns.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B08",
+      "category": "B",
+      "title": "Selection policy and explanation",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B07"
+      ],
+      "reuse": "admitted resource policies",
+      "acceptance": "Choose smallest feasible composition according to explicit policy; compare tradeoffs; demonstrate case where cheaper composition is rejected due to required independent evidence.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B09",
+      "category": "B",
+      "title": "User composition editing",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B06",
+        "EH-B07"
+      ],
+      "reuse": "agent-studio.js and existing validation",
+      "acceptance": "Change task assignment or choose alternative, validate draft DAG and show missing requirements; editing never dispatches.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B10",
+      "category": "B",
+      "title": "Exact plan handoff",
+      "priority": "P0",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B09"
+      ],
+      "reuse": "existing consent inspectors and approved-plan paths",
+      "acceptance": "Compile supported composition to existing admitted graph and pin disclosure, objective, version, routes and limits; mutation invalidates approval.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B11",
+      "category": "B",
+      "title": "Bounded execution eligibility",
+      "priority": "P0",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B10"
+      ],
+      "reuse": "existing runtime and browser-investigation limits",
+      "acceptance": "Do not raise runtime bounds to match renderer; unsupported composition remains draft/refused, including ten-agent live request beyond current path caps.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-B12",
+      "category": "B",
+      "title": "Composition evaluation corpus",
+      "priority": "P1",
+      "phase": 3,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B04",
+        "EH-B08",
+        "EH-B11"
+      ],
+      "reuse": "existing semantic fixtures and research acceptance cases",
+      "acceptance": "Test at least 24 held-out scenario families/cases with direct, one-agent, multi-agent, insufficient capability and denial; record coverage, unnecessary work and reviewer disagreements.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C01",
+      "category": "C",
+      "title": "Design system tokens and reusable primitives",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A01"
+      ],
+      "reuse": "existing paper/phosphor, dark and retro CSS",
+      "acceptance": "Consolidate typography, spacing, borders, contrast, focus, state and motion tokens; no remote font or tracking dependency.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C02",
+      "category": "C",
+      "title": "Procedural identities",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02",
+        "EH-C01"
+      ],
+      "reuse": "existing SVG icon machinery",
+      "acceptance": "Stable digest-derived appearance, instance distinction and typed glyphs; unknown capability gets neutral fallback; no competence/trust implied.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C03",
+      "category": "C",
+      "title": "Graph projection contract",
+      "priority": "P0",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A03",
+        "EH-A04"
+      ],
+      "reuse": "existing dependency graph and task manifests",
+      "acceptance": "Typed nodes and edges with provenance (planned, observed, declared, replayed); validate endpoints and never infer observed communications from layout.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C04",
+      "category": "C",
+      "title": "Adaptive layout selection",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C03"
+      ],
+      "reuse": "existing orbit geometry",
+      "acceptance": "Radial only for real hub, pipeline for chain, hierarchy for DAG, mesh for peer links, adversarial for competing branches, matrix/list alternatives; same data in each.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C05",
+      "category": "C",
+      "title": "Stable incremental layout",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C02",
+        "EH-C04"
+      ],
+      "reuse": "existing SVG and frame driver",
+      "acceptance": "Deterministic seed; preserve position/selection on new events; avoid overlapping labels at 1/2/6/10/12; no animation-driven state mutation.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C06",
+      "category": "C",
+      "title": "Graph navigation",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C05"
+      ],
+      "reuse": "existing drag, wheel and zoom controls",
+      "acceptance": "Fit, zoom, pan, reset, keyboard traversal and focus restoration; browser scroll not trapped; touch and pointer equivalent.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C07",
+      "category": "C",
+      "title": "Event-driven motion",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A07",
+        "EH-C05"
+      ],
+      "reuse": "existing demand-driven frame driver",
+      "acceptance": "Only real recorded execution triggers pulses; unknown/denial/cancel distinct; stop idle/hidden and reduced-motion loops; inspect event ID from pulse.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C08",
+      "category": "C",
+      "title": "Contextual inspector",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A09",
+        "EH-C03"
+      ],
+      "reuse": "existing orbit and master inspectors",
+      "acceptance": "Show typed selected participant/task/tool/source, actual status, permissions, dependencies and evidence; arbitrary valid names supported; empty state clear.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C09",
+      "category": "C",
+      "title": "Graph scaling and virtualization",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C04",
+        "EH-C06"
+      ],
+      "reuse": "SVG renderer and local layout",
+      "acceptance": "Measure 13–64 nodes and 65–500 displayed entities via aggregation/virtualization; no new execution implied; retain selectable list parity.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C10",
+      "category": "C",
+      "title": "Semantic zoom",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C06",
+        "EH-C08"
+      ],
+      "reuse": "existing orbit, dependency traversal, evidence views",
+      "acceptance": "Navigate publisher → run → participant/task → operation → exact evidence/proof with breadcrumb and back; missing links explicitly unavailable.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C11",
+      "category": "C",
+      "title": "Visual modes and polish",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C01",
+        "EH-C07"
+      ],
+      "reuse": "existing dark/1997/offline preferences",
+      "acceptance": "Refine scientific paper, dark observatory and optional retro; consistent state meanings, opt-in sound, no decorative fake metrics or compulsory effects.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-C12",
+      "category": "C",
+      "title": "Cross-view visual regression",
+      "priority": "P1",
+      "phase": 2,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C08",
+        "EH-C09",
+        "EH-C10",
+        "EH-C11"
+      ],
+      "reuse": "existing orbital screenshot CI and browser tests",
+      "acceptance": "Capture 320/390/768/1440 widths, empty/active/failed/denied/replay and 0/1/10 participants; inspect real screenshots, baseline diff and approve changes.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D01",
+      "category": "D",
+      "title": "Feature-preserving shell migration",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A01",
+        "EH-A12",
+        "EH-C01"
+      ],
+      "reuse": "existing navigation, commands, lab details and objective entry",
+      "acceptance": "One coherent shell, primary investigate/open web/knowledge/studio/verify paths; map every old control and retain explicit advanced/legacy access.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D02",
+      "category": "D",
+      "title": "Universal objective composer",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D01",
+        "EH-B03"
+      ],
+      "reuse": "current autonomous research objective and worked example",
+      "acceptance": "Enter, edit, attach/select evidence and choose supported intent; default view presents objective and local example above fold at 390px; no hidden provider contact.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D03",
+      "category": "D",
+      "title": "Trusted workspace component registry",
+      "priority": "P0",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D01",
+        "EH-B01"
+      ],
+      "reuse": "existing DOM panels and reviewed workspace",
+      "acceptance": "Closed typed component IDs, input schemas and commands; unsupported requests get accessible fallback; never execute model-generated HTML/JS.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D04",
+      "category": "D",
+      "title": "Domain-specific layouts",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D03"
+      ],
+      "reuse": "existing quantity, economics, semantic, research and proof panels",
+      "acceptance": "At least math, engineering, finance, academic, historical, software, medical-literature and general research fixture layouts; unsupported domain widgets honestly unavailable.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D05",
+      "category": "D",
+      "title": "Shared read model and selection",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A09",
+        "EH-C03",
+        "EH-D03"
+      ],
+      "reuse": "existing execution feed, investigationGraph and workspace snapshots",
+      "acceptance": "Spatial, task DAG, notebook, evidence graph and timeline consume same run/version and selected typed key; edit goes through existing controller only.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D06",
+      "category": "D",
+      "title": "Live research canvas",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A05",
+        "EH-D05"
+      ],
+      "reuse": "autonomous-research-panel and browser-research-orchestration",
+      "acceptance": "Actual query, retrieval, failed/denied, admission, gaps and cancellation; distinguish host-mediated from browser-native and fixture from live.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D07",
+      "category": "D",
+      "title": "Research notebook",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D05",
+        "EH-D06"
+      ],
+      "reuse": "existing research report and source handoff",
+      "acceptance": "Render reviewed/proposed claims, quotes, dates, uncertainty and cited passages; update from admitted version; no auto adoption of draft sources.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D08",
+      "category": "D",
+      "title": "Command palette and deep links",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D01",
+        "EH-D05"
+      ],
+      "reuse": "existing Ctrl/Command K and tool jump",
+      "acceptance": "Search trusted commands, entities and capabilities; focus safe targets, disabled reasons, URL state without secrets; no action on search alone.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D09",
+      "category": "D",
+      "title": "Mission control placement",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D05",
+        "EH-A10"
+      ],
+      "reuse": "existing budget, consent and cancel controls",
+      "acceptance": "Sticky compact run status, reservations, permission pending and stop reachable from every active view; mobile alternative; never mask unknown billing.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-D10",
+      "category": "D",
+      "title": "Guided investigation cinema",
+      "priority": "P1",
+      "phase": 4,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D07",
+        "EH-D08",
+        "EH-D09"
+      ],
+      "reuse": "demo-guide.mjs and worked fixtures",
+      "acceptance": "Narrated/stepwise retained fixture or real receipt replay, with clear mode labels and no external actions; new user completes one meaningful proof export.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E01",
+      "category": "E",
+      "title": "Publisher and network inventory",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A01",
+        "EH-B01"
+      ],
+      "reuse": "existing caller, guide, manifest and links files",
+      "acceptance": "List exact origins, versions and artifact digests; distinguish bundled, loopback, publicly observed and unverified candidate; no invented directory.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E02",
+      "category": "E",
+      "title": "User-controlled discovery",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E01"
+      ],
+      "reuse": "existing loadLocalNetwork and bounded fetch",
+      "acceptance": "Explicit origin/URL selection, validate scheme/origin/manifest limits before contact; denied or malformed input zero unauthorized traffic.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E03",
+      "category": "E",
+      "title": "Agent passport",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E01",
+        "EH-E02"
+      ],
+      "reuse": "existing artifact digests and runtime compatibility",
+      "acceptance": "Show publisher claims, supported schema, tools, limits, disclosure, integrity, availability and unknown independence; no visual trust certification.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E04",
+      "category": "E",
+      "title": "Capability directory and comparison",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B05",
+        "EH-E03"
+      ],
+      "reuse": "registry and user-authored/imported manifests",
+      "acceptance": "Search/filter candidate definitions by capability; alternatives local/peer/model; distinguish absent, incompatible and unavailable; no silent crawling.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E05",
+      "category": "E",
+      "title": "Visual network composer",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B09",
+        "EH-E03"
+      ],
+      "reuse": "agent-studio and compileNetwork",
+      "acceptance": "Drag/keyboard connection editor, validate ports/dependencies and preview exact portable graph; reject cycle/unsupported tools; no execution by edit.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E06",
+      "category": "E",
+      "title": "Publisher studio",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E05"
+      ],
+      "reuse": "existing portable JSON build and packaging",
+      "acceptance": "Create/inspect/export manifest+network bundle with schema, origin, notices and digest; preview locally; publishing separately authorized.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E07",
+      "category": "E",
+      "title": "Portable import and export",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E06"
+      ],
+      "reuse": "existing network artifacts, proof capsule and pins",
+      "acceptance": "Round-trip supported artifacts byte-exact or explicitly canonicalized; reject tamper and unsupported fields; import never auto-executes.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E08",
+      "category": "E",
+      "title": "Consent cockpit",
+      "priority": "P0",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B10",
+        "EH-E02"
+      ],
+      "reuse": "existing consent inspector and browser plan preview",
+      "acceptance": "Display exact destination, purpose, payload/redaction, version pin, limits and one-use grant; deny, expiry and changed scope cause zero contact.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E09",
+      "category": "E",
+      "title": "Cross-origin peer execution",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E05",
+        "EH-E08"
+      ],
+      "reuse": "existing guide peer runtime and separate-origin fixture",
+      "acceptance": "Recorded caller/peer ancestry and authorization; loopback two-origin positive and denial tests; arbitrary external origins remain unsupported unless admitted by policy.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E10",
+      "category": "E",
+      "title": "Open network observatory",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A04",
+        "EH-E09"
+      ],
+      "reuse": "execution feeds and browser-run receipts",
+      "acceptance": "Visualize observed calls, artifact receipt and failure; never show discovered peer as executing without trace; preserve model vs tool vs peer counts.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E11",
+      "category": "E",
+      "title": "Neutral interoperability journey",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E07",
+        "EH-E09"
+      ],
+      "reuse": "existing neutral conformance archives and browser matrix",
+      "acceptance": "Run at least two separately authored compatible graphs without SUTRA-specific names or frontend code changes; label fixture vs real public deployment.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-E12",
+      "category": "E",
+      "title": "Public HTTPS acceptance boundary",
+      "priority": "P1",
+      "phase": 5,
+      "status": "remaining",
+      "acceptanceScope": "external evidence or owner authorization required",
+      "dependencies": [
+        "EH-E10",
+        "EH-E11"
+      ],
+      "reuse": "REL-C11, C19, R15 and deployment approval",
+      "acceptance": "After owner authorization verify actual caller and independent publisher origins, manifests and browser journey; retain failures; cannot close from localhost or control-plane success.",
+      "evidence": [],
+      "limitations": "External portion must remain open until observed; no fabricated approval or evidence."
+    },
+    {
+      "id": "EH-F01",
+      "category": "F",
+      "title": "Run and operation state machine",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A07"
+      ],
+      "reuse": "execution-events.js and browser receipts",
+      "acceptance": "Proposed/admitted/queued/executing/validating/terminal states derive from authority; unknown dispatch outcome not success; malformed transition refused.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F02",
+      "category": "F",
+      "title": "Resource accounting view",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B07",
+        "EH-F01"
+      ],
+      "reuse": "existing reserved calls, bytes, caps and timeouts",
+      "acceptance": "Separate estimates/reserved/observed and unknown billed amounts; account correctly under cancellation and concurrent tasks.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F03",
+      "category": "F",
+      "title": "Graph revision proposal and diff",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-B10",
+        "EH-F01"
+      ],
+      "reuse": "existing revision preview and DAG compiler",
+      "acceptance": "Capability gap yields explicit proposed graph with added/removed/retained tasks, changed disclosure and version; proposal has no authority.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F04",
+      "category": "F",
+      "title": "Revision authorization and admission",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F03",
+        "EH-E08"
+      ],
+      "reuse": "existing consent and version fences",
+      "acceptance": "Revalidate exact graph, version, disclosure and remaining budgets; any new grant requires approval; deny leaves existing history intact.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F05",
+      "category": "F",
+      "title": "Bounded adaptation policy",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F04"
+      ],
+      "reuse": "scheduler caps and cancellation",
+      "acceptance": "Enforce limits for revisions, recursion, invocations, tasks, time and bytes across run, not reset on revision; test denial and exhaustion.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F06",
+      "category": "F",
+      "title": "Cancellation and stale fencing",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F01",
+        "EH-D09"
+      ],
+      "reuse": "existing AbortController and assertCurrent",
+      "acceptance": "Stop disables new dispatch; late completion cannot publish; unknown external outcome stays unknown; cancellation visible across views.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F07",
+      "category": "F",
+      "title": "Artifact reuse and provenance",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F03",
+        "EH-F04"
+      ],
+      "reuse": "existing role artifact sealing and reuse panels",
+      "acceptance": "Only reuse with validated input/dependency/version compatibility; invalidation transitively propagates; old pins remain retained.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F08",
+      "category": "F",
+      "title": "Versioned dynamic recovery",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F05",
+        "EH-F07",
+        "EH-A08"
+      ],
+      "reuse": "existing execution-recovery and fixed legacy profile",
+      "acceptance": "Introduce distinct versioned manifest profile only if needed; validate tamper, wrong plan, missing dependency, resume bounds; legacy archive bytes remain compatible.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F09",
+      "category": "F",
+      "title": "Timeline and replay",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F01",
+        "EH-F07"
+      ],
+      "reuse": "existing checkpoint timeline and journal",
+      "acceptance": "Scrub exact retained events, distinguish gaps/truncation, no credentials or network on playback; original run immutable.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-F10",
+      "category": "F",
+      "title": "Integrated adaptive journey",
+      "priority": "P0",
+      "phase": 6,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F05",
+        "EH-F06",
+        "EH-F08",
+        "EH-F09"
+      ],
+      "reuse": "existing browser revision/recovery tests",
+      "acceptance": "Fixture discovers missing capability, proposes and admits bounded revision, preserves/reuses justified artifact, cancels or completes and exports; verify denied variant zero new contacts.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G01",
+      "category": "G",
+      "title": "Evidence constellation",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C03",
+        "EH-D05"
+      ],
+      "reuse": "existing investigationGraph and admitted source records",
+      "acceptance": "Show declared lineage, digest, reported claim and dependency edge; copied sources cluster, do not assert independence; exact provenance inspectable.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G02",
+      "category": "G",
+      "title": "Source microscope",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G01",
+        "EH-D07"
+      ],
+      "reuse": "existing reviewed source spans and source handoff",
+      "acceptance": "Jump from claim to exact offsets/text/digest, date/freshness, unit/scope and unknowns; preserve raw bytes and safe rendering.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G03",
+      "category": "G",
+      "title": "Semantic multiverse",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G02"
+      ],
+      "reuse": "semantic-intake and candidate comparison",
+      "acceptance": "Branch alternative meanings and coverage, show unresolved and conditional status; no generated meaning treated as verified truth.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G04",
+      "category": "G",
+      "title": "Competing conclusions",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G03"
+      ],
+      "reuse": "existing semantic triage and report",
+      "acceptance": "Side-by-side competing candidates with supporting/contradicting evidence, assumptions and limitations; no forced consensus.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G05",
+      "category": "G",
+      "title": "Knowledge dependency debugger",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G01",
+        "EH-F07"
+      ],
+      "reuse": "impact-projection and withdrawal preview",
+      "acceptance": "Select source, preview affected/retained/refused candidates and reasons; no mutation before explicit apply; stale preview refused.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G06",
+      "category": "G",
+      "title": "Scenario and uncertainty visualization",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G03",
+        "EH-G04"
+      ],
+      "reuse": "existing interval/world/clarification panels",
+      "acceptance": "Represent bounded hypothetical inputs, exact units and conditional results; distinguish scenario from observed evidence and expose decisive next observation.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G07",
+      "category": "G",
+      "title": "Living history and branch explorer",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G05",
+        "EH-F07"
+      ],
+      "reuse": "history-host, pinned workspace and history controls",
+      "acceptance": "Inspect parent/child and sibling conflicts; compare before/after, retain pins, explicit restore; stale durable CAS refusal remains intact.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G08",
+      "category": "G",
+      "title": "Proof explorer",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G02",
+        "EH-G07"
+      ],
+      "reuse": "existing capsule, roundtrip and Python verifier",
+      "acceptance": "Show exact artifact/digest, what local replay verifies vs independent Python replay; wrong pin/tamper fails; no truth claim.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G09",
+      "category": "G",
+      "title": "Portable knowledge exchange",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G07",
+        "EH-G08"
+      ],
+      "reuse": "existing version/history/checkpoint exports",
+      "acceptance": "Import exact supported archives with separate pin; privacy review before export; preserve historical schema and unsupported-case refusal.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-G10",
+      "category": "G",
+      "title": "End-to-end signature demonstration",
+      "priority": "P1",
+      "phase": 7,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-G04",
+        "EH-G06",
+        "EH-G09"
+      ],
+      "reuse": "guided debugger and research-revision tests",
+      "acceptance": "Question → sources → competing interpretations → conditional result → correction/withdrawal → changed/retained outcome → independent replay; actual browser plus separate verifier.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H01",
+      "category": "H",
+      "title": "Responsive workspace shell",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D01",
+        "EH-C12"
+      ],
+      "reuse": "existing 320px reflow checks",
+      "acceptance": "320/360/390/768/1440 widths, portrait/landscape and 200% text; no document overflow, clipped labels or hidden primary action.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H02",
+      "category": "H",
+      "title": "Touch-first navigation and graph",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C06",
+        "EH-H01"
+      ],
+      "reuse": "existing pan/zoom and controls",
+      "acceptance": "44px preferred touch targets, bottom/sheet navigation, no mandatory hover, explicit zoom/reset and list alternative; physical-device check separate.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H03",
+      "category": "H",
+      "title": "Keyboard and focus",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D08",
+        "EH-H01"
+      ],
+      "reuse": "existing keyboard journey",
+      "acceptance": "All primary flows reachable without pointer; modal focus restored, no trap, visible focus, command shortcuts scoped, selection retained.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H04",
+      "category": "H",
+      "title": "Screen reader semantics",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C08",
+        "EH-H03"
+      ],
+      "reuse": "existing aria-live and graph lists",
+      "acceptance": "Named landmarks, headings, controls, status announcements and text equivalents for nodes/edges; avoid event flood; automated plus actual human screen reader.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H05",
+      "category": "H",
+      "title": "Contrast and reduced motion",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C11",
+        "EH-H01"
+      ],
+      "reuse": "existing theme and frame tests",
+      "acceptance": "WCAG 2.2 AA target, verify normal text/state contrast across all themes, reduced motion parity and no idle frames; no color-only status.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H06",
+      "category": "H",
+      "title": "Plain-language empty and failure states",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D06",
+        "EH-D09"
+      ],
+      "reuse": "existing refusal/cancel paths",
+      "acceptance": "Explain what is unavailable, why, next safe action and no misleading completion; display no-model offline path without setup.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-H07",
+      "category": "H",
+      "title": "Human usability study",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "external evidence or owner authorization required",
+      "dependencies": [
+        "EH-D10",
+        "EH-G10",
+        "EH-H03",
+        "EH-H04",
+        "EH-H06"
+      ],
+      "reuse": "REL-U01/U09 and guided examples",
+      "acceptance": "5–10 consenting target users, uncoached objective-to-proof task; first-action comprehension within 10s target, completion/time/confusion, fixes and retest; disclose small sample.",
+      "evidence": [],
+      "limitations": "External portion must remain open until observed; no fabricated approval or evidence."
+    },
+    {
+      "id": "EH-H08",
+      "category": "H",
+      "title": "Human mobile and accessibility acceptance",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "external evidence or owner authorization required",
+      "dependencies": [
+        "EH-H02",
+        "EH-H03",
+        "EH-H04",
+        "EH-H05"
+      ],
+      "reuse": "REL-U07",
+      "acceptance": "Physical phone and desktop, real screen reader plus manual keyboard/reflow; record OS/browser/device and findings; automated results alone insufficient.",
+      "evidence": [],
+      "limitations": "External portion must remain open until observed; no fabricated approval or evidence."
+    },
+    {
+      "id": "EH-I01",
+      "category": "I",
+      "title": "Baseline and transfer budget",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A01"
+      ],
+      "reuse": "existing CI performance report",
+      "acceptance": "Measure exact-head cold desktop and emulated phone, 4x CPU/1Mbps/150ms; compare existing 310537-byte historical baseline; target initial compressed transfer <500KB, define included resources.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-I02",
+      "category": "I",
+      "title": "Progressive loading",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D01",
+        "EH-I01"
+      ],
+      "reuse": "index.html, Vite and existing offline shell",
+      "acceptance": "Load primary view first; lazily mount graph/labs/verifier where safe; preserve offline entry and build/packaging contract; compare bytes and request counts.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-I03",
+      "category": "I",
+      "title": "Interaction and layout performance",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-I02",
+        "EH-C09"
+      ],
+      "reuse": "existing performance harness",
+      "acceptance": "Measure LCP ≤2.5s, INP ≤200ms, CLS ≤0.1 p75 targets with stated sample/device; lab proxies labeled; no production field claim without field data.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-I04",
+      "category": "I",
+      "title": "Demand-driven animation and graph load",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C07",
+        "EH-C09",
+        "EH-I01"
+      ],
+      "reuse": "frame-driver and visualization",
+      "acceptance": "Zero recurring idle/hidden JS frames, reduced-motion parity; target 60 FPS on capable hardware with 12 participants; measure 64/500-entity rendering separately.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-I05",
+      "category": "I",
+      "title": "Lifecycle and memory",
+      "priority": "P1",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D05",
+        "EH-I04"
+      ],
+      "reuse": "existing event journal retention and workspace teardown",
+      "acceptance": "Repeated mount/switch/50 fixture runs with bounded journal and no orphan subscriptions/frames; record heap trend, browser errors and cap behavior.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-I06",
+      "category": "I",
+      "title": "Static-first deployment efficiency",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "external evidence or owner authorization required",
+      "dependencies": [
+        "EH-I02",
+        "EH-I03",
+        "EH-I04",
+        "EH-I05"
+      ],
+      "reuse": "REL-S14 and C11, static build",
+      "acceptance": "Verify zero unapproved external requests locally; after approved deployment measure static browsing Worker invocations (target zero), CDN cache and actual ingress costs; no deployment claim from build.",
+      "evidence": [],
+      "limitations": "External portion must remain open until observed; no fabricated approval or evidence."
+    },
+    {
+      "id": "EH-J01",
+      "category": "J",
+      "title": "Threat model and permission invariants",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A02",
+        "EH-B01"
+      ],
+      "reuse": "existing consent, capability and runtime contracts",
+      "acceptance": "Threat-to-test matrix covers confused deputy, injection, malicious manifest, credential leakage, spoofed event and recursive cost; UI never grants authority.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J02",
+      "category": "J",
+      "title": "Untrusted UI data admission",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-D03",
+        "EH-J01"
+      ],
+      "reuse": "strict-json, existing safe DOM rendering and component registry",
+      "acceptance": "Reject prototype keys, executable HTML/JS, unsafe URL and oversized input; test malicious names/labels/source content; no network or script execution.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J03",
+      "category": "J",
+      "title": "Secret and privacy regression",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-E08",
+        "EH-J01"
+      ],
+      "reuse": "existing ephemeral vault, receipts and exports",
+      "acceptance": "Canary secrets excluded from DOM telemetry, journal, URLs, local storage, checkpoints, exported bundles and third-party contacts; no new storage without policy.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J04",
+      "category": "J",
+      "title": "Authorization and cancellation negatives",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-F05",
+        "EH-F06",
+        "EH-J01"
+      ],
+      "reuse": "existing consent and orchestration browser tests",
+      "acceptance": "Denied/replayed/expired/stale permits, unknown route, recursive delegate and post-stop paths generate zero unauthorized transport contacts; retain counters.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J05",
+      "category": "J",
+      "title": "Compatibility suite and feature parity",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-A12",
+        "EH-G10",
+        "EH-J02"
+      ],
+      "reuse": "existing browser.cjs, master.cjs, research-revision, durable-recovery, build-contract and verifier",
+      "acceptance": "Run original suites unweakened, migration inventory every original user path; old exports/pins and separate-origin fixtures pass or block.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J06",
+      "category": "J",
+      "title": "Integrated browser matrix",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-C12",
+        "EH-H05",
+        "EH-J03",
+        "EH-J04",
+        "EH-J05"
+      ],
+      "reuse": "existing workspace/knowledge/operator/browser-matrix CI",
+      "acceptance": "Exact-head Chromium plus supported Firefox/WebKit where applicable; retain screenshots, events, network canaries, performance and test outputs; no skipped-as-pass.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J07",
+      "category": "J",
+      "title": "Release crosswalk and independent review",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-J06",
+        "EH-H07",
+        "EH-H08",
+        "EH-I03"
+      ],
+      "reuse": "REL-U01–U10, R15, C11/C19, S12–S14",
+      "acceptance": "Revalidate affected existing gates on new head; human reviewer records unresolved issues; no double counting or claiming live inference/public deployment from fixture.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    },
+    {
+      "id": "EH-J08",
+      "category": "J",
+      "title": "Final promotion and rollback readiness",
+      "priority": "P0",
+      "phase": 8,
+      "status": "remaining",
+      "acceptanceScope": "engineering and exact-head evidence",
+      "dependencies": [
+        "EH-J07",
+        "EH-E12",
+        "EH-I06",
+        "EH-F10",
+        "EH-B12"
+      ],
+      "reuse": "existing release register and static packaging",
+      "acceptance": "All required Event Horizon gates exact-head accepted; documented rollback to previous working shell, unresolved external gates keep NO-GO; owner approval for merge/deploy required.",
+      "evidence": [],
+      "limitations": "Existing components are starting points, not acceptance credit."
+    }
+  ]
+}

@@ -7,6 +7,8 @@
 **Official deadline:** 2027-01-11 16:00 UTC / 21:45 Nepal (08:00 PST). Internal submission freeze: January 9. Keep judge access operational through January 18, 17:00 PST (January 19, 06:45 Nepal).
 **Scope:** This is the release acceptance overlay to the existing active [CHECKLIST.md](CHECKLIST.md), not a second competing engineering queue and not authorization to merge, deploy, enable paid inference, change DNS or submit. Existing broad engineering obligations remain open unless their own acceptance is met. The owner must separately authorize preview and production changes.
 
+**Frontend enhancement overlay (2026-11-28):** [EVENT HORIZON V2](EVENT-HORIZON.md) and [structured register](event-horizon-register.json) define 100 new enhancement gates, mapped to the affected REL gates. They do not add to the 103 release gates or change their existing acceptance status. Any affected closure must be revalidated at the new exact implementation head; production remains NO-GO. No public cutover or paid inference is authorized.
+
 ## 0. Evidence and governing requirements
 
 Sources inspected on the audit date:

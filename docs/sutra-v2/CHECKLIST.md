@@ -2,6 +2,8 @@
 
 > **SOLE ACTIVE EXECUTION CHECKLIST.** SUTRA is one product and `main` is canonical. Earlier SUTRA task queues are historical only; their implementation and verified evidence remain reusable when current SUTRA depends on them. “Continue with SUTRA” means resolve exact `main`, inspect exact-head CI, and execute the single dependency-ready `[~]` item here.
 
+**Frontend enhancement overlay (2026-11-28):** [EVENT HORIZON V2](EVENT-HORIZON.md) tracks 100 dependency-aware enhancement gates with [structured mirror](event-horizon-register.json). Explicit Event Horizon work follows that scoped register, beginning EH-A01; general continuation and historical status remain governed here. Existing implementation is reused, not restarted. Release gate status is unchanged.
+
 **Release overlay (2026-11-27):** [Devpost pre-release gates and award strategy](DEVPOST-PRE-RELEASE.md) governs release acceptance and Cloudflare cutover, without replacing this engineering queue or marking existing items complete.
 
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
