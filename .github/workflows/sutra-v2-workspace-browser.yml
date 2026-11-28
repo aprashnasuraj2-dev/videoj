@@ -85,5 +85,14 @@ jobs:
           retention-days: 30
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
+      - name: Measure cold desktop and mobile emulation performance
+        run: node apps/sutra-v2/test/workspace-performance.cjs
+      - name: Preserve workspace performance measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-workspace-performance
+          path: apps/sutra-v2/test-output/workspace-performance.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Scope boundary
         run: echo 'Actual browser and isolated independent fixed-capsule replay; broader integration formal gates remain required.'
