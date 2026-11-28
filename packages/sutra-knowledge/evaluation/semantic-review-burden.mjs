@@ -9,6 +9,7 @@ import {previewSemanticQuestion} from '../semantic-question-engine.js';
 
 const heldout=JSON.parse(readFileSync(new URL('./finqa-public-test-heldout.json',import.meta.url)));
 const ambient=readFileSync(new URL('./ambient-human-categories-v1.jsonl',import.meta.url),'utf8').split(/\n/).filter(Boolean).map(JSON.parse);
+const linguists=readFileSync(new URL('./ambient-linguist-annotations-v1.jsonl',import.meta.url),'utf8').split(/\n/).filter(Boolean).map(JSON.parse);
 const syntheticManifest=JSON.parse(readFileSync(new URL('./semantic-model-authored-manifest-v1.json',import.meta.url)));
 const money={kind:'currency_amount',unit:'USD',scope:'same_company',dimension:[0,0,0]},ratio={kind:'ratio',unit:'one',scope:'same_company',dimension:[0,0,0]};
 function gold(c){const q=c.question.toLowerCase(),ops=(c.program.match(/\b(add|subtract|multiply|divide)\(/g)||[]).map(x=>x.slice(0,-1));if(/\b(average|mean)\b/.test(q))return 'MEAN';if(ops.includes('subtract')&&ops.includes('divide')&&/\b(percent|percentage|growth)\b/.test(q))return 'RELATIVE_CHANGE';if(ops.every(x=>x==='add'))return 'SUM';if(ops.length===1&&ops[0]==='subtract')return 'DIFFERENCE';if(ops.includes('divide'))return 'RATIO';return 'UNSUPPORTED';}
@@ -34,6 +35,7 @@ export async function runSemanticReviewMeasurement(){
  const burden=previews.map((p,i)=>({question:supported[i],state:p.state,candidates:p.candidates.length,reviewFlags:p.ambiguities.filter(a=>a.state==='REVIEW_REQUIRED'||a.state==='EXPLICIT_OR_REVIEW').length,unresolved:p.state!=='UNREVIEWED_CANDIDATES'}));
  const flags=burden.map(x=>x.reviewFlags),candidates=burden.map(x=>x.candidates),categoryCounts={};
  for(const x of ambient)categoryCounts[x.category]=(categoryCounts[x.category]||0)+1;
+ const multi=linguists.filter(x=>(x.annotations?.length??0)>1),exactAgreement=multi.filter(x=>new Set(x.annotations).size===1),multilabel=linguists.filter(x=>(x.annotations??[]).some(v=>typeof v==='string'&&v.includes('|')));
  return {
   version:'sutra-semantic-review-measurement/v1',
   heldOutOperationFamily:{cases:held.length,resolved:resolved.length,unresolved:held.length-resolved.length,unresolvedRate:(held.length-resolved.length)/held.length,correct:correct.length,
@@ -41,7 +43,7 @@ export async function runSemanticReviewMeasurement(){
    boundary:'Frozen FinQA question-only operation-family classification. It is not full program induction or semantic truth.'},
   structuralReviewBurden:{cases:burden.length,meanReviewFlags:mean(flags),medianReviewFlags:median(flags),maxReviewFlags:Math.max(...flags),meanCandidateCount:mean(candidates),
    unresolvedOrUnsupported:burden.filter(x=>x.unresolved).length,rows:burden,boundary:'Machine-measured review workload proxy: ambiguity flags, candidate counts and unresolved states. It is not human elapsed review time.'},
-  externalHumanAmbiguity:{cases:ambient.length,categoryCounts,boundary:'External human ambiguity-type annotations from AmbiEnt; SUTRA does not relabel them.'},
+  externalHumanAmbiguity:{cases:ambient.length,categoryCounts,linguistAgreement:{records:linguists.length,totalAnnotations:linguists.reduce((n,x)=>n+(x.annotations?.length??0),0),multiAnnotated:multi.length,exactStringAgreement:exactAgreement.length,exactStringAgreementRate:exactAgreement.length/multi.length,multilabelRecords:multilabel.length},boundary:'External AmbiEnt human annotations; exact-string agreement is descriptive annotation evidence, not SUTRA correctness or truth probability.'},
   modelAuthoredCoverage:{cases:syntheticManifest.counts.cases,families:syntheticManifest.counts.families,domains:syntheticManifest.counts.domains,humanAnnotation:false,hiddenTrainingExampleClaim:false},
   humanElapsedReviewTime:'NOT_MEASURED',truthProbability:'NOT_COMPUTED',decisionAuthority:'NONE'
  };
