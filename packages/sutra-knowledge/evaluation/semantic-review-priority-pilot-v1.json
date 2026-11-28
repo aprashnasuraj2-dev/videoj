@@ -56,5 +56,10 @@
   },
   "contextPriorityTargetHits": 27,
   "authority": "NONE",
-  "qualification": "FIRST_PASS is a review-order proxy, not a semantic ambiguity classifier. Unselected items retain review; v3 not unseen held-out."
+  "qualification": "FIRST_PASS is a review-order proxy, not a semantic ambiguity classifier. Unselected items retain review; v3 not unseen held-out.",
+  "disposition": {
+    "reviewPriority": "REJECTED_AS_DEFAULT",
+    "temporalV3": "REJECTED_AS_DEFAULT",
+    "reason": "Review queue reduction reduced precision and recall; temporal V3 increased false positives. Diagnostic hypotheses only."
+  }
 }

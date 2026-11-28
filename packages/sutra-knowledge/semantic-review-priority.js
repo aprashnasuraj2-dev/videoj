@@ -1,4 +1,4 @@
-// Review ordering only. No probability, semantic verdict, or authority is generated.
+// Experimental diagnostic only; the rejected heuristic cannot reorder review. No probability, semantic verdict, or authority is generated.
 const REVIEW=new Set(['REVIEW_REQUIRED','EXPLICIT_OR_REVIEW']);
 const SOURCE_FAMILIES={entity_identity:'entityIdentity',numerator:'numerator',reporting_period:'reportingPeriod',units:'units',scaling:'scaling',sign:'sign',percentage_vs_percentage_point:'percentageConvention',baseline_selection:'baseline',measurement_assumptions:'measurement',causal_vs_observational:'causality'};
 export function prioritizeSemanticReview({diagnostics,profile,aliasCollisions=[],typeCollisions=[],admission}){
@@ -17,5 +17,5 @@ export function prioritizeSemanticReview({diagnostics,profile,aliasCollisions=[]
   return {family,priority:grounds.length?'FIRST_PASS':'STANDARD_REVIEW',grounds,decisionAuthority:'NONE'};
  });
  const first=rows.filter(r=>r.priority==='FIRST_PASS').length;
- return {status:admission==='REFUSE'?'REFUSED':'REVIEW_REQUIRED',firstPassCount:first,standardCount:rows.length-first,rows:rows.sort((a,b)=>Number(b.priority==='FIRST_PASS')-Number(a.priority==='FIRST_PASS')),decisionAuthority:'NONE',qualification:'Prioritizes observable structural or source contrast cues, never removes a mandatory review obligation. FIRST_PASS is not a calibrated ambiguity probability; STANDARD_REVIEW is not evidence of unambiguity.'};
+ return {status:admission==='REFUSE'?'REFUSED':'REVIEW_REQUIRED',firstPassCount:first,standardCount:rows.length-first,policy:'DIAGNOSTIC_ONLY_NOT_ADOPTED',rows,decisionAuthority:'NONE',qualification:'Records experimental structural or source contrast cues in original diagnostic order; does not prioritize or remove any mandatory review obligation. FIRST_PASS is not a calibrated ambiguity probability; STANDARD_REVIEW is not evidence of unambiguity.'};
 }
