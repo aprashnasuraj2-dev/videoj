@@ -137,4 +137,5 @@ import './reviewed-workspace.js';
 import './agent-studio.js';
 
 import './operator-model-console.js';
-\nimport './semantic-intake.js';\n
+
+import './semantic-intake.js';
