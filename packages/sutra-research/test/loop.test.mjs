@@ -39,3 +39,10 @@ test('structured extraction is bounded, rejects duplicate JSON keys and preserve
  assert.throws(()=>extractDocument(Buffer.from('text'),'image/svg+xml',url),/EXTRACTION_MEDIA/);
  const bytes=Buffer.from('{"cost":100,"scope":"fixture"}'),doc=extractDocument(bytes,'application/json',url);assert.equal(doc.text,bytes.toString());assert.equal(doc.rawDigest,digest(bytes));
 });
+
+test('search backend outage preserves independently acquired evidence and bounded attempts',async()=>{
+ const a=grant(),calls=[],reads=[];try{
+ const report=await runAutonomousResearch({authorization:a,providers:{brave:{search:async q=>{calls.push(['brave',q]);throw Object.assign(Error('private provider message'),{code:'RATE_LIMIT'});}},tavily:{search:async q=>{calls.push(['tavily',q]);return [{url:'https://independent.org/report'}];}}},readDocument:async url=>{reads.push(url);a.reserve('document',{bytes:100});const text='Battery storage costs fell in 2025.';return {url,text,textDigest:digest(text),rawDigest:digest(text),links:[],mediaType:'text/plain'};}});
+ assert.ok(report.failures.some(x=>x.reason==='RATE_LIMIT'));assert.equal(report.documents.length,1);assert.equal(reads.length,1);assert.ok(calls.length<=3);assert.equal(new Set(calls.map(x=>JSON.stringify(x))).size,calls.length);assert.doesNotMatch(JSON.stringify(report),/private provider message/);
+ }finally{a.close();}
+});
