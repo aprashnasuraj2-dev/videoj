@@ -37,7 +37,7 @@ async function main(){
   if(authorization.plan.scope.allowJsRendering===true&&(process.env.SUTRA_ENABLE_OBSCURA!=='1'||!process.env.SUTRA_OBSCURA_BIN))fail('OBSCURA_NOT_CONFIGURED');
    const obscura=authorization.plan.scope.allowJsRendering===true?createObscuraRenderer({binaryPath:process.env.SUTRA_OBSCURA_BIN}):null;
    if(authorization.plan.scope.allowPdf===true)await probePdfSandbox({signal:authorization.signal});
-  const providers=createSearchProviders({credentials:{brave:process.env.SUTRA_SEARCH_BRAVE,tavily:process.env.SUTRA_SEARCH_TAVILY}});
+  const providers=createSearchProviders({credentials:{brave:process.env.SUTRA_SEARCH_BRAVE,tavily:process.env.SUTRA_SEARCH_TAVILY,openalex:process.env.SUTRA_SEARCH_OPENALEX,semanticscholar:process.env.SUTRA_SEARCH_SEMANTICSCHOLAR}});
   const writer=opts.has('--checkpoint-dir')?await createCheckpointWriter(opts.get('--checkpoint-dir')):undefined;
   let checkpointDigest;
   const onCheckpoint=writer?async s=>{checkpointDigest=await writer(s);}:undefined;
