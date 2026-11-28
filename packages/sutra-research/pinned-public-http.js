@@ -32,6 +32,9 @@ export async function pinnedPublicHttp({url,method='GET',headers={},body,maxByte
        finish(null,{status:res.statusCode,location,bytes:0,body:Buffer.alloc(0),mediaType:''});return;
       }
       if(allowMissing&&[404,410].includes(res.statusCode)){finish(null,{status:res.statusCode,bytes:0,body:Buffer.alloc(0),mediaType:''});return;}
+      // Only bounded status classes are published; do not consume or expose error bodies or Retry-After, or retry an uncertain dispatch.
+      if(res.statusCode===429){finish(fail('RATE_LIMIT'));return;}
+      if(Number.isInteger(res.statusCode)&&res.statusCode>=500&&res.statusCode<=599){finish(fail('UPSTREAM_UNAVAILABLE'));return;}
       const raw=res.headers['content-type'],encoding=res.headers['content-encoding'],length=res.headers['content-length'];
       const mediaType=typeof raw==='string'?raw.split(';')[0].trim().toLowerCase():'';
       if(res.statusCode!==200||!acceptedTypes.includes(mediaType)||encoding!==undefined&&encoding!=='identity'||res.headers['content-range']!==undefined||length!==undefined&&(typeof length!=='string'||!/^\d+$/.test(length)||Number(length)>maxBytes)){finish(fail('RESPONSE'));return;}
