@@ -31,7 +31,7 @@ export function createObscuraRenderer({binaryPath,spawnProcess=defaultSpawn,time
     let child;try{child=spawnProcess(binaryPath,args,{env,shell:false,stdio:['ignore','pipe','ignore'],windowsHide:true});}catch{reject(error('OBSCURA_SPAWN'));return;}
     let done=false,total=0;const chunks=[];
     const finish=(e,result)=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);if(e)reject(e);else resolve(result);};
-    const stop=code=>{try{child.kill('SIGKILL');}catch{}finish(error(code));};
+    const stop=code=>{finish(error(code));try{child.kill('SIGKILL');}catch{}};
     const abort=()=>stop('CANCELLED');
     const timer=setTimeout(()=>stop('OBSCURA_TIMEOUT'),timeoutMs+1000);
     timer.unref?.();
