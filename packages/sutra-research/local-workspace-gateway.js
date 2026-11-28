@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {admitManifest,authorizeResearch,digest,secretLike} from './research-session.js';
 import {MODEL_PROFILES,createResearchModelBroker} from './model-broker.js';
 import {createSearchProviders} from './providers.js';
+import {selectResearchBackends} from './research-source-router.js';
 import {createDocumentReader} from './document-reader.js';
 import {createObscuraRenderer,createObscuraEnhancedReader} from './obscura-adapter.js';
 import {runAutonomousResearch} from './research-supervisor.js';
@@ -14,21 +15,21 @@ const safeCode=e=>typeof e?.code==='string'&&/^[A-Z_]{1,60}$/.test(e.code)?e.cod
 const active=s=>s&&['running','cancelling'].includes(s.state);
 const costPolicy=Object.freeze({maxSearches:6,maxDocuments:12,maxLinkDepth:2,maxDurationSeconds:120,maxDownloadBytes:16777216,maxCostMicros:100000,maxModelCalls:6});
 // A single autonomous run is a runtime-scoped capability, not a per-URL human consent ceremony.
-const autonomousBudget=Object.freeze({maxSearches:3,maxDocuments:6,maxLinkDepth:1,maxDurationSeconds:90,maxDownloadBytes:5242880,maxCostMicros:20000});
+const autonomousBudget=Object.freeze({maxSearches:5,maxDocuments:10,maxLinkDepth:1,maxDurationSeconds:180,maxDownloadBytes:8388608,maxCostMicros:40000});
 export function createLocalResearchGateway({modelCredentials={},searchCredentials={},configure,clock=()=>Date.now(),enableObscura=false,obscuraBinaryPath}={}){
  const modelKeys=Object.fromEntries(Object.keys(MODEL_PROFILES).filter(v=>keyPresent(modelCredentials[v])).map(v=>[v,modelCredentials[v]]));
  const searchKeys=Object.fromEntries(['brave','tavily'].filter(v=>keyPresent(searchCredentials[v])).map(v=>[v,searchCredentials[v]]));
- const vendors=Object.keys(modelKeys),searchBackends=Object.keys(searchKeys),mode=configure?'injected_fixture':'local_host_transport';
+ const vendors=Object.keys(modelKeys),searchBackends=Object.keys(createSearchProviders({credentials:searchKeys})),mode=configure?'injected_fixture':'local_host_transport';
   const obscuraRenderer=enableObscura===true?createObscuraRenderer({binaryPath:obscuraBinaryPath}):null;
  let previewed=null,current=null,closed=false;
  const web=createOnDemandWebAccess({searchCredentials:searchKeys,renderer:obscuraRenderer,clock,isBusy:()=>active(current)});
  const check=()=>{if(closed)fail('GATEWAY_CLOSED');};
- const caps=()=>({schema:'sutra-local-research-capabilities/v1',mode,configuredModelVendors:[...vendors],searchBackends:[...searchBackends],directPublicUrls:true,jsRendering:obscuraRenderer?'operator_enabled_experimental':'unavailable',maxSelectedModels:3,autonomousModelFree:true,autonomousDefaultSearch:searchBackends.length?'configured_search':'wikipedia_limited',webTools:web.capabilities(),authority:'NONE'});
+ const caps=()=>({schema:'sutra-local-research-capabilities/v1',mode,configuredModelVendors:[...vendors],searchBackends:[...searchBackends],directPublicUrls:true,jsRendering:obscuraRenderer?'operator_enabled_experimental':'unavailable',maxSelectedModels:3,autonomousModelFree:true,autonomousDefaultSearch:'multi_source_objective_routing',webTools:web.capabilities(),authority:'NONE'});
  function preview(input){
   check();if(active(current)||web.isBusy())fail('RUN_ACTIVE');
   if(!exact(input,['objective','models',...(Object.hasOwn(input??{},'reviewEnabled')?['reviewEnabled']:[]),...(Object.hasOwn(input??{},'browserScheduled')?['browserScheduled']:[])])||(Object.hasOwn(input,'reviewEnabled')&&typeof input.reviewEnabled!=='boolean')||(Object.hasOwn(input,'browserScheduled')&&typeof input.browserScheduled!=='boolean')||typeof input.objective!=='string'||!Array.isArray(input.models)||input.models.length<1||input.models.length>3||input.models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model)))fail('MODEL_SELECTION');
   if(secretLike(JSON.stringify(input))||[...Object.values(modelKeys),...Object.values(searchKeys)].some(key=>JSON.stringify(input).includes(key)))fail('SENSITIVE_INPUT');
-  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true,...(obscuraRenderer?{allowJsRendering:true}:{})},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,...(input.reviewEnabled===false?{reviewEnabled:false}:{}),models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
+  const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true,...(obscuraRenderer?{allowJsRendering:true}:{})},budget:{...costPolicy},providers:selectResearchBackends(input.objective,searchBackends,{max:5}).providers.map(id=>({id,estimatedMaxCostMicros:['brave','tavily'].includes(id)?5000:1})),modelPolicy:{allowPublicEvidenceDisclosure:true,...(input.reviewEnabled===false?{reviewEnabled:false}:{}),models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
   const p=admitManifest(raw),expiresAt=clock()+120000;
   const approvalId=randomUUID();previewed={raw,pin:p.planPin,approvalId,expiresAt,browserScheduled:input.browserScheduled===true};
   return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,approvalId,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,browserScheduled:previewed.browserScheduled,authority:'NONE'};
@@ -66,8 +67,8 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   if(!Array.isArray(models)||models.length>3||models.some(m=>!exact(m,['vendor','model'])||!vendors.includes(m.vendor)||typeof m.model!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(m.model))||new Set(models.map(x=>x.vendor+'|'+x.model)).size!==models.length)fail('MODEL_SELECTION');
   const objective=input.objective.trim().replace(/\s+/gu,' ');
   if(!objective||objective.length>1000||secretLike(objective)||/[\u0000-\u001f\u007f]/.test(objective))fail('AUTONOMOUS_INPUT');
-  const configured=searchBackends.length?searchBackends:['wikipedia'];
-  const providers=configured.slice(0,2).map(id=>({id,estimatedMaxCostMicros:id==='wikipedia'?1:5000}));
+  const route=selectResearchBackends(objective,searchBackends,{max:5});
+  const providers=route.providers.map(id=>({id,estimatedMaxCostMicros:['brave','tavily'].includes(id)?5000:1}));
   const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective,
    scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:true,...(models.length?{allowModelPublicUrls:true}:{}),...(obscuraRenderer?{allowJsRendering:true}:{})},
    budget:models.length?{...autonomousBudget,maxDurationSeconds:120,maxCostMicros:100000,maxModelCalls:6}:{...autonomousBudget},providers,
@@ -76,7 +77,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   previewed=null;
   const session={browserScheduled:false,permit:null,permitSequence:0,actor,autonomous:true,sessionId:'research_'+randomUUID(),planPin:plan.planPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
   current=session;void execute(session,raw);
-  return {sessionId:session.sessionId,planPin:session.planPin,state:session.state,mode,autonomous:true,actor,modelCallsEnabled:models.length>0};
+  return {sessionId:session.sessionId,planPin:session.planPin,state:session.state,mode,autonomous:true,actor,modelCallsEnabled:models.length>0,discoveryRoute:route.mode,discoveryProviders:[...route.providers]};
  }
  function status(id,after=0){
   check();if(!current||id!==current.sessionId)fail('SESSION_NOT_FOUND');
