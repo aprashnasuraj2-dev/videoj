@@ -18,6 +18,7 @@ export function createObscuraRenderer({binaryPath,spawnProcess=defaultSpawn,time
  if(!validPath(binaryPath)||typeof spawnProcess!=='function'||!Number.isSafeInteger(timeoutMs)||timeoutMs<1000||timeoutMs>20000)refused('OBSCURA_CONFIG');
  let active=false;
  async function render(raw,{signal,allowQuery=false}={}){
+  const began=performance.now();
   const url=admitDocumentURL(raw,{allowQuery});
   if(signal?.aborted)refused('CANCELLED');
   if(active)refused('OBSCURA_BUSY');
@@ -47,7 +48,7 @@ export function createObscuraRenderer({binaryPath,spawnProcess=defaultSpawn,time
    const n=Buffer.byteLength(decoded.html);
    if(n<1||n>MAX_DOM_BYTES||!/^<html(?:\s|>)/i.test(decoded.html.trimStart()))refused('OBSCURA_DOM_LIMIT');
    if(signal?.aborted)refused('CANCELLED');
-   return Object.freeze({url,html:decoded.html,renderedDomDigest:digest(decoded.html),engine:'obscura',upstreamCommit:OBSCURA_UPSTREAM_COMMIT,retrievedAt:new Date().toISOString()});
+   return Object.freeze({url,html:decoded.html,renderedDomDigest:digest(decoded.html),engine:'obscura',upstreamCommit:OBSCURA_UPSTREAM_COMMIT,binaryAttestation:'not_verified',durationMs:Math.max(0,Math.round(performance.now()-began)),retrievedAt:new Date().toISOString()});
   }finally{active=false;}
  }
  return Object.freeze({render});
@@ -72,16 +73,25 @@ export function createObscuraEnhancedReader({authorization,renderer,readDocument
   if(seenOrigins.has(origin)||used>=3)return result;
   seenOrigins.add(origin);used++;
   const signal=options.signal?AbortSignal.any([authorization.signal,options.signal]):authorization.signal;
+  if(signal.aborted)refused('CANCELLED');
+  // The byte ledger covers this extra document, not the browser's subresources.
+  try{authorization.reserve('document',{bytes:MAX_DOM_BYTES});}
+  catch(e){
+   if(e?.code!=='BUDGET_EXHAUSTED')throw e;
+   return Object.freeze({...result,render:Object.freeze({status:'static_fallback',reason:'BUDGET_EXHAUSTED',secondNavigationPossible:false})});
+  }
+  // A failing checkpoint/dispatch fence MUST propagate. Never treat it as a
+  // harmless browser failure or navigate before this durable fence succeeds.
+  if(typeof options.beforeDispatch==='function')await options.beforeDispatch({kind:'obscura_render',url:result.finalUrl??result.url});
+  authorization.assertActive();
   try{
-   // Reserve a second document response conservatively. No refund after a failure.
-   authorization.reserve('document',{bytes:MAX_DOM_BYTES});
-   if(typeof options.beforeDispatch==='function')await options.beforeDispatch({kind:'obscura_render',url:result.finalUrl??result.url});
-   authorization.assertActive();
    const page=await renderer.render(result.finalUrl??result.url,{signal,allowQuery:authorization.plan.scope.allowPublicQueryParameters===true});
    authorization.assertActive();
    const extracted=extractDocument(Buffer.from(page.html,'utf8'),'text/html',page.url,{allowCrossOriginLinks:true,allowQuery:authorization.plan.scope.allowPublicQueryParameters===true});
+   if(extracted.text.length<=result.text.length&&extracted.links.every(link=>result.links.includes(link)))
+    return Object.freeze({...result,render:Object.freeze({status:'no_material_gain',engine:'obscura',durationMs:page.durationMs??null,secondNavigation:true,subresourceBytesMetered:false})});
    return Object.freeze({...result,text:extracted.text,textDigest:extracted.textDigest,links:extracted.links,metadata:extracted.metadata,parser:'obscura-dom/v1+bounded-html/v2',
-    render:Object.freeze({status:'rendered_unverified',engine:'obscura',upstreamCommit:page.upstreamCommit,renderedDomDigest:page.renderedDomDigest,staticTextDigest:result.textDigest,secondNavigation:true,subresourceBytesMetered:false,retrievedAt:page.retrievedAt})});
+    render:Object.freeze({status:'rendered_unverified',engine:'obscura',upstreamCommit:page.upstreamCommit,renderedDomDigest:page.renderedDomDigest,staticTextDigest:result.textDigest,binaryAttestation:page.binaryAttestation??'not_verified',durationMs:page.durationMs??null,secondNavigation:true,subresourceBytesMetered:false,retrievedAt:page.retrievedAt})});
   }catch(e){
    if(signal.aborted){throw error('CANCELLED');}
    authorization.assertActive();

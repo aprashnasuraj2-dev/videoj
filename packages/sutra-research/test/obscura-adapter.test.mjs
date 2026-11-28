@@ -79,3 +79,38 @@ test('obscura failure returns explicit static evidence without fabricated render
   assert.equal(out.text,d.text);assert.equal(out.render.status,'static_fallback');assert.equal(out.render.reason,'OBSCURA_SPAWN');assert.equal(a.usage().documents,1);
  }finally{a.close();}
 });
+
+test('a failed durable dispatch fence propagates and never launches the browser',async()=>{
+ const a=grant(),d=extractDocument(Buffer.from('<html><main>Loading...</main></html>'),'text/html','https://data.public.org/');
+ let invoked=0;
+ try{
+  const read=createObscuraEnhancedReader({authorization:a,readDocument:async()=>d,renderer:{render:async()=>{invoked++;return {};}}});
+  await assert.rejects(read(d.url,{beforeDispatch:async()=>{throw Error('CHECKPOINT_FAILED');}}),/CHECKPOINT_FAILED/);
+  assert.equal(invoked,0);assert.equal(a.usage().documents,1);
+ }finally{a.close();}
+});
+test('complete static HTML never invokes Obscura and unchanged rendered content cannot replace the static evidence',async()=>{
+ const a=grant();
+ try{
+  const staticRich=extractDocument(Buffer.from('<html><body><article>'+ 'Published battery costs data. '.repeat(20)+'</article></body></html>'),'text/html','https://data.public.org/');
+  const read=createObscuraEnhancedReader({authorization:a,readDocument:async()=>staticRich,renderer:{render:async()=>{throw Error('MUST_NOT_RENDER');}}});
+  const unchanged=await read(staticRich.url);assert.deepEqual(unchanged,staticRich);
+  assert.equal(a.usage().documents,0);
+ }finally{a.close();}
+ const b=grant();
+ try{
+  const d=extractDocument(Buffer.from('<html><main>Loading...</main></html>'),'text/html','https://another.public.org/');
+  const read=createObscuraEnhancedReader({authorization:b,readDocument:async()=>d,renderer:{render:async()=>({url:d.url,html:'<html><main>Loading...</main></html>',durationMs:4})}});
+  const out=await read(d.url);assert.equal(out.render.status,'no_material_gain');assert.equal(out.textDigest,d.textDigest);
+ }finally{b.close();}
+});
+test('extra browser navigation refuses exhausted document budget before launch',async()=>{
+ const a=grant(),d=extractDocument(Buffer.from('<html><main>Loading...</main></html>'),'text/html','https://data.public.org/');
+ let called=0;
+ try{
+  for(let i=0;i<5;i++)a.reserve('document',{bytes:100});
+  const read=createObscuraEnhancedReader({authorization:a,readDocument:async()=>d,renderer:{render:async()=>{called++;return {};}}});
+  const out=await read(d.url);
+  assert.equal(out.render.reason,'BUDGET_EXHAUSTED');assert.equal(out.render.secondNavigationPossible,false);assert.equal(called,0);
+ }finally{a.close();}
+});
