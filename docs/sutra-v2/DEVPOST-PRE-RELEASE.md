@@ -630,3 +630,10 @@ C19 follow-up: d38c9fd standalone neutral [job 140868954290](https://github.com/
 - **C11 remains open:** [public observation artifact](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46123719582/artifacts/15254372491) SHA-256 e05a85a4243ba9d0e9f613b81d53be63c0e999dd508360b7026eba34b2940d46 verified, all 10 public HTTPS checks failed with unavailable/invalid; this is not evidence of independent origin availability. No DNS, deployment, production or main mutation.
 
 No release or promotion authority. User-requested engineering work only. Local clone still blocked by DNS; exact retained archive independently inspected and changes made with a non-force expected-head update.
+
+### Additional distribution and orchestration hardening (verification pending)
+
+- REL-S13: copy exact root LICENSE/NOTICE into both static distributions and bundled nsDeploy LICENSE/NOTICE into the caller; closed-inventory and byte-equality checks reject missing or changed notices. This is a correction to the audited artifact, not full clearance of every evaluation corpus, sample archive, or vendored dependency.
+- REL-R15: document selection now uses the approved preview objective, not mutable DOM text. A dedicated Chromium integration test exercises multi-query and multi-document opaque selection, separate one-use permits before every contact, export and zero external browser requests. The actual search/model transport remains host-mediated and fixture-injected. Native browser-wide general research planning remains outside this closure.
+- REL-S14: preserve structured Workerd load metrics as an exact-head CI artifact with accounting and stop-probe assertions. Public CDN/Worker invocation counts and live-provider measurements remain open.
+- No deployment or paid provider call is authorized by this change. All new acceptance checks require fresh exact-head CI.

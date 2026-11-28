@@ -47,8 +47,8 @@ function requirePublication(files,manifest,expected,html,caller){
 // Static publication is deliberately closed to an exact inventory plus the
 // two generated Vite entry assets. Unknown payloads cannot ride along with
 // byte-identical copying from a compromised or stale source directory.
-const callerFixed=['index.html','_headers','_routes.json','agents/agent-manifest.json','agents/links.json',...callerNetworks.map(n=>'agents/'+n[2].slice(2)),'support-lattice.wasm','sutra-proof-verifier.pyz','sutra-proof-verifier.pyz.sha256','offline.html','orbit-sw.js','orbit.webmanifest','sutra-orbit.svg'];
-const guideFixed=['index.html','_headers','agents/agent-manifest.json','agents/checklist.network.json','agents/links.json','peer.config.json','src/main.js','src/style.css'];
+const callerFixed=['index.html','_headers','_routes.json','agents/agent-manifest.json','agents/links.json',...callerNetworks.map(n=>'agents/'+n[2].slice(2)),'support-lattice.wasm','sutra-proof-verifier.pyz','sutra-proof-verifier.pyz.sha256','offline.html','orbit-sw.js','orbit.webmanifest','sutra-orbit.svg','LICENSE.txt','NOTICE.txt','nsdeploy-LICENSE.txt','nsdeploy-NOTICE.txt'];
+const guideFixed=['index.html','_headers','agents/agent-manifest.json','agents/checklist.network.json','agents/links.json','peer.config.json','src/main.js','src/style.css','LICENSE.txt','NOTICE.txt'];
 function exactInventory(files,fixed,caller){
  const assets=files.filter(p=>/^assets\/[A-Za-z0-9_-]+\.(?:js|css)$/.test(p));
  if(caller)assert.deepEqual(assets.map(p=>p.slice(p.lastIndexOf('.'))).sort(),['.css','.js'],'Unexpected generated runtime assets');
@@ -56,6 +56,9 @@ function exactInventory(files,fixed,caller){
  assert.deepEqual([...files].sort(),[...fixed,...assets].sort(),'Unexpected or missing static artifact');
 }
 exactInventory(dst,callerFixed,true);exactInventory(peer,guideFixed,false);
+const licenseSources=[["LICENSE.txt","LICENSE"],["NOTICE.txt","NOTICE"],["nsdeploy-LICENSE.txt","packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt"],["nsdeploy-NOTICE.txt","packages/sutra-runtime/vendor/nsdeploy/NOTICE.md"]];
+for(const [dir,entries] of [[candidate,licenseSources],[guide,licenseSources.slice(0,2)]])for(const [name,source] of entries){assert.deepEqual(await read(dir,name),await read(resolve(root,'../..'),source),name+' license/notice mismatch');}
+for(const [files,fixed,caller] of [[dst,callerFixed,true],[peer,guideFixed,false]])for(const name of fixed.filter(x=>/LICENSE|NOTICE/.test(x)))assert.throws(()=>exactInventory(files.filter(x=>x!==name),fixed,caller));
 for(const path of ['extra.json','assets/secret.txt','assets/another.js','agents/extra.network.json','retired/index.html'])assert.throws(()=>exactInventory([...dst,path],callerFixed,true));
 assert.throws(()=>exactInventory(dst.filter(p=>p!=='offline.html'),callerFixed,true));
 // Bounded, value-redacting defense against accidental embedded credentials.

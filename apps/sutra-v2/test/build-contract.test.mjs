@@ -50,3 +50,8 @@ test('canonical artifact cannot include historical product entrypoints, source m
  for(const p of paths){assert.doesNotMatch(p,/(?:^|[/_.-])(?:dhago|detour|afterimage)(?:[/_.-]|$)/i);assert.doesNotMatch(p,/\.map$|^media\/|^transcripts\//i);}
  const html=await readFile(resolve(root,'index.html'),'utf8');assert.doesNotMatch(html,/https?:\/\/(?:dhago|detour|afterimage)\./i);
 });
+
+
+test('static distribution carries exact root and bundled-runtime license notices',async()=>{
+ for(const [name,source] of [["LICENSE.txt","LICENSE"],["NOTICE.txt","NOTICE"],["nsdeploy-LICENSE.txt","packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt"],["nsdeploy-NOTICE.txt","packages/sutra-runtime/vendor/nsdeploy/NOTICE.md"]])assert.deepEqual(await readFile(resolve(app,'dist',name)),await readFile(resolve(app,'../..',source)),name);
+});

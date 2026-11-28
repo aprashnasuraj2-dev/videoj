@@ -27,7 +27,17 @@ jobs:
       - name: Validate strict quota wire boundary
         run: node --test services/sutra-api/test/quota-wire.test.mjs services/sutra-api/test/inference.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
-        run: node services/sutra-api/test-local/quota-runtime.mjs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node services/sutra-api/test-local/quota-runtime.mjs | tee "$RUNNER_TEMP/sutra-workerd-load.log"
+          node --input-type=module -e 'import fs from "node:fs";import assert from "node:assert/strict";const p=process.env.RUNNER_TEMP;const rows=fs.readFileSync(p+"/sutra-workerd-load.log","utf8").split("\n").filter(s=>s.startsWith("WORKERD_LOAD "));assert.equal(rows.length,1);const x=JSON.parse(rows[0].slice(13));assert.equal(x.concurrentClients,20);assert.equal(x.statusCounts[200]+x.statusCounts[429],20);assert.equal(x.providerContacts,x.statusCounts[200]);assert.equal(x.freshStopProbeContacts,0);assert.equal(x.finalContacts,0);assert.ok(x.p95Ms>=x.p50Ms);fs.writeFileSync(p+"/sutra-workerd-load.json",JSON.stringify(x,null,2)+"\n")'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-workerd-load
+          path: ${{ runner.temp }}/sutra-workerd-load.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Build independent static candidates with synthetic credential-leak canaries
         env:
           SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_PROVIDER00000000000000000001

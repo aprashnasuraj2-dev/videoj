@@ -64,6 +64,8 @@ jobs:
           retention-days: 30
       - name: Execute objective-first shared-model research bridge fixture
         run: node apps/sutra-v2/test/autonomous-workspace.cjs
+      - name: Verify browser-owned bounded query and document selection
+        run: node apps/sutra-v2/test/browser-research-orchestration.cjs
       - name: Exercise research disagreement through reviewed revision and proof export
         run: |
           node apps/sutra-v2/test/research-revision.cjs
