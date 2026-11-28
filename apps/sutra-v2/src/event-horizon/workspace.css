@@ -818,3 +818,120 @@
  padding-left:18px;
  color:var(--eh-muted);
 }
+
+/* The navigation occupies its own desktop rail instead of pushing the
+   topology off screen; mobile uses an explicit, accessible disclosure. */
+#eh-workspace .eh-nav-directory{
+ min-width:0;
+}
+#eh-workspace .eh-nav-directory>summary{
+ color:var(--eh-muted);
+ cursor:pointer;
+ min-height:44px;
+ padding:9px 0;
+ font-size:.8rem;
+}
+#eh-workspace .eh-nav-control>button{
+ flex:0 0 auto;
+}
+#eh-workspace .eh-mission-dock{
+ border:1px solid var(--eh-line);
+ background:#172a31;
+ border-radius:8px;
+ padding:10px;
+ margin:8px 0;
+ display:grid;
+ gap:5px;
+}
+#eh-workspace .eh-mission-dock[data-phase=running]{
+ border-color:var(--eh-accent);
+}
+#eh-workspace .eh-mission-dock h4,#eh-workspace .eh-mission-dock p{
+ margin:0;
+}
+#eh-workspace .eh-mission-actions{
+ display:grid;
+ gap:5px;
+}
+#eh-workspace .eh-mission-actions button{
+ text-align:left;
+ font-size:.76rem;
+}
+@media(min-width:1000px){
+ #eh-workspace{
+  display:grid;
+  grid-template-columns:minmax(180px,220px) minmax(0,1fr);
+  align-items:start;
+  gap:10px 18px;
+ }
+ #eh-workspace>.eh-head,#eh-workspace>.eh-objective-slot{
+  grid-column:1/-1;
+ }
+ #eh-workspace>.eh-head{
+  grid-row:1;
+ }
+ #eh-workspace>.eh-objective-slot{
+  grid-row:2;
+  margin:0;
+ }
+ #eh-workspace>.eh-navigation-slot{
+  grid-column:1;
+  grid-row:3 / span 2;
+  position:sticky;
+  top:8px;
+  max-height:calc(100dvh - 16px);
+  overflow:auto;
+  padding:0 5px 8px 0;
+  border-right:1px solid var(--eh-line);
+ }
+ #eh-workspace>.eh-navigation-slot~*{
+  grid-column:2;
+ }
+ #eh-workspace>[id^=eh-]:not(.eh-objective-slot){
+  grid-row:3;
+ }
+ #eh-workspace>.eh-navigation-slot+.eh-state{
+  grid-row:4;
+ }
+ #eh-workspace .eh-tabs{
+  border-bottom:0;
+  padding:0;
+  margin:0;
+ }
+ #eh-workspace .eh-nav-control{
+  display:grid;
+ }
+ #eh-workspace .eh-nav-current{
+  flex-basis:auto;
+ }
+ #eh-workspace .eh-nav-groups{
+  grid-template-columns:minmax(0,1fr);
+ }
+ #eh-workspace .eh-nav-items{
+  grid-template-columns:minmax(0,1fr);
+ }
+ #eh-workspace .eh-nav-items>button{
+  padding:8px 9px;
+ }
+ #eh-workspace .eh-nav-directory>summary{
+  min-height:36px;
+  padding:7px 0;
+ }
+ #eh-workspace .eh-metrics{
+  margin:8px 0 10px;
+ }
+ #eh-workspace .eh-canvas{
+  min-height:200px;
+ }
+}
+@media(max-width:999px){
+ #eh-workspace .eh-nav-control{
+  align-items:center;
+ }
+ #eh-workspace .eh-nav-groups{
+  grid-template-columns:minmax(0,1fr);
+ }
+ #eh-workspace .eh-nav-directory:not([open]) .eh-nav-groups{
+  display:none;
+ }
+}

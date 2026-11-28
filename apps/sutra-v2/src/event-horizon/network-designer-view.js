@@ -277,7 +277,7 @@ export function mountNetworkDesigner(root,executionHooks={}){
    inspector.append(E('p','Select a definition.','eh-copy'));
    return;
   }
-  inspector.append(E('h3',a.name),E('p','No live instance or model route.','eh-copy'));
+  inspector.append(E('h3',a.name),E('p','Declaration only; observed invocations are shown in Runtime.','eh-copy'));
   const rename=input(a.name);
   const description=textarea(a.function.description,2000);
   const instructions=textarea(a.instructions);
@@ -346,7 +346,7 @@ export function mountNetworkDesigner(root,executionHooks={}){
   networkSteps.value=String(state.definition.max_steps??8);
   raw.textContent=JSON.stringify(state.definition,null,2);
   summary.replaceChildren();
-  for(const [name,value] of [['Definitions',state.analysis.definitionCount],['Possible links',state.analysis.edgeCount],['Maximum depth',state.analysis.maxDepth],['Running instances',0]]){
+  for(const [name,value] of [['Definitions',state.analysis.definitionCount],['Possible links',state.analysis.edgeCount],['Maximum depth',state.analysis.maxDepth],['Runtime status','See operation']]){
    const box=E('div',undefined,'eh-metric');
    box.append(E('small',name),E('strong',String(value)));
    summary.append(box);

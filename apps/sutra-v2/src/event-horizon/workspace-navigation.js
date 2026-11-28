@@ -96,7 +96,10 @@ export function mountWorkspaceNavigation(root,entries,{onSelect}){
   section.append(items);
   groups.append(section);
  }
- nav.append(controls,groups);
+ const directory=E('details',undefined,'eh-nav-directory');
+ directory.open=globalThis.matchMedia?.('(min-width: 1000px)').matches??true;
+ directory.append(E('summary','All workspace tools'),groups);
+ nav.append(controls,directory);
  root.append(nav);
  const dialog=E('dialog',undefined,'eh-command-dialog');
  dialog.setAttribute('aria-labelledby','eh-command-heading');

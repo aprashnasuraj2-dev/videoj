@@ -14,6 +14,7 @@ import {createLazyViews,createCoalescedRefresh} from './view-lifecycle.js';
 import {mountScenarioView} from './scenario-view.js';
 import {mountRunArchive} from './run-archive-view.js';
 import {mountWorkspaceNavigation} from './workspace-navigation.js';
+import {mountMissionDock} from './mission-dock.js';
 import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -176,13 +177,14 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
    onStart(){const id='designed_'+(++designedSequence),p=createResearchProjection();p.begin();const record={projection:p,snapshot(){const g=p.snapshot();const remap=k=>id+'/'+k;return {...g,id,runId:id,label:'Designed network trace',nodes:g.nodes.map(n=>({...n,key:remap(n.key)})),edges:g.edges.map(e=>({...e,key:remap(e.key),from:remap(e.from),to:remap(e.to)}))};}};designedRuns.set(id,record);if(designedRuns.size>8)designedRuns.delete(designedRuns.keys().next().value);refresh(id);return id;},
    onEvent(id,e){const p=designedRuns.get(id)?.projection;if(p?.accept({...e,kind:'browser.'+e.kind,operation:e.phase},'browser_runtime'))refresh(id);},
    onEnd(id,status){const p=designedRuns.get(id)?.projection;if(p){p.end(status);refresh(id);}},
-   onObserve(id){autoFollow=false;selectedRun=id;selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}
+   onObserve:observeDesigned,onState:state=>missionDock.update(state)
   })},
   {id:'scenarios',name:'Scenario matrix',panelId:'eh-scenarios',mount:()=>mountScenarioView(section)},
   {id:'archive',name:'Run archive',panelId:'eh-run-archive',mount:()=>mountRunArchive(section,{feed})},
   {id:'notebook',name:'Notebook',panelId:'eh-notebook',mount:()=>{const instance=mountNotebook(section);if(latestKnowledge)instance.update(latestKnowledge);return instance;}}
  ];
  const navigation=mountWorkspaceNavigation(navSlot,viewDefinitions,{onSelect:switchView});
+ const missionDock=mountMissionDock(navSlot,{onOpen:()=>switchView('designer'),onObserve:observeDesigned,onCancel:()=>registry.instance('designer')?.cancel()});
  const viewError=E('p','','eh-state');viewError.hidden=true;viewError.setAttribute('role','status');navSlot.after(viewError);
  const registry=createLazyViews(viewDefinitions,{
   makePlaceholder(entry){
@@ -194,6 +196,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   removePlaceholder(element){element.remove();},
   onFailure(entry){viewError.textContent='Could not open '+entry.name+'. Existing views remain available.';viewError.hidden=false;}
  });
+ function observeDesigned(id){autoFollow=false;selectedRun=id;selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}
  function switchView(next){
   const instance=registry.show(next);
   if(!instance)return;
@@ -218,6 +221,6 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   observeResearch(e,mode){if(research.accept(e,mode))refresh(research.snapshot().id);},
   endResearch(status){research.end(status);refresh(research.snapshot()?.id);},
   setActive,attachObjective,updateKnowledge(state){latestKnowledge=state;registry.instance('knowledge')?.update(state);registry.instance('notebook')?.update(state);},
-  destroy(){destroyed=true;coalesced.destroy();registry.destroy();navigation.destroy();unsubscribe();section.remove();}
+  destroy(){destroyed=true;coalesced.destroy();registry.destroy();navigation.destroy();missionDock.destroy();unsubscribe();section.remove();}
  });
 }

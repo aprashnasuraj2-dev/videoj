@@ -20,6 +20,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   if(width===390)assert.ok(await page.locator('#orb-autonomous-objective').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight),'objective visible within 390 × 844 viewport');
   await page.screenshot({path:path.join(out,'event-horizon-'+width+'.png'),fullPage:false});
+  if(width<1000){assert.equal(await page.locator('.eh-nav-directory').getAttribute('open'),null);await page.locator('.eh-nav-directory > summary').click();}
   await page.locator('#orb-nav').getByRole('button',{name:'Ring map',exact:true}).click();
   assert.equal(await page.locator('#orb-map').isVisible(),true);
   assert.equal(await page.locator('#orb-map .orb-agent').count(),6);
@@ -101,6 +102,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.locator('#eh-designed-prepare').click();
    await page.waitForFunction(()=>document.querySelector('#eh-designed-execution').dataset.phase==='previewed');
    assert.equal(modelPosts,0);
+   assert.equal(await page.locator('#eh-mission-dock').getAttribute('data-phase'),'previewed');
    assert.equal(await page.locator('#eh-designed-run').isDisabled(),true);
    await page.locator('#eh-designed-execution input[type=checkbox]').check();
    await page.locator('[data-definition=evidence]').click();
@@ -114,6 +116,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
    await page.locator('#eh-designed-run').click();
    await page.waitForFunction(()=>document.querySelector('#eh-designed-execution').dataset.phase==='completed');
    assert.equal(modelPosts,3);
+   assert.equal(await page.locator('#eh-mission-dock').getAttribute('data-phase'),'completed');
    assert.match(await page.locator('#eh-designed-execution').innerText(),/Fixture candidate from custom network/);
    await page.locator('#eh-designed-execution').getByRole('button',{name:'Inspect recorded runtime'}).click();
    assert.match(await page.locator('#eh-status').innerText(),/Designed network trace · completed/);

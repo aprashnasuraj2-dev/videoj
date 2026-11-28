@@ -26,7 +26,7 @@ function download(record){
  a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export function mountDesignedExecution(root,{snapshot,isDirty,onStart,onEvent,onEnd,onObserve}){
+export function mountDesignedExecution(root,{snapshot,isDirty,onStart,onEvent,onEnd,onObserve,onState}){
  const section=E('section',undefined,'eh-designed-execution');
  section.id='eh-designed-execution';
  section.append(E('p','EXPLICIT MODEL EXECUTION','eh-kicker'),E('h3','Run this network'),E('p','Use only the current publisher’s configured model router. Your objective, declared instructions and derived messages may be sent to that model. No peer, search, private evidence or write capability is available here.','eh-copy'));
@@ -114,7 +114,7 @@ export function mountDesignedExecution(root,{snapshot,isDirty,onStart,onEvent,on
    controller?.abort();
   }
   plan=null;approval.checked=false;previewArea.replaceChildren();
-  if(!controller){phase='idle';status.textContent='Draft changed. Prepare a new exact plan.';}
+  if(!controller){phase='idle';result=null;traceId=null;output.replaceChildren();status.textContent='Draft changed. Prepare a new exact plan.';}
   sync();
  }
  function sync(){
@@ -127,6 +127,7 @@ export function mountDesignedExecution(root,{snapshot,isDirty,onStart,onEvent,on
   receipt.disabled=busy||!result;
   observe.disabled=!traceId;
   section.dataset.phase=phase;
+  onState?.({phase,busy,traceId,maxModelCalls:Number(budget.value)});
  }
  objective.addEventListener('input',invalidate);
  budget.addEventListener('change',invalidate);
