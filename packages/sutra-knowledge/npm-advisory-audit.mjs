@@ -2,7 +2,7 @@ import {spawnSync} from 'node:child_process';
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
-import {evaluateNpmAudit} from './npm-advisory-gate.js';
+import {evaluateNpmAudit,reviewedVitePatch} from './npm-advisory-gate.js';
 import {inspectNpmLock} from './release-ci-evidence.js';
 const digest=b=>createHash('sha256').update(b).digest('hex');
 const output=resolve(process.argv[2]??'sutra-dependency-audit');
@@ -14,7 +14,7 @@ for(const dir of ['apps/sutra-v2','apps/sutra','apps/sutra-peer']){
  const base={directory:dir,lockSha256:digest(before),entries:metadata.entries.length,metadataPass:metadata.metadataPass};
  if(!metadata.metadataPass){results.push({...base,eligible:false,reason:'LOCK_METADATA'});continue;}
  // A known direct advisory must not disappear merely because the registry has not ingested it.
- const vite=lock.packages['node_modules/vite'];if(vite&&(/^8\\.3\\.[0-6]$/.test(vite.version)||!/^8\\.3\\.(?:[7-9]|[1-9]\\d+)$/.test(vite.version))){results.push({...base,eligible:false,reason:'VITE_PATCH_FLOOR_REVIEW',version:vite.version});continue;}
+ const vite=lock.packages['node_modules/vite'];if(vite&&!reviewedVitePatch(vite.version)){results.push({...base,eligible:false,reason:'VITE_PATCH_FLOOR_REVIEW',version:vite.version});continue;}
  if(metadata.entries.length===0){results.push({...base,eligible:true,reason:'EMPTY_LOCK_NO_NPM_DEPENDENCIES'});continue;}
  const r=spawnSync('npm',['audit','--package-lock-only','--ignore-scripts','--include=dev','--include=optional','--audit-level=high','--registry=https://registry.npmjs.org/','--json'],{cwd:resolve(dir),encoding:'utf8',timeout:90000,maxBuffer:8*1024*1024,env:{PATH:process.env.PATH,HOME:process.env.HOME,CI:'true',npm_config_userconfig:'/dev/null',npm_config_globalconfig:'/dev/null',npm_config_fetch_retries:'0'}});
  let report=null;try{report=JSON.parse(r.stdout??'');}catch{}

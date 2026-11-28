@@ -31,7 +31,7 @@ export function chooseBrowserFrontier(choices,objective){
   if(!c||typeof c!=='object'||Object.keys(c).length!==5||!['id','title','rank','depth','attempts'].every(k=>Object.hasOwn(c,k))||typeof c.id!=='string'||!/^candidate_(?:0|[1-9]\d{0,2})$/.test(c.id)||Number(c.id.slice(10))>=240||seen.has(c.id)||typeof c.title!=='string'||c.title.length>300||!Number.isSafeInteger(c.rank)||c.rank<1||c.rank>10||!Number.isSafeInteger(c.depth)||c.depth<0||c.depth>8||!Number.isSafeInteger(c.attempts)||c.attempts<0||c.attempts>=3)throw Error('FRONTIER_SELECTION');
   seen.add(c.id);
   const title=c.title.toLowerCase(),relevance=terms.length?terms.filter(w=>title.includes(w)).length/terms.length:0;
-  const score=.45/(1+c.attempts)+.30*relevance+.15*(11-c.rank)/10+.10/(1+c.depth);
+  const score=.45*(1/(1+c.attempts))+.30*relevance+.15*((11-c.rank)/10)+.10*(1/(1+c.depth));
   if(!best||score>best.score)best={id:c.id,score,index};
  }
  return best.id;

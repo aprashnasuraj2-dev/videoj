@@ -16,3 +16,9 @@ export function evaluateNpmAudit(report,exitCode){
  if(exitCode!==0)return {...fail('AUDIT_COMMAND_FAILED'),counts};
  return {eligible:true,reason:null,counts,authority:'NPM_ADVISORY_DATABASE_ONLY'};
 }
+
+// Current reviewed Vite minor line; a new minor/major requires advisory review.
+export function reviewedVitePatch(version){
+ const m=typeof version==='string'&&/^8[.]3[.](0|[1-9][0-9]*)$/.exec(version);
+ return Boolean(m&&Number.isSafeInteger(Number(m[1]))&&Number(m[1])>=7);
+}
