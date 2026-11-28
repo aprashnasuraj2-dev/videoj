@@ -1,0 +1,176 @@
+{
+  "version": "sutra-altentities-human-reference/v1",
+  "sourceRepository": "https://github.com/google-research-datasets/AltEntities",
+  "revision": "b26fd4a87327d614acaf6e4e26afef5b3575f298",
+  "license": "CC BY-SA 3.0",
+  "humanReferenceSelection": true,
+  "humanAmbiguityLabel": false,
+  "selection": "For each domain/split cell, rank examples by SHA256(question + NUL + choice0 URL + NUL + choice1 URL); keep lowest 20. Selection excludes targetIndex and human expression text. Retain every human expression for selected examples.",
+  "sourceFiles": [
+    {
+      "domain": "BOOKS",
+      "split": "train",
+      "path": "data/books/train.json",
+      "gitBlob": "b45899e9973272987c47ddc620a2494b161dac97",
+      "sha256": "a997a25a103945cf17e7939e0e6aac90049b25f556335f9d571ba32a95da9a45",
+      "bytes": 13245877,
+      "records": 1452,
+      "expressions": 9165
+    },
+    {
+      "domain": "BOOKS",
+      "split": "dev",
+      "path": "data/books/dev.json",
+      "gitBlob": "5c5c317ab2f155e55bd593ce03bed0ebea07f638",
+      "sha256": "b1c450493808947d71792f3981af4bdf10a520adbc57f759b106a0129a7ac00b",
+      "bytes": 2788111,
+      "records": 313,
+      "expressions": 1979
+    },
+    {
+      "domain": "BOOKS",
+      "split": "test",
+      "path": "data/books/test.json",
+      "gitBlob": "c704f1c0147020537642e1284974dec82d7f6356",
+      "sha256": "9fd0867714ebf8c5df334cebfb47cd3494f15263ca3b8050316bd90cd34c801a",
+      "bytes": 2773931,
+      "records": 313,
+      "expressions": 2000
+    },
+    {
+      "domain": "RECIPES",
+      "split": "train",
+      "path": "data/recipes/train.json",
+      "gitBlob": "8723a7d1b1cc35f6284a1064187767eba95e44b1",
+      "sha256": "b2619e9cf3f6b253858190ab1e0e422091cdfb41c8cbeddf1deb41dbee25cc21",
+      "bytes": 11364992,
+      "records": 1465,
+      "expressions": 10547
+    },
+    {
+      "domain": "RECIPES",
+      "split": "dev",
+      "path": "data/recipes/dev.json",
+      "gitBlob": "490e5ad4bea91b6fb9fae303fbe6e0e62ac1f612",
+      "sha256": "fa2404503a985194bb109f6f0bc25131ceae47017d72d02a5961a3890aa7a406",
+      "bytes": 2583097,
+      "records": 315,
+      "expressions": 2256
+    },
+    {
+      "domain": "RECIPES",
+      "split": "test",
+      "path": "data/recipes/test.json",
+      "gitBlob": "e2dd285a7bc4b84a8a9e6759a5d45a75f1548ab7",
+      "sha256": "214f66380c6af60c1186eb5aff8ef4c46b8699e8357bceaa7abfa2d66a6dab95",
+      "bytes": 2649844,
+      "records": 314,
+      "expressions": 2243
+    },
+    {
+      "domain": "SONGS",
+      "split": "train",
+      "path": "data/songs/train.json",
+      "gitBlob": "0e008b7fba8e0177f0113c298240692855e55989",
+      "sha256": "f0b357dd287615105d4cdff69693dcde4157f0e84ed64aa2b26b9253bac192a2",
+      "bytes": 18482453,
+      "records": 1451,
+      "expressions": 10001
+    },
+    {
+      "domain": "SONGS",
+      "split": "dev",
+      "path": "data/songs/dev.json",
+      "gitBlob": "76ad4e93b69c80bdee32eb3bf68126cfac517e66",
+      "sha256": "221e6224fd87472aaeea645208eabe8b1f57906394fa1ce3a348b0958a67e90a",
+      "bytes": 4002456,
+      "records": 312,
+      "expressions": 2161
+    },
+    {
+      "domain": "SONGS",
+      "split": "test",
+      "path": "data/songs/test.json",
+      "gitBlob": "02ed6f3c3aae73153ef2a73ff5d603339c69fac7",
+      "sha256": "9e4f4cc011dbe07216a7276fe3a22d497c2ca0dae2d3644c5f8f3a047fa194a1",
+      "bytes": 3998473,
+      "records": 312,
+      "expressions": 2177
+    }
+  ],
+  "statistics": {
+    "examplesSelected": 180,
+    "referenceRecords": 1212,
+    "uniqueExpressions": 1194,
+    "targetIndexCounts": {
+      "0": 552,
+      "1": 660
+    },
+    "domains": {
+      "BOOKS": 380,
+      "RECIPES": 431,
+      "SONGS": 401
+    },
+    "splits": {
+      "test": 399,
+      "dev": 404,
+      "train": 409
+    },
+    "samplingMethods": {
+      "SAME_NAME": 38,
+      "UNIFORM": 454,
+      "SAME_INFOBOXES": 125,
+      "SIMILAR_NAME": 188,
+      "SIMILAR_DESCRIPTION": 407
+    },
+    "cells": {
+      "BOOKS/train": {
+        "sourceRecords": 1452,
+        "selectedExamples": 20,
+        "selectedExpressions": 130
+      },
+      "BOOKS/dev": {
+        "sourceRecords": 313,
+        "selectedExamples": 20,
+        "selectedExpressions": 129
+      },
+      "BOOKS/test": {
+        "sourceRecords": 313,
+        "selectedExamples": 20,
+        "selectedExpressions": 121
+      },
+      "RECIPES/train": {
+        "sourceRecords": 1465,
+        "selectedExamples": 20,
+        "selectedExpressions": 144
+      },
+      "RECIPES/dev": {
+        "sourceRecords": 315,
+        "selectedExamples": 20,
+        "selectedExpressions": 144
+      },
+      "RECIPES/test": {
+        "sourceRecords": 314,
+        "selectedExamples": 20,
+        "selectedExpressions": 143
+      },
+      "SONGS/train": {
+        "sourceRecords": 1451,
+        "selectedExamples": 20,
+        "selectedExpressions": 135
+      },
+      "SONGS/dev": {
+        "sourceRecords": 312,
+        "selectedExamples": 20,
+        "selectedExpressions": 131
+      },
+      "SONGS/test": {
+        "sourceRecords": 312,
+        "selectedExamples": 20,
+        "selectedExpressions": 135
+      }
+    }
+  },
+  "boundary": "Human indirect referring expressions identify one of two supplied entities. This is direct human entity-reference evidence, not a binary ambiguity label and not evidence for all SUTRA entity_identity phenomena.",
+  "citation": "Hosseini, Radlinski, Pareti, Louis (ACL 2023), Resolving Indirect Referring Expressions for Entity Selection."
+}
