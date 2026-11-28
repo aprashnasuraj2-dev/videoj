@@ -94,3 +94,15 @@ After building the existing frontend, start `node apps/sutra-v2/research-workspa
 ### Optional Obscura Rust browser backend (local experimental)
 
 A pinned Apache-2.0 Obscura Rust source checkout, opt-in JavaScript-rendered HTML enhancement, strict subprocess limits, static fallback and explicit unmetered-subresource caveats are described in [OBSCURA-WEB-ACCESS](../../docs/sutra-v2/OBSCURA-WEB-ACCESS.md). Disabled by default; not enabled for hosted/public deployment. Rendering is a second navigation behind original pinned static retrieval and does not replace native research or any existing capability.
+
+### Verified PDF host configuration (Ubuntu 24.04)
+
+CI verified the actual parser on Ubuntu 24.04, Bubblewrap 0.9.0-1ubuntu0.3 and Poppler 24.02.0. The distro's `bwrap-userns-restrict` AppArmor profile permits the required Bubblewrap setup while the global `kernel.apparmor_restrict_unprivileged_userns` remains 1. The PDF process runs as a dedicated unprivileged account; nested user namespaces, host network/files and capabilities remain blocked. See the [actual hostile extraction and native isolation test](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/46109033505/job/140868189395) and the exact CI provisioning in `.github/workflows/sutra-autonomous-research.yml`.
+
+For an operator preparing a separate compatible Linux host, install the distribution's patched `bubblewrap`, `poppler-utils`, `poppler-data`, `util-linux` and `apparmor-profiles` packages under normal host-change review. Use the distribution profile, not a broad unconfined profile, and do not disable the global AppArmor restriction. The CI workflow is the reference; never run the parser as root or grant broad host privileges merely to make a test pass. Check availability as the actual service account:
+
+```sh
+node --input-type=module -e 'import {probePdfSandbox} from "./packages/sutra-research/pdf-parser.js"; await probePdfSandbox(); console.log("PDF_SANDBOX_READY")'
+```
+
+The command has no remote contact, reads no real document and does not enable PDF by itself. Actual service host review, hostile test and exact-artifact validation are still required before deployment. The isolated CI test additionally uses positive controls to verify the host canary exists and host loopback is reachable outside the sandbox. It then checks independent network/PID namespaces, inaccessible canary and listener, cleared environment, zero capabilities, no-new-privileges, denied nested user namespaces, and address-space/CPU/file-size/open-file/process limits inside the same parser envelope. A failed probe refuses PDF-enabled reader acquisition before robots/document contact; no fallback to an unsandboxed parser.
