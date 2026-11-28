@@ -64,7 +64,7 @@ export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],t
  const contextPairs=pairSignals(sourceLower),contextFamilies=new Set(contextPairs.map(x=>x.family));
  const sourceFlags={
   entityIdentity:/\b(?:identically\s+named|same\s+name|namesake)\b/i.test(sourceLower),
-  numerator:/\bdenominator\b.{0,48}\b(?:fixed|same|constant)\b/i.test(sourceLower),
+  numerator:/\bdenominator\b.{0,48}\b(?:fixed|same|constant)\b/i.test(sourceLower)||/\bboth\b.{0,32}\b(?:use|using|share)\b.{0,24}\b\d+\b/i.test(sourceLower),
   reportingPeriod:/\b(?:month-to-date|year-to-date|quarter-to-date|calendar[- ]year|fiscal[- ]year|reporting\s+date)\b/i.test(sourceLower),
   units:/\b(?:unit|units)\b.{0,48}\b(?:omitted|unspecified|missing|unknown|unclear)\b/i.test(sourceLower)||/\bthreshold(?:'s)?\b.{0,48}\b(?:unit|units)\b.{0,24}\b(?:omitted|unspecified|missing)\b/i.test(sourceLower),
   scaling:/\b(?:thousands?|millions?|billions?)\b.{0,60}\b(?:or|versus|vs\.?)\b.{0,60}\b(?:thousands?|millions?|billions?)\b/i.test(sourceLower)||/\b(?:multiplier|scale|table\s+header)\b.{0,48}\b(?:omitted|unspecified|missing|unclear)\b/i.test(sourceLower),
