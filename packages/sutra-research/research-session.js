@@ -26,7 +26,7 @@ export function admitManifest(text){
  const limits={maxSearches:[2,30],maxDocuments:[1,60],maxLinkDepth:[0,3],maxDurationSeconds:[5,1200],maxDownloadBytes:[65536,52428800],maxCostMicros:[1,1000000]};
  if(hasModels)limits.maxModelCalls=[3,30];
  if(!exact(p.budget,Object.keys(limits))||Object.entries(limits).some(([k,[a,b]])=>!bounded(p.budget[k],a,b)))fail('BUDGET');
- if(!Array.isArray(p.providers)||p.providers.length<(p.scope?.allowDirectPublicUrls===true||hasModels&&((p.modelPolicy?.webAccess==='on_demand')||((Object.hasOwn(p.modelPolicy??{},'defaultModel')||Object.hasOwn(p.modelPolicy??{},'models'))&&p.modelPolicy.webAccess===undefined))?0:1)||p.providers.length>2||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
+ if(!Array.isArray(p.providers)||p.providers.length<(p.scope?.allowDirectPublicUrls===true||hasModels&&((p.modelPolicy?.webAccess==='on_demand')||((Object.hasOwn(p.modelPolicy??{},'defaultModel')||Object.hasOwn(p.modelPolicy??{},'models'))&&p.modelPolicy.webAccess===undefined))?0:1)||p.providers.length>2||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily','wikipedia'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
  let modelPolicy;
  if(hasModels){
   const m=p.modelPolicy,pool=Object.hasOwn(m??{},'models'),compact=Object.hasOwn(m??{},'defaultModel'),explicitWeb=Object.hasOwn(m??{},'webAccess'),roleKeys=['bot','orb','spark'];
