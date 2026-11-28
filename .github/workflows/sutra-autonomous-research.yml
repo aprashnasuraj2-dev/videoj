@@ -11,6 +11,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -34,6 +38,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -43,18 +51,25 @@ jobs:
           SUTRA_TEST_POSTGRES: postgresql://sutra_ci:sutra_ci_fixture@127.0.0.1:5432/sutra_ci
   pdf-sandbox:
     runs-on: ubuntu-24.04
-    timeout-minutes: 6
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends bubblewrap poppler-utils poppler-data apparmor-profiles
+          uname -r
+          dpkg-query -W bubblewrap poppler-utils poppler-data apparmor-profiles
           bwrap --version
+          bwrap --help | grep -- --disable-userns
           pdftotext -v
       - name: Enable only the distribution's restricted Bubblewrap AppArmor profile
         shell: bash
@@ -62,6 +77,8 @@ jobs:
           set -euo pipefail
           before="$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)"
           echo "Global user namespace restriction: $before"
+          # This job validates the restricted Ubuntu host, not an unrestricted substitute.
+          test "$before" = 1
           if [ "$before" = 1 ]; then
             profile=/usr/share/apparmor/extra-profiles/bwrap-userns-restrict
             if [ -f /etc/apparmor.d/bwrap-userns-restrict ]; then
@@ -72,6 +89,8 @@ jobs:
             grep -q 'profile unpriv_bwrap' "$profile"
             grep -q 'deny capability' "$profile"
             sudo apparmor_parser -r "$profile"
+            sha256sum "$profile"
+            sudo grep -E "^(unpriv_bwrap|bwrap|/usr/bin/bwrap) " /sys/kernel/security/apparmor/profiles
           fi
           test "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)" = "$before"
       - name: Probe sandbox as a dedicated unprivileged user with no other processes
@@ -84,4 +103,15 @@ jobs:
           sudo install -m 0755 "$RUNNER_TEMP/pdf-isolation-probe" /tmp/sutra-pdf-ci/sutra-research/test/pdf-isolation-probe
           echo synthetic-host-canary | sudo tee /tmp/sutra-pdf-ci/host-canary >/dev/null
           sudo install -m 0755 "$(command -v node)" /tmp/sutra-pdf-ci/node
-          sudo runuser -u sutra-pdf-ci -- sh -c 'cd /tmp/sutra-pdf-ci && exec ./node --test sutra-research/test/pdf-sandbox.integration.mjs'
+          set -o pipefail
+          sudo runuser -u sutra-pdf-ci -- sh -c 'cd /tmp/sutra-pdf-ci && exec ./node --test sutra-research/test/pdf-sandbox.integration.mjs' | tee "$RUNNER_TEMP/pdf-sandbox.tap"
+      - name: Preserve host isolation test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-pdf-sandbox-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/pdf-sandbox.tap
+          if-no-files-found: warn
+      - name: Confirm restriction remains enabled
+        if: always()
+        run: test "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)" = 1
