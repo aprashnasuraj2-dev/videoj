@@ -6,6 +6,13 @@ const fail=code=>{throw Object.assign(Error('Research intelligence refused: '+co
 const exact=(o,k)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===k.length&&k.every(x=>Object.hasOwn(o,x));
 const text=(s,max)=>typeof s==='string'&&s.trim()===s&&s.length>0&&s.length<=max&&!/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(s)&&!secretLike(s);
 const id=(prefix,x)=>prefix+'_'+digest(JSON.stringify(x)).slice(7,31);
+// Snapshot exact acquisition identity without including URLs or timestamps in
+// model disclosures. Fixtures lacking acquisition metadata remain span-only.
+const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+function acquisitionPin(d){
+ if(typeof d.rawDigest!=='string'||!/^sha256:[a-f0-9]{64}$/.test(d.rawDigest)||typeof d.retrievedAt!=='string'||typeof d.url!=='string'||typeof d.mediaType!=='string'||typeof d.parser!=='string')return null;
+ return digest(JSON.stringify([d.id,d.textDigest,d.rawDigest,d.url,d.finalUrl??d.url,d.retrievedAt,d.mediaType,d.parser,d.extractionTruncated===true,d.pageMap??[]]));
+}
 const questions=new Set(['primary','counterevidence','comparability','gaps']);
 export function plannerInput(objective,history,documents,passages,coverage,capabilities){
  // No source text, titles, URLs, model-written claims or prior model outputs.
@@ -48,7 +55,10 @@ export function admitWebDecision(value,objective,history,{allowPublicUrls=false,
 }
 export function makeEvidencePacket(documents,passages,{maxPassages=24,maxTextBytes=16000}={}){
  if(!Number.isSafeInteger(maxPassages)||maxPassages<1||maxPassages>48||!Number.isSafeInteger(maxTextBytes)||maxTextBytes<256||maxTextBytes>48000)fail('PACKET_LIMIT');
- const v=verifyEvidence(documents,passages),byDoc=new Map(documents.map(d=>[d.id,d]));
+ // Verify the same detached data used for subsequent model/reviewer admission.
+ const v=verifyEvidence(documents,passages);
+ documents=structuredClone(documents);passages=structuredClone(passages);
+ const byDoc=new Map(documents.map(d=>[d.id,freeze(d)]));
  // Round-robin over sources to avoid filling context with one source.
  const groups=new Map();for(let i=0;i<passages.length;i++){const p=passages[i];if(secretLike(p.supportingText))continue;if(!groups.has(p.sourceId))groups.set(p.sourceId,[]);groups.get(p.sourceId).push({ref:v.refs[i],p});}
  const excerpts=[],map=new Map();let bytes=0;
@@ -56,14 +66,14 @@ export function makeEvidencePacket(documents,passages,{maxPassages=24,maxTextByt
   if(excerpts.length>=maxPassages)break;const x=group[round];if(!x)continue;
   const {ref,p}=x,d=byDoc.get(p.sourceId);
   // No raw source URL, model credentials, document bodies or local paths disclosed.
-  const e={passageId:ref.id,sourceId:p.sourceId,sourceDigest:p.sourceDigest,locator:ref.locator,quote:p.supportingText};
-  const size=Buffer.byteLength(JSON.stringify(e));if(bytes+size>maxTextBytes)continue;bytes+=size;excerpts.push(e);map.set(ref.id,{ref,p,d});
+  const e=freeze({passageId:ref.id,sourceId:p.sourceId,sourceDigest:p.sourceDigest,locator:ref.locator,quote:p.supportingText});
+  const size=Buffer.byteLength(JSON.stringify(e));if(bytes+size>maxTextBytes)continue;bytes+=size;excerpts.push(e);map.set(ref.id,freeze({ref,p,d,acquisitionPin:acquisitionPin(d)}));
  }
- return {excerpts,map,disclosedBytes:bytes,availablePassages:passages.length};
+ return Object.freeze({excerpts:Object.freeze(excerpts),map:Object.freeze({get:key=>map.get(key),has:key=>map.has(key),get size(){return map.size;}}),disclosedBytes:bytes,availablePassages:passages.length});
 }
 function admitCitations(citations,packet,{minimum=1,maximum=3}={}){
  if(!Array.isArray(citations)||citations.length<minimum||citations.length>maximum)fail('CITATION_COUNT');
- const seen=new Set(),out=[];
+ const seen=new Set(),spans=new Set(),out=[];
  for(const c of citations){
   if(!exact(c,['passageId','quote'])||!text(c.quote,600)||c.quote.length<8||typeof c.passageId!=='string'||seen.has(c.passageId))fail('CITATION_SCHEMA');
   const item=packet.map.get(c.passageId);if(!item)fail('CITATION_UNKNOWN');
@@ -73,7 +83,8 @@ function admitCitations(citations,packet,{minimum=1,maximum=3}={}){
   if(item.p.supportingText.indexOf(c.quote,offset+1)>=0)fail('CITATION_AMBIGUOUS');
   const start=item.ref.locator.startOffset+offset,end=start+c.quote.length;
   if(item.d.text.slice(start,end)!==c.quote)fail('CITATION_QUOTE');
-  seen.add(c.passageId);out.push({passageId:c.passageId,sourceId:item.ref.sourceId,sourceDigest:item.ref.sourceDigest,quote:c.quote,locator:{...item.ref.locator,startOffset:start,endOffset:end},verification:'exact_span_only'});
+  const spanKey=JSON.stringify([item.ref.sourceId,item.ref.sourceDigest,start,end]);if(spans.has(spanKey))fail('CITATION_DUPLICATE');spans.add(spanKey);
+  seen.add(c.passageId);out.push({passageId:c.passageId,sourceId:item.ref.sourceId,sourceDigest:item.ref.sourceDigest,quote:c.quote,locator:{...item.ref.locator,startOffset:start,endOffset:end},verification:'exact_span_only',...(item.acquisitionPin?{acquisitionPin:item.acquisitionPin}:{})});
  }
  return out;
 }
