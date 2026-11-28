@@ -4,6 +4,6 @@ async function artifact(){const text='100; 120; 3/20',money={kind:'currency_amou
 function mutate(text,fn){const rows=text.trimEnd().split('\n'),i=rows.findIndex(x=>x.startsWith('RELATION\t'));assert.ok(i>=0,'fixture must contain a RELATION row');const o=JSON.parse(rows[i].slice(rows[i].indexOf('\t')+1));fn(o);rows[i]='RELATION\t'+JSON.stringify(o);return rows.join('\n')+'\n';}
 test('controlled round trip is clean without mutation',async()=>{const a=await artifact();assert.equal(a.candidates.length,1);const r=await verifyControlledIntentRoundtrip(a.intentText,a.intentPin);assert.equal(r.status,'ROUNDTRIP_CLEAN');assert.deepEqual(r.classes,[]);});
 test('scope definition negation denominator and invented relation drift are explicit',async()=>{const a=await artifact(),r=await renderControlledIntent(a.intentText,a.intentPin);
- const cases=[['DENOMINATOR_DRIFT',o=>o.denominatorBinding='now'],['NEGATION_DRIFT',o=>o.negated=!o.negated],['SCOPE_DRIFT',o=>o.declaredTypes.prior.scope='company_B'],['DEFINITION_DRIFT',o=>o.mode='SIGNED_DIFFERENCE'],['INVENTED_RELATION_DRIFT',o=>o.operator='>']];
+ const cases=[['DENOMINATOR_DRIFT',o=>o.denominatorBinding='now'],['NEGATION_DRIFT',o=>o.negated=!o.negated],['SCOPE_DRIFT',o=>o.declaredTypes.prior.scope='company_B'],['DEFINITION_DRIFT',o=>o.mode='SIGNED_DIFFERENCE'],['INVENTED_RELATION_DRIFT',o=>o.operator='<=']];
  for(const [kind,fn] of cases){const text=mutate(r.controlledText,fn),d=await detectControlledIntentDrift(a.intentText,a.intentPin,text,await casePin(text));assert.ok(d.classes.includes(kind),kind);}
 });

@@ -99,21 +99,36 @@ jobs:
           cat sutra-v2-pinned-policy-refinement.json
           python3 packages/sutra-knowledge/action-protocol/formal/refine_pinned_policy_trace_mutants.py sutra-v2-pinned-policy-trace.json > sutra-v2-pinned-policy-refinement-mutants.json
           cat sutra-v2-pinned-policy-refinement-mutants.json
-      - name: Run full JavaScript knowledge regression before external formal dependency
+      - name: Run focused semantic corpus and contextual evidence gate
         env:
           SUTRA_SEMANTIC_CORPUS_REPORT: sutra-semantic-corpus-execution.json
           SUTRA_SEMANTIC_CONTRAST_REPORT: sutra-semantic-contrast-execution.json
           SUTRA_TEMPORAL_CORPUS_REPORT: sutra-temporal-corpus-execution.json
-        run: node --test packages/sutra-knowledge/test/*.test.mjs
-      - name: Independently verify semantic corpus report and test pinned acquisition offline
         run: |
+          node --test \
+            packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
+            packages/sutra-knowledge/test/semantic-question-engine.test.mjs \
+            packages/sutra-knowledge/test/controlled-intent-roundtrip.test.mjs \
+            packages/sutra-knowledge/test/semantic-intake-security.test.mjs \
+            packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs \
+            packages/sutra-knowledge/test/scope-human-evidence.test.mjs \
+            packages/sutra-knowledge/test/semantic-evaluation-deep.test.mjs \
+            packages/sutra-knowledge/test/reviewed-proposal-contrast.test.mjs \
+            packages/sutra-knowledge/test/eia-capacity-revision.test.mjs
           python3 packages/sutra-knowledge/reference/verify-semantic-corpus-report.py sutra-semantic-corpus-execution.json sutra-semantic-contrast-execution.json > sutra-semantic-corpus-independent.json
-          cat sutra-semantic-corpus-independent.json
+          python3 packages/sutra-knowledge/reference/verify-temporal-corpus-report.py sutra-temporal-corpus-execution.json > sutra-temporal-corpus-independent.json
           python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --self-test
           python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --verify-local packages/sutra-knowledge/evaluation/tempambiqa-human-full-v1.json
-          python3 packages/sutra-knowledge/reference/verify-temporal-corpus-report.py sutra-temporal-corpus-execution.json > sutra-temporal-corpus-independent.json
-          cat sutra-temporal-corpus-independent.json
           python3 packages/sutra-knowledge/evaluation/semantic-human-review.py --self-test
+          node packages/sutra-knowledge/evaluation/temporal-v2-evaluation.mjs > sutra-temporal-v2-evaluation.json
+          node packages/sutra-knowledge/evaluation/semantic-scenario-split.mjs > sutra-semantic-scenario-split.json
+          node packages/sutra-knowledge/evaluation/scope-human-benchmark.mjs > sutra-scope-human-benchmark.json
+          node packages/sutra-knowledge/evaluation/semantic-human-burden.mjs > sutra-semantic-human-burden.json
+          node packages/sutra-knowledge/evaluation/context-contrast-benchmark.mjs > sutra-context-contrast-benchmark.json
+          node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
+          cat sutra-semantic-corpus-independent.json
+          cat sutra-temporal-corpus-independent.json
+          cat sutra-context-contrast-benchmark.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -124,7 +139,15 @@ jobs:
             sutra-semantic-corpus-independent.json
             sutra-temporal-corpus-execution.json
             sutra-temporal-corpus-independent.json
-          if-no-files-found: ignore
+            sutra-temporal-v2-evaluation.json
+            sutra-semantic-scenario-split.json
+            sutra-scope-human-benchmark.json
+            sutra-semantic-human-burden.json
+            sutra-context-contrast-benchmark.json
+            sutra-semantic-performance.json
+          if-no-files-found: error
+      - name: Run full JavaScript knowledge regression before external formal dependency
+        run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Bounded recovery state model and unsafe counterexample
         run: sh packages/sutra-knowledge/action-protocol/formal/check.sh
       - name: Rust bounded support lattice and exhaustive reference controls
