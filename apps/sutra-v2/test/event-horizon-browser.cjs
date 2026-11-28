@@ -30,6 +30,18 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   await page.locator('.eh-tabs').getByRole('button',{name:'Compose',exact:true}).click();await page.locator('#eh-compose').getByRole('button',{name:'Exact calculation',exact:true}).click();assert.match(await page.locator('#eh-compose-status').innerText(),/1 candidate composition/);await page.locator('#eh-compose').getByRole('button',{name:'Open Direct quantity kernel',exact:true}).click();assert.equal(await page.locator('#eh-compute-value').innerText(),'1 m');
   await page.locator('.eh-tabs').getByRole('button',{name:'Agent Atlas',exact:true}).click();assert.match(await page.locator('#eh-atlas-status').innerText(),/No publisher has been contacted/);await page.locator('#eh-atlas-read').click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('declared networks found'));await page.locator('#eh-atlas').getByRole('button',{name:'Inspect investigation',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('Network definition inspected'));assert.equal(await page.locator('#eh-atlas .eh-definition').count(),2);assert.match(await page.locator('#eh-atlas .eh-atlas-passport').innerText(),/None instantiated by inspection/);await page.screenshot({path:path.join(out,'event-horizon-atlas-'+width+'.png'),fullPage:false});
   if(width===1440){
+   await page.locator('.eh-tabs').getByRole('button',{name:'Proof workbench',exact:true}).click();
+   await page.locator('#eh-proof-evaluate').click();
+   await page.waitForFunction(()=>document.querySelector('#eh-proof-status').textContent.includes('4 receipts'));
+   await page.locator('#eh-proof').getByRole('button',{name:'Retain current baseline',exact:true}).click();
+   await page.locator('[data-proof-node=available]').click();
+   await page.locator('#eh-proof').getByRole('button',{name:'Edit this declaration',exact:true}).click();
+   await page.locator('#eh-proof').getByLabel('Exact magnitude').fill('90');
+   await page.locator('#eh-proof-save-node').click();
+   await page.locator('#eh-proof-evaluate').click();
+   await page.waitForFunction(()=>document.querySelector('#eh-proof .eh-proof-diff').textContent.includes('constraint refuted'));
+   assert.match(await page.locator('#eh-proof .eh-proof-diff').innerText(),/3 affected nodes/);
+   await page.screenshot({path:path.join(out,'event-horizon-proof-revision.png'),fullPage:false});
    await page.locator('.eh-tabs').getByRole('button',{name:'Task workshop',exact:true}).click();
    for(let i=1;i<10;i++)await page.locator('#eh-batch').getByRole('button',{name:'Add task',exact:true}).click();
    for(let i=0;i<10;i++)await page.locator('#eh-batch .eh-batch-row').nth(i).getByLabel('Task owner').fill('owner_'+i);

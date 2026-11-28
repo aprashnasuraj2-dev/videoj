@@ -202,3 +202,45 @@ test('pre-aborted local DAG publishes no results',async()=>{
  const p=prepareLocalBatch([batchRow('a','owner')]);const r=await p.execute({runId:'stopped',signal:abort.signal});
  assert.equal(r.result.status,'cancelled');assert.equal(r.result.artifacts.length,0);
 });
+
+import {starterGraph,graphText,parseGraph,editGraph,makeInput,createProofSession,dependencyTrace,exportProof,inspectProofArchive,formatDimension} from '../src/event-horizon/proof-model.js';
+test('proof workbench evaluates, reuses and compares actual kernel receipts',async()=>{
+ const s=createProofSession();
+ const baseline=await s.evaluate();
+ assert.equal(baseline.report.receipts.find(r=>r.id==='margin').outcome.value,'20/1');
+ s.retain();
+ const input=makeInput({id:'available',value:'90',dimension:[0,0,0],basis:'Declared available capacity'});
+ s.edit({operation:'replace',id:'available',node:input});
+ assert.equal(s.snapshot().current,null);
+ assert.equal(s.snapshot().baseline.report.graphDigest,baseline.report.graphDigest);
+ const after=await s.evaluate();
+ assert.equal(after.report.receipts.find(r=>r.id==='sufficient').outcome.status,'constraint_refuted');
+ assert.equal(after.report.receipts.find(r=>r.id==='margin').outcome.value,'-10/1');
+ assert.deepEqual(after.stats.reused,['required']);
+ const d=s.diff();
+ assert.deepEqual(d.closure.affected,['available','margin','sufficient']);
+ assert.equal(d.changes.find(c=>c.id==='required').relation,'unchanged');
+ const imported=await inspectProofArchive(exportProof(after));
+ assert.equal(imported.report.graphDigest,after.report.graphDigest);
+ s.restore(1);
+ assert.equal(s.snapshot().current,null);
+ assert.equal((await s.evaluate()).report.graphDigest,baseline.report.graphDigest);
+});
+test('proof workbench refuses graph mutations with dangling dependencies, duplicate keys or cycles',()=>{
+ const nodes=starterGraph();
+ assert.throws(()=>editGraph(nodes,{operation:'remove',id:'available'}));
+ assert.throws(()=>editGraph(nodes,{operation:'append',node:nodes[0]}));
+ assert.throws(()=>editGraph(nodes,{operation:'replace',id:'available',node:{id:'available',kind:'derive',op:'add',args:['margin','required']}}));
+ assert.throws(()=>parseGraph('{"schemaVersion":1,"schemaVersion":1,"nodes":[]}'));
+ assert.deepEqual(dependencyTrace(nodes,'available').downstream,['margin','sufficient']);
+ assert.equal(formatDimension([1,0,-1]),'m · s^-1');
+ assert.equal(parseGraph(graphText(nodes)).nodes.length,4);
+});
+test('proof archive alteration is refused and inspection has no execution authority',async()=>{
+ const s=createProofSession();
+ const r=await s.evaluate();
+ const archive=JSON.parse(exportProof(r));
+ archive.reportText=archive.reportText.replace('20/1','21/1');
+ await assert.rejects(inspectProofArchive(JSON.stringify(archive)));
+ assert.equal(s.snapshot().current.report.graphDigest,r.report.graphDigest);
+});
