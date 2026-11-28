@@ -111,6 +111,15 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
   const session={sessionId:'web_'+randomUUID(),planPin:proposal.planPin,requestPin:proposal.requestPin,state:'running',controller:new AbortController(),report:null,reportPin:null,reason:null,outcome:null,dispatchAttempted:false};
   current=session;void execute(session,proposal);return Object.freeze({sessionId:session.sessionId,planPin:session.planPin,requestPin:session.requestPin,state:session.state});
  }
+
+ // Runtime-owned scope: a trusted user/agent/engine session may invoke a public
+ // read/search without manufacturing a new human approval on every tool call.
+ // The local host must never accept an arbitrary caller-supplied actor.
+ function autoStart(input,{actor='user'}={}){
+  check();if(isBusy()||active(current))fail('WEB_BUSY');
+  const p=preview(input,{actor});
+  return start({planPin:p.planPin,requestPin:p.requestPin,approvalId:p.approvalId,approvePublicContact:true,approveEstimatedCost:true});
+ }
  function status(sessionId){
   check();if(!current||sessionId!==current.sessionId)fail('WEB_SESSION');
   const s=current;return Object.freeze({sessionId:s.sessionId,planPin:s.planPin,requestPin:s.requestPin,state:s.state,reason:s.reason,outcome:s.outcome,report:s.state==='closed'?s.report:null,reportPin:s.state==='closed'?s.reportPin:null});
@@ -120,5 +129,5 @@ export function createOnDemandWebAccess({searchCredentials={},renderer=null,make
   if(current.state==='running'){current.state='cancelling';current.controller.abort();}
   return {sessionId,state:current.state};
  }
- return Object.freeze({capabilities,preview,start,status,cancel,isBusy:()=>active(current),close(){closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
+ return Object.freeze({capabilities,preview,start,autoStart,status,cancel,isBusy:()=>active(current),close(){closed=true;previewed=null;if(active(current)){current.state='cancelling';current.controller.abort();}}});
 }
