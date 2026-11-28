@@ -42,7 +42,7 @@ jobs:
         env:
           SUTRA_TEST_POSTGRES: postgresql://sutra_ci:sutra_ci_fixture@127.0.0.1:5432/sutra_ci
   pdf-sandbox:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
