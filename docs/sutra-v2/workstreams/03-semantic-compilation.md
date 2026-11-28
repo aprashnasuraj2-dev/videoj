@@ -44,3 +44,14 @@ Vendor a deterministic 24-case subset of the official FinQA public test split at
 
 ### V2-183 impact-map correction
 Impact run 45758466150 correctly refused the newly vendored FinQA MIT license because the non-Markdown third-party artifact was not mapped. Register only that exact license path in the existing v2 verification suite and add a fail-closed unknown third-party `.txt` control. Semantic implementation had already passed scoped workstream CI at run 45758466099; prior impact failure retained. Corrected impact CI pending.
+
+
+## 2026-11-28 repaired semantic-engine integration candidate
+
+A user-supplied standalone semantic-engine archive was retained as source lineage rather than imported wholesale. The executable integration was repaired against SUTRA's real reviewed-contract boundary: exact pinned caller alias mappings feed bounded question profiles, candidate expressions are compiled only by the existing reviewed compiler, and every result retains `decisionAuthority: NONE`. The Agent Studio/orbital workspace now exposes a local semantic-intake station that exercises this path without model or provider contact.
+
+Scoped grammar now covers direct comparisons, signed/relative change, ratio/proportion/rate, percentage-point change, year-qualified comparisons, year-qualified relative change, weighted mean, sum/total, and portable-only mean/average where the closed expression kernel would otherwise require an invented numeric divisor. Twenty ambiguity families are reported separately; causal language, modality, hidden clauses and unsupported inferential-statistical claims remain review obligations or refusals.
+
+A frozen question-only operation-family classifier was defined before scoring the existing FinQA held-out FNV ranks 25–64. It receives question text only; the external FinQA gold programs remain on the scorer side. Current scoped result is 23/40 family matches (57.5%) with 24/40 non-abstaining coverage (60%). Failures remain retained; no tuning on this held-out split is authorized. This is not full value retrieval, program induction, answer execution, unrestricted language coverage, human review-time evidence, or superiority evidence.
+
+The seven-item repair/integration pass is an engineering-delivery status, not canonical checklist closure. `V2-SEM-001/002/003/005/006/007/008/009` remain governed by their full acceptance criteria and external/human evidence requirements.
