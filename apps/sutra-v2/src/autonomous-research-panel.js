@@ -3,6 +3,7 @@
 import {runTaskGraph} from '../../../packages/sutra-runtime/investigation-tasks.js';
 import {prepareBrowserInvestigation} from './browser-investigation.js';
 import {prepareAutonomousSourceCandidate} from './research-source-handoff.js';
+import {createDirectWebPanel} from './direct-web-panel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const button=(id,text)=>{const e=E('button',text,'orb-button');e.id=id;e.type='button';return e;};
 const field=(name,input)=>{const e=E('label',undefined,'orb-field');e.append(E('span',name),input);return e;};
@@ -112,5 +113,6 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
  cancel.onclick=async()=>{if(cancel.disabled)return;cancelRequested=true;if(browserController){browserController.abort();state('Browser cancellation and approval revocation requested.','cancelling');return;}if(!session)return;const ticket=epoch,s=session;busy=true;sync();try{await request('cancel',{method:'POST',data:{sessionId:s.sessionId}});if(ticket===epoch&&running)state('Cancellation requested; awaiting confirmed terminal state.','cancelling');}catch(e){if(ticket===epoch&&running)state('Cancellation status unknown: '+reason(e),'disconnected');}finally{if(ticket===epoch){busy=false;sync();}}};
  download.onclick=()=>{if(report&&saveFile)saveFile(JSON.stringify(report),'sutra-autonomous-research-report.json');};
  receiptDownload.onclick=()=>{if(browserReceipt&&saveFile)saveFile(JSON.stringify(browserReceipt,null,2),'sutra-browser-run-receipt.json');};
- sync();return Object.freeze({invalidate(){if(!busy&&!running)reset();},close(){clearTimeout(timer);browserController?.abort();epoch++;},isRunning(){return running;}});
+ const directWeb=createDirectWebPanel(root,{saveFile});
+ sync();return Object.freeze({invalidate(){if(!busy&&!running)reset();},close(){directWeb.close();clearTimeout(timer);browserController?.abort();epoch++;},isRunning(){return running;}});
 }
