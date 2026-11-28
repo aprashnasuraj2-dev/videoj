@@ -6,6 +6,8 @@ import {mountCompositionView} from './composition-view.js';
 import {mountAtlasView} from './atlas-view.js';
 import {fitViewport,zoomViewport,panViewport,centerViewport,viewBox,entityPage,projectGraphFilter} from './navigation.js';
 import {replayJournalPrefix} from './replay.js';
+import {mountBatchWorkshop} from './batch-workshop.js';
+import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
 const label=s=>String(s??'Unknown').replaceAll('_',' ');
@@ -40,7 +42,7 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  for(const [id,name] of [['all','All entities'],['participants','Agents and invocations'],['operations','Tasks and tools'],['evidence','Evidence']]){const o=E('option',name);o.value=id;kindFilter.append(o);}
  for(const [id,name] of [['all','All relationships'],['assignment','Assignments'],['dependency','Dependencies'],['invocation ancestry','Observed ancestry']]){const o=E('option',name);o.value=id;relationFilter.append(o);}
  controls.append(field('Run',runSelect),field('Layout',layoutSelect),field('Filter entities',filter),field('Entity type',kindFilter),field('Relationship type',relationFilter));
- const counters=E('div',undefined,'eh-metrics'),agents=metric('Agent instances'),invocations=metric('Retained invocations'),entities=metric('Entities'),links=metric('Recorded relations');
+ const counters=E('div',undefined,'eh-metrics'),agents=metric('Agent / task-owner instances'),invocations=metric('Retained invocations'),entities=metric('Entities'),links=metric('Recorded relations');
  counters.append(agents.wrap,invocations.wrap,entities.wrap,links.wrap);
  const status=E('p','No recorded execution.','eh-status');status.id='eh-status';status.setAttribute('role','status');
  const qualification=E('p',undefined,'eh-copy');
@@ -155,7 +157,8 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const computation=mountComputationView(section,{onStart(label){const id='local_'+(++localSequence);const g=localToolGraph({id,label,status:'executing'});localRuns.set(g.id,g);if(localRuns.size>8)localRuns.delete(localRuns.keys().next().value);refresh(g.id);return {id,label};},onEnd(operation,status){if(!operation)return;const g=localToolGraph({...operation,status});if(g&&localRuns.has(g.id)){localRuns.set(g.id,g);refresh(g.id);}}});
  const composition=mountCompositionView(section,{openWorkflow(id){if(id==='direct_compute')switchView('computation');else openWorkflow(id);}});
  const atlas=mountAtlasView(section);
- const views=[['runtime','Runtime',runtime],['composition','Compose',composition],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation],['atlas','Agent Atlas',atlas]];
+ const batch=mountBatchWorkshop(section,{publish:publishTaskExecution,onObserve(runId){autoFollow=false;selectedRun='task/'+encodeURIComponent(runId);selection=null;pageIndex=0;replaySequence=null;switchView('runtime');}});
+ const views=[['runtime','Runtime',runtime],['composition','Compose',composition],['knowledge','Knowledge',knowledge.section],['computation','Direct compute',computation],['atlas','Agent Atlas',atlas],['batch','Task workshop',batch.section]];
  function switchView(next){viewMode=next;for(const [id,,panel] of views)panel.hidden=id!==next;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));knowledge.setActive(active&&next==='knowledge');if(next==='runtime')refresh();}
  for(const [id,name,panel] of views){const b=button(name,()=>switchView(id));b.dataset.view=id;b.setAttribute('aria-controls',panel.id);tabs.append(b);}
  function setActive(value){active=!!value;for(const {node,marker} of placements){if(active)objectiveSlot.append(node);else marker.after(node);}objectiveSlot.hidden=!active||!placements.length;knowledge.setActive(active&&viewMode==='knowledge');if(active)refresh();}
@@ -167,6 +170,6 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   observeResearch(e,mode){if(research.accept(e,mode))refresh(research.snapshot().id);},
   endResearch(status){research.end(status);refresh(research.snapshot()?.id);},
   setActive,attachObjective,updateKnowledge(state){knowledge.update(state);},
-  destroy(){destroyed=true;unsubscribe();section.remove();}
+  destroy(){destroyed=true;batch.cancel();unsubscribe();section.remove();}
  });
 }

@@ -175,3 +175,30 @@ test('clustered layout retains each entity and all original relations',()=>{
  const layout=layoutGraph(graph,'clustered');assert.equal(layout.mode,'clustered');assert.equal(layout.positions.length,8);assert.equal(new Set(layout.positions.map(x=>x.key)).size,8);
  assert.ok(layout.positions.every(p=>p.x>=0&&p.x<=layout.width&&p.y>=0&&p.y<=layout.height));
 });
+
+import {prepareLocalBatch} from '../src/event-horizon/local-batch.js';
+const batchRow=(id,owner,from='mm',to='m',value='1000',predecessor=null)=>({id,owner,kind:'length',from,to,value,predecessor});
+test('actual local DAG executes ten named deterministic owners and shares no model authority',async()=>{
+ const j=createExecutionJournal(),rows=Array.from({length:10},(_,i)=>batchRow('task_'+i,'owner_'+i));
+ const p=prepareLocalBatch(rows,{concurrency:4});assert.equal(p.plan.ownerCount,10);assert.equal(p.plan.modelCalls,0);assert.equal(j.runs().length,0);
+ const r=await p.execute({runId:'actual_ten',onExecutionEvent:j.accept});
+ assert.equal(r.result.status,'completed');assert.equal(r.result.artifacts.length,10);assert.ok(r.result.artifacts.every(a=>a.value.value==='1'));
+ const g=projectTaskRun(j.snapshot('actual_ten'),j.events('actual_ten'));assert.equal(g.agentCount,10);assert.equal(g.nodes.filter(n=>n.kind==='task'&&n.status==='completed').length,10);
+ assert.equal(j.events('actual_ten').filter(e=>e.type==='task.state'&&e.payload.status==='completed').length,10);
+});
+test('actual chained computation uses predecessor result and one logical owner',async()=>{
+ const p=prepareLocalBatch([batchRow('a','owner'),batchRow('b','owner','m','cm',null,'a')]);
+ const r=await p.execute({runId:'chain'});assert.equal(r.result.status,'completed');assert.equal(r.result.artifacts[1].value.value,'100');assert.equal(p.plan.ownerCount,1);
+});
+test('local plan rejects cycles, unit mismatch, ambiguous inputs, extra fields and limit overflow',()=>{
+ assert.throws(()=>prepareLocalBatch([batchRow('a','owner','mm','m',null,'b'),batchRow('b','owner','m','mm',null,'a')]));
+ assert.throws(()=>prepareLocalBatch([batchRow('a','owner'),batchRow('b','owner','cm','m',null,'a')]));
+ assert.throws(()=>prepareLocalBatch([batchRow('a','owner','mm','m','1','a')]));
+ assert.throws(()=>prepareLocalBatch([{...batchRow('a','owner'),url:'https://example.com'}]));
+ assert.throws(()=>prepareLocalBatch(Array.from({length:13},(_,i)=>batchRow('a'+i,'owner'))));
+});
+test('pre-aborted local DAG publishes no results',async()=>{
+ const abort=new AbortController();abort.abort();
+ const p=prepareLocalBatch([batchRow('a','owner')]);const r=await p.execute({runId:'stopped',signal:abort.signal});
+ assert.equal(r.result.status,'cancelled');assert.equal(r.result.artifacts.length,0);
+});

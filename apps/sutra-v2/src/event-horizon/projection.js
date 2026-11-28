@@ -4,7 +4,7 @@ const ID=/^[A-Za-z0-9_.:/-]{1,160}$/;
 const valid=x=>typeof x==='string'&&ID.test(x);
 const safe=(x,fallback='Unknown')=>valid(x)?x:fallback;
 const terminal=new Set(['completed','failed','blocked','cancelled','refused','stopped','unknown']);
-const states=new Set(['queued','executing','validating','completed','failed','blocked','cancelled','waiting','refused','idle','stopped','unknown','running','paused','working','not-run','incomplete','unadmitted']);
+const states=new Set(['queued','executing','validating','completed','failed','blocked','cancelled','waiting','refused','idle','stopped','unknown','running','paused','working','not-run','incomplete','unadmitted','partial','timeout','stale']);
 const state=x=>states.has(x)?x:'unknown';
 const key=(...parts)=>parts.map(x=>encodeURIComponent(String(x))).join('/');
 const entity=(run,kind,id,label,status,extra={})=>Object.freeze({key:key(run,kind,id),kind,id,label,status:state(status),...extra});
@@ -30,7 +30,7 @@ export function projectTaskRun(run,events=[]){
   for(const id of t.dependsOn){const source=tasks.get(id);if(source)edges.push(relation(source.key,target.key,'dependency','admitted manifest'));}
  }
  const journal=events.slice(-120).filter(e=>e.runId===run.runId&&e.version===run.version&&e.origin===run.origin).map(e=>Object.freeze({sequence:e.sequence,label:safe(e.type),detail:[e.payload?.taskId,e.payload?.agentId,e.payload?.phase,e.payload?.status].filter(valid).join(' · ')}));
- return freezeGraph({id:key('task',run.runId),label:origins[run.origin],runId:run.runId,version:run.version,journalBacked:true,status:state(run.status),nodes,edges,events:journal,agentCount:agents.size,invocationCount:null,qualification:'Recorded task manifest and validated journal. Assignment and dependency edges are not observed messages. Model independence and factual truth are not established.'});
+ return freezeGraph({id:key('task',run.runId),label:origins[run.origin],runId:run.runId,version:run.version,journalBacked:true,status:state(run.status),nodes,edges,events:journal,agentCount:agents.size,invocationCount:null,qualification:'Recorded task manifest and validated journal. Assignment and dependency edges are not observed messages. Deterministic task owners are logical scheduler assignments, not live AI models. Model independence and factual truth are not established.'});
 }
 export function createResearchProjection({maxNodes=512,maxEvents=120}={}){
  if(!Number.isInteger(maxNodes)||maxNodes<1||maxNodes>512||!Number.isInteger(maxEvents)||maxEvents<1||maxEvents>512)throw Error('PROJECTION_LIMIT');

@@ -11,7 +11,7 @@ function viewport(x,y,width,height,extentWidth,extentHeight){
  const padX=extentWidth*.06,padY=extentHeight*.06;
  const minX=width>=extentWidth?-(width-extentWidth)/2:-padX,maxX=width>=extentWidth?minX:extentWidth-width+padX;
  const minY=height>=extentHeight?-(height-extentHeight)/2:-padY,maxY=height>=extentHeight?minY:extentHeight-height+padY;
- return Object.freeze({x:clamp(x,minX,maxX),y:clamp(y,minY,maxY),width,height,extentWidth,extentHeight,zoom:extentWidth/width});
+ return Object.freeze({x:clamp(x,minX,maxX)||0,y:clamp(y,minY,maxY)||0,width,height,extentWidth,extentHeight,zoom:extentWidth/width});
 }
 export function zoomViewport(v,factor,{x=.5,y=.5}={}){
  if(!finite(factor)||factor<=0||!finite(x)||!finite(y))throw Error('VIEWPORT_ZOOM');

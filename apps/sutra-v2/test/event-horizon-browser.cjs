@@ -28,6 +28,18 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   await page.locator('.eh-tabs').getByRole('button',{name:'Knowledge'}).click();assert.ok(await page.locator('#eh-knowledge').isVisible());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await page.locator('.eh-tabs').getByRole('button',{name:'Compose',exact:true}).click();await page.locator('#eh-compose').getByRole('button',{name:'Exact calculation',exact:true}).click();assert.match(await page.locator('#eh-compose-status').innerText(),/1 candidate composition/);await page.locator('#eh-compose').getByRole('button',{name:'Open Direct quantity kernel',exact:true}).click();assert.equal(await page.locator('#eh-compute-value').innerText(),'1 m');
   await page.locator('.eh-tabs').getByRole('button',{name:'Agent Atlas',exact:true}).click();assert.match(await page.locator('#eh-atlas-status').innerText(),/No publisher has been contacted/);await page.locator('#eh-atlas-read').click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('declared networks found'));await page.locator('#eh-atlas').getByRole('button',{name:'Inspect investigation',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#eh-atlas-status').textContent.includes('Network definition inspected'));assert.equal(await page.locator('#eh-atlas .eh-definition').count(),2);assert.match(await page.locator('#eh-atlas .eh-atlas-passport').innerText(),/None instantiated by inspection/);await page.screenshot({path:path.join(out,'event-horizon-atlas-'+width+'.png'),fullPage:false});
+  if(width===1440){
+   await page.locator('.eh-tabs').getByRole('button',{name:'Task workshop',exact:true}).click();
+   for(let i=1;i<10;i++)await page.locator('#eh-batch').getByRole('button',{name:'Add task',exact:true}).click();
+   for(let i=0;i<10;i++)await page.locator('#eh-batch .eh-batch-row').nth(i).getByLabel('Task owner').fill('owner_'+i);
+   await page.locator('#eh-batch').getByRole('button',{name:'Review exact plan',exact:true}).click();assert.equal(await page.locator('#eh-batch-run').isDisabled(),false);
+   await page.locator('#eh-batch-run').click();await page.waitForFunction(()=>document.querySelector('#eh-batch-status').textContent.includes('completed · 10 admitted'));
+   assert.equal(await page.locator('#eh-batch .eh-batch-result').count(),10);
+   await page.locator('#eh-batch').getByRole('button',{name:'Inspect recorded execution',exact:true}).click();
+   assert.match(await page.locator('#eh-status').innerText(),/Local deterministic task graph · completed/);
+   assert.equal(await page.locator('#eh-workspace .eh-entity').count(),20);
+   await page.screenshot({path:path.join(out,'event-horizon-ten-owners.png'),fullPage:false});
+  }
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await context.close();
  }}finally{await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

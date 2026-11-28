@@ -108,3 +108,8 @@
 #eh-workspace .eh-replay-controls{border:1px solid var(--eh-line);background:var(--eh-panel);border-radius:7px;padding:10px;margin:8px 0}
 #eh-workspace .eh-replay-controls input[type=range]{width:100%;padding:0;accent-color:var(--eh-accent)}
 #eh-workspace button:disabled{opacity:.5;cursor:not-allowed}
+
+#eh-workspace .eh-batch-rows,#eh-workspace .eh-batch-results{display:grid;gap:10px;margin:12px 0}
+#eh-workspace .eh-batch-row,#eh-workspace .eh-batch-result{border:1px solid var(--eh-line);padding:12px;border-radius:8px;background:var(--eh-panel)}
+#eh-workspace .eh-batch-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:8px;margin:8px 0}
+#eh-workspace .eh-batch-result{overflow-wrap:anywhere}
