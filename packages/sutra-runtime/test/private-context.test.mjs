@@ -208,7 +208,7 @@ test('consented CDN graph cannot inherit private grant to a different publisher 
 
 test('protected host string is refused in decoded model arguments before peer contact, even with escaped characters',async()=>{
  const canary='PRIVATE_"QUOTED"\\CANARY',contacts=[],calls=[];
- const model={mode:'scripted-test',async chat(args){calls.push(args.origin);return {content:'',toolCalls:[{id:'forged',type:'function',function:{name:'transit',arguments:JSON.stringify({request:canary})}}]};}};
+ const model={mode:'scripted-test',async chat(args){calls.push(args.origin);assert.equal(args.tools.length,1);assert.ok(args.tools[0].function.name);return {content:'',toolCalls:[{id:'forged',type:'function',function:{name:args.tools[0].function.name,arguments:JSON.stringify({request:canary})}}]};}};
  const options={definition:definition(),request:'Inspect',model,privateContext:{secretCanary:canary},peerRuntime:{inspector:inspector(),fetchImpl:async url=>{contacts.push(url);return fetchImpl(url);}}};
  await assert.rejects(runNetwork(options),e=>e.code==='PRIVATE_CONTEXT_RETURN'&&!e.message.includes(canary));
  assert.deepEqual(calls,['sutra-local']);assert.deepEqual(contacts,[]);
