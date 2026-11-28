@@ -112,6 +112,7 @@ jobs:
             packages/sutra-knowledge/test/semantic-intake-security.test.mjs \
             packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs \
             packages/sutra-knowledge/test/scope-human-evidence.test.mjs \
+            packages/sutra-knowledge/test/external-human-evidence.test.mjs \
             packages/sutra-knowledge/test/semantic-evaluation-deep.test.mjs \
             packages/sutra-knowledge/test/reviewed-proposal-contrast.test.mjs \
             packages/sutra-knowledge/test/eia-capacity-revision.test.mjs
@@ -125,6 +126,8 @@ jobs:
           node packages/sutra-knowledge/evaluation/scope-human-benchmark.mjs > sutra-scope-human-benchmark.json
           node packages/sutra-knowledge/evaluation/semantic-human-burden.mjs > sutra-semantic-human-burden.json
           node packages/sutra-knowledge/evaluation/context-contrast-benchmark.mjs > sutra-context-contrast-benchmark.json
+          node packages/sutra-knowledge/evaluation/entity-reference-benchmark.mjs > sutra-entity-reference-benchmark.json
+          node packages/sutra-knowledge/evaluation/external-human-evidence-matrix.mjs > sutra-external-human-evidence-matrix.json
           node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
           cat sutra-semantic-corpus-independent.json
           cat sutra-temporal-corpus-independent.json
@@ -144,6 +147,8 @@ jobs:
             sutra-scope-human-benchmark.json
             sutra-semantic-human-burden.json
             sutra-context-contrast-benchmark.json
+            sutra-entity-reference-benchmark.json
+            sutra-external-human-evidence-matrix.json
             sutra-semantic-performance.json
           if-no-files-found: error
       - name: Run full JavaScript knowledge regression before external formal dependency

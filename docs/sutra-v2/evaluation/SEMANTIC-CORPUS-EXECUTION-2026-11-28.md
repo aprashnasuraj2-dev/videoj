@@ -95,3 +95,20 @@ The focused semantic gate runs before the full knowledge regression so unrelated
 - Independent adjudication of the 40 model-authored contrast labels.
 - Absence of model-training contamination in public human datasets.
 - End-to-end semantic resolution accuracy across all 20 families; the current engine measures review obligations and bounded executable candidates, not general semantic truth.
+
+
+## External human evidence expansion: entity reference and syntactic ambiguity
+
+Two additional licensed sources are now tracked without collapsing them into the 20-family taxonomy.
+
+**AltEntities** (Google Research, CC BY-SA 3.0) contributes a deterministic label-independent sample of 180 entity-pair examples and all 1,212 attached human indirect referring expressions. The sample is balanced at 20 examples per BOOKS/RECIPES/SONGS × train/dev/test cell. Selection hashes only the alternative question and the two choice URLs; target index and human expression text are not selection inputs. SUTRA retains only the alternative question, choice names/URLs, human expression, target index, sampling method and exact source coordinates. On all 1,212 records, an explicitly supplied two-entity alternative context produces an `entity_identity` review obligation. This is **obligation coverage, not target-selection accuracy**.
+
+**TAB** (Amazon Science, CC BY-SA 4.0) contributes 510 byte-pinned main linguistic ambiguity prompts: 74 PP attachment, 243 VP attachment, 127 conjunction, 21 discourse anaphora and 45 discourse ellipsis. Fairness, complex, combination and miscellaneous files are excluded. Most TAB types do not map one-to-one to SUTRA families and are retained as related linguistic evidence, not direct validation of units, scaling, causal interpretation or other unrelated families.
+
+The machine-readable external-evidence matrix currently marks only **4/20 SUTRA families (20%)** as having direct external human task/annotation evidence:
+- `entity_identity`: AltEntities human reference selection + TAB anaphora.
+- `reporting_period`: TempAmbiQA manual ambiguity labels.
+- `negation_scope`: McGill human-validated scope/control constructions.
+- `quantifier_scope`: McGill human-validated operator-scope constructions.
+
+The other **16/20 families remain direct-human evidence gaps**. AmbiEnt lexical/pragmatic/scopal categories and TAB conjunction/ellipsis are recorded as related evidence where appropriate but are never promoted to direct family validation. This is intentional: dataset volume is not equivalent to taxonomy coverage.
