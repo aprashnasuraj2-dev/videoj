@@ -1,0 +1,1199 @@
+{
+  "schema": "sutra-release-ref-snapshot/v1",
+  "observedDate": "2026-11-28",
+  "main": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+  "candidate": "342c77308cc438a6d8ca63ea3e5a42a784f5afc6",
+  "branches": [
+    {
+      "name": "afterimage",
+      "sha": "d4d913af16717c07f11b46f45fc912cb6f39187c",
+      "protected": false
+    },
+    {
+      "name": "afterimage-hardening",
+      "sha": "78a0a910223be59fb600491ddf734597a1b1c7e7",
+      "protected": false
+    },
+    {
+      "name": "chore/open-source-dhago-detour-20261116",
+      "sha": "87e396d467b3168f3e37360f3f0a17d61f7f1218",
+      "protected": false
+    },
+    {
+      "name": "cleanup/retired-product-removal",
+      "sha": "56113343fd2fd30366b221c84410f658b82be2af",
+      "protected": false
+    },
+    {
+      "name": "codex/sutra-detailed-checklist",
+      "sha": "8f5a7038f47c2b476235b91ff826beb70c4eb166",
+      "protected": false
+    },
+    {
+      "name": "codex/sutra-evidence-validator",
+      "sha": "2df6f6462ead3befef9a70ba173dd7a139766634",
+      "protected": false
+    },
+    {
+      "name": "codex/sutra-learner-shell",
+      "sha": "d38db2d346dc46613868f826163cf03bd95ab425",
+      "protected": false
+    },
+    {
+      "name": "codex/sutra-runtime-player",
+      "sha": "cd06a447b8e894c59ccbfe9746c97f821e20fe8c",
+      "protected": false
+    },
+    {
+      "name": "copy/studio-real-world-playback-20261115",
+      "sha": "e079f861ea1a450b99b0a197422675d5f1c5c110",
+      "protected": false
+    },
+    {
+      "name": "detour",
+      "sha": "a4af85bc7e83c08d6417ce4d3065738a0e2da68f",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-6d26d98b96af",
+      "sha": "98dfb5af81a72fad14b67133d9fbc921d8ca809a",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-50ac9661e315",
+      "sha": "52310244bf4326ae6239f28d9d303d88eb8bd841",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-58ce6dd42d4c",
+      "sha": "62bc6ab7edc9ad8b202bd81fe45dfc522cc485c3",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-60f91760b900",
+      "sha": "554457f8769068c1eebf36864d0871ae75dc949a",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-86e3b15bdfb5",
+      "sha": "30d22f7d1ab1c568ec77342d04601ad130713b83",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-391eaf347641",
+      "sha": "59583b73a892498f9e0d0034f768271ee8e971b3",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-844c1d0b26e8",
+      "sha": "7d2e749c2d8ba5597c4ae4102f8d851824162a17",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-a3b43f74c765",
+      "sha": "0e3f8f05adaf71743f3a3539e793df282fb14fac",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-a9bbfcb4ee68",
+      "sha": "3e966d4c4849bbf91d084e0da94298ccdeb62415",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-c647d59d6f00",
+      "sha": "af341c358d07b016e799f3ecc18b7add50c18c04",
+      "protected": false
+    },
+    {
+      "name": "detour-dist-d430f2ee49fa",
+      "sha": "ac7422fe3390a5c04d7bbc0446a119d73739ca07",
+      "protected": false
+    },
+    {
+      "name": "detour-hardening",
+      "sha": "0fd402ad6626e7a8d601372075c500b3c25b20d5",
+      "protected": false
+    },
+    {
+      "name": "dhago-hardening-20261116",
+      "sha": "de7ce8e13ff442102529a24d76bed6528d8fc6f4",
+      "protected": false
+    },
+    {
+      "name": "dist-0a2c8df82d54",
+      "sha": "6abaa90d1f3a9e8424cf74f0f224e6556b22b5db",
+      "protected": false
+    },
+    {
+      "name": "dist-4acefca864e5",
+      "sha": "fb71e9dbb4999f2a3d6d093b4a523b5cdbd1d781",
+      "protected": false
+    },
+    {
+      "name": "dist-7b585e369bc3",
+      "sha": "4865c5e7a3368529a16953c635754315a9ddd709",
+      "protected": false
+    },
+    {
+      "name": "dist-7e920dabe356",
+      "sha": "2c9488a67790766922f1895178012aeb86c1a588",
+      "protected": false
+    },
+    {
+      "name": "dist-8ff80476c0dc",
+      "sha": "79e1a5540bbc926b32c8419e36019674f9418d5c",
+      "protected": false
+    },
+    {
+      "name": "dist-9ac84755b94b",
+      "sha": "5c04db9955e38cae2706def6b5cc5d6f8d18b24d",
+      "protected": false
+    },
+    {
+      "name": "dist-17f16dfe8dd4",
+      "sha": "39d5ef646ffb1acba163bd09f1fd17a500148848",
+      "protected": false
+    },
+    {
+      "name": "dist-37ef2424dd65",
+      "sha": "90a665bd03c44ef45e86d19dbaec1ef758485e14",
+      "protected": false
+    },
+    {
+      "name": "dist-50d0e8561a36",
+      "sha": "2e8fd72d46280c2737255fd1f9890a61f1e110b5",
+      "protected": false
+    },
+    {
+      "name": "dist-58a0ac2e4fb1",
+      "sha": "ec711552e86e4fbfd3091dfc99f853c187b9d69f",
+      "protected": false
+    },
+    {
+      "name": "dist-62d7d1546e13",
+      "sha": "550b05b1e965cc0b8999e3460d2c90a893874dce",
+      "protected": false
+    },
+    {
+      "name": "dist-72ec6c324f64",
+      "sha": "17ce7e433c6899295c221208781bae31075975d4",
+      "protected": false
+    },
+    {
+      "name": "dist-87eaa316ba23",
+      "sha": "f6ca062b2ee8424075c6b7c4a987602900b7588b",
+      "protected": false
+    },
+    {
+      "name": "dist-89eeddd70d1e",
+      "sha": "06e1c7fa6b5f71d1b5d300702f91858c950eedd7",
+      "protected": false
+    },
+    {
+      "name": "dist-353bb3f59322",
+      "sha": "302d88f1843590246a36083c8877151e78a71b47",
+      "protected": false
+    },
+    {
+      "name": "dist-374b71d3a20c",
+      "sha": "d76602f1b3f8bbf63d956b1952108044d593b9ab",
+      "protected": false
+    },
+    {
+      "name": "dist-1947d6029743",
+      "sha": "62a18339e383b2a577c836fd28713fde524499e5",
+      "protected": false
+    },
+    {
+      "name": "dist-011743d7d4e5",
+      "sha": "ec002458986b395e0cb1716312e874fc21238500",
+      "protected": false
+    },
+    {
+      "name": "dist-265888b9f70a",
+      "sha": "b0da62b1f4b83ee2a09c5bec25831a652c4c2955",
+      "protected": false
+    },
+    {
+      "name": "dist-a1d2733a8b01",
+      "sha": "e0586b338d60a2957f118da02bc1412344805a3e",
+      "protected": false
+    },
+    {
+      "name": "dist-a6492362b634",
+      "sha": "18692e618e2ec2a955b6d182e85c740562224d0b",
+      "protected": false
+    },
+    {
+      "name": "dist-abd6f3a8667b",
+      "sha": "1a2fd9aea1753c9ed82b6418791d09b010e093a9",
+      "protected": false
+    },
+    {
+      "name": "dist-bcada9cc5c24",
+      "sha": "469223ed33a20066b9f7d81a9c784c5943681626",
+      "protected": false
+    },
+    {
+      "name": "dist-bfd030305def",
+      "sha": "b792c491b295c1546f475ef4cf9aa09e33a3b2c2",
+      "protected": false
+    },
+    {
+      "name": "dist-c6d65f2f6288",
+      "sha": "3ae89749c820c9f5b55547e9e059f26f7285e61c",
+      "protected": false
+    },
+    {
+      "name": "dist-c7bb559acefe",
+      "sha": "8bd8ac5bf33745ca9a115d7fb216cfb386b6c0c2",
+      "protected": false
+    },
+    {
+      "name": "dist-d8aba3f957cb",
+      "sha": "1870727d340d300145bc0b64a4061ac668e86e58",
+      "protected": false
+    },
+    {
+      "name": "dist-d976e987cf11",
+      "sha": "82f48f7fa0899f70d93507d931c602b66b905316",
+      "protected": false
+    },
+    {
+      "name": "dist-dd6ec8bd217a",
+      "sha": "4d7ecf360890252b458815c3ecb53393cc4410ab",
+      "protected": false
+    },
+    {
+      "name": "dist-df4464868db5",
+      "sha": "b0b6cf1cdda19629b71d41b09431932f65b33995",
+      "protected": false
+    },
+    {
+      "name": "dist-e2c7231baff1",
+      "sha": "998ecf06b98063c273882b29028113466478feb0",
+      "protected": false
+    },
+    {
+      "name": "dist-eae52d9e0c9e",
+      "sha": "e39484d32a6d4f9cad0f2f7a2d4c9186a27be9ec",
+      "protected": false
+    },
+    {
+      "name": "dist-ee8241aaf06b",
+      "sha": "5fb9395086a1df6c2f53d277bf1d2ef638362acb",
+      "protected": false
+    },
+    {
+      "name": "dist-f1ac8b402df3",
+      "sha": "314207d9360ce82b7217aec1cad77e270092ba57",
+      "protected": false
+    },
+    {
+      "name": "docs/dhago-a649-release-attestation",
+      "sha": "0b2961cc822e0bf60669f1e4ba2b8995e557263d",
+      "protected": false
+    },
+    {
+      "name": "docs/dhago-final-entry-audit-20261115",
+      "sha": "2b1dc1c6cea1e18542c8943b3cc67e86efdf2db3",
+      "protected": false
+    },
+    {
+      "name": "docs/dhago-release-evidence",
+      "sha": "168bab610ddc0a72c28a0d0bc62cc9dcdc7a57c0",
+      "protected": false
+    },
+    {
+      "name": "docs/finish-handoff-attestation",
+      "sha": "8c4721088594c1843073eb1e50b335ee12b50127",
+      "protected": false
+    },
+    {
+      "name": "feat/dhago-competition-excellence-20261115",
+      "sha": "1fda45eca5a34dd8b2916424aca2228f75cd228f",
+      "protected": false
+    },
+    {
+      "name": "feat/dhago-final-state-release",
+      "sha": "09352e53d5e9247c7cea8c47d33a94b1af51bf5a",
+      "protected": false
+    },
+    {
+      "name": "feat/dhago-judge-polish",
+      "sha": "95ce1e533fc90649c3a84ef4a0d9f930a8095148",
+      "protected": false
+    },
+    {
+      "name": "feat/dhago-thread-craft-stable",
+      "sha": "e765854098dede556ace465e092585a7f18cd71a",
+      "protected": false
+    },
+    {
+      "name": "feat/living-loom-release",
+      "sha": "b18c51a211c0b3e3630522be6c9732bc73592db8",
+      "protected": false
+    },
+    {
+      "name": "feat/mux-submission-workflows",
+      "sha": "fc43ef58e97c31033df5ebb97bbc04b8adaeaef5",
+      "protected": false
+    },
+    {
+      "name": "feat/physical-thread-details",
+      "sha": "d7fe8cdcce2c6e7a46661d7cfd96ac3dc0b01b92",
+      "protected": false
+    },
+    {
+      "name": "feat/public-judge-smoke",
+      "sha": "fbcdee715e00ed2d200ee324d23da380906cd3da",
+      "protected": false
+    },
+    {
+      "name": "feat/verified-source-handoff",
+      "sha": "aa4503eb7a4255f236c64bb3902fc9ed59c4d040",
+      "protected": false
+    },
+    {
+      "name": "feature/edge-lab-fibre-to-fabric",
+      "sha": "1d7e953a1165e2cd04e86258faa5a87e5190a1c1",
+      "protected": false
+    },
+    {
+      "name": "feature/hero-tactile-timeline-proof",
+      "sha": "709df4ed5d4f913e18b9ea2b1d980ace04ee3e63",
+      "protected": false
+    },
+    {
+      "name": "feature/living-loom-media-choreography",
+      "sha": "4008023eaf788a070f0e1e2dacf86615031ed057",
+      "protected": false
+    },
+    {
+      "name": "feature/restore-original-dhago-20261114",
+      "sha": "b830409eeb60e59f0bfc79b08980ed5cbab1bcf4",
+      "protected": false
+    },
+    {
+      "name": "film/from-fibre-to-fabric-20261114",
+      "sha": "bd3afb62315b14559237d181db1052dd8cf362d7",
+      "protected": false
+    },
+    {
+      "name": "final/documentary-media-alignment",
+      "sha": "734a614030342b45168ba090266be8bb9c551dc9",
+      "protected": false
+    },
+    {
+      "name": "final/fibre-competition-coherence",
+      "sha": "aab20975accc346fa13b14d5850cf53b1ac8894c",
+      "protected": false
+    },
+    {
+      "name": "final/judge-visible-proof",
+      "sha": "985353840b8e41af986cd57507074f7509a995dc",
+      "protected": false
+    },
+    {
+      "name": "final/stress-lab-portable",
+      "sha": "971ec0aad05478dd324323807f4b9565af031a72",
+      "protected": false
+    },
+    {
+      "name": "final/stress-lab-portable-v2",
+      "sha": "22a12dce75e23f5dbc85bf253d07b4d3d7980be5",
+      "protected": false
+    },
+    {
+      "name": "fix/capture-focus-settle",
+      "sha": "41eae7591f2aeccf03c0e01e0e297b70d5b2e519",
+      "protected": false
+    },
+    {
+      "name": "fix/capture-journal-settle",
+      "sha": "e16aa8d548cfb80e2ef13217bacf88e1f1d5fa00",
+      "protected": false
+    },
+    {
+      "name": "fix/corrected-documentary-20261114",
+      "sha": "ecc7cd1f79abcc80f22a9ce2b7abdc47d06b3bff",
+      "protected": false
+    },
+    {
+      "name": "fix/fibre-film-default",
+      "sha": "238a9445633c5c25a22caa1cc75f6a87fc0a7802",
+      "protected": false
+    },
+    {
+      "name": "fix/fibre-mux-cleanup",
+      "sha": "803ca20c847168902fd5ebbae89658502092c9a2",
+      "protected": false
+    },
+    {
+      "name": "fix/final-evidence-order",
+      "sha": "eba95e0c7a7faf87b4172f19be052bb716fcd35c",
+      "protected": false
+    },
+    {
+      "name": "fix/final-stress-footer",
+      "sha": "e2361bd6423ee98d3caf918357ec2dfba58c1a53",
+      "protected": false
+    },
+    {
+      "name": "fix/pin-original-webm-hash-20261114",
+      "sha": "0830eaf36fba376dce26a016619ae1b305c8ecc9",
+      "protected": false
+    },
+    {
+      "name": "fix/public-evidence-entry-selection-20261114",
+      "sha": "ab2ad02434aa97570d5ef53b34c490fe2b31901e",
+      "protected": false
+    },
+    {
+      "name": "fix/public-smoke-journal-selector",
+      "sha": "466c975fce5cbfbd034558ab9f7025b3d07c08c9",
+      "protected": false
+    },
+    {
+      "name": "fix/release-prune-and-handoff-20261114",
+      "sha": "9f077125f0e227ec3179920fe21dd643e8fb6f9e",
+      "protected": false
+    },
+    {
+      "name": "fix/sheep-clip-direct-playback-20261115",
+      "sha": "854355682a9fc566c8370ab28e8eb8276d24b19d",
+      "protected": false
+    },
+    {
+      "name": "fix/tools-trailing-state-20261114",
+      "sha": "d38d7cc9b4c0f9f292b94f333b7c802bd1eb182f",
+      "protected": false
+    },
+    {
+      "name": "hotfix/fibre-film-live",
+      "sha": "ad2d1c13d45420528e3a198abd6674dc0d7945ed",
+      "protected": false
+    },
+    {
+      "name": "main",
+      "sha": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+      "protected": false
+    },
+    {
+      "name": "newsroom-reel-engine",
+      "sha": "f547192d23eb06b5fc41a590fc43f634cb7c9c14",
+      "protected": false
+    },
+    {
+      "name": "newsroom-review-first-v3",
+      "sha": "adfea2cbbe9fd705f980faf730d9fa8cf6bbd90f",
+      "protected": false
+    },
+    {
+      "name": "polish/stress-gallery-public-20261115",
+      "sha": "37827a41acd4ffadee44a59c5264702a5d4a6734",
+      "protected": false
+    },
+    {
+      "name": "scent-atlas",
+      "sha": "31fd5d3766ec6fdc1f9a12608a413160966747bc",
+      "protected": false
+    },
+    {
+      "name": "submission-polish-20261115",
+      "sha": "527692e5cbfca8e9ed6dd11b0df0b4aeb747ad38",
+      "protected": false
+    },
+    {
+      "name": "sutra/bounded-inference-source-tools",
+      "sha": "b189dc6b38ca2daaefe52d21ca2e0cd0127dbb15",
+      "protected": false
+    },
+    {
+      "name": "sutra/caller-peer-failure-boundary",
+      "sha": "1ab497bb706ed1f1d7c8e921cd037b1abb1fa87d",
+      "protected": false
+    },
+    {
+      "name": "sutra/consent-inspector",
+      "sha": "213a98434332662103dd8079657a049703a328e6",
+      "protected": false
+    },
+    {
+      "name": "sutra/evidence-portability-deep-work",
+      "sha": "d503ebff987b66b8cb1a4804faa056d8ca8601a2",
+      "protected": false
+    },
+    {
+      "name": "sutra/hist-010-durable-history-workspace",
+      "sha": "cd0c931d437f1fa3f6def66255fb618ed6f81e6a",
+      "protected": false
+    },
+    {
+      "name": "sutra/master-investigation-ui",
+      "sha": "342c77308cc438a6d8ca63ea3e5a42a784f5afc6",
+      "protected": false
+    },
+    {
+      "name": "sutra/orch-001-common-consent",
+      "sha": "f1c6d4344485a0d4adaf80266c17bb5df7ea2dec",
+      "protected": false
+    },
+    {
+      "name": "sutra/orch-002-capability-negotiation",
+      "sha": "cf1babd925a8dfef94d801e2d23c5f3caccc3d27",
+      "protected": false
+    },
+    {
+      "name": "sutra/packaging-preflight-evidence",
+      "sha": "48f338a8f64a41c7c7bf0db8d9daca67077cedf6",
+      "protected": false
+    },
+    {
+      "name": "sutra/peer-invocation",
+      "sha": "61a575449c7266aad3b731468c900927a8ba5bc9",
+      "protected": false
+    },
+    {
+      "name": "sutra/semantic-induction-intake-20261128",
+      "sha": "85aa254a51c9902e8c3d96a05270fca34c2a040a",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-knowledge-compiler",
+      "sha": "ad182e801d969e9209009de54df1c8a9cfb1a6de",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/01-model-orchestration",
+      "sha": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/02-persistent-knowledge",
+      "sha": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/03-semantic-compilation",
+      "sha": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/04-evidence-acquisition",
+      "sha": "2336566c64c4ce461042bec8b34c01c22356aba3",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/05-independent-verification",
+      "sha": "1a429e24a4fca63affccedf138150480b3ee87c2",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/06-counterfactuals",
+      "sha": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/07-security-recovery",
+      "sha": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/08-unified-workspace",
+      "sha": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/09-specialist-domains",
+      "sha": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-parallel/10-benchmark",
+      "sha": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+      "protected": false
+    },
+    {
+      "name": "sutra/v2-validation/v2-182",
+      "sha": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+      "protected": false
+    }
+  ],
+  "tags": [],
+  "releases": [],
+  "parallelComparisons": [
+    {
+      "branch": "sutra/v2-parallel/01-model-orchestration",
+      "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 5,
+      "behind": 91,
+      "totalCommits": 5,
+      "files": [
+        {
+          "path": ".github/workflows/sutra-v2-operator-browser.yml",
+          "status": "added",
+          "changes": 30
+        },
+        {
+          "path": "apps/sutra-v2/index.html",
+          "status": "modified",
+          "changes": 22
+        },
+        {
+          "path": "apps/sutra-v2/src/main.js",
+          "status": "modified",
+          "changes": 2
+        },
+        {
+          "path": "apps/sutra-v2/src/operator-model-console.js",
+          "status": "added",
+          "changes": 71
+        },
+        {
+          "path": "apps/sutra-v2/test/model-approval-browser.cjs",
+          "status": "added",
+          "changes": 14
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/01-model-orchestration.md",
+          "status": "added",
+          "changes": 38
+        },
+        {
+          "path": "packages/sutra-knowledge/approved-expression-council.js",
+          "status": "added",
+          "changes": 41
+        },
+        {
+          "path": "packages/sutra-knowledge/test/model-substitution.test.mjs",
+          "status": "added",
+          "changes": 48
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/02-persistent-knowledge",
+      "head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 11,
+      "behind": 91,
+      "totalCommits": 11,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/02-persistent-knowledge.md",
+          "status": "added",
+          "changes": 50
+        },
+        {
+          "path": "packages/sutra-knowledge/history-extension.js",
+          "status": "added",
+          "changes": 25
+        },
+        {
+          "path": "packages/sutra-knowledge/history-witness-client.js",
+          "status": "added",
+          "changes": 105
+        },
+        {
+          "path": "packages/sutra-knowledge/index.js",
+          "status": "modified",
+          "changes": 18
+        },
+        {
+          "path": "packages/sutra-knowledge/local-history-store.mjs",
+          "status": "added",
+          "changes": 117
+        },
+        {
+          "path": "packages/sutra-knowledge/test/history-extension.test.mjs",
+          "status": "added",
+          "changes": 19
+        },
+        {
+          "path": "packages/sutra-knowledge/test/history-witness-client.test.mjs",
+          "status": "added",
+          "changes": 72
+        },
+        {
+          "path": "packages/sutra-knowledge/test/local-history-store.test.mjs",
+          "status": "added",
+          "changes": 107
+        },
+        {
+          "path": "packages/sutra-knowledge/test/revision-dependency-closure.test.mjs",
+          "status": "added",
+          "changes": 53
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/03-semantic-compilation",
+      "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 7,
+      "behind": 91,
+      "totalCommits": 7,
+      "files": [
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-ATTRIBUTION.md",
+          "status": "added",
+          "changes": 8
+        },
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-LICENSE.txt",
+          "status": "added",
+          "changes": 21
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/03-semantic-compilation.md",
+          "status": "added",
+          "changes": 46
+        },
+        {
+          "path": "docs/sutra/tools/impact.test.mjs",
+          "status": "modified",
+          "changes": 3
+        },
+        {
+          "path": "docs/sutra/verification-map.json",
+          "status": "modified",
+          "changes": 3
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/finqa-public-test-semantic.json",
+          "status": "added",
+          "changes": 4777
+        },
+        {
+          "path": "packages/sutra-knowledge/finqa-semantic-profile.js",
+          "status": "added",
+          "changes": 46
+        },
+        {
+          "path": "packages/sutra-knowledge/question-mapping-review.js",
+          "status": "added",
+          "changes": 57
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_finqa_semantic.py",
+          "status": "added",
+          "changes": 29
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_question_mapping_review.py",
+          "status": "added",
+          "changes": 75
+        },
+        {
+          "path": "packages/sutra-knowledge/test/finqa-semantic-profile.test.mjs",
+          "status": "added",
+          "changes": 9
+        },
+        {
+          "path": "packages/sutra-knowledge/test/question-mapping-review.test.mjs",
+          "status": "added",
+          "changes": 57
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/04-evidence-acquisition",
+      "head": "2336566c64c4ce461042bec8b34c01c22356aba3",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 6,
+      "behind": 91,
+      "totalCommits": 6,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/04-evidence-acquisition.md",
+          "status": "added",
+          "changes": 34
+        },
+        {
+          "path": "packages/sutra-knowledge/acquisition-path.js",
+          "status": "added",
+          "changes": 43
+        },
+        {
+          "path": "packages/sutra-knowledge/authenticated-acquisition.js",
+          "status": "added",
+          "changes": 48
+        },
+        {
+          "path": "packages/sutra-knowledge/test/authenticated-acquisition.test.mjs",
+          "status": "added",
+          "changes": 37
+        },
+        {
+          "path": "packages/sutra-knowledge/test/robust-acquisition.test.mjs",
+          "status": "modified",
+          "changes": 20
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/05-independent-verification",
+      "head": "1a429e24a4fca63affccedf138150480b3ee87c2",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 4,
+      "behind": 91,
+      "totalCommits": 4,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/05-independent-verification.md",
+          "status": "added",
+          "changes": 34
+        },
+        {
+          "path": "packages/sutra-knowledge/test/independent-generated-replay.test.mjs",
+          "status": "added",
+          "changes": 36
+        },
+        {
+          "path": "packages/sutra-knowledge/test/reviewed-interval.test.mjs",
+          "status": "modified",
+          "changes": 45
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/06-counterfactuals",
+      "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 6,
+      "behind": 91,
+      "totalCommits": 6,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/06-counterfactuals.md",
+          "status": "added",
+          "changes": 35
+        },
+        {
+          "path": "packages/sutra-knowledge/grid-expansion-audit.js",
+          "status": "added",
+          "changes": 26
+        },
+        {
+          "path": "packages/sutra-knowledge/streaming-counterfactual-search.js",
+          "status": "added",
+          "changes": 65
+        },
+        {
+          "path": "packages/sutra-knowledge/test/semantic-probe-suite.test.mjs",
+          "status": "modified",
+          "changes": 20
+        },
+        {
+          "path": "packages/sutra-knowledge/test/streaming-counterfactual-search.test.mjs",
+          "status": "added",
+          "changes": 17
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/07-security-recovery",
+      "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 5,
+      "behind": 91,
+      "totalCommits": 5,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/07-security-recovery.md",
+          "status": "added",
+          "changes": 29
+        },
+        {
+          "path": "packages/sutra-inference/protocol-workspace.js",
+          "status": "modified",
+          "changes": 7
+        },
+        {
+          "path": "packages/sutra-inference/provider-workspace.js",
+          "status": "modified",
+          "changes": 12
+        },
+        {
+          "path": "packages/sutra-inference/test/encoded-wire-boundary.test.mjs",
+          "status": "added",
+          "changes": 13
+        },
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "status": "modified",
+          "changes": 22
+        },
+        {
+          "path": "packages/sutra-inference/test/route-credential-boundary.test.mjs",
+          "status": "added",
+          "changes": 10
+        },
+        {
+          "path": "packages/sutra-knowledge/agent-council.js",
+          "status": "modified",
+          "changes": 1
+        },
+        {
+          "path": "packages/sutra-knowledge/binding-suggestion-request.js",
+          "status": "modified",
+          "changes": 8
+        },
+        {
+          "path": "packages/sutra-knowledge/council-scheduler.js",
+          "status": "modified",
+          "changes": 12
+        },
+        {
+          "path": "packages/sutra-knowledge/expression-council.js",
+          "status": "modified",
+          "changes": 1
+        },
+        {
+          "path": "packages/sutra-knowledge/test/expression-council.test.mjs",
+          "status": "modified",
+          "changes": 9
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/08-unified-workspace",
+      "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 13,
+      "behind": 91,
+      "totalCommits": 13,
+      "files": [
+        {
+          "path": ".github/workflows/sutra-v2-workspace-browser.yml",
+          "status": "added",
+          "changes": 35
+        },
+        {
+          "path": "apps/sutra-v2/index.html",
+          "status": "modified",
+          "changes": 2
+        },
+        {
+          "path": "apps/sutra-v2/src/reviewed-workspace.js",
+          "status": "modified",
+          "changes": 78
+        },
+        {
+          "path": "apps/sutra-v2/src/style.css",
+          "status": "modified",
+          "changes": 41
+        },
+        {
+          "path": "apps/sutra-v2/test/browser.cjs",
+          "status": "modified",
+          "changes": 30
+        },
+        {
+          "path": "apps/sutra-v2/test/workspace-accessibility.cjs",
+          "status": "added",
+          "changes": 30
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/08-unified-workspace.md",
+          "status": "added",
+          "changes": 49
+        },
+        {
+          "path": "packages/sutra-knowledge/draft-checkpoint.js",
+          "status": "added",
+          "changes": 18
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_workspace_checkpoint.py",
+          "status": "added",
+          "changes": 78
+        },
+        {
+          "path": "packages/sutra-knowledge/test/draft-checkpoint.test.mjs",
+          "status": "added",
+          "changes": 9
+        },
+        {
+          "path": "packages/sutra-knowledge/test/workspace-checkpoint.test.mjs",
+          "status": "added",
+          "changes": 41
+        },
+        {
+          "path": "packages/sutra-knowledge/workspace-checkpoint.js",
+          "status": "added",
+          "changes": 24
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/09-specialist-domains",
+      "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 6,
+      "behind": 91,
+      "totalCommits": 6,
+      "files": [
+        {
+          "path": "docs/sutra-v2/workstreams/09-specialist-domains.md",
+          "status": "added",
+          "changes": 35
+        },
+        {
+          "path": "packages/sutra-knowledge/examples/public-source-specialists.mjs",
+          "status": "added",
+          "changes": 31
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/verify_public_source_specialists.py",
+          "status": "added",
+          "changes": 18
+        },
+        {
+          "path": "packages/sutra-knowledge/test/public-source-specialists.test.mjs",
+          "status": "added",
+          "changes": 8
+        },
+        {
+          "path": "packages/sutra-knowledge/test/specialist-revision-journey.test.mjs",
+          "status": "added",
+          "changes": 30
+        }
+      ],
+      "tooLarge": false
+    },
+    {
+      "branch": "sutra/v2-parallel/10-benchmark",
+      "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+      "status": "diverged",
+      "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480",
+      "ahead": 5,
+      "behind": 91,
+      "totalCommits": 5,
+      "files": [
+        {
+          "path": ".github/workflows/sutra-v2-finqa-benchmark.yml",
+          "status": "added",
+          "changes": 28
+        },
+        {
+          "path": "docs/sutra-v2/evaluation/third-party/FinQA-BENCHMARK-LICENSE.md",
+          "status": "added",
+          "changes": 33
+        },
+        {
+          "path": "docs/sutra-v2/workstreams/10-benchmark.md",
+          "status": "added",
+          "changes": 31
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-budget-admission.js",
+          "status": "added",
+          "changes": 24
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-paired-score.js",
+          "status": "added",
+          "changes": 23
+        },
+        {
+          "path": "packages/sutra-knowledge/benchmark-split-audit.js",
+          "status": "added",
+          "changes": 24
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/finqa-public-test-heldout.json",
+          "status": "added",
+          "changes": 4906
+        },
+        {
+          "path": "packages/sutra-knowledge/evaluation/run-finqa-heldout.mjs",
+          "status": "added",
+          "changes": 1
+        },
+        {
+          "path": "packages/sutra-knowledge/finqa-heldout-benchmark.js",
+          "status": "added",
+          "changes": 17
+        },
+        {
+          "path": "packages/sutra-knowledge/reference/score_finqa_heldout.py",
+          "status": "added",
+          "changes": 52
+        },
+        {
+          "path": "packages/sutra-knowledge/test/benchmark-budget-admission.test.mjs",
+          "status": "added",
+          "changes": 25
+        },
+        {
+          "path": "packages/sutra-knowledge/test/benchmark-paired-score.test.mjs",
+          "status": "added",
+          "changes": 9
+        },
+        {
+          "path": "packages/sutra-knowledge/test/finqa-heldout-benchmark.test.mjs",
+          "status": "added",
+          "changes": 5
+        }
+      ],
+      "tooLarge": false
+    }
+  ],
+  "cloudflare": {
+    "account": "CloudflareB",
+    "project": "sutra",
+    "domain": "sutra-c70.pages.dev",
+    "source": "github",
+    "repository": "aprashnasuraj2-dev/videoj",
+    "productionBranch": "sutra/caller-peer-failure-boundary",
+    "automaticProduction": false,
+    "previewSetting": "none",
+    "prComments": false,
+    "build": {
+      "root": "apps/sutra",
+      "command": "npm ci && npm run build",
+      "destination": "dist"
+    },
+    "compatibilityDate": "2026-11-26",
+    "productionServiceBindings": [],
+    "previewServiceBindings": [],
+    "productionEnvNames": [],
+    "previewEnvNames": [],
+    "productionDeployment": {
+      "id": "f2209727-cff2-4142-ad1d-966c42770e48",
+      "url": "https://f2209727.sutra-c70.pages.dev",
+      "commit": "2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d",
+      "stage": "deploy",
+      "status": "success"
+    },
+    "latestObservedPreview": {
+      "id": "769f1755-9aff-46f2-a84f-3b0526b86549",
+      "commit": "85aa254a51c9902e8c3d96a05270fca34c2a040a",
+      "branch": "sutra/semantic-induction-intake-20261128",
+      "status": "idle",
+      "stage": "queued"
+    },
+    "qualification": "Read-only configuration observation. Deployment commit is platform-reported metadata, not independently verified artifact bytes. No secret values collected. No deployment, DNS or rollback performed."
+  },
+  "qualification": "All returned branch pages (100 + final page), tag matching refs and releases; historical source comparisons, not blanket semantic equivalence. Refresh immediately before merge."
+}
