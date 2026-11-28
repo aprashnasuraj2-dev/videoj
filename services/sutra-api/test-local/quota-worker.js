@@ -32,12 +32,13 @@ export default {async fetch(request,env){
 
 async function runInferenceFixture(request,env,url){
  const scenario=url.searchParams.get('scenario');
- if(!['success','redirect','malformed','disabled'].includes(scenario))return new Response('',{status:400});
+ if(!['success','redirect','malformed','disabled','load'].includes(scenario))return new Response('',{status:400});
  const origin='https://sutra.test',key='LOCAL_SYNTHETIC_KEY_NOT_A_REAL_CREDENTIAL';
  const config={...env,SUTRA_ENABLE_INFERENCE:scenario==='disabled'?'false':'true',SUTRA_INFERENCE_BACKEND:'hosted',
   SUTRA_PROVIDER_KEY:key,SUTRA_CLIENT_HASH_SECRET:'f'.repeat(32),SUTRA_ALLOWED_ORIGIN:origin,
   SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'64',
-  SUTRA_QUOTA:{idFromName:()=>env.TEST_QUOTA.idFromName('local-inference'),get:id=>env.TEST_QUOTA.get(id)}
+  ...(scenario==='load'?{SUTRA_MAX_DAILY_CALLS:'4',SUTRA_MAX_CLIENT_CALLS:'1',SUTRA_MAX_CONCURRENT:'4'}:{}),
+  SUTRA_QUOTA:{idFromName:()=>env.TEST_QUOTA.idFromName(scenario==='load'?'local-inference-load':'local-inference'),get:id=>env.TEST_QUOTA.get(id)}
  };
  const original=await request.json();
  const localRequest=new Request(origin+'/api/infer',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json','CF-Connecting-IP':original.client??'192.0.2.1'},
