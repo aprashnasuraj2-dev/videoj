@@ -50,7 +50,7 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
-let historySaveUncertain=false,inspectedDurableHistory=null,previousLocalHistory=null,historyAdoptionPending=false,historySaveController=null;
+let historySaveUncertain=false,inspectedDurableHistory=null,previousLocalHistory=null,historyAdoptionPending=false,adoptedHistoryPin=null,historySaveController=null;
 // Use the existing canonical history object; recovery never alters evidence draft or baseline.
 function markHistorySaveUnknown(attempted){
  historySaveUncertain=true;inspectedDurableHistory=null;
@@ -1385,7 +1385,7 @@ function durableHistoryStatus(state,message){by('history-durable-status').datase
 // These controls are added only to the existing durable-history panel.
 const durableRecoveryRow=document.createElement('div');durableRecoveryRow.className='controls';
 const durableRecoveryDetail=document.createElement('p');durableRecoveryDetail.id='review-history-durable-detail';durableRecoveryDetail.setAttribute('role','status');durableRecoveryDetail.className='mono';
-for(const [id,label] of [['cancel','Stop waiting for save'],['reload','Use inspected history; keep draft'],['undo','Restore previous local history']]){
+for(const [id,label] of [['cancel','Stop waiting for save'],['reload','Use inspected history; keep draft'],['undo','Restore previous local history'],['keep','Keep current history']]){
  const button=document.createElement('button');button.type='button';button.id='review-history-durable-'+id;button.textContent=label;button.className='secondary';button.disabled=true;durableRecoveryRow.append(button);
 }
 by('history-durable-status').after(durableRecoveryDetail,durableRecoveryRow);
@@ -1398,7 +1398,8 @@ function durableHistoryControl(){
  by('history-durable-cancel').disabled=!historySaveController;
  const inspected=inspectedDurableHistory?.snapshot();
  by('history-durable-reload').disabled=busy||historyAdoptionPending||historySaveUncertain||!inspected||inspected.digest!==retained||inspected.digest===s?.digest;
- by('history-durable-undo').disabled=busy||!historyAdoptionPending;
+ by('history-durable-undo').disabled=busy||!historyAdoptionPending||s?.digest!==adoptedHistoryPin;
+ by('history-durable-keep').disabled=busy||!historyAdoptionPending;
  const describe=x=>x.view.versions.length+' version(s) · '+x.view.branches.map(b=>b.name+' '+b.head.slice(7,19)).join(', ');
  const localSet=new Set(s?.view.versions.map(v=>v.digest)),savedSet=new Set(inspected?.view.versions.map(v=>v.digest));
  const delta=s&&inspected?localSet.size-[...localSet].filter(v=>savedSet.has(v)).length+' local-only / '+(savedSet.size-[...savedSet].filter(v=>localSet.has(v)).length)+' saved-only versions':'';
@@ -1468,15 +1469,20 @@ by('history-durable-read').onclick=()=>work(async ticket=>{
 });
 by('history-durable-reload').onclick=()=>{
  if(busy||historyAdoptionPending||historySaveUncertain||!inspectedDurableHistory||inspectedDurableHistory.snapshot().digest!==by('history-durable-pin').value.trim()||inspectedDurableHistory.snapshot().digest===history?.snapshot().digest)return;
- previousLocalHistory=history;historyAdoptionPending=true;history=inspectedDurableHistory;inspectedDurableHistory=null;renderHistory();
+ previousLocalHistory=history;historyAdoptionPending=true;history=inspectedDurableHistory;adoptedHistoryPin=history.snapshot().digest;inspectedDurableHistory=null;renderHistory();
  durableHistoryStatus('recovered','Inspected history loaded explicitly. Editable draft and comparison baseline unchanged; prior local history can be restored.');
  status('history_ready','Saved history loaded without changing evidence draft or baseline.');
 };
 by('history-durable-undo').onclick=()=>{
- if(busy||!historyAdoptionPending)return;
- history=previousLocalHistory;previousLocalHistory=null;historyAdoptionPending=false;inspectedDurableHistory=null;renderHistory();
+ if(busy||!historyAdoptionPending||history?.snapshot().digest!==adoptedHistoryPin)return;
+ history=previousLocalHistory;previousLocalHistory=null;historyAdoptionPending=false;adoptedHistoryPin=null;inspectedDurableHistory=null;renderHistory();
  durableHistoryStatus('local','Previous local history restored. Durable store and editable draft unchanged.');
  status('history_ready','Previous local history restored; no host write.');
+};
+by('history-durable-keep').onclick=()=>{
+ if(busy||!historyAdoptionPending)return;
+ previousLocalHistory=null;historyAdoptionPending=false;adoptedHistoryPin=null;historyControl();
+ durableHistoryStatus(historySaveUncertain?'unknown':'local','Current local history kept explicitly. No host write; saved digest still requires verification if uncertain.');
 };
 by('history-create').onclick=()=>work(async ticket=>{
  const v=semanticCurrent;if(history||!v)return;
