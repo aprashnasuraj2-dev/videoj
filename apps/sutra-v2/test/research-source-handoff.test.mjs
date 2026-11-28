@@ -29,7 +29,7 @@ function citationFixture(){
  const f=fixture('Reported revenue was USD 100 million in 2025.');
  const d=f.report.documents[0],start=0,end=d.text.length,quote='USD 100 million',offset=d.text.indexOf(quote);
  f.report.passages=[{sourceId:d.id,sourceDigest:d.textDigest,supportingText:d.text,locator:{coordinateSystem:'utf16-extracted-text',startOffset:start,endOffset:end}}];
- f.report.intelligence={claims:[{id:'claim_1',kind:'reported',truthStatus:'UNVERIFIED',publicationStatus:'candidate_reviewed',citations:[{passageId:'passage_'+digest(JSON.stringify([d.id,d.textDigest,start,end])).slice(7,31),sourceId:d.id,sourceDigest:d.textDigest,quote,locator:{coordinateSystem:'utf16-extracted-text',startOffset:offset,endOffset:offset+quote.length},verification:'exact_span_only'}]}]};
+ f.report.intelligence={claims:[{id:'claim_1',kind:'reported',truthStatus:'UNVERIFIED',publicationStatus:'candidate_reviewed',citations:[{passageId:'passage_'+digest(JSON.stringify([d.id,d.textDigest,start,end])).slice(7,31),sourceId:d.id,sourceDigest:d.textDigest,quote,locator:{coordinateSystem:'utf16-extracted-text',startOffset:offset,endOffset:offset+quote.length},verification:'exact_span_only',acquisitionPin:digest(JSON.stringify([d.id,d.textDigest,d.rawDigest,d.url,d.finalUrl??d.url,d.retrievedAt,d.mediaType,d.parser,false,[]]))}]}]};
  f.reportPin=digest(JSON.stringify(f.report));return {...f,citation:{claimId:'claim_1',index:0}};
 }
 test('claim citation handoff selects only exact reviewed span and never admits claim or quantity',async()=>{
@@ -39,7 +39,7 @@ test('claim citation handoff selects only exact reviewed span and never admits c
  assert.ok(Object.isFrozen(c.provenance.passages[0]));
 });
 test('repinned unknown claim, wrong passage id, stale digest, withheld claim and invented locator refuse',async()=>{
- for(const mutate of [f=>f.citation.claimId='unknown',f=>f.report.intelligence.claims[0].citations[0].passageId='forged',f=>f.report.intelligence.claims[0].citations[0].sourceDigest='sha256:'+'a'.repeat(64),f=>f.report.intelligence.claims[0].publicationStatus='withheld_from_findings',f=>f.report.intelligence.claims[0].citations[0].locator.startOffset++,f=>f.report.intelligence.claims[0].truthStatus='VERIFIED']){
+ for(const mutate of [f=>f.citation.claimId='unknown',f=>f.report.intelligence.claims[0].citations[0].passageId='forged',f=>f.report.intelligence.claims[0].citations[0].sourceDigest='sha256:'+'a'.repeat(64),f=>f.report.intelligence.claims[0].publicationStatus='withheld_from_findings',f=>f.report.intelligence.claims[0].citations[0].locator.startOffset++,f=>f.report.intelligence.claims[0].truthStatus='VERIFIED',f=>f.report.documents[0].retrievedAt='2026-11-27T12:01:00.000Z',f=>f.report.documents[0].url='https://replacement.org/report',f=>f.report.documents[0].finalUrl='https://replacement.org/report']){
   const f=citationFixture();mutate(f);f.reportPin=digest(JSON.stringify(f.report));await assert.rejects(prepareAutonomousSourceCandidate(f),/RESEARCH_HANDOFF_(CLAIM|CITATION)/);
  }
 });
