@@ -3,6 +3,7 @@ import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
+import {semanticOperationExpression as expression} from './semantic-operation-schema.js';
 
 export const VERSION='sutra-semantic-input-pathway/v1';
 export const PATHWAYS=Object.freeze(['structured_table','template_rule','user_expression','document_extract','model_proposal']);
@@ -14,19 +15,9 @@ const parse=(s,d=10)=>parseUniqueJson(s,{maxChars:262144,maxDepth:d});
 const sort=(a,b)=>a<b?-1:a>b?1:0;
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
 function roles(x,ids){
- if(!x||typeof x!=='object'||Array.isArray(x))fail('ROLES');const out={};
+ if(!x||typeof x!=='object'||Array.isArray(x))fail('ROLES');const out=Object.create(null);
  for(const [k,v] of Object.entries(x).sort(([a],[b])=>sort(a,b))){if(!/^[A-Za-z][A-Za-z0-9_-]{0,31}$/.test(k)||typeof v!=='string'||!ids.has(v))fail('ROLE_BINDING');out[k]=v;}
  return out;
-}
-function expression(mode,r,op){
- if(!MODES.has(mode)||!OPS.has(op))fail('RULE');const b=x=>'['+r[x]+']';
- if(mode==='DIRECT_COMPARISON'||mode==='TEMPORAL_COMPARISON')return b('left')+op+b('right');
- if(mode==='SIGNED_DIFFERENCE'||mode==='PERCENTAGE_POINT_CHANGE')return '('+b('now')+'-'+b('prior')+')'+op+b('limit');
- if(mode==='SIGNED_RELATIVE_CHANGE'||mode==='TEMPORAL_RELATIVE_CHANGE')return '(('+b('now')+'-'+b('prior')+')/'+b('prior')+')'+op+b('limit');
- if(mode==='RATIO')return '('+b('numerator')+'/'+b('denominator')+')'+op+b('limit');
- if(mode==='AGGREGATE_SUM'){const xs=Object.keys(r).filter(k=>/^item\d+$/.test(k)).sort((a,b)=>Number(a.slice(4))-Number(b.slice(4)));if(xs.length<2)fail('SUM');return '('+xs.map(b).join('+')+')'+op+b('limit');}
- if(mode==='WEIGHTED_MEAN')return '(('+b('a')+'*'+b('wa')+')+('+b('b')+'*'+b('wb')+'))/('+b('wa')+'+'+b('wb')+')'+op+b('limit');
- fail('MODE');
 }
 function semantic(mode,operator,roleMap){return JSON.stringify({mode,operator,roles:roleMap});}
 export async function normalizeSemanticPathway({contractText,contractPin,pathway,payloadText,payloadPin}={}){
@@ -36,7 +27,7 @@ export async function normalizeSemanticPathway({contractText,contractPin,pathway
  let mode,operator,roleMap,expr;
  if(pathway==='structured_table'){
   if(!keys(p,['version','mode','operator','columns','rows'])||p.version!==1||!Array.isArray(p.columns)||JSON.stringify(p.columns)!==JSON.stringify(['role','bindingId'])||!Array.isArray(p.rows))fail('TABLE');
-  roleMap=roles(Object.fromEntries(p.rows.map(row=>{if(!Array.isArray(row)||row.length!==2)fail('TABLE_ROW');return row;})),ids);mode=p.mode;operator=p.operator;expr=expression(mode,roleMap,operator);
+  const seen=new Set();roleMap=roles(Object.fromEntries(p.rows.map(row=>{if(!Array.isArray(row)||row.length!==2||typeof row[0]!=='string'||seen.has(row[0]))fail('TABLE_ROW');seen.add(row[0]);return row;})),ids);mode=p.mode;operator=p.operator;expr=expression(mode,roleMap,operator);
  }else if(pathway==='template_rule'){
   if(!keys(p,['version','template','operator','arguments'])||p.version!==1)fail('TEMPLATE');mode=p.template;operator=p.operator;roleMap=roles(p.arguments,ids);expr=expression(mode,roleMap,operator);
  }else if(pathway==='user_expression'){

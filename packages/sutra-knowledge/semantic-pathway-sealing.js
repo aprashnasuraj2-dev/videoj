@@ -3,6 +3,7 @@ import {casePin} from './pinned-investigation.js';
 import {sealReviewedDraft} from './reviewed-draft.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
 import {PATHWAYS} from './semantic-input-pathways.js';
+import {semanticOperationExpression as expr} from './semantic-operation-schema.js';
 
 export const VERSION='sutra-semantic-pathway-sealing/v1';
 const OPS=new Set(['>','>=','<','<=','==']);
@@ -20,23 +21,13 @@ function canonicalEvidenceDraft(d){
  return {version:1,question:d.question,sources,bindings};
 }
 function roleRows(rows){
- if(!Array.isArray(rows))fail('ROLE_ROWS');const out={};
+ if(!Array.isArray(rows))fail('ROLE_ROWS');const out=Object.create(null);
  for(const row of rows){if(!Array.isArray(row)||row.length!==2||typeof row[0]!=='string'||Object.hasOwn(out,row[0]))fail('ROLE_ROW');out[row[0]]=row[1];}
  return out;
 }
 function normalizeRoles(raw,ids){
- if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('ROLES');const out={};
+ if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('ROLES');const out=Object.create(null);
  for(const [k,v] of Object.entries(raw).sort(([a],[b])=>sort(a,b))){if(!/^[A-Za-z][A-Za-z0-9_-]{0,31}$/.test(k)||typeof v!=='string'||!ids.has(v))fail('ROLE_BINDING');out[k]=v}return out;
-}
-function expr(mode,r,op){
- if(!MODES.has(mode)||!OPS.has(op))fail('RULE');const b=x=>'['+r[x]+']';
- if(mode==='DIRECT_COMPARISON'||mode==='TEMPORAL_COMPARISON')return b('left')+op+b('right');
- if(mode==='SIGNED_DIFFERENCE'||mode==='PERCENTAGE_POINT_CHANGE')return '('+b('now')+'-'+b('prior')+')'+op+b('limit');
- if(mode==='SIGNED_RELATIVE_CHANGE'||mode==='TEMPORAL_RELATIVE_CHANGE')return '(('+b('now')+'-'+b('prior')+')/'+b('prior')+')'+op+b('limit');
- if(mode==='RATIO')return '('+b('numerator')+'/'+b('denominator')+')'+op+b('limit');
- if(mode==='AGGREGATE_SUM'){const xs=Object.keys(r).filter(k=>/^item\d+$/.test(k)).sort((a,b)=>Number(a.slice(4))-Number(b.slice(4)));if(xs.length<2)fail('SUM');return '('+xs.map(b).join('+')+')'+op+b('limit')}
- if(mode==='WEIGHTED_MEAN')return '(('+b('a')+'*'+b('wa')+')+('+b('b')+'*'+b('wb')+'))/('+b('wa')+'+'+b('wb')+')'+op+b('limit');
- fail('MODE');
 }
 function prepare(pathway,p){
  if(pathway==='structured_table'){
@@ -48,7 +39,7 @@ function prepare(pathway,p){
  if(pathway==='user_expression'){if(!keys(p,['version','evidence','declaredMode','operator','roles','expression'])||p.version!==2||typeof p.expression!=='string')fail('EXPRESSION');return {draft:canonicalEvidenceDraft(p.evidence),mode:p.declaredMode,operator:p.operator,roles:p.roles,supplied:p.expression}}
  if(pathway==='document_extract'){
   if(!keys(p,['version','question','document','relationship','selections'])||p.version!==2||!keys(p.document,['id','text','lineage'])||!keys(p.relationship,['mode','operator'])||!p.selections||typeof p.selections!=='object'||Array.isArray(p.selections))fail('DOCUMENT');
-  const byId=new Map(),roles={};for(const [role,s] of Object.entries(p.selections)){if(!keys(s,['bindingId','start','end','type']))fail('DOCUMENT_SELECTION');roles[role]=s.bindingId;const row={id:s.bindingId,sourceId:p.document.id,start:s.start,end:s.end,type:s.type},prior=byId.get(s.bindingId);if(prior&&JSON.stringify(stable(prior))!==JSON.stringify(stable(row)))fail('DOCUMENT_DUPLICATE');byId.set(s.bindingId,row)}
+  const byId=new Map(),roles=Object.create(null);for(const [role,s] of Object.entries(p.selections)){if(!keys(s,['bindingId','start','end','type']))fail('DOCUMENT_SELECTION');roles[role]=s.bindingId;const row={id:s.bindingId,sourceId:p.document.id,start:s.start,end:s.end,type:s.type},prior=byId.get(s.bindingId);if(prior&&JSON.stringify(stable(prior))!==JSON.stringify(stable(row)))fail('DOCUMENT_DUPLICATE');byId.set(s.bindingId,row)}
   return {draft:canonicalEvidenceDraft({version:1,question:p.question,sources:[p.document],bindings:[...byId.values()]}),mode:p.relationship.mode,operator:p.relationship.operator,roles,supplied:null};
  }
  if(!keys(p,['version','authority','reviewedEvidence','proposal'])||p.version!==2||p.authority!=='UNTRUSTED_PROPOSAL'||!keys(p.proposal,['mode','operator','roles']))fail('MODEL');
