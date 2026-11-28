@@ -1,0 +1,30 @@
+{
+  "schema": "sutra-autonomous-research/v1",
+  "objective": "Public documentation of the International Energy Agency global energy statistics",
+  "scope": {
+    "publicWeb": true,
+    "queryDisclosureAllowed": true,
+    "allowPrivateNetworks": false,
+    "allowAuthentication": false,
+    "allowExternalWrites": false,
+    "privateEvidenceDisclosureAllowed": false
+  },
+  "budget": {
+    "maxSearches": 2,
+    "maxDocuments": 1,
+    "maxLinkDepth": 0,
+    "maxDurationSeconds": 60,
+    "maxDownloadBytes": 524288,
+    "maxCostMicros": 200000
+  },
+  "providers": [
+    {
+      "id": "brave",
+      "estimatedMaxCostMicros": 100000
+    },
+    {
+      "id": "tavily",
+      "estimatedMaxCostMicros": 100000
+    }
+  ]
+}

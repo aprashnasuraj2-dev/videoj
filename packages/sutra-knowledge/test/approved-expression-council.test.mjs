@@ -6,13 +6,13 @@ import {createProviderWorkspace} from '../../sutra-inference/provider-workspace.
 import {createDisclosureConsentInspector} from '../../sutra-consent/index.js';
 
 const scope='reviewed-question-bindings-and-conditional-feedback';
-function setup(){
+function setup(transport){
  let calls=0,seed=1;
  const limits={maxCalls:2,maxInputBytes:100000,maxOutputTokens:2048,maxConcurrent:1};
  const workspace=createProviderWorkspace({
   catalog:[{id:'local-a',label:'Local A',models:['local/a']}],
   globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,
-  transports:[{providerId:'local-a',async send(){calls++;return {actualInputBytes:1,actualOutputTokens:8,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};}}]
+  transports:[{providerId:'local-a',async send(input,options){calls++;if(transport)return transport(input,options);return {actualInputBytes:1,actualOutputTokens:8,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};}}]
  });
  const profile=workspace.addProfile({providerId:'local-a',label:'Local profile',credential:'SYNTHETIC_COUNCIL_SECRET'});
  return {workspace,route:{id:'reviewer',role:'Propose one comparison',handle:profile.handle,model:'local/a',shareScope:scope},calls:()=>calls};
@@ -61,4 +61,40 @@ test('route invalidation after consent preview cannot dispatch under the old app
  await assert.rejects(approval.execute({consentInspector:consent,approvedPlanPin:approval.planPin}));
  assert.equal(decisions,1);assert.equal(s.calls(),0);
  await assert.rejects(approval.execute({consentInspector:consent,approvedPlanPin:approval.planPin}),/COUNCIL_APPROVAL_CONSUMED/);
+});
+
+
+test('approved council plan pins generic capability requirements and host declaration before consent',async()=>{
+ const f=await compilerFinanceFixture(),limits={maxCalls:2,maxInputBytes:100000,maxOutputTokens:2048,maxConcurrent:1};let seed=120,calls=0;
+ const workspace=createProviderWorkspace({
+  catalog:[{id:'capable-host',label:'Capable host',models:['capable/model'],capabilities:{'capable/model':['text.generate','structured.output']}}],
+  globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,
+  transports:[{providerId:'capable-host',send:async()=>{calls++;return {actualInputBytes:1,actualOutputTokens:1,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};}}]
+ });
+ const p=workspace.addProfile({providerId:'capable-host',label:'Capable',credential:'CAPABILITY_PLAN_SECRET_123'});
+ const route={id:'reviewer',role:'Propose one comparison',handle:p.handle,model:'capable/model',shareScope:scope,requires:['text.generate']};
+ const approval=await prepareApprovedExpressionCouncil({contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:[route],workspace,maxRounds:1});
+ assert.deepEqual(approval.plan.agents[0].requires,['text.generate']);
+ assert.deepEqual(approval.plan.agents[0].declaredCapabilities,['text.generate','structured.output']);
+ assert.equal(approval.plan.agents[0].capabilityAuthority,'HOST_DECLARED_UNVERIFIED');
+ assert.equal(calls,0);assert.equal(workspace.budgetSnapshot().global.used.calls,0);
+ route.requires.push('tool.call');
+ const consent=createDisclosureConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await approval.execute({consentInspector:consent,approvedPlanPin:approval.planPin});
+ assert.equal(calls,1);assert.equal(result.decisionAuthority,'NONE');
+});
+
+test('revocation during a dispatched approved council aborts the actual transport and prevents later rounds',async()=>{
+ let entered,release,transportSignal;const ready=new Promise(r=>entered=r);
+ const s=setup((_request,{signal})=>{transportSignal=signal;entered();return new Promise(r=>release=r);});
+ const f=await compilerFinanceFixture();
+ const approval=await prepareApprovedExpressionCouncil({contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:[s.route],workspace:s.workspace,maxRounds:2,maxOutputTokens:128,timeoutMs:5000});
+ const inspector=createDisclosureConsentInspector({decide:()=> 'allow'});
+ const pending=approval.execute({consentInspector:inspector,approvedPlanPin:approval.planPin});
+ await ready;inspector.clearSession();
+ await assert.rejects(pending,e=>e.code==='CANCELLED');assert.equal(transportSignal.aborted,true);
+ release({actualInputBytes:1,actualOutputTokens:8,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}});
+ await new Promise(r=>setImmediate(r));assert.equal(s.calls(),1);
+ assert.deepEqual(inspector.exportEvents().filter(e=>e.type==='outcome').map(e=>e.status),['failed']);
+ await assert.rejects(approval.execute({consentInspector:inspector,approvedPlanPin:approval.planPin}),/COUNCIL_APPROVAL_CONSUMED/);
 });

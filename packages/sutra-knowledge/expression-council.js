@@ -9,9 +9,9 @@ import {prepareCouncil,runCouncilRounds,councilClosed,councilFail,councilText} f
 import {admitCouncilDisclosure,projectCouncilBindings} from './council-disclosure.js';
 const SCOPE='reviewed-question-bindings-and-conditional-feedback';
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
-export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed'}={}){
+export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed',assertCurrent,onActivity}={}){
  if(!['fixed','stop-on-stagnation'].includes(roundPolicy))councilFail('CONFIG');
- const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
+ const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8,maxParticipants:6,assertCurrent});
  const admitted=admitCouncilDisclosure(disclosure,config.team.map(x=>x.id)),allowed=new Set(admitted.bindingIds),includeValues=admitted.includeValues;
  const scopes=new Map(admitted.scopes.map(x=>[x.agentId,x]));
  // Snapshot disclosure and route choices BEFORE asynchronous admission.
@@ -20,6 +20,7 @@ export async function runExpressionCouncil({contractText,contractPin,disclosure,
  if(!councilText(contract.question.text,2000)||[...allowed].some(id=>!contract.bindings.some(b=>b.id===id)))councilFail('DISCLOSURE');
  const question=contract.question.text,bindings=projectCouncilBindings(contract,admitted),bindingsByAgent=new Map(admitted.scopes.map(x=>[x.agentId,projectCouncilBindings(contract,x)]));
  const result=await runCouncilRounds(config,{
+  onActivity,
   operation:(route,round,feedback)=>({kind:'reviewed-expression-council-v1',agentId:route.id,role:route.role,question,bindings:bindingsByAgent.get(route.id),round,feedback:feedback.filter(x=>x.agentId===route.id||scopes.get(route.id).feedbackFrom.includes(x.agentId)),instruction:'Propose a single mathematical comparison representing a possible interpretation of the question. Use only offered [binding_id] references, parentheses, + - * / and exactly one of == < <= > >=. No numeric literals, code, URLs, new inputs, or claimed verdict. Return JSON {version:1,kind:"expression",expression:"..."} or {version:1,kind:"abstain"}. Prior verification is conditional only; challenge incorrect interpretations rather than vote.'}),
   admit:(text,route)=>{
    const p=parseUniqueJson(text,{maxChars:8192,maxDepth:3});

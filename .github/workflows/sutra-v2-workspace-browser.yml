@@ -2,10 +2,10 @@ name: Validate SUTRA workspace browser
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**', 'apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-research/**', 'tools/sutra-neutral-consumer/**', 'services/sutra-api/**', 'deploy/sutra-pages/**', '.github/workflows/sutra-v2-workspace-browser.yml']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', '.github/workflows/sutra-v2-workspace-browser.yml']
+    paths: ['apps/sutra-v2/**', 'apps/sutra-peer/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-research/**', 'tools/sutra-neutral-consumer/**', 'services/sutra-api/**', 'deploy/sutra-pages/**', '.github/workflows/sutra-v2-workspace-browser.yml']
 permissions:
   contents: read
 jobs:
@@ -14,12 +14,20 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate revision
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: apps/sutra-v2/package-lock.json
       - run: node --check apps/sutra-v2/test/browser.cjs
+      - run: node --test apps/sutra-v2/test/council-activity.test.mjs apps/sutra-v2/test/execution-channel.test.mjs apps/sutra-v2/test/investigation-graph.test.mjs apps/sutra-v2/test/frame-driver.test.mjs apps/sutra-v2/test/impact-projection.test.mjs apps/sutra-v2/test/research-source-handoff.test.mjs apps/sutra-v2/test/research-activity.test.mjs apps/sutra-v2/test/reviewed-answer.test.mjs apps/sutra-v2/test/browser-run-receipt.test.mjs apps/sutra-v2/test/history-host.test.mjs
+      - run: node --test apps/sutra-v2/test/event-horizon.test.mjs
       - run: npm ci --prefix apps/sutra-v2
       - name: Build actual canonical browser artifact
         run: |
@@ -28,10 +36,85 @@ jobs:
           node --test apps/sutra-v2/test/build-contract.test.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra-v2/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Verify adaptive workspace and explicit legacy mode
+        run: node apps/sutra-v2/test/event-horizon-browser.cjs
+      - name: Preserve adaptive workspace screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-event-horizon-viewports
+          path: apps/sutra-v2/test-output/event-horizon-*.png
+          if-no-files-found: warn
       - run: node --test apps/sutra-v2/test/demo-guide.test.mjs
+      - name: Verify actual offline history capability and recovery boundary
+        run: node apps/sutra-v2/test/durable-recovery.cjs
       - name: Execute complete browser journey including draft recovery
         run: node apps/sutra-v2/test/browser.cjs
+      - name: Independently replay actual browser downloads in isolated Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=apps/sutra-v2/test-output
+          python3 -I -S --version
+          python3 packages/sutra-knowledge/reference/test_offline_verifier.py "$out/sutra-proof-verifier.pyz" "$out/sutra-proof-verifier.pyz.sha256" "$out/capsule-current.json" "$out/capsule-current.sha256" "$out/capsule-old.json" "$out/capsule-old.sha256" | tee "$out/offline-replay.log"
+          git rev-parse HEAD > "$out/offline-replay-revision.txt"
+      - name: Preserve browser-download independent replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-browser-offline-replay
+          path: |
+            apps/sutra-v2/test-output/sutra-proof-verifier.pyz
+            apps/sutra-v2/test-output/sutra-proof-verifier.pyz.sha256
+            apps/sutra-v2/test-output/capsule-current.json
+            apps/sutra-v2/test-output/capsule-current.sha256
+            apps/sutra-v2/test-output/capsule-old.json
+            apps/sutra-v2/test-output/capsule-old.sha256
+            apps/sutra-v2/test-output/offline-replay*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Execute objective-first shared-model research bridge fixture
+        run: node apps/sutra-v2/test/autonomous-workspace.cjs
+      - name: Verify browser-owned bounded query and document selection
+        run: node apps/sutra-v2/test/browser-research-orchestration.cjs
+      - name: Exercise research disagreement through reviewed revision and proof export
+        run: |
+          node apps/sutra-v2/test/research-revision.cjs
+          node apps/sutra-v2/test/research-revision.cjs --mobile
+      - name: Consume canonical V2 build from independent browser origin
+        run: node tools/sutra-neutral-consumer/browser.cjs --v2-dist
+      - name: Preserve independent conformance assertion and network report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-neutral-conformance
+          path: apps/sutra-v2/test-output/neutral-conformance.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve orbital viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-orbital-viewport-screenshots
+          path: apps/sutra-v2/test-output/orbit-*.png
+          if-no-files-found: ignore
+      - name: Preserve synthetic competition browser screenshots and receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-competition-fixture-evidence
+          path: apps/sutra-v2/test-output/competition-fixture-*
+          if-no-files-found: warn
+          retention-days: 30
       - name: Execute keyboard, reflow and reduced-motion accessibility contract
         run: node apps/sutra-v2/test/workspace-accessibility.cjs
+      - name: Measure cold desktop and mobile emulation performance
+        run: node apps/sutra-v2/test/workspace-performance.cjs
+      - name: Preserve workspace performance measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-workspace-performance
+          path: apps/sutra-v2/test-output/workspace-performance.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Scope boundary
-        run: echo 'Actual child browser execution only; full independent artifact replay and integration formal gates remain required.'
+        run: echo 'Actual browser and isolated independent fixed-capsule replay; broader integration formal gates remain required.'

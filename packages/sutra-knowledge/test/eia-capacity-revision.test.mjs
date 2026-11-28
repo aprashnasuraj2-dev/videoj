@@ -1,0 +1,47 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {casePin} from '../pinned-investigation.js';
+import {sealReviewedDraft,selectedSpan} from '../reviewed-draft.js';
+import {FACETS} from '../semantic-investigation.js';
+import {sealInvestigationVersion,replayInvestigationVersion,createInvestigationReplaySession} from '../investigation-revision.js';
+import {exportEvidenceRevision,openEvidenceRevision} from '../evidence-revision-transaction.js';
+import {readFile} from 'node:fs/promises';
+
+const fixture=JSON.parse(await readFile(new URL('../evaluation/eia-capacity-2024-v1.json',import.meta.url),'utf8'));
+const type={kind:'capacity',unit:'GW',scope:'us_battery_additions_2024',dimension:[0,0,0]};
+const before=fixture.sources[0],after=fixture.sources[1],threshold=fixture.analystThreshold;
+const tokenBinding=(id,sourceId,text,token)=>({id,sourceId,start:text.indexOf(token),end:text.indexOf(token)+token.length,type});
+test('EIA dated forecast versus subsequent reported additions: conditional threshold flips, exact proof reopens',async()=>{
+ for(const s of fixture.sources)assert.equal(await casePin(s.excerpt),s.excerptDigest);
+ assert.equal(await casePin(threshold.text),threshold.digest);
+ const question='Does the reported or assumed 2024 US battery storage capacity addition meet the analyst review threshold?';
+ const sources=[{id:'addition_report',lineage:'eia_same_publisher',text:before.excerpt},{id:'threshold_rule',lineage:'analyst_declared',text:threshold.text}];
+ const bindings=[tokenBinding('addition','addition_report',before.excerpt,before.token),tokenBinding('threshold','threshold_rule',threshold.text,threshold.token)];
+ const {contractText,pin}=await sealReviewedDraft(JSON.stringify({version:1,question,sources,bindings}));
+ const proposalText=JSON.stringify({version:1,contractDigest:pin,questionSpan:selectedSpan('question',question,0,question.length),claims:[],nodes:[{id:'addition_value',kind:'input',bindingId:'addition'},{id:'threshold_value',kind:'input',bindingId:'threshold'},{id:'target',kind:'constraint',op:'ge',args:['addition_value','threshold_value']}],targetId:'target'});
+ // The contrast contract requires two to eight candidates. Compare the predicate with its exact complement, not a fabricated independent interpretation.
+ const complement=JSON.parse(proposalText);complement.nodes.find(n=>n.id==='target').op='lt';
+ const batchText=JSON.stringify({version:1,contractDigest:pin,proposals:[{id:'threshold_check',proposalText},{id:'below_threshold',proposalText:JSON.stringify(complement)}]});
+ const annotationText=JSON.stringify({version:1,contractDigest:pin,batchDigest:await casePin(batchText),candidates:[{id:'threshold_check',meaning:'Conditional on the selected dated estimate; not an empirical forecast verification or investment recommendation.',facets:Object.fromEntries(FACETS.map(k=>[k,null]))},{id:'below_threshold',meaning:'Complementary predicate: selected dated estimate is below the hypothetical threshold; not a separate independent source.',facets:Object.fromEntries(FACETS.map(k=>[k,null]))}]});
+ const parent=await sealInvestigationVersion({previousDigest:null,contractText,contractPin:pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
+ const contract=JSON.parse(contractText);
+ const old=contract.sources.find(s=>s.id==='addition_report');
+ const start=after.excerpt.indexOf(after.token);
+ const replacement={kind:'replace',sourceId:old.id,previousDigest:old.digest,replacementText:after.excerpt,replacementDigest:after.excerptDigest,rebindings:[{bindingId:'addition',span:selectedSpan(old.id,after.excerpt,start,start+after.token.length)}]};
+ const planText=JSON.stringify({version:1,parentDigest:parent.digest,operations:[replacement]}),planPin=await casePin(planText);
+ const e=await exportEvidenceRevision(parent.versionText,parent.digest,planText,planPin);
+ assert.equal(e.portable,true);
+ const r=e.revision;
+ assert.deepEqual(r.changes.map(c=>[c.id,c.classification,c.before,c.after]),[['threshold_check','TARGET_INPUT_RESELECTED',fixture.expected.before,fixture.expected.after],['below_threshold','TARGET_INPUT_RESELECTED',fixture.expected.after,fixture.expected.before]]);
+ assert.deepEqual(r.invalidatedBindingIds,['addition']);assert.deepEqual(r.reselectedBindingIds,['addition']);assert.deepEqual(r.missingBindingIds,[]);
+ const childContract=JSON.parse(JSON.parse(r.child.versionText).contractText);
+ assert.deepEqual(childContract.sources.find(s=>s.id==='threshold_rule'),contract.sources.find(s=>s.id==='threshold_rule'));
+ assert.deepEqual(await replayInvestigationVersion(r.child.versionText,r.child.digest),r.child.report);
+ const session=createInvestigationReplaySession();await session.replay(parent.versionText,parent.digest);
+ assert.deepEqual((await session.replay(r.child.versionText,r.child.digest)).report,r.child.report);
+ const opened=await openEvidenceRevision(e.bundleText,e.snapshotPin,parent.digest,planPin,r.child.digest);
+ assert.deepEqual(opened.exported,e);
+ const tampered=JSON.parse(e.bundleText);tampered.decisionAuthority='VERIFIED';
+ const wire=JSON.stringify(tampered);
+ await assert.rejects(openEvidenceRevision(wire,await casePin(wire),parent.digest,planPin,r.child.digest),/IMPORT_/);
+});

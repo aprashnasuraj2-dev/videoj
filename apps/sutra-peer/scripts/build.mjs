@@ -5,4 +5,5 @@ await copyFile(path.join(root,'index.html'),path.join(dist,'index.html'));
 await copyFile(path.join(root,'peer.config.json'),path.join(dist,'peer.config.json'));
 await cp(path.join(root,'src'),path.join(dist,'src'),{recursive:true});
 await cp(path.join(root,'public'),dist,{recursive:true});
+for(const [name,source] of [["LICENSE.txt","LICENSE"],["NOTICE.txt","NOTICE"]])await copyFile(path.resolve(root,'../..',source),path.join(dist,name));
 console.log('Built independent static SUTRA peer at apps/sutra-peer/dist');

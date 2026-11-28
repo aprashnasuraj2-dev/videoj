@@ -3,7 +3,7 @@ import {assertV2StaticHeaders,guideCandidateHeaders,rootStaticPolicy,V2_STATIC_C
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-import {readFile,access} from 'node:fs/promises';
+import {readFile,access,readdir} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const here=dirname(fileURLToPath(import.meta.url)),app=resolve(here,'..');
@@ -33,4 +33,25 @@ test('standalone Python verifier is byte-reproducible, inspectable and bound to 
  const html=await readFile(resolve(app,'dist/index.html'),'utf8');assert.match(html,/href="\.\/sutra-proof-verifier\.pyz" download/);assert.match(html,/href="\.\/sutra-proof-verifier\.pyz\.sha256" download/);
  const checked=spawnSync('python3',[resolve(app,'../../packages/sutra-knowledge/reference/test_offline_verifier.py'),'--build-only',archive,pin],{encoding:'utf8'});
  assert.equal(checked.status,0,checked.stderr||String(checked.error));assert.match(checked.stdout,/exact source manifest and deterministic rebuild verified/);
+});
+
+test('canonical V2 build publishes its own portable investigation graph',async()=>{const {compileNetwork}=await import('../../../packages/sutra-runtime/index.js');const manifest=JSON.parse(await readFile(resolve(app,'dist/agents/agent-manifest.json'),'utf8'));assert.equal(manifest.networks.length,3);const entry=manifest.networks[0];assert.equal(entry.name,'investigation');assert.equal(entry.front_man,'planner');const definition=JSON.parse(await readFile(resolve(app,'dist/agents',entry.hocon),'utf8'));assert.equal(definition.tools.length,2);assert.deepEqual(definition.tools[0].tools,['critic']);assert.equal(compileNetwork(definition,{name:entry.name,frontMan:entry.front_man}).frontMan,'planner');});
+
+test('CORS is restricted to exact public data artifacts, never private API or wildcard',async()=>{const headers=await readFile(resolve(app,'dist/_headers'),'utf8');assertV2StaticHeaders(headers);for(const path of ['/agents/agent-manifest.json','/agents/investigation.network.json'])assert.ok(headers.includes(path+'\n  Access-Control-Allow-Origin: *'));for(const changed of [headers.replace('/agents/agent-manifest.json\n  Access-Control-Allow-Origin: *','/api/*\n  Access-Control-Allow-Origin: *'),headers.replace('/agents/investigation.network.json\n  Access-Control-Allow-Origin: *','/agents/*\n  Access-Control-Allow-Origin: *'),headers.replace('Access-Control-Allow-Origin: *','Access-Control-Allow-Credentials: true'),headers.replace('  Access-Control-Allow-Origin: *\n','')])assert.throws(()=>assertV2StaticHeaders(changed));});
+
+test('reviewed graph needs explicit owning-workspace capability',async()=>{const {compileNetwork}=await import('../../../packages/sutra-runtime/index.js');const graph=JSON.parse(await readFile(resolve(app,'dist/agents/reviewed-investigation.network.json'),'utf8'));assert.throws(()=>compileNetwork(graph,{name:'reviewed_investigation',frontMan:'planner'}),/bounded local tool list/);assert.equal(compileNetwork(graph,{name:'reviewed_investigation',frontMan:'planner',allowWorkspaceEvidence:true}).frontMan,'planner');});
+
+test('peer graph uses exactly the published guide binding',async()=>{const {compileNetwork,resolveSymbolicPeerLinks}=await import('../../../packages/sutra-runtime/index.js');const g=JSON.parse(await readFile(resolve(app,'dist/agents/peer-investigation.network.json'),'utf8')),l=JSON.parse(await readFile(resolve(app,'dist/agents/links.json'),'utf8'));const resolved=resolveSymbolicPeerLinks(g,l,'peer_investigation');assert.deepEqual(resolved.tools[0].tools,[GUIDE_ORIGIN+'/agents/checklist']);assert.throws(()=>compileNetwork(resolved,{name:'peer_investigation',frontMan:'planner'}));assert.equal(compileNetwork(resolved,{name:'peer_investigation',frontMan:'planner',allowPeers:true}).frontMan,'planner');});
+
+test('canonical artifact cannot include historical product entrypoints, source maps or old media assets',async()=>{
+ const root=resolve(app,'dist');
+ async function walk(dir){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=resolve(dir,e.name);if(e.isSymbolicLink())throw Error('Unexpected artifact symlink: '+p);if(e.isDirectory())out.push(...await walk(p));else out.push(p.slice(root.length+1));}return out;}
+ const paths=await walk(root);assert.ok(paths.includes('index.html'));assert.ok(paths.includes('agents/agent-manifest.json'));
+ for(const p of paths){assert.doesNotMatch(p,/(?:^|[/_.-])(?:dhago|detour|afterimage)(?:[/_.-]|$)/i);assert.doesNotMatch(p,/\.map$|^media\/|^transcripts\//i);}
+ const html=await readFile(resolve(root,'index.html'),'utf8');assert.doesNotMatch(html,/https?:\/\/(?:dhago|detour|afterimage)\./i);
+});
+
+
+test('static distribution carries exact root and bundled-runtime license notices',async()=>{
+ for(const [name,source] of [["LICENSE.txt","LICENSE"],["NOTICE.txt","NOTICE"],["nsdeploy-LICENSE.txt","packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt"],["nsdeploy-NOTICE.txt","packages/sutra-runtime/vendor/nsdeploy/NOTICE.md"]])assert.deepEqual(await readFile(resolve(app,'dist',name)),await readFile(resolve(app,'../..',source)),name);
 });

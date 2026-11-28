@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "networks": {
+    "peer_investigation": {
+      "guide_peer": "https://sutra-guide.aafnaipatro.com/agents/checklist"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SUTRA | Debugger for conclusions</title></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SUTRA | Debugger for conclusions</title><link rel="manifest" href="./orbit.webmanifest"><link rel="icon" href="./sutra-orbit.svg" type="image/svg+xml"><meta name="theme-color" content="#101711"></head>
 <body>
 <header><a class="brand" href="./">SUTRA<span> / 02</span></a><nav class="studio-nav" aria-label="Workspace"><a class="tag studio-entry" href="#agent-studio">Agent Studio</a><a class="tag studio-entry" id="review-open" href="#reviewed-workspace">Investigation workspace</a></nav></header>
 <main>
@@ -60,7 +60,7 @@
 </div>
 <p class="hint">Reuses selected connection IDs, protocols, model IDs, roles, permissions, round and call limits. Export defaults: 256 output tokens/call, 100,000 reserved input bytes, up to 2 concurrent calls, 15s council timeout and 10s request deadline. No credentials are included; local processes may forward data or incur costs.</p>
 <label class="studio-consent"><input type="checkbox" id="studio-local-export-approve"> I understand that the configuration includes the full reviewed contract and is intended for my trusted local operator environment.</label>
-<button type="button" class="secondary" id="studio-export-local-plan">Export local runner configuration</button>
+<button type="button" class="secondary" id="studio-export-local-plan">Export local runner configuration</button><p id="studio-hybrid-version" class="hint">No evaluated investigation offered for hybrid execution.</p><label class="studio-consent"><input type="checkbox" id="studio-hybrid-export-approve"> I approve exporting the full offered investigation, including reviewed sources, candidate graphs and annotations, to my local operator.</label><button type="button" class="secondary" id="studio-export-hybrid-plan" disabled>Export local hybrid operator plan</button>
 <p id="studio-local-plan-status" role="status" aria-live="polite" data-state="idle">No local configuration exported.</p>
 <pre id="studio-local-plan-commands" hidden></pre></details>
 </div>
@@ -97,7 +97,7 @@
 <pre id="operator-plan">No approval preview.</pre>
 <p id="operator-pin" class="mono"></p>
 <label class="studio-consent"><input id="operator-approve" type="checkbox" disabled> I approve exactly the displayed route, disclosure and budget identified by this digest.</label>
-<div class="controls"><button id="operator-run" type="button" disabled>Consume approved local rehearsal once</button></div>
+<div class="controls"><button id="operator-run" type="button" disabled>Consume approved local rehearsal once</button><button id="operator-revoke" type="button" class="secondary" disabled>Revoke in-flight approval</button></div>
 <p id="operator-status" role="status" aria-live="polite" data-state="idle">No model authority granted.</p>
 <p id="operator-result"></p>
 </form>

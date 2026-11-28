@@ -1,7 +1,7 @@
 // Loopback-only Wrangler/Miniflare/workerd test, with a fresh SQLite DO.
 // Run explicitly from CI or a local checkout. No Cloudflare login or deploy.
 import assert from 'node:assert/strict';
-import {spawn} from 'node:child_process';
+import {spawn,execFileSync} from 'node:child_process';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
@@ -74,6 +74,26 @@ try{
  const capped=await model('success');assert.equal(capped.status,429);assert.equal(capped.contacts,0);
  const malformed=await model('malformed','192.0.2.2');assert.equal(malformed.status,200);assert.equal(malformed.contacts,1);assert.match(malformed.text,/INCOMPLETE_STREAM/);assert.doesNotMatch(malformed.text,/\[DONE\]/);
  const globalCap=await model('success','192.0.2.3');assert.equal(globalCap.status,429);assert.equal(globalCap.contacts,0);
+ // Separate actual SQLite quota object: 20 concurrent unique client addresses,
+ // with the fixture's real 3/day, 2/client, 1-concurrent limits.
+ // Do not retry any rejected/ambiguous request; later stop probes are new clients.
+ const load=await Promise.all(Array.from({length:20},async(_,i)=>{
+  const start=performance.now(),result=await model('load','192.0.2.'+(i+20));
+  return {...result,ms:Math.round((performance.now()-start)*100)/100};
+ }));
+ const admitted=load.filter(x=>x.status===200),refused=load.filter(x=>x.status===429);
+ assert.equal(admitted.length+refused.length,20);
+ assert.ok(admitted.length>=1&&admitted.length<=3);
+ assert.ok(admitted.every(x=>x.contacts===1&&/data: \[DONE\]/.test(x.text)));
+ assert.ok(refused.every(x=>x.contacts===0));
+ assert.ok(load.every(x=>!x.text.includes('PRIVATE_PROVIDER_CANARY')&&!x.text.includes('LOCAL_SYNTHETIC_KEY')));
+ let stopProbeContacts=0,stopProbeAdmitted=0;
+ for(let i=0;i<3-admitted.length;i++){
+  const fresh=await model('load','192.0.2.'+(100+i));assert.equal(fresh.status,200);assert.equal(fresh.contacts,1);stopProbeContacts+=fresh.contacts;stopProbeAdmitted++;
+ }
+ const stop=await model('load','192.0.2.120');assert.equal(stop.status,429);assert.equal(stop.contacts,0);
+ const percentile=(rows,p)=>rows.length?rows.map(x=>x.ms).sort((a,b)=>a-b)[Math.ceil(rows.length*p)-1]:null;
+ console.log('WORKERD_LOAD '+JSON.stringify({scope:'actual loopback Workerd HTTP + SQLite DO; injected provider only; no production CDN/Worker metrics',revision:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),concurrentClients:20,statusCounts:{200:admitted.length,429:refused.length},providerContacts:load.reduce((n,x)=>n+x.contacts,0),p50Ms:percentile(load,.5),p95Ms:percentile(load,.95),admittedP50Ms:percentile(admitted,.5),admittedP95Ms:percentile(admitted,.95),refusedP50Ms:percentile(refused,.5),refusedP95Ms:percentile(refused,.95),freshStopProbeContacts:stopProbeContacts,stopProbeAdmitted,finalStatus:stop.status,finalContacts:stop.contacts,dailyCeiling:3,perClientCeiling:2,concurrentCeiling:1}));
  console.log('WORKERD_INFERENCE '+JSON.stringify({localOnly:true,simulatedUpstream:true,realDurableStorage:true,disabledContacts:0,completeSse:true,redirectRefused:true,malformedIncomplete:true,perClientAndGlobalCap:true,privateFieldsAbsent:true}));
  console.log('WORKERD_QUOTA '+JSON.stringify({localOnly:true,sqlite:true,wrangler:'4.166.0',oldDayRefused:true,expiredRefused:true,concurrencyDenials:denied.length,sourceCap:true,unknownLeaseRecovered:true,elapsedSinceLostReplyMs:Date.now()-lostAt,perClientAndDailyChargeRetained:true,releaseIdempotent:true}));
 }catch(error){console.error(log);throw error;}

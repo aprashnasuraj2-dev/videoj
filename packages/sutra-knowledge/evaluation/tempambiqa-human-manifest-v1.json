@@ -1,0 +1,26 @@
+{
+  "version": "sutra-external-human-temporal/v1",
+  "dataset": "TempAmbiQA",
+  "source": "https://huggingface.co/datasets/Bhawna/TempAmbiQA",
+  "revision": "ba7839ca206d7b68d4d5322e8c286b649d8da587",
+  "upstreamPath": "TempAmbiQA.json",
+  "repositoryPath": "tempambiqa-human-full-v1.json",
+  "upstreamGitBlob": "b9432856685169dd40e884570ab511b1c129ba12",
+  "sha256": "e71fa96f389e45d73c61915461f9b0b3f6207e956fd5b3eb72d19c66cfee9942",
+  "bytes": 937488,
+  "license": "MIT",
+  "licenseSource": "https://huggingface.co/datasets/Bhawna/TempAmbiQA",
+  "humanAnnotation": true,
+  "hiddenTrainingExampleClaim": false,
+  "statistics": {
+    "records": 8162,
+    "ambiguous": 3879,
+    "unambiguous": 4283,
+    "distinctQuestionStrings": 8161,
+    "conflictingQuestionStrings": 0
+  },
+  "split": "upstream-train; development evaluation only, not a guarantee of model-unseen data",
+  "citation": "Piryani, Abdallah, Mozafari, and Jatowt (2024), Detecting Temporal Ambiguity in Questions, Findings of EMNLP 2024, pages 9620–9634, https://aclanthology.org/2024.findings-emnlp.562/",
+  "integrity": "Pinned upstream tree metadata verified via Hugging Face tree API; raw bytes downloaded from the immutable commit; Git SHA-1 and SHA-256 computed over bytes, repository blob verified.",
+  "scope": "External temporal ambiguity labels only; no other ambiguity families are inferred."
+}

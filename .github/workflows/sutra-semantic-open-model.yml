@@ -1,0 +1,47 @@
+name: Observe SUTRA open-weight semantic pilot
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cpu-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: '1'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare label-blind public test prompts
+        run: |
+          mkdir -p sutra-open-model-pilot
+          SUTRA_SCENARIO_SPLIT_REPORT=sutra-open-model-pilot/split.json node packages/sutra-knowledge/evaluation/semantic-scenario-v2.mjs > sutra-open-model-pilot/split-summary.json
+          node packages/sutra-knowledge/evaluation/semantic-open-model-pilot.mjs prepare sutra-open-model-pilot/split.json sutra-open-model-pilot
+          git rev-parse HEAD > sutra-open-model-pilot/revision.txt
+      - name: Install bounded CPU inference dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --no-input torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --disable-pip-version-check --no-input transformers==4.57.1 huggingface-hub==0.36.0 safetensors==0.6.2
+          python -m pip freeze > sutra-open-model-pilot/dependencies.txt
+      - name: Run actual open-weight generation without inference API
+        run: python packages/sutra-knowledge/evaluation/semantic-open-model-inference.py sutra-open-model-pilot
+      - name: Admit model readings through actual SUTRA engine and score frozen public labels
+        run: node packages/sutra-knowledge/evaluation/semantic-open-model-pilot.mjs score sutra-open-model-pilot/split.json sutra-open-model-pilot
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-open-model-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+          path: sutra-open-model-pilot/
+          if-no-files-found: warn
+          retention-days: 30

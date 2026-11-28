@@ -1,9 +1,11 @@
+import {installHybridSemanticPanel} from './hybrid-semantic-panel.js';
+import {updateMaster} from './master.js';
 import {openWorkspaceCheckpoint,exportWorkspaceCheckpoint} from '../../../packages/sutra-knowledge/workspace-checkpoint.js';
 import {createHistoryHostClient} from './history-host.js';
 import {openDraftCheckpoint,exportDraftCheckpoint} from '../../../packages/sutra-knowledge/draft-checkpoint.js';
 import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
-import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
+import {reviewedContractHandoff,investigationHandoff,researchSourceHandoff} from './workspace-handoff.js';
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
 import {makeEvidencePinCard,readEvidencePinCard} from '../../../packages/sutra-knowledge/evidence-checkpoint-pins.js';
 import {exportEvidenceRecovery,openEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
@@ -38,6 +40,7 @@ import {createInvestigationReplaySession,compareInvestigationVersions} from '../
 const by=id=>document.getElementById('review-'+id);
 let handoffPreview=null,bindingSuggestions=null,localBindingPlan=null,draftSaved=null,draftPreview=null,sessionSaved=null,sessionPreview=null;
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
+let hybridControl=()=>{};
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
 let recoveryContext=null,recoveryQueue=[],recoverySelections=[],recoveryPreview=null,recoveryExport=null,recoveryImport=null;
@@ -49,6 +52,13 @@ const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const historyHost=createHistoryHostClient();
+let historySaveUncertain=false,inspectedDurableHistory=null,previousLocalHistory=null,historyAdoptionPending=false,adoptedHistoryPin=null,historySaveController=null;
+// Use the existing canonical history object; recovery never alters evidence draft or baseline.
+function markHistorySaveUnknown(attempted){
+ historySaveUncertain=true;inspectedDurableHistory=null;
+ by('history-durable-pin').value=attempted;
+ durableHistoryStatus('unknown','Save outcome unknown: the host may have published the attempted digest. Verify this digest or a separately retained current digest using Read before another write. Local history was not replaced.');
+}
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -57,9 +67,9 @@ function control(){
  by('offer-contract').disabled=busy||!sealed||!bindings.length;handoffControl();bindingSuggestionControl();
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
- semanticControl();tableControl();questionControl();textFileControl();
  by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
  by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
+ semanticControl();tableControl();questionControl();textFileControl();hybridControl();
 }
 function invalidate(message){epoch++;clearDraftCheckpoint();clearSessionCheckpoint();clearHandoffPreview();clearBindingSuggestions();clearLocalBindingPlan();clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
@@ -445,7 +455,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|BINDING_SUGGESTION|MAPPING_REVIEW)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE|EVIDENCE_RECOVERY|PROVENANCE|BINDING_SUGGESTION|MAPPING_REVIEW)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -461,11 +471,16 @@ async function loadGuidedCase(domain,corrected,ticket){
 for(const domain of ['finance','engineering','statistics','two-groups'])for(const corrected of [false,true])by('sample-'+domain+(corrected?'-corrected':'')).onclick=()=>work(ticket=>loadGuidedCase(domain,corrected,ticket));
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
 by('source-add').onclick=()=>work(async ticket=>{
- const next=[...sources,{id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value}];
- await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;
- invalidate('Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
+ const offer=researchSourceHandoff.read(),row={id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value};
+ if(offer&&(offer.id!==row.id||offer.text!==row.text))throw Error('PROVENANCE_STALE');
+ if(offer?.provenance)row.provenance=offer.provenance;
+ const next=[...sources,row];
+ await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;researchSourceHandoff.clear();
+ invalidate(row.provenance?'Exact research provenance retained in the source contract; no source truth established.':'Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
+ if(offer?.selection){const {start,end,quote}=offer.selection,field=by('select-text');if(field.value.slice(start,end)===quote){field.setSelectionRange(start,end);field.focus();status('draft','Exact candidate citation selected. Review meaning and units before adding a binding. No claim adopted.');}}
  for(const id of ['source-id','lineage','source-text'])by(id).value='';
 });
+for(const id of ['source-id','source-text'])by(id).addEventListener('input',()=>{if(researchSourceHandoff.read()){researchSourceHandoff.clear();status('draft','Edited research offer: acquisition provenance is not carried to manual text. Re-stage the original to retain it.');}});
 by('source-revise-pick').onchange=()=>{clearWithdrawalPreview();by('source-revise-text').value=sources.find(s=>s.id===by('source-revise-pick').value)?.text??'';control();};
 by('source-withdraw-preview').onclick=()=>work(async ticket=>{
  clearWithdrawalPreview();
@@ -608,17 +623,29 @@ by('transaction-preview').onclick=()=>work(async ticket=>{
  const sealedDraft=await sealReviewedDraft(wire);if(sealedDraft.pin!==JSON.parse(parent.versionText).contractPin)throw Error('REVISION_TRANSACTION_BASELINE');
  const planText=JSON.stringify({version:1,parentDigest:parent.digest,operations:transactionQueue}),planPin=await casePin(planText);
  const exported=await exportEvidenceRevision(parent.versionText,parent.digest,planText,planPin),r=exported.revision;
+ // The portable transaction above independently computes the entire child.
+ // Fork the exact retained arithmetic state, replay the same child and
+ // require matching fresh report before offering adoption or reuse counts.
+ const anchor=baselineReplay?.head()===parent.digest?baselineReplay:createInvestigationReplaySession();
+ const warmup=anchor.head()===parent.digest?null:(await anchor.replay(parent.versionText,parent.digest)).stats;
+ const session=anchor.fork(),cached=await session.replay(r.child.versionText,r.child.digest);
+ if(JSON.stringify(cached.report)!==JSON.stringify(r.child.report))throw Error('REVISION_TRANSACTION_REPLAY_MISMATCH');
+ const stats=cached.stats;
  const restored=await restoreReviewedSourceDraft(r.child.versionText,r.child.digest);
  if(!restored.exactContractBytes)throw Error('REVISION_TRANSACTION_EDITABLE_CONTRACT');
  if(ticket!==epoch||parent!==baseline||wire!==draft()||planText!==JSON.stringify({version:1,parentDigest:parent.digest,operations:transactionQueue}))return;
- transactionPreview={parent,wire,planText,planPin,exported,draft:restored.draft};
+ transactionPreview={parent,wire,planText,planPin,exported,draft:restored.draft,anchor,session,stats,warmup};
  by('transaction-plan-pin').textContent=planPin;
  by('transaction-result').textContent=[
   'Proposed atomic child — '+r.sourceChanges.length+' source revision(s)',
   'Explicitly reselected: '+(r.reselectedBindingIds.join(', ')||'none'),
   'Missing after revision: '+(r.missingBindingIds.join(', ')||'none'),
   ...r.changes.map(c=>c.id+' · '+c.classification+' · '+c.before+' → '+c.after+' · removed links: '+c.removedReferences.length+' · removed quotations: '+c.removedClaims.length),
-  'No change applied. Confirmation replaces staged proposals; retained baseline remains intact.'
+  'Independent full child replay agrees with retained arithmetic replay.',
+  stats.totals.executed+' arithmetic operations executed · '+stats.totals.reusedOutcomes+' outcomes reused in cached replay.',
+  ...(warmup?['Historical anchor warm-up: '+warmup.totals.executed+' operations executed separately.']:[]),
+  ...stats.candidates.map(c=>c.id+': '+c.executed.length+' executed, '+c.reusedOutcomes.length+' reused'),
+  'Both paths executed for validation; counts are not wall-clock savings. No change applied. Confirmation replaces staged proposals; retained baseline remains intact.'
  ].join('\n');
  status('transaction_preview','Review all source and candidate changes before confirming.');
 });
@@ -628,6 +655,8 @@ by('transaction-apply').onclick=()=>work(async ticket=>{
  const r=p.exported.revision,e=p.exported;
  if(ticket!==epoch)return;
  adoptReviewedChild(r.child,p.draft,r.impact,'Atomic source revision confirmed; exact child evaluated.');
+ baselineReplay=p.anchor;currentReplay=p.session;
+ by('session-reuse-result').textContent='Verified cached child versus independent full replay. '+p.stats.totals.executed+' arithmetic operations executed · '+p.stats.totals.reusedOutcomes+' outcomes reused. '+(p.warmup?'Historical warm-up '+p.warmup.totals.executed+' operations. ':'')+'Both replay paths ran; no wall-clock savings claimed.';
  by('transaction-result').textContent='Confirmed '+r.sourceChanges.length+' source revision(s). Retained baseline unchanged. Review new conditional states and removed semantic links.';
  by('transaction-disclosure').textContent=e.byteLength+' report bytes; includes original and corrected source text, including withdrawals: '+r.sourceChanges.map(x=>x.sourceId+' ('+x.kind+')').join(', ')+'. '+(e.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no report download.');
  if(e.portable){transactionExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,planPin:p.planPin,card:makeEvidencePinCard('revision',[e.snapshotPin,r.parentDigest,p.planPin,r.child.digest])};by('transaction-snapshot-pin').textContent=e.snapshotPin;by('transaction-plan-pin').textContent=p.planPin;}
@@ -842,7 +871,7 @@ by('run').onclick=()=>work(async ticket=>{
 function download(data,name,type){const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-reviewed-workspace.json','application/json');};
 by('export-pin').onclick=()=>{if(current&&!busy)download(current.pin+'\n','sutra-reviewed-workspace.sha256','text/plain');};
-by('reset').onclick=()=>{if(busy)return;sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
+by('reset').onclick=()=>{if(busy)return;researchSourceHandoff.clear();sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
 function nextCandidateId(){let i=1;while(stagedProposals.some(p=>p.id==='proposal_'+i))i++;return 'proposal_'+i;}
 function renderBatch(){
  by('candidate-id').value=nextCandidateId();by('correspondence').checked=false;
@@ -953,6 +982,15 @@ function renderStudio(){
  else if(baseline&&!by('correspondence').checked){target='correspondence';label='Review correspondence';help='Confirm candidate identifiers correspond across versions before computing revision impact.';}
  else{target='semantic-run';label='Inspect evaluation controls';help='Evaluate all staged meanings under the sealed contract.';}
  const next=by('studio-next');next.dataset.target=target;next.textContent=label;next.disabled=busy;by('studio-help').textContent=help;
+ updateMaster({question:by('question').value,sources,bindings,proposalCount:stagedProposals.length,current:semanticCurrent,baseline,history:history?.snapshot(),busy,status:by('status').textContent,next:target,singleResult:by('result').textContent,withdrawal:withdrawalPreview?{sourceId:withdrawalPreview.sourceId,versioned:!!withdrawalPreview.revision}:null,counterfactual:orbitalCounterfactual()});
+}
+function orbitalCounterfactual(){
+ const view=v=>({digest:v.digest,graph:v.report.graph,versionText:v.versionText});
+ const withdrawal=withdrawalPreview?.revision,transaction=transactionPreview?.exported?.revision;
+ if(withdrawal&&withdrawalPreview.parent===baseline)return {kind:'withdrawal-preview',before:view(baseline),after:view(withdrawal.child),impact:withdrawal.impact};
+ if(transaction&&transactionPreview.parent===baseline)return {kind:'transaction-preview',before:view(baseline),after:view(transaction.child),impact:transaction.impact};
+ if(impactCurrent&&baseline&&semanticCurrent&&impactCurrent.beforeDigest===baseline.digest&&impactCurrent.afterDigest===semanticCurrent.digest)return {kind:'applied-revision',before:view(baseline),after:view(semanticCurrent),impact:impactCurrent};
+ return null;
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();
@@ -1346,12 +1384,28 @@ by('branch-run').onclick=()=>work(async ticket=>{
 });
 by('branch-export').onclick=()=>{if(branchCurrent&&!busy)download(JSON.stringify(branchCurrent),'sutra-sibling-contrast.json','application/json');};
 function durableHistoryStatus(state,message){by('history-durable-status').dataset.state=state;by('history-durable-status').textContent=message;}
+// These controls are added only to the existing durable-history panel.
+const durableRecoveryRow=document.createElement('div');durableRecoveryRow.className='controls';
+const durableRecoveryDetail=document.createElement('p');durableRecoveryDetail.id='review-history-durable-detail';durableRecoveryDetail.setAttribute('role','status');durableRecoveryDetail.className='mono';
+for(const [id,label] of [['cancel','Stop waiting for save'],['reload','Use inspected history; keep draft'],['undo','Restore previous local history'],['keep','Keep current history']]){
+ const button=document.createElement('button');button.type='button';button.id='review-history-durable-'+id;button.textContent=label;button.className='secondary';button.disabled=true;durableRecoveryRow.append(button);
+}
+by('history-durable-status').after(durableRecoveryDetail,durableRecoveryRow);
 function durableHistoryControl(){
  const s=history?.snapshot(),retained=by('history-durable-pin').value.trim(),available=!!historyHost;
  by('history-durable-pin').disabled=busy||!available;
- by('history-durable-initialize').disabled=busy||!available||!s||!!retained;
- by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest;
+ by('history-durable-initialize').disabled=busy||!available||!s||!!retained||historySaveUncertain;
+ by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest||historySaveUncertain;
  by('history-durable-read').disabled=busy||!available||!retained;
+ by('history-durable-cancel').disabled=!historySaveController;
+ const inspected=inspectedDurableHistory?.snapshot();
+ by('history-durable-reload').disabled=busy||historyAdoptionPending||historySaveUncertain||!inspected||inspected.digest!==retained||inspected.digest===s?.digest;
+ by('history-durable-undo').disabled=busy||!historyAdoptionPending||s?.digest!==adoptedHistoryPin;
+ by('history-durable-keep').disabled=busy||!historyAdoptionPending;
+ const describe=x=>x.view.versions.length+' version(s) · '+x.view.branches.map(b=>b.name+' '+b.head.slice(7,19)).join(', ');
+ const localSet=new Set(s?.view.versions.map(v=>v.digest)),savedSet=new Set(inspected?.view.versions.map(v=>v.digest));
+ const delta=s&&inspected?localSet.size-[...localSet].filter(v=>savedSet.has(v)).length+' local-only / '+(savedSet.size-[...savedSet].filter(v=>localSet.has(v)).length)+' saved-only versions':'';
+ durableRecoveryDetail.textContent=[s?'Local: '+describe(s):'No local history',inspected?'Inspected: '+describe(inspected):'',delta].filter(Boolean).join(' · ');
  if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
 }
 function historyControl(){
@@ -1381,32 +1435,57 @@ function renderHistory(){
 by('history-branch').onchange=historyControl;
 for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
 by('history-file').addEventListener('change',historyControl);
-by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus('idle','Retained durable digest edited. Host not contacted.');historyControl();});
+by('history-durable-pin').addEventListener('input',()=>{inspectedDurableHistory=null;durableHistoryStatus(historySaveUncertain?'unknown':'idle',historySaveUncertain?'Save outcome remains unknown. Read the retained digest to verify it before another write.':'Retained durable digest edited. Host not contacted.');historyControl();});
 by('history-durable-initialize').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot();if(!historyHost||!h||!s)return;
- const committed=await historyHost.initialize(s);
+ const h=history,s=h?.snapshot();if(!historyHost||!h||!s||historySaveUncertain)return;
+ inspectedDurableHistory=null;historySaveController=new AbortController();durableHistoryControl();
+ let committed;try{committed=await historyHost.initialize(s,historySaveController.signal);}catch(e){if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN')markHistorySaveUnknown(s.digest);throw e;}finally{historySaveController=null;durableHistoryControl();}
  if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest)return;
  by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host initialized at the exact replayed history digest. Retain this digest separately.');status('history_durable_ready','Durable host initialized explicitly; browser history unchanged.');historyControl();
 });
 by('history-durable-append').onclick=()=>work(async ticket=>{
- const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected)return;
+ const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected||historySaveUncertain)return;
+ inspectedDurableHistory=null;historySaveController=new AbortController();durableHistoryControl();
  try{
-  const committed=await historyHost.append(expected,s);
+  const committed=await historyHost.append(expected,s,historySaveController.signal);
   if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest||by('history-durable-pin').value.trim()!==expected)return;
   by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host advanced to the exact current history digest. Retain this new digest separately.');status('history_durable_ready','Durable history advanced with exact retained-head CAS.');historyControl();
  }catch(e){
+  if(e?.message==='HISTORY_HOST_OUTCOME_UNKNOWN'){markHistorySaveUnknown(s.digest);throw e;}
   if(ticket===epoch&&h===history&&by('history-durable-pin').value.trim()===expected)durableHistoryStatus(/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused',/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'Durable head differs from the retained digest. No retry or local history change occurred. Verify a separately retained current digest before proceeding.':'Durable host refused the write. No automatic retry or local history change occurred.');
   throw e;
- }
+ }finally{historySaveController=null;durableHistoryControl();}
 });
+by('history-durable-cancel').onclick=()=>historySaveController?.abort();
 by('history-durable-read').onclick=()=>work(async ticket=>{
  const h=history,expected=by('history-durable-pin').value.trim();if(!historyHost||!expected)return;
- const checked=await historyHost.read(expected);
+ inspectedDurableHistory=null;
+ let checked,opened;
+ try{checked=await historyHost.read(expected);opened=await openInvestigationHistory(checked.historyText,checked.digest);}
+ catch(e){if(ticket===epoch&&h===history){const state=historySaveUncertain?'unknown':/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused';durableHistoryStatus(state,'Saved digest not confirmed. Local history and draft unchanged; no retry.');}throw e;}
  if(ticket!==epoch||h!==history||by('history-durable-pin').value.trim()!==expected)return;
+ inspectedDurableHistory=opened;historySaveUncertain=false;
  const local=history?.snapshot().digest??null,same=local===checked.digest;
  durableHistoryStatus('ready','Durable host exactly matches the retained digest. In-memory history '+(same?'matches it.':'is different and was not replaced.')+' No state was adopted automatically.');
  status('history_durable_ready','Retained durable head verified without changing browser history.');historyControl();
 });
+by('history-durable-reload').onclick=()=>{
+ if(busy||historyAdoptionPending||historySaveUncertain||!inspectedDurableHistory||inspectedDurableHistory.snapshot().digest!==by('history-durable-pin').value.trim()||inspectedDurableHistory.snapshot().digest===history?.snapshot().digest)return;
+ previousLocalHistory=history;historyAdoptionPending=true;history=inspectedDurableHistory;adoptedHistoryPin=history.snapshot().digest;inspectedDurableHistory=null;renderHistory();
+ durableHistoryStatus('recovered','Inspected history loaded explicitly. Editable draft and comparison baseline unchanged; prior local history can be restored.');
+ status('history_ready','Saved history loaded without changing evidence draft or baseline.');
+};
+by('history-durable-undo').onclick=()=>{
+ if(busy||!historyAdoptionPending||history?.snapshot().digest!==adoptedHistoryPin)return;
+ history=previousLocalHistory;previousLocalHistory=null;historyAdoptionPending=false;adoptedHistoryPin=null;inspectedDurableHistory=null;renderHistory();
+ durableHistoryStatus('local','Previous local history restored. Durable store and editable draft unchanged.');
+ status('history_ready','Previous local history restored; no host write.');
+};
+by('history-durable-keep').onclick=()=>{
+ if(busy||!historyAdoptionPending)return;
+ previousLocalHistory=null;historyAdoptionPending=false;adoptedHistoryPin=null;historyControl();
+ durableHistoryStatus(historySaveUncertain?'unknown':'local','Current local history kept explicitly. No host write; saved digest still requires verification if uncertain.');
+};
 by('history-create').onclick=()=>work(async ticket=>{
  const v=semanticCurrent;if(history||!v)return;
  const h=await createInvestigationHistory(v.versionText,v.digest);
@@ -1488,3 +1567,5 @@ by('handoff-confirm').onclick=()=>work(async ticket=>{
  by('semantic-pin').textContent=child.digest;by('semantic-result').textContent=semanticText(child);by('impact-result').textContent='';baselineState();
  investigationHandoff.clear(p.offer);status('semantic_ready','Exact offered root retained. Revise or withdraw evidence against this baseline; no semantic adoption or model call.');
 });
+
+hybridControl=installHybridSemanticPanel({anchor:by('question-path-panel'),getSealed:()=>sealed,isBusy:()=>busy,download});

@@ -9,8 +9,15 @@ const calls=[];
 const workspace=createProviderWorkspace({
  catalog:[{id:'local-a',label:'Local provider A',models:['local/model-a']},{id:'local-b',label:'Local provider B',models:['local/model-b']}],
  globalLimits:limits,defaultProfileLimits:{maxCalls:2,maxInputBytes:50000,maxOutputTokens:2048,maxConcurrent:1},
- transports:['local-a','local-b'].map(providerId=>({providerId,async send(request){
+ transports:['local-a','local-b'].map(providerId=>({providerId,async send(request,{signal}={}){
   calls.push(Object.freeze({providerId:request.providerId,model:request.model,leaseId:request.leaseId}));
+  state('dispatching','Local scripted adapter has started. Revoke this one-use approval to cancel publication.');
+  // Bounded scripted response latency makes the cancellation control usable.
+  // No actual network, model processing time, or billed usage is implied.
+  await new Promise((resolve,reject)=>{
+   let timer;const finish=()=>{signal?.removeEventListener('abort',abort);clearTimeout(timer);resolve();},abort=()=>{signal?.removeEventListener('abort',abort);clearTimeout(timer);reject(Error('SCRIPTED_CANCELLED'));};
+   if(signal?.aborted){abort();return;}signal?.addEventListener('abort',abort,{once:true});timer=setTimeout(finish,600);
+  });
   return {actualInputBytes:1,actualOutputTokens:8,value:{text:JSON.stringify({version:1,kind:'expression',expression:'[ocf26]>[ocf25]'})}};
  }}))
 });
@@ -33,6 +40,7 @@ function controls(){
  by('operator-remove').disabled=busy||!enrolled;
  by('operator-preview').disabled=busy||!enrolled;
  by('operator-run').disabled=busy||!preview||!by('operator-approve').checked;
+ by('operator-revoke').disabled=!pendingApprovedPin;
  for(const x of [provider,model,credential,values])x.disabled=busy||!!enrolled&&x!==values;
 }
 async function work(fn){
@@ -44,7 +52,13 @@ provider.addEventListener('change',()=>{syncModel();invalidate();controls();});
 model.addEventListener('change',()=>{invalidate();controls();});
 values.addEventListener('change',()=>{invalidate();controls();});
 credential.addEventListener('input',controls);
-by('operator-approve').addEventListener('change',controls);
+function revokeInFlight(){
+ if(!pendingApprovedPin)return;
+ invalidate('In-flight approval revoked. Late results are discarded; no further dispatch under this approval.');
+ state('approval-revoked','In-flight approval revoked. No result restored; request attempts already made cannot be undone.');controls();
+}
+by('operator-approve').addEventListener('change',()=>{if(!by('operator-approve').checked&&pendingApprovedPin)revokeInFlight();else controls();});
+by('operator-revoke').addEventListener('click',revokeInFlight);
 by('operator-enroll').addEventListener('click',()=>work(async ticket=>{
  const secret=credential.value,providerId=provider.value,label='Operator ephemeral '+providerId;
  const added=workspace.addProfile({providerId,label,credential:secret});credential.value='';
@@ -68,7 +82,7 @@ by('operator-preview').addEventListener('click',()=>work(async ticket=>{
 }));
 by('operator-run').addEventListener('click',()=>work(async ticket=>{
  if(!preview||!enrolled||preview.profileId!==enrolled.profile.profileId)return;
- const approval=preview.approval,pin=approval.planPin;pendingApprovedPin=pin;
+ const approval=preview.approval,pin=approval.planPin;pendingApprovedPin=pin;controls();state('running','Consuming the exact one-use approval.');
  const result=await approval.execute({consentInspector,approvedPlanPin:pin});
  if(ticket!==epoch)return;preview=null;pendingApprovedPin=null;by('operator-approve').checked=false;by('operator-approve').disabled=true;by('operator-run').disabled=true;
  const consentEvents=consentInspector.exportEvents().slice(-3);

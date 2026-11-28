@@ -2,13 +2,37 @@ name: Validate SUTRA knowledge kernel
 on:
   push:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'apps/sutra/package.json', 'apps/sutra/package-lock.json', 'apps/sutra-peer/package-lock.json', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
     branches: ['main']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'apps/sutra/package.json', 'apps/sutra/package-lock.json', 'apps/sutra-peer/package-lock.json', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact candidate revision
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Audit exact npm locks against registry (no install scripts)
+        run: node packages/sutra-knowledge/npm-advisory-audit.mjs "$RUNNER_TEMP/sutra-npm-audit"
+      - name: Retain audit receipt including refusals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-npm-advisory-audit
+          path: ${{ runner.temp }}/sutra-npm-audit
+          if-no-files-found: warn
   knowledge:
     runs-on: ubuntu-latest
     # V2-013: the preserved formal suite grew beyond the historical five-minute
@@ -18,6 +42,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate revision
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
       - name: Audit sole V2 execution queue
         run: node --test docs/sutra-v2/tools/checklist.test.mjs
       - uses: actions/setup-node@v4
@@ -25,10 +55,12 @@ jobs:
           node-version: 24
       - name: Validate executable SUTRA v2 threat model coverage
         run: node docs/sutra/tools/threat-model-check.mjs
+      - name: Verify typed investigation task runtime
+        run: node --test packages/sutra-runtime/test/investigation-tasks.test.mjs packages/sutra-runtime/test/execution-events.test.mjs packages/sutra-runtime/test/investigation-stress.test.mjs
       - name: Run bounded inference and opaque credential boundary tests
         run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Verify council orchestration and operator integration before external formal tool download
-        run: node --test packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs packages/sutra-knowledge/test/binding-suggestion-request.test.mjs packages/sutra-knowledge/test/local-binding-runner.test.mjs
+        run: node --test packages/sutra-consent/test/consent.test.mjs packages/sutra-knowledge/test/approved-expression-council.test.mjs packages/sutra-knowledge/test/hybrid-investigation.test.mjs packages/sutra-knowledge/test/agent-council.test.mjs packages/sutra-knowledge/test/expression-council.test.mjs packages/sutra-knowledge/test/expression-review-answers.test.mjs packages/sutra-knowledge/test/local-council-config.test.mjs packages/sutra-knowledge/test/local-council-runner.test.mjs packages/sutra-knowledge/test/local-hybrid-runner.test.mjs packages/sutra-knowledge/test/mixed-council-runner.test.mjs packages/sutra-knowledge/test/binding-suggestions.test.mjs packages/sutra-knowledge/test/binding-suggestion-request.test.mjs packages/sutra-knowledge/test/local-binding-runner.test.mjs
       - name: Execute threat-register runtime and API regressions
         run: |
           node --test packages/sutra-runtime/test/private-context.test.mjs packages/sutra-runtime/test/peer-boundary.test.mjs packages/sutra-runtime/test/peer-invocation.test.mjs
@@ -67,6 +99,58 @@ jobs:
           cat sutra-v2-pinned-policy-refinement.json
           python3 packages/sutra-knowledge/action-protocol/formal/refine_pinned_policy_trace_mutants.py sutra-v2-pinned-policy-trace.json > sutra-v2-pinned-policy-refinement-mutants.json
           cat sutra-v2-pinned-policy-refinement-mutants.json
+      - name: Run focused semantic corpus and contextual evidence gate
+        env:
+          SUTRA_SEMANTIC_CORPUS_REPORT: sutra-semantic-corpus-execution.json
+          SUTRA_SEMANTIC_CONTRAST_REPORT: sutra-semantic-contrast-execution.json
+          SUTRA_TEMPORAL_CORPUS_REPORT: sutra-temporal-corpus-execution.json
+        run: |
+          node --test \
+            packages/sutra-knowledge/test/semantic-context-analyzer.test.mjs \
+            packages/sutra-knowledge/test/semantic-question-engine.test.mjs \
+            packages/sutra-knowledge/test/controlled-intent-roundtrip.test.mjs \
+            packages/sutra-knowledge/test/semantic-intake-security.test.mjs \
+            packages/sutra-knowledge/test/semantic-corpus-execution.test.mjs \
+            packages/sutra-knowledge/test/scope-human-evidence.test.mjs \
+            packages/sutra-knowledge/test/external-human-evidence.test.mjs \
+            packages/sutra-knowledge/test/semantic-evaluation-deep.test.mjs \
+            packages/sutra-knowledge/test/reviewed-proposal-contrast.test.mjs \
+            packages/sutra-knowledge/test/eia-capacity-revision.test.mjs
+          python3 packages/sutra-knowledge/reference/verify-semantic-corpus-report.py sutra-semantic-corpus-execution.json sutra-semantic-contrast-execution.json > sutra-semantic-corpus-independent.json
+          python3 packages/sutra-knowledge/reference/verify-temporal-corpus-report.py sutra-temporal-corpus-execution.json > sutra-temporal-corpus-independent.json
+          python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --self-test
+          python3 packages/sutra-knowledge/evaluation/acquire-tempambiqa.py --verify-local packages/sutra-knowledge/evaluation/tempambiqa-human-full-v1.json
+          python3 packages/sutra-knowledge/evaluation/semantic-human-review.py --self-test
+          node packages/sutra-knowledge/evaluation/temporal-v2-evaluation.mjs > sutra-temporal-v2-evaluation.json
+          node packages/sutra-knowledge/evaluation/semantic-scenario-split.mjs > sutra-semantic-scenario-split.json
+          node packages/sutra-knowledge/evaluation/scope-human-benchmark.mjs > sutra-scope-human-benchmark.json
+          node packages/sutra-knowledge/evaluation/semantic-human-burden.mjs > sutra-semantic-human-burden.json
+          node packages/sutra-knowledge/evaluation/context-contrast-benchmark.mjs > sutra-context-contrast-benchmark.json
+          node packages/sutra-knowledge/evaluation/entity-reference-benchmark.mjs > sutra-entity-reference-benchmark.json
+          node packages/sutra-knowledge/evaluation/external-human-evidence-matrix.mjs > sutra-external-human-evidence-matrix.json
+          node packages/sutra-knowledge/evaluation/semantic-performance.mjs > sutra-semantic-performance.json
+          cat sutra-semantic-corpus-independent.json
+          cat sutra-temporal-corpus-independent.json
+          cat sutra-context-contrast-benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-semantic-corpus-evidence
+          path: |
+            sutra-semantic-corpus-execution.json
+            sutra-semantic-contrast-execution.json
+            sutra-semantic-corpus-independent.json
+            sutra-temporal-corpus-execution.json
+            sutra-temporal-corpus-independent.json
+            sutra-temporal-v2-evaluation.json
+            sutra-semantic-scenario-split.json
+            sutra-scope-human-benchmark.json
+            sutra-semantic-human-burden.json
+            sutra-context-contrast-benchmark.json
+            sutra-entity-reference-benchmark.json
+            sutra-external-human-evidence-matrix.json
+            sutra-semantic-performance.json
+          if-no-files-found: error
       - name: Run full JavaScript knowledge regression before external formal dependency
         run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Bounded recovery state model and unsafe counterexample
@@ -96,6 +180,10 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/probe-suite-reference-cases.mjs > sutra-probe-suite-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_semantic_probe_suite.py < sutra-probe-suite-reference-cases.json
+      - name: Measure semantic review burden, unresolved rate and residual error
+        run: |
+          node packages/sutra-knowledge/evaluation/semantic-review-burden.mjs > sutra-semantic-review-burden.json
+          cat sutra-semantic-review-burden.json
       - name: Execute frozen 40-case assumption benchmark against matched review selectors
         run: |
           result=0
@@ -218,6 +306,12 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate revision
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
       - uses: actions/setup-node@v4
         with:
           node-version: 24

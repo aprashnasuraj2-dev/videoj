@@ -1,6 +1,7 @@
 // A human-controlled draft is distinct from the model proposal.
 // Browser textarea selections use UTF-16 indices; the pinned compiler uses bytes.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+import {validateSourceProvenance} from './source-provenance.js';
 import {casePin} from './pinned-investigation.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 const keys=(o,k)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===k.length&&k.every(x=>Object.hasOwn(o,x));
@@ -20,8 +21,8 @@ export async function sealReviewedDraft(draftText){
  if(!keys(d,['version','question','sources','bindings'])||d.version!==1||!text(d.question,8192)||!Array.isArray(d.sources)||d.sources.length>8||!Array.isArray(d.bindings)||d.bindings.length>64)fail('DRAFT_SHAPE');
  const docs=new Map([['question',d.question]]),sources=[];
  for(const s of d.sources){
-  if(!keys(s,['id','text','lineage'])||!id(s.id)||docs.has(s.id)||!id(s.lineage)||!text(s.text,16384))fail('DRAFT_SOURCE');
-  docs.set(s.id,s.text);sources.push({id:s.id,text:s.text,digest:await casePin(s.text),lineage:s.lineage});
+  if(!(keys(s,['id','text','lineage'])||keys(s,['id','text','lineage','provenance']))||!id(s.id)||docs.has(s.id)||!id(s.lineage)||!text(s.text,16384))fail('DRAFT_SOURCE');
+  docs.set(s.id,s.text);const digest=await casePin(s.text);sources.push({id:s.id,text:s.text,digest,lineage:s.lineage,...(Object.hasOwn(s,'provenance')?{provenance:validateSourceProvenance(s.provenance,s.text,digest)}:{})});
  }
  const bindings=[];
  for(const b of d.bindings){

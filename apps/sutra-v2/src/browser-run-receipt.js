@@ -1,0 +1,26 @@
+// Metadata-only execution evidence; adapted from legacy PR #48's provenance-store design.
+// A receipt is not a signed attestation, provider billing receipt or proof of source truth.
+const knownAgents=new Set(['planner','critic','checklist','source_select']);
+const knownTools=new Set(['critic','mcp_inspect_evidence','guide','source_select']);
+const knownNetworks=new Set(['investigation','reviewed_investigation','peer_investigation','checklist']);
+const allowed=(set,v)=>set.has(v);
+export function createBrowserRunReceipt({preview,result,consentEvents=[]}){
+ const {network,graphPin,model,router,limits,peerUrl,provider,backend,inferenceContractId,front,runtimeCommit,artifactDigests,peerBinding,actionPolicy}=preview;
+ const publication=Object.fromEntries(['manifest','definition','links'].filter(k=>typeof artifactDigests?.[k]==='string'&&/^[a-f0-9]{64}$/.test(artifactDigests[k])).map(k=>[k,artifactDigests[k]]));
+ const peerOrigin=peerUrl?new URL(peerUrl).origin:null;
+ const peerArtifacts=(result.peerArtifacts??[]).filter(p=>peerOrigin&&p.origin===peerOrigin&&p.name==='checklist'&&p.front==='checklist'&&p.artifacts?.manifest===peerOrigin+'/agents/agent-manifest.json'&&p.artifacts?.definition===peerOrigin+'/agents/checklist.network.json'&&['manifest','definition'].every(k=>/^[a-f0-9]{64}$/.test(p.digests?.[k]??'')&&Number.isSafeInteger(p.bytes?.[k])&&p.bytes[k]>0&&p.bytes[k]<=(k==='manifest'?16384:65536))).slice(0,1).map(p=>({name:'checklist',front:'checklist',manifest:{url:p.artifacts.manifest,sha256:p.digests.manifest,bytes:p.bytes.manifest},definition:{url:p.artifacts.definition,sha256:p.digests.definition,bytes:p.bytes.definition}}));
+ const events=[];
+ for(const e of result.events){
+  if(events.length>=512)break;
+  if(!['agent','tool','model_call'].includes(e.kind)||!['start','end'].includes(e.phase))continue;
+  const safe={kind:e.kind,phase:e.phase};
+  if(['ok','error','cancelled'].includes(e.status))safe.status=e.status;
+  if(allowed(knownAgents,e.agent))safe.agent=e.agent;
+  if(allowed(knownTools,e.tool))safe.tool=e.tool;
+  if(allowed(knownNetworks,e.network))safe.network=e.network;
+  if(e.origin==='sutra-local'||peerOrigin&&e.origin===peerOrigin)safe.origin=e.origin;
+  events.push(safe);
+ }
+ const consent=consentEvents.filter(e=>peerOrigin&&e.origin===peerOrigin&&['peer_manifest','peer_graph'].includes(e.contactKind)&&['intent','decision','outcome'].includes(e.type)).slice(0,32).map(e=>({type:e.type,contactKind:e.contactKind,origin:peerOrigin,...(['allow','deny'].includes(e.decision)?{decision:e.decision}:{}),...(['completed','failed'].includes(e.status)?{status:e.status}:{}),...(['once','session'].includes(e.scope)?{scope:e.scope}:{})}));
+ return {schema:'sutra-browser-run-receipt/v1',status:'completed',network,graphPin,...(knownAgents.has(front)?{front}:{}),...(/^[a-f0-9]{40}$/.test(runtimeCommit??'')?{runtimeCommit}:{}),...(Object.keys(publication).length?{artifactDigests:publication}:{}),...(['publisher','caller'].includes(peerBinding)?{peerBinding}:{}),model,router,...(['openai','gemini','groq','openrouter','self_hosted','publisher_unspecified'].includes(provider)?{provider}:{}),...(['hosted','self_hosted'].includes(backend)?{backend}:{}),...(typeof inferenceContractId==='string'&&/^[a-f0-9]{64}$/.test(inferenceContractId)?{inferenceContractId}:{}),limits,...(actionPolicy?.registeredSiteActions===0&&actionPolicy.externalWrites==='disabled'?{actionPolicy:{registeredSiteActions:0,externalWrites:'disabled'}}:{}),modelCalls:result.modelCalls,agentCalls:result.agentCalls,transport:result.mode,peerOrigin,...(peerArtifacts.length?{peerArtifacts}:{}),events,consent,authority:'NONE',qualification:'Browser-observed metadata only. Omits objective, source, claims, raw messages and credentials. Transport mode does not attest live upstream inference; injected HTTP fixtures can exercise the same protocol.'};
+}

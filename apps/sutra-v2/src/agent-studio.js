@@ -1,4 +1,5 @@
-import {reviewedContractHandoff,investigationHandoff} from './workspace-handoff.js';
+import {createStudioExecution} from './execution-channel.js';
+import {reviewedContractHandoff,investigationHandoff,hybridVersionHandoff} from './workspace-handoff.js';
 import {validateReviewedContract} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {createProtocolWorkspace} from '../../../packages/sutra-inference/protocol-workspace.js';
 import {admitProofCase} from '../../../packages/sutra-knowledge/agent-bridge.js';
@@ -18,13 +19,13 @@ const form=by('studio-form'),runButton=by('studio-run'),cancelButton=by('studio-
 const fields=[...form.querySelectorAll('input,select,textarea'),by('studio-reset-case'),by('studio-load-finance')];
 const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'stiffer_assumption',constraintId:'deflection_limit',graphText:beamGraph('10000000000')},{id:'softer_assumption',constraintId:'deflection_limit',graphText:beamGraph('2500000000')}]});
 const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt'),versionButton=by('studio-export-version');
-let active=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null,reviewEpoch=0,reviewExport=null;
+let active=null,activeTelemetry=null,current=null,epoch=0,replayEpoch=0,transferEpoch=0,verifiedTransfer=null,reviewEpoch=0,reviewExport=null;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
 function clear(){resetReviewPreview();by('studio-review-preview').disabled=true;by('studio-review-reset').disabled=true;current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-offer-version').disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-local-plan-commands').hidden=true;by('studio-local-plan-commands').textContent='';by('studio-local-plan-status').dataset.state='idle';by('studio-local-plan-status').textContent='Configuration changed; export a fresh local plan.';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
-function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;if(value)exportButton.disabled=true;}
-function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;}
+function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;by('studio-handoff-load').disabled=value;by('studio-handoff-dismiss').disabled=value;by('studio-export-hybrid-plan').disabled=value||!hybridVersionHandoff.read();if(value)exportButton.disabled=true;}
+function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;by('studio-local-export-approve').checked=false;by('studio-hybrid-export-approve').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
-function invalidate(){epoch++;active?.abort();clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
+function invalidate(){epoch++;active?.abort();activeTelemetry?.finish('cancelled');clear();resetReplay();resetTransfer();status('Configuration changed. Run a fresh council.','idle');}
 function showMode(){const expression=by('studio-mode').value==='expression';for(const id of ['studio-method-question','studio-method-case','studio-method-consent'])by(id).hidden=expression;by('studio-expression-fields').hidden=!expression;}
 const bindingList=id=>by(id).value.split(',').map(x=>x.trim()).filter(Boolean);
 function readDisclosure(){
@@ -52,7 +53,7 @@ function showScopes(){
  }
 }
 function element(tag,value,className){const x=document.createElement(tag);x.textContent=value;if(className)x.className=className;return x;}
-function render(r,configuration,calls){
+function render(r,configuration,calls,telemetry){
  const expression=configuration.mode==='expression',artifacts=expression?r.candidates:r.methods;
  const key=x=>expression?x.expression:x.methodId,verdict=x=>expression?x.target.status:x.outcome.status;
  by('studio-result').hidden=false;by('studio-round-count').textContent=String(r.rounds.length);by('studio-calls').textContent=String(calls);by('studio-agreement').textContent=r.agreement.replaceAll('_',' ').toLowerCase();
@@ -69,6 +70,7 @@ function render(r,configuration,calls){
  for(const round of r.rounds){
   const section=document.createElement('section');section.className='studio-round';section.append(element('h4','Round '+round.round));
   for(const agent of round.agents){
+   telemetry.send(agent.status==='PROPOSED'?'proposal':agent.status==='ABSTAINED'?'abstained':'rejected',agent.agentId,round.round);
    const item=document.createElement('article');item.className='studio-agent-event';item.dataset.agent=agent.agentId;item.dataset.status=agent.status;
    const route=configuration.agents.find(x=>x.id===agent.agentId);
    item.append(element('strong',route.role),element('small',agent.providerId+' / '+agent.model),element('p',agent.status==='PROPOSED'?'Proposed '+key(agent)+' → '+outcomes.get(key(agent)):agent.status==='ABSTAINED'?'Abstained — no proposal':'Refused: '+agent.reason));
@@ -106,15 +108,17 @@ function syntheticPayload(strategy,operation){
  if(strategy==='hostile'&&operation.agentId==='agent_two')payload.verified=true;
  return payload;
 }
-function setup(config){
+function setup(config,telemetry){
  const cap=config.callCap,limits={maxCalls:cap,maxInputBytes:100000,maxOutputTokens:cap*256,maxConcurrent:Math.min(2,cap)};
  const connections=config.connections.map(c=>({id:c.id,label:c.id,models:[c.model],protocol:c.protocol,endpoint:c.endpoint,transportClass:'hosted'}));
  const workspace=createProtocolWorkspace({connections,globalLimits:limits,defaultProfileLimits:limits,exchange:async request=>{
   const expected=connections.find(c=>c.id===request.connectionId);
   if(!expected||expected.models[0]!==request.model||expected.endpoint!==request.endpoint||expected.protocol!==request.protocol)throw Error('MOCK_REFUSED');
   const wire=JSON.parse(request.bodyText),operation=JSON.parse(wire.messages.at(-1).content);
+  const signal=phase=>telemetry.send(phase,operation.agentId,operation.round);
+  signal('request');
   await new Promise(resolve=>setTimeout(resolve,45));
-  const result=JSON.stringify(syntheticPayload(config.strategy,operation));
+  let result;try{result=JSON.stringify(syntheticPayload(config.strategy,operation));signal('response');}catch(error){signal('transport-refused');throw error;}
   const body=request.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:result}],usage:{output_tokens:1}}:request.protocol==='ollama-chat-json'?{done:true,done_reason:'stop',message:{role:'assistant',content:result},eval_count:1}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:result}}],usage:{completion_tokens:1}};
   return {status:200,bodyText:JSON.stringify(body)};
  }});
@@ -142,12 +146,12 @@ form.addEventListener('input',event=>{
   // values or peer feedback in customized mode.
   for(const slot of ['a','b'])if(!by('studio-scope-'+slot).value.trim())by('studio-scope-'+slot).value=by('studio-bindings').value;
  }
- if(!['studio-share','studio-expression-share','studio-local-export-approve'].includes(event.target.id))revoke();
+ if(!['studio-share','studio-expression-share','studio-local-export-approve','studio-hybrid-export-approve'].includes(event.target.id))revoke();
  showMode();showScopes();invalidate();
 });
 by('studio-reset-case').addEventListener('click',()=>{by('studio-case').value=fixture();revoke();invalidate();});
 by('studio-load-finance').addEventListener('click',async()=>{revoke();invalidate();const ticket=epoch;try{const f=await compilerFinanceFixture();if(ticket!==epoch||active)return;by('studio-contract').value=f.contractText;by('studio-contract-pin').value=f.pin;by('studio-bindings').value='ocf25,ppe25,ocf26,ppe26';by('studio-include-values').checked=false;by('studio-custom-scopes').checked=false;for(const slot of ['a','b']){by('studio-scope-'+slot).value='';by('studio-values-'+slot).checked=false;by('studio-peer-'+slot).checked=false;}showScopes();status('Reviewed example loaded. Approve the selected disclosure before running.','idle');}catch{if(ticket===epoch)status('Example unavailable.','refused');}});
-cancelButton.addEventListener('click',()=>{if(!active)return;active.abort();clear();status('Council cancelled. Late adapter results cannot publish.','cancelled');});
+cancelButton.addEventListener('click',()=>{if(!active)return;active.abort();activeTelemetry?.finish('cancelled');clear();status('Council cancelled. Late adapter results cannot publish.','cancelled');});
 form.addEventListener('submit',async event=>{
  event.preventDefault();if(active)return;clear();
  const expression=by('studio-mode').value==='expression';
@@ -155,18 +159,20 @@ form.addEventListener('submit',async event=>{
  revoke();
  const ticket=++epoch,controller=new AbortController();active=controller;busy(true);status('Running local agents and independent verification…','busy');
  try{
-  const config=readConfig();if(expression)admitCouncilDisclosure(config.disclosure,config.agents.map(x=>x.id));const {workspace,routes}=setup(config);
+  const config=readConfig();if(expression)admitCouncilDisclosure(config.disclosure,config.agents.map(x=>x.id));
+  const version=expression&&/^sha256:[0-9a-f]{64}$/.test(config.contractPin)?config.contractPin:'studio_draft:'+ticket;
+  const telemetry=createStudioExecution(ticket,version,()=>controller.signal.aborted||ticket!==epoch,config.agents.map(a=>a.id));activeTelemetry=telemetry;telemetry.send('started');const {workspace,routes}=setup(config,telemetry);
   const options={workspace,routes,maxRounds:config.rounds,maxOutputTokens:256,signal:controller.signal};
   const r=expression?await runExpressionCouncil({...options,contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure,roundPolicy:config.roundPolicy}):await runAgentCouncil({...options,caseText:config.caseText,question:config.question});
   if(ticket!==epoch||controller.signal.aborted)return;
   const calls=workspace.budgetSnapshot().global.used.calls;
-  if(r.termination==='CANCELLED_OR_TIMEOUT'){status('Council timed out. No late results accepted.','cancelled');return;}
-  render(r,config,calls);
+  if(r.termination==='CANCELLED_OR_TIMEOUT'){telemetry.finish('cancelled');status('Council timed out. No late results accepted.','cancelled');return;}
+  render(r,config,calls,telemetry);
   // Export omits endpoint descriptors as well as credential handles.
   current={version:'sutra-local-council-trace/v1',configuration:{...config,connections:config.connections.map(({endpoint,...c})=>c)},result:r,calls};
-  status('Local council completed: '+r.termination+'. '+r.agreement+'. No live inference or decision authority.','complete');
- }catch{if(ticket===epoch&&!controller.signal.aborted)status('Council refused. Check connection descriptors, reviewed input, pin and disclosure.','refused');}
- finally{if(active===controller){active=null;busy(false);exportButton.disabled=!current;receiptButton.disabled=!(current?.configuration.mode==='expression'&&current.result.candidates.length);versionButton.disabled=!(current?.configuration.mode==='expression'&&current.result.uniqueCompiledProposals>=2);by('studio-offer-version').disabled=versionButton.disabled;}}
+  telemetry.finish('completed');status('Local council completed: '+r.termination+'. '+r.agreement+'. No live inference or decision authority.','complete');
+ }catch{activeTelemetry?.finish(controller.signal.aborted?'cancelled':'refused');if(ticket===epoch&&!controller.signal.aborted)status('Council refused. Check connection descriptors, reviewed input, pin and disclosure.','refused');}
+ finally{if(active===controller){activeTelemetry?.finish(controller.signal.aborted||ticket!==epoch?'cancelled':'refused');activeTelemetry=null;active=null;busy(false);exportButton.disabled=!current;receiptButton.disabled=!(current?.configuration.mode==='expression'&&current.result.candidates.length);versionButton.disabled=!(current?.configuration.mode==='expression'&&current.result.uniqueCompiledProposals>=2);by('studio-offer-version').disabled=versionButton.disabled;}}
 });
 exportButton.addEventListener('click',()=>{
  if(!current||active)return;
@@ -208,13 +214,16 @@ replayButton.addEventListener('click',async()=>{
  finally{if(ticket===replayEpoch)replayButton.disabled=false;}
 });
 const localPlanButton=by('studio-export-local-plan');
+const hybridPlanButton=by('studio-export-hybrid-plan');
 let exportingPlan=false;
-localPlanButton.addEventListener('click',async()=>{
+hybridVersionHandoff.subscribe(offer=>{by('studio-hybrid-version').textContent=offer?'Offered evaluated version '+offer.pin+' · load its exact contract before export.':'No evaluated investigation offered for hybrid execution.';by('studio-hybrid-export-approve').checked=false;hybridPlanButton.disabled=!!active||exportingPlan||!offer;});
+async function exportLocalPlan(hybrid=false){
  const el=by('studio-local-plan-status'),commands=by('studio-local-plan-commands');
  if(active||exportingPlan)return;
  commands.hidden=true;commands.textContent='';
- if(!by('studio-local-export-approve').checked){el.dataset.state='refused';el.textContent='Approve the full reviewed-contract export first.';return;}
- const ticket=epoch;by('studio-local-export-approve').checked=false;exportingPlan=true;localPlanButton.disabled=true;
+ const approval=by(hybrid?'studio-hybrid-export-approve':'studio-local-export-approve'),offer=hybrid?hybridVersionHandoff.read():null;
+ if(!approval.checked||hybrid&&!offer){el.dataset.state='refused';el.textContent=hybrid?'Offer an evaluated version and approve the full investigation export first.':'Approve the full reviewed-contract export first.';return;}
+ const ticket=epoch;approval.checked=false;exportingPlan=true;localPlanButton.disabled=hybridPlanButton.disabled=true;
  try{
   const c=readConfig();if(c.mode!=='expression')throw Error('EXPRESSION_REQUIRED');
   const used=new Set(c.agents.map(x=>x.connectionId));
@@ -224,15 +233,23 @@ localPlanButton.addEventListener('click',async()=>{
    return {id:x.id,label:x.id,protocol:x.protocol,endpoint:by('studio-local-endpoint-'+x.slot).value.trim(),models:[x.model],authMode,credentialEnv:authMode==='none'?null:env};
   });
   const config={version:LOCAL_COUNCIL_VERSION,contractText:c.contractText,contractPin:c.contractPin,disclosure:c.disclosure,connections,agents:c.agents,budget:{maxCalls:c.callCap,maxInputBytes:100000,maxOutputTokens:c.callCap*256,maxConcurrent:Math.min(2,c.callCap)},maxRounds:c.rounds,maxOutputTokens:256,roundPolicy:c.roundPolicy,timeoutMs:15000,transportDeadlineMs:10000};
-  const text=JSON.stringify(config,null,2),admitted=await admitLocalCouncilConfig(text);
-  if(ticket!==epoch||active)return;
-  const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-local-council-config.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  el.dataset.state='complete';el.textContent='Configuration export requested. No endpoint contact. Review CLI preview before executing. Retain plan pin: '+admitted.planPin;
-  commands.textContent='node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+admitted.planPin+' --export-version --portable-output < sutra-local-council-config.json > sutra-local-result.json';
+  let text=JSON.stringify(config,null,2);const admitted=await admitLocalCouncilConfig(text);
+  let planPin=admitted.planPin,name='sutra-local-council-config.json';
+  if(hybrid){
+   if(await casePin(offer.text)!==offer.pin)throw Error('HYBRID_VERSION_PIN');
+   const v=JSON.parse(offer.text);if(v.contractText!==c.contractText||v.contractPin!==c.contractPin)throw Error('HYBRID_CONTRACT');
+   const councilConfigText=JSON.stringify({...config,version:'sutra-mixed-expression-council/v1',connections:config.connections.map(x=>({...x,transportClass:'local'}))});
+   text=JSON.stringify({version:'sutra-mixed-hybrid-operator/v1',versionText:offer.text,versionPin:offer.pin,councilConfigText});planPin=await casePin(text);name='sutra-local-hybrid-config.json';
+  }
+  if(ticket!==epoch||active||hybrid&&hybridVersionHandoff.read()!==offer)return;
+  const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),anchor=document.createElement('a');anchor.href=url;anchor.download=name;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  el.dataset.state='complete';el.textContent='Configuration export requested. No endpoint contact. Review CLI preview before executing. Retain plan pin: '+planPin;
+  commands.textContent=hybrid?'node apps/sutra-v2/local-hybrid.mjs --plan < '+name+'\n\nnode apps/sutra-v2/local-hybrid.mjs --execute-local --approve-local-disclosure --approve-plan '+planPin+' < '+name+' > sutra-local-hybrid-result.json':'node apps/sutra-v2/local-council.mjs --plan < sutra-local-council-config.json\n\nnode apps/sutra-v2/local-council.mjs --execute-local --approve-local-disclosure --approve-plan '+planPin+' --export-version --portable-output < sutra-local-council-config.json > sutra-local-result.json';
   commands.hidden=false;
  }catch{if(ticket===epoch){el.dataset.state='refused';el.textContent='Local configuration refused. Check reviewed contract/pin, scopes, literal loopback endpoints, protocols and environment names.';}}
- finally{exportingPlan=false;localPlanButton.disabled=false;}
-});
+ finally{exportingPlan=false;localPlanButton.disabled=false;hybridPlanButton.disabled=!!active||!hybridVersionHandoff.read();}
+}
+localPlanButton.addEventListener('click',()=>exportLocalPlan(false));hybridPlanButton.addEventListener('click',()=>exportLocalPlan(true));
 function resetTransfer(){
  transferEpoch++;verifiedTransfer=null;by('studio-transfer-download').disabled=true;by('studio-transfer-help').hidden=true;by('studio-transfer-verify').disabled=false;
  const el=by('studio-transfer-status');el.dataset.state='idle';el.textContent='Inputs changed. Verify the portable result again.';

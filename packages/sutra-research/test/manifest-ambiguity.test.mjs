@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {admitManifest} from '../research-session.js';
+const valid=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:'Compare battery storage costs',scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false},budget:{maxSearches:2,maxDocuments:1,maxLinkDepth:0,maxDurationSeconds:5,maxDownloadBytes:65536,maxCostMicros:10000},providers:[{id:'brave',estimatedMaxCostMicros:1000}]});
+test('manifest parser rejects duplicate and escaped-alias keys before pinning',()=>{assert.ok(admitManifest(valid).planPin);for(const text of [valid.replace('"objective":','"objective":"Unapproved objective","objective":'),valid.replace('"allowPrivateNetworks":false','"allowPrivateNetworks":true,"allowPrivateNetworks":false'),valid.replace('"allowPrivateNetworks":false','"allowPrivateNetworks":true,"allowPrivateNetwor\\u006bs":false')])assert.throws(()=>admitManifest(text),{code:'MANIFEST'});});

@@ -5530,5 +5530,17 @@
     "verification": "11/11 triggered PR workflows passed at exact implementation head; operator-browser 45927484259 and knowledge/browser 45927484224",
     "next": "V2-ORCH-002 capability negotiation",
     "qualification": "Synthetic/provider-neutral injected transports only; no live-provider interoperability or billing claim."
+  },
+  "releaseIntegrationCheckpoint": {
+    "branch": "sutra/master-investigation-ui",
+    "pr": 66,
+    "progressRegisterRevision": "c3705970233be2581321db74ec3023407ee55a11",
+    "evidenceRegister": "docs/sutra-v2/release-integration-inventory.json",
+    "evidenceRevision": "23637c2dcb5c9851d7cac7e0b18e507fd0ab8619",
+    "activeReleaseChecklist": "docs/sutra-v2/DEVPOST-PRE-RELEASE.md",
+    "scope": "candidate only; existing canonical phase statuses unchanged",
+    "release": "NO-GO",
+    "closed": [],
+    "nextDependencyReady": "Restore independently trusted pinned TLC artifact or approved reproducible equivalent without weakening formal checks; verify exact final integration CI."
   }
 }

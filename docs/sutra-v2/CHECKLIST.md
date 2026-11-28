@@ -2,6 +2,10 @@
 
 > **SOLE ACTIVE EXECUTION CHECKLIST.** SUTRA is one product and `main` is canonical. Earlier SUTRA task queues are historical only; their implementation and verified evidence remain reusable when current SUTRA depends on them. “Continue with SUTRA” means resolve exact `main`, inspect exact-head CI, and execute the single dependency-ready `[~]` item here.
 
+**Frontend enhancement overlay (2026-11-28):** [EVENT HORIZON V2](EVENT-HORIZON.md) tracks 100 dependency-aware enhancement gates with [structured mirror](event-horizon-register.json). Explicit Event Horizon work follows that scoped register, beginning EH-A01; general continuation and historical status remain governed here. Existing implementation is reused, not restarted. Release gate status is unchanged.
+
+**Release overlay (2026-11-27):** [Devpost pre-release gates and award strategy](DEVPOST-PRE-RELEASE.md) governs release acceptance and Cloudflare cutover, without replacing this engineering queue or marking existing items complete.
+
 [Binding mandate](LIVING-KNOWLEDGE.md) · [Continuation contract](CONTINUE.md) · [Roadmap](ROADMAP.md) · [Parallel workstreams](PARALLEL-WORKSTREAMS.md) · [Machine state](progress.json)
 
 ## State contract
@@ -325,3 +329,10 @@ For every material task:
 **inspect → implement → adversarially challenge → verify exact source → update this checklist + machine registers + session/decision evidence → commit → re-read remote → continue**
 
 A continuation session should keep executing dependency-ready items while safe and authorized work remains. Stop dependent work only for a genuine external/user-owned input, safety issue or explicit user instruction.
+
+
+## 2026-11-27 — pre-release reconciliation evidence
+
+See [pre-release checkpoint](DEVPOST-PRE-RELEASE.md#2026-11-27--incremental-integration-checkpoint) and [machine-readable inventory](release-integration-inventory.json). V2-ORCH-002 has exact integration CI at `02a2367e4ab1b05a768ae0738cc5d175e80fb5bb` (13/13 workflows successful); preserve host-declared versus verified capability distinction. V2-HIST-010 receives partial #63 recovery hardening at `12478b8824345c483ba96536dd452e412a027bea`; earlier completed evidence is not a substitute for new exact-revision verification. Lost-ack filesystem/browser regression is included in the next candidate; full #63 branch reconciliation remains open under REL-B03. Existing task states are retained deliberately until their complete acceptance evidence is reviewed. No external release authority granted.
+
+- Pre-release integration candidate: REL-R06 exact source handoff and REL-C02/C03/C04/C07 published browser planner/critic graph are tracked in DEVPOST-PRE-RELEASE.md; these remain open until their complete acceptance evidence is available. No live provider or public conformance claim.

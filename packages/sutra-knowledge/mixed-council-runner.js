@@ -1,6 +1,10 @@
 // Trusted-host integration candidate. No CLI/browser live activation, no default
 // public resolver, no secret prompt. All credentials are enrolled before dispatch.
-import {admitMixedCouncilConfig} from './mixed-council-config.js';
+import {admitMixedCouncilConfig,admitHybridCouncilConfig} from './mixed-council-config.js';
+import {prepareHybridInvestigationReview} from './investigation-role-review.js';
+import {createDisclosureConsentInspector} from '../sutra-consent/index.js';
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+import {createExecutionCheckpoint} from '../sutra-runtime/execution-checkpoint.js';
 import {createMixedModelExchange} from '../sutra-inference/mixed-model-exchange.js';
 import {createProtocolWorkspace} from '../sutra-inference/protocol-workspace.js';
 import {runExpressionCouncil} from './expression-council.js';
@@ -33,8 +37,10 @@ function scanBounded(workspace,x){
  }
  scan(x);
 }
-export async function runApprovedMixedCouncil({configText,approvedPlanPin,approveDisclosure=false,approveHosted=false,readCredential,resolveAll,hostedIO,signal}={}){
- const {config,contract,planPin,preview}=await admitMixedCouncilConfig(configText);
+export async function runApprovedMixedCouncil(options={}){return runMixed(options,await admitMixedCouncilConfig(options.configText));}
+export async function runApprovedHybridCouncil(options={}){const hybrid=await admitHybridCouncilConfig(options.configText);return runMixed(options,hybrid.mixed,hybrid);}
+async function runMixed({approvedPlanPin,approveDisclosure=false,approveHosted=false,readCredential,resolveAll,hostedIO,signal},admitted,hybrid=null){
+ const {config,contract,preview}=admitted,planPin=hybrid?.planPin??admitted.planPin;
  if(approvedPlanPin!==planPin||approveDisclosure!==true)fail('APPROVAL');
  if(preview.hostedConnections&&approveHosted!==true)fail('HOSTED_APPROVAL');
  if(signal?.aborted)fail('CANCELLED');
@@ -60,6 +66,26 @@ export async function runApprovedMixedCouncil({configText,approvedPlanPin,approv
   scanBounded(workspace,config);scanBounded(workspace,contract);
   if(controller.signal.aborted)fail(stopCode);
   const routes=config.agents.map(x=>({id:x.id,role:x.role,handle:handles.get(x.connectionId),model:x.model,shareScope:'reviewed-question-bindings-and-conditional-feedback'}));
+  if(hybrid){
+   // Inspect decoded version inputs, including any escaped secret in annotation
+   // or proposal bytes, before the first request. No raw source data in events.
+   const wire=parseUniqueJson(hybrid.versionText,{maxChars:262144,maxDepth:12});
+   scanBounded(workspace,wire);
+   for(const key of ['contractText','batchText','annotationText'])scanBounded(workspace,parseUniqueJson(wire[key],{maxChars:262144,maxDepth:32}));
+   const prepared=await prepareHybridInvestigationReview({versionText:hybrid.versionText,versionPin:hybrid.versionPin,disclosure:config.disclosure,routes,workspace,maxRounds:config.maxRounds,maxOutputTokens:config.maxOutputTokens,timeoutMs:config.timeoutMs,roundPolicy:config.roundPolicy});
+   scanBounded(workspace,prepared.plan);
+   if(controller.signal.aborted)fail(stopCode);
+   // The outer host has explicitly approved the exact version/configuration.
+   // Bind the inner one-use consent to the generated recipient plan only.
+   const inspector=createDisclosureConsentInspector({decide:intent=>!controller.signal.aborted&&intent.planPin===prepared.plan.councilPlanPin?'allow':'deny'}),events=[];
+   const result=await prepared.execute({approvedPlanPin:prepared.planPin,consentInspector:inspector,runId:'hybrid_'+crypto.randomUUID(),signal:controller.signal,onExecutionEvent:e=>events.push(e)});
+   transport.close();
+   let checkpoint=null;
+   if(!controller.signal.aborted){const cp=await createExecutionCheckpoint(result,events);checkpoint={text:cp.text,pin:cp.pin};}
+   const cancelled=controller.signal.aborted;
+   const output={mode:'EXPLICIT_MIXED_HYBRID_HOST_CANDIDATE',planPin,versionDigest:hybrid.versionPin,contractPin:config.contractPin,hybridPlanPin:prepared.planPin,councilPlanPin:prepared.plan.councilPlanPin,status:cancelled?'INCOMPLETE_CANCELLED':result.status,result:cancelled?null:result,checkpoint:cancelled?null:checkpoint,budget:workspace.budgetSnapshot().global,decisionAuthority:'NONE',qualification:'Exact approved host routes; model proposals remain quarantined. Imported history cannot re-execute model calls. No authenticated model identity, billed currency, semantic or empirical authority.'};
+   scanBounded(workspace,output);return Object.freeze(output);
+  }
   const result=await runExpressionCouncil({contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure,routes,workspace,maxRounds:config.maxRounds,maxOutputTokens:config.maxOutputTokens,roundPolicy:config.roundPolicy,timeoutMs:config.timeoutMs,signal:controller.signal});
   transport.close();
   let receipt=null;

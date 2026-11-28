@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {admitReviewedAnswer} from '../../../packages/sutra-runtime/reviewed-answer.js';
+const e={sourceId:'source_1',sourceDigest:'sha256:'+'a'.repeat(64),start:8,end:19,quote:'Battery 😀!'};
+const fixture=()=>({claims:[{kind:'source_claim',text:'A source mentions a battery.',citation:{sourceId:e.sourceId,sourceDigest:e.sourceDigest,start:8,end:15,quote:'Battery'}},{kind:'uncertainty',text:'No price established.',citation:null}]});
+test('exact selected span with explicit uncertainty; never truth or authority',()=>{const a=admitReviewedAnswer(JSON.stringify(fixture()),e);assert.equal(a.truthStatus,'UNVERIFIED');assert.equal(a.authority,'NONE');assert.match(a.text,/Reported by source/);});
+test('reject forged quote, source, offsets, extra keys, surrogate split and missing uncertainty',()=>{for(const mutate of [x=>x.claims[0].citation.quote='Invented',x=>x.claims[0].citation.sourceDigest='sha256:'+'b'.repeat(64),x=>x.claims[0].citation.start=0,x=>x.claims[0].authority='APPROVED',x=>Object.assign(x.claims[0].citation,{start:17,end:18,quote:'\ude00'}),x=>x.claims.pop(),x=>x.claims[1].citation=x.claims[0].citation]){const x=fixture();mutate(x);assert.throws(()=>admitReviewedAnswer(JSON.stringify(x),e),/REVIEWED_ANSWER_SCHEMA/);}assert.throws(()=>admitReviewedAnswer('{"claims":[],"claims":[]}',e),/REVIEWED_ANSWER_SCHEMA/);});

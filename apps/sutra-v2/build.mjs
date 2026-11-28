@@ -13,6 +13,7 @@ if(!existsSync(vite))throw Error('Missing pinned SUTRA toolchain. Run npm ci --p
 run('sh',['packages/sutra-knowledge/support-lattice/build-wasm.sh']);
 run(node,[vite,'build','apps/sutra-v2']);
 await copyFile(resolve(here,'_headers'),resolve(here,'dist/_headers'));
+for(const [name,source] of [["LICENSE.txt","LICENSE"],["NOTICE.txt","NOTICE"],["nsdeploy-LICENSE.txt","packages/sutra-runtime/vendor/nsdeploy/LICENSE.txt"],["nsdeploy-NOTICE.txt","packages/sutra-runtime/vendor/nsdeploy/NOTICE.md"]])await copyFile(resolve(root,source),resolve(here,'dist',name));
 run('python3',['packages/sutra-knowledge/reference/build_offline_verifier.py','apps/sutra-v2/dist']);
 const html=await readFile(resolve(here,'dist/index.html'),'utf8');
 if(!html.includes('SUTRA')||!html.includes('Debugger for conclusions')||!html.includes('KNOWLEDGE COMPILER'))throw Error('Built artifact is not the SUTRA v2 product entry.');

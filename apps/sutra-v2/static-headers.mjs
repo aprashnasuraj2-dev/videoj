@@ -12,6 +12,9 @@ export function assertV2StaticHeaders(headers){
  if(rootStaticPolicy(headers)!==V2_STATIC_CSP)throw Error('V2 static CSP drift');
  const policies=headers.split(/\r?\n/).filter(l=>/^\s*Content-Security-Policy\s*:/i.test(l));
  if(policies.some((l,i)=>l.includes("'unsafe-eval'")||i>0&&l.includes("'wasm-unsafe-eval'")))throw Error('Unexpected eval policy');
+ const cors=[];
+ for(const block of headers.trim().split(/\r?\n\r?\n/)){const [path,...lines]=block.split(/\r?\n/);for(const line of lines){if(/^\s*Access-Control-/i.test(line)){if(line.trim()!=='Access-Control-Allow-Origin: *')throw Error('Unexpected static CORS field');cors.push(path);}}}
+ if(JSON.stringify(cors.sort())!==JSON.stringify(['/agents/agent-manifest.json','/agents/investigation.network.json','/agents/links.json','/agents/peer-investigation.network.json','/agents/reviewed-investigation.network.json']))throw Error('V2 CORS must be limited to public graph artifacts');
  return headers;
 }
 export function guideCandidateHeaders(headers){

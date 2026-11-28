@@ -1,13 +1,13 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {buildProviderCostReport} from './report.mjs';
-const base=()=>({schema:1,sourceRevision:'a'.repeat(40),provider:'provider',model:'model-v1',currency:'USD',
+const base=()=>({schema:2,sourceRevision:'a'.repeat(40),provider:'provider',model:'model-v1',backend:'hosted',routerPath:'/api/v1/chat/completions',currency:'USD',
  priceBasis:{promptPerMillion:2,completionPerMillion:8,effectiveAt:'2026-11-24T00:00:00Z',source:'operator-recorded provider price page'},
  monthlyRunScenario:1000,runs:[
   {id:'r1',outcome:'completed',observedAt:'2026-11-24T00:01:00Z',requests:[
-   {sequence:1,outcome:'completed',retry:false,usage:{promptTokens:1000,completionTokens:200}},
-   {sequence:2,outcome:'completed',retry:false,usage:{promptTokens:500,completionTokens:100}}]},
+   {sequence:1,outcome:'completed',retry:false,latencyMs:420,usage:{promptTokens:1000,completionTokens:200}},
+   {sequence:2,outcome:'completed',retry:false,latencyMs:280,usage:{promptTokens:500,completionTokens:100}}]},
   {id:'r2',outcome:'completed',observedAt:'2026-11-24T00:02:00Z',requests:[
-   {sequence:1,outcome:'completed',retry:false,usage:{promptTokens:2000,completionTokens:250}},
-   {sequence:2,outcome:'completed',retry:true,usage:{promptTokens:1000,completionTokens:100}}]}
+   {sequence:1,outcome:'completed',retry:false,latencyMs:420,usage:{promptTokens:2000,completionTokens:250}},
+   {sequence:2,outcome:'completed',retry:true,latencyMs:310,usage:{promptTokens:1000,completionTokens:100}}]}
  ]});
 test('complete observed usage produces transparent mean p95 projection and sensitivity including retries',()=>{
  const r=buildProviderCostReport(base());assert.equal(r.costComplete,true);assert.equal(r.observed.providerRequests,4);assert.equal(r.observed.retries,1);
@@ -21,10 +21,10 @@ test('any missing request usage nulls mean p95 monthly and sensitivity instead o
  assert.equal(r.projectedMonthlyUsd,null);assert.equal(r.sensitivity,null);assert.ok(r.runs[0].knownPartialCostUsd>0);
 });
 test('failed and cancelled requests remain visible in spend record rather than disappearing',()=>{
- const x=base();x.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,usage:{promptTokens:500,completionTokens:0}}]});
- x.runs.push({id:'r4',outcome:'cancelled',observedAt:'2026-11-24T00:04:00Z',requests:[{sequence:1,outcome:'cancelled',retry:false,usage:null}]});
+ const x=base();x.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,latencyMs:500,usage:{promptTokens:500,completionTokens:0}}]});
+ x.runs.push({id:'r4',outcome:'cancelled',observedAt:'2026-11-24T00:04:00Z',requests:[{sequence:1,outcome:'cancelled',retry:false,latencyMs:250,usage:null}]});
  const r=buildProviderCostReport(x);assert.equal(r.observed.failedRuns,1);assert.equal(r.observed.cancelledRuns,1);assert.equal(r.observed.providerRequests,6);assert.equal(r.costComplete,false);
- const y=base();y.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,usage:{promptTokens:500,completionTokens:0}}]});
+ const y=base();y.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,latencyMs:500,usage:{promptTokens:500,completionTokens:0}}]});
  const known=buildProviderCostReport(y);assert.equal(known.costComplete,true);assert.ok(known.observedRunMeanUsd<known.completedRunMeanUsd,'failed paid attempt participates in observed-run denominator');
 });
 test('malformed prices, duplicate runs, negative tokens and fabricated monthly scale fail closed',()=>{
@@ -55,3 +55,6 @@ test('cost report rejects unsafe tokens, overflow-capable prices, missing attemp
  const x=base();x.priceBasis.promptPerMillion=1_000_000;x.priceBasis.completionPerMillion=1_000_000;x.runs[0].requests[0].usage={promptTokens:10_000_000,completionTokens:10_000_000};
  const r=buildProviderCostReport(x);assert.ok(Number.isFinite(r.projectedMonthlyUsd));assert.equal(r.costComplete,true);assert.equal(JSON.parse(JSON.stringify(r)).costComplete,true);
 });
+
+test('schema 2 exposes exact route class, per-request latency and request-level cost while schema 1 remains readable as historical arithmetic',()=>{const current=buildProviderCostReport(base());assert.equal(current.schema,2);assert.equal(current.inputSchema,2);assert.equal(current.backend,'hosted');assert.equal(current.routerPath,'/api/v1/chat/completions');assert.equal(current.latencyComplete,true);assert.equal(current.requestLatencyP95Ms,420);assert.ok(current.requestLatencyMeanMs>0);assert.equal(current.runs[0].requests[0].latencyMs,420);assert.ok(current.runs[0].requests[0].costUsd>0);const legacy=base();legacy.schema=1;delete legacy.backend;delete legacy.routerPath;for(const run of legacy.runs)for(const req of run.requests)delete req.latencyMs;const old=buildProviderCostReport(legacy);assert.equal(old.inputSchema,1);assert.equal(old.backend,null);assert.equal(old.latencyComplete,false);assert.equal(old.requestLatencyMeanMs,null);assert.equal(old.runs[0].requests[0].latencyMs,null);});
+test('schema 2 refuses unknown provider route classes and missing latency rather than inventing interoperability evidence',()=>{for(const mutate of [x=>x.backend='mystery',x=>x.routerPath='https://provider.example/v1',x=>delete x.runs[0].requests[0].latencyMs]){const x=base();mutate(x);assert.throws(()=>buildProviderCostReport(x));}});

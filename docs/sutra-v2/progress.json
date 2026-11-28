@@ -13496,5 +13496,20 @@
     "contract": "One-shot model disclosure consent is separate from DOM enablement and binds exact destination, disclosure labels and plan pin. Denial/cancellation happens before dispatch; approval is consumed on attempted use; route/profile revalidation occurs immediately inside the approved effect; consent event history excludes reviewed values.",
     "verification": "exact implementation head bef87881387adb9a02a225a49b993a9b4389ec64: all 11 triggered PR workflows passed; operator 45927484259, knowledge/browser 45927484224, workspace 45927484296",
     "limitations": "Synthetic injected transports only. No real provider credentials, billing semantics, provider-authenticated capability discovery or external deployment."
+  },
+  "releaseIntegrationCheckpoint": {
+    "branch": "sutra/master-investigation-ui",
+    "pr": 66,
+    "canonicalMain": "b3d4ac7aa7fafbbeb200a5d73c7e549ba5f47be7",
+    "implementationHead": "0c7c76be6ad5eb1e3d559fb7a3f144d81afdad93",
+    "evidenceRegister": "docs/sutra-v2/release-integration-inventory.json",
+    "evidenceRevision": "23637c2dcb5c9851d7cac7e0b18e507fd0ab8619",
+    "conformanceMapping": "docs/sutra-v2/DEVPOST-PRE-RELEASE.md",
+    "conformanceRevision": "0efb8bcd8f64d749ca0486f41380719635baf769",
+    "scope": "candidate and scoped verified evidence only; no canonical task promotion",
+    "release": "NO-GO",
+    "uncheckedPreRelease": 103,
+    "closed": [],
+    "blocker": "Formal TLC dependency pin mismatch; exact final integration CI and public release proof not established."
   }
 }

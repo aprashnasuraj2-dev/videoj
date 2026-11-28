@@ -101,3 +101,22 @@ test('direct Worker and Pages both refuse query-bearing API routes',async()=>{
   assert.equal((await worker.fetch(original,env)).status,404);assert.equal(calls,0);
  }
 });
+
+test('public ingress and private Worker do not expose durable research-session operations',async()=>{
+ let contacts=0;
+ const pages={SUTRA_API:{fetch(){contacts++;throw Error('unexpected binding contact');}}};
+ const workerEnv={SUTRA_QUOTA:{idFromName(){contacts++;throw Error('unexpected quota contact');}},ASSETS:{fetch(){contacts++;throw Error('unexpected asset contact');}}};
+ for(const [path,method] of [
+  ['/api/research/capabilities','GET'],['/api/research/preview','POST'],
+  ['/api/research/start','POST'],['/api/research/status','GET'],['/api/research/cancel','POST'],
+  ['/api/research/status?id=other&after=0','GET'],['/api/research/resume','POST'],['/api/research/report','GET']
+ ]){
+  const request=()=>req(path,{method,headers:{Origin:base,'X-Sutra-Session':'untrusted-session'}});
+  for(const response of [await onRequest({request:request(),env:pages}),await worker.fetch(request(),workerEnv)]){
+   assert.equal(response.status,404,path);
+   assert.equal(response.headers.get('cache-control'),'no-store');
+   assert.equal(response.headers.has('access-control-allow-origin'),false);
+  }
+ }
+ assert.equal(contacts,0);
+});

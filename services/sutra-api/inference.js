@@ -4,6 +4,13 @@ import {parseUniqueJson} from '../../packages/sutra-runtime/strict-json.js';
 import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES,admissionWindow,ADMISSION_MS} from './quota.js';
 import {readQuotaReply} from './quota-transport.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
+// Operator-selected exact routes. No client-directed endpoint or fallback.
+const HOSTED_PROFILES=Object.freeze({
+ openai:Object.freeze({url:UPSTREAM,tokenField:'max_completion_tokens'}),
+ gemini:Object.freeze({url:'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',tokenField:'max_tokens'}),
+ groq:Object.freeze({url:'https://api.groq.com/openai/v1/chat/completions',tokenField:'max_tokens'}),
+ openrouter:Object.freeze({url:'https://openrouter.ai/api/v1/chat/completions',tokenField:'max_tokens'})
+});
 export async function clientKeyForRequest(request,secretValue,day=new Date().toISOString().slice(0,10)){
  if(typeof secretValue!=='string'||secretValue.length<32)throw Error('CLIENT_KEY_CONFIG');
  const secret=await crypto.subtle.importKey('raw',new TextEncoder().encode(secretValue),{name:'HMAC',hash:'SHA-256'},false,['sign']);
@@ -17,10 +24,13 @@ export function inferenceBackend(env={}){
  const mode=env.SUTRA_INFERENCE_BACKEND;
  if(mode==='hosted'){
   if(env.SUTRA_SELF_HOSTED_UPSTREAM_URL!==undefined)return null;
+  const provider=env.SUTRA_HOSTED_PROVIDER===undefined?'openai':env.SUTRA_HOSTED_PROVIDER;
+  if(typeof provider!=='string'||!Object.hasOwn(HOSTED_PROFILES,provider))return null;
+  if(provider==='openrouter'&&configuredModels(env).some(m=>['openrouter/auto','openrouter/free'].includes(m)))return null;
   return typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8
-   ?Object.freeze({mode,url:UPSTREAM,credential:env.SUTRA_PROVIDER_KEY}):null;
+   ?Object.freeze({mode,provider,...HOSTED_PROFILES[provider],credential:env.SUTRA_PROVIDER_KEY}):null;
  }
- if(mode!=='self_hosted')return null;
+ if(mode!=='self_hosted'||env.SUTRA_HOSTED_PROVIDER!==undefined)return null;
  if(typeof env.SUTRA_SELF_HOSTED_UPSTREAM_URL!=='string'||typeof env.SUTRA_SELF_HOSTED_TOKEN!=='string'||env.SUTRA_SELF_HOSTED_TOKEN.length<32)return null;
  let url;try{url=new URL(env.SUTRA_SELF_HOSTED_UPSTREAM_URL);}catch{return null;}
  const host=url.hostname;
@@ -28,7 +38,7 @@ export function inferenceBackend(env={}){
  if(url.protocol!=='https:'||url.port||url.username||url.password||url.search||url.hash||url.pathname!=='/v1/chat/completions'||url.href!==env.SUTRA_SELF_HOSTED_UPSTREAM_URL||
   !/^[a-z0-9.-]+$/.test(host)||labels.length<2||labels.some(label=>!label||label.startsWith('-')||label.endsWith('-'))||
   /^(?:[0-9.]+|localhost)$/i.test(host)||['local','localhost','internal','invalid'].includes(labels.at(-1)))return null;
- return Object.freeze({mode,url:url.href,credential:env.SUTRA_SELF_HOSTED_TOKEN});
+ return Object.freeze({mode,provider:'self_hosted',tokenField:'max_tokens',url:url.href,credential:env.SUTRA_SELF_HOSTED_TOKEN});
 }
 
 // Match the media type, not a prefix such as application/jsonp.
@@ -114,7 +124,7 @@ export async function inferenceContractId(env={},snapshot={backend:inferenceBack
  const {backend,models,maxOutput}=snapshot;
  if(!backend||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)throw Error('CONTRACT_CONFIG');
  const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
- const message=JSON.stringify(['sutra-inference-contract-v2',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env),sourceQuotaLimits(env),[env.SUTRA_CONTENT_MODE,env.SUTRA_CONTENT_VERSION,env.SUTRA_CATALOG_SHA256,env.SUTRA_TRANSCRIPT_SHA256]]);
+ const message=JSON.stringify(['sutra-inference-contract-v3',backend.mode,backend.provider,backend.tokenField,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env),sourceQuotaLimits(env),[env.SUTRA_CONTENT_MODE,env.SUTRA_CONTENT_VERSION,env.SUTRA_CATALOG_SHA256,env.SUTRA_TRANSCRIPT_SHA256]]);
  const signature=await crypto.subtle.sign('HMAC',key,enc.encode(message));
  return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
 }
@@ -137,7 +147,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  let body;try{body=validPayload(await readJson(request),models);}catch{return error(request.signal.aborted?'CANCELLED':'PAYLOAD',request.signal.aborted?499:400);}
  if(request.signal.aborted)return error('CANCELLED',499);
  const upstreamBody=JSON.stringify({...body,
-  ...(backend.mode==='self_hosted'?{max_tokens:maxOutput}:{max_completion_tokens:maxOutput}),
+  [backend.tokenField]:maxOutput,
   stream_options:{include_usage:true},
   ...(backend.mode==='hosted'&&body.tools.length?{tool_choice:'auto'}:{})
  });

@@ -4,7 +4,7 @@ const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),
 const requireToolchain=createRequire(path.resolve(__dirname,'../package.json'));
 const {chromium}=requireToolchain('playwright');
 const dist=path.resolve(__dirname,'../dist');
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'};
 (async()=>{
  const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
  const peer=http.createServer((req,res)=>{
@@ -39,6 +39,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  let browser;const cleanupDirs=[];
  try{
   browser=await chromium.launch({headless:true});
+  await require('./master.cjs').testMaster(browser,origin,assert);
   const probe=await browser.newPage();
   for(const [suffix,expected] of [['v1',{wasm:false,js:false}],['v2',{wasm:true,js:false}]]){
    await probe.goto(origin+'/__csp_probe_'+suffix);
@@ -1032,12 +1033,17 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const durableDir=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'sutra-browser-durable-'));cleanupDirs.push(durableDir);
    const {openDurableInvestigationHistory}=await import('../../../packages/sutra-knowledge/durable-investigation-history.mjs'),durableHistory=await openDurableInvestigationHistory(durableDir);
    const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   let initializationWrites=0,appendWrites=0,historyReads=0;
    await samplePage.exposeFunction('__sutraHistoryHostCall',async ({operation,payload})=>{
     try{
      let snapshot;
-     if(operation==='initialize_snapshot')snapshot=await durableHistory.initializeSnapshot(payload);
-     else if(operation==='append_snapshot')snapshot=await durableHistory.appendSnapshot(payload);
-     else if(operation==='read_snapshot')snapshot=await durableHistory.read(payload.expectedHistoryPin);
+     if(operation==='initialize_snapshot'){
+      initializationWrites++;snapshot=await durableHistory.initializeSnapshot(payload);
+      // The actual filesystem commit succeeded, but its acknowledgement was lost.
+      if(initializationWrites===1)return null;
+     }
+     else if(operation==='append_snapshot'){appendWrites++;snapshot=await durableHistory.appendSnapshot(payload);}
+     else if(operation==='read_snapshot'){historyReads++;snapshot=await durableHistory.read(payload.expectedHistoryPin);}
      else throw Error('HISTORY_HOST_OPERATION');
      return {ok:true,snapshot};
     }catch(e){return {ok:false,error:String(e?.message??'HISTORY_HOST_FAILURE')};}
@@ -1075,8 +1081,19 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
      rootHistoryPin=await samplePage.locator('#review-history-digest').innerText();
      await samplePage.locator('#review-history-durable-panel > summary').click();
-     await samplePage.locator('#review-history-durable-initialize').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
-     assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/initialized/);
+     await samplePage.locator('#review-history-durable-initialize').click();await sampleState('refused');
+     const durableStatus=samplePage.locator('#review-history-durable-status'),durablePin=samplePage.locator('#review-history-durable-pin');
+     assert.equal(await durableStatus.getAttribute('data-state'),'unknown');assert.match(await durableStatus.innerText(),/Save outcome unknown/);
+     assert.equal(await durablePin.inputValue(),rootHistoryPin);assert.equal((await durableHistory.read(rootHistoryPin)).digest,rootHistoryPin);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),rootHistoryPin);
+     assert.equal(initializationWrites,1);assert.equal(appendWrites,0);
+     await durablePin.fill('');assert.equal(await samplePage.locator('#review-history-durable-initialize').isDisabled(),true);
+     await durablePin.fill('sha256:'+'0'.repeat(64));assert.equal(await samplePage.locator('#review-history-durable-append').isDisabled(),true);
+     await samplePage.locator('#review-history-durable-read').click();await sampleState('refused');assert.equal(await durableStatus.getAttribute('data-state'),'unknown');
+     assert.equal(await samplePage.locator('#review-history-durable-append').isDisabled(),true);
+     await durablePin.fill(rootHistoryPin);await samplePage.locator('#review-history-durable-read').click();await sampleState('history_durable_ready');
+     assert.equal(await durableStatus.getAttribute('data-state'),'ready');assert.match(await durableStatus.innerText(),/In-memory history matches it/);
+     assert.equal(historyReads,2);assert.equal(initializationWrites,1);assert.equal(appendWrites,0);
     }
     await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
     assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
@@ -1110,12 +1127,62 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      const archive=samplePage.waitForEvent('download');await samplePage.locator('#review-history-export').click();const historyBytes=fs.readFileSync(await (await archive).path());
      fs.writeFileSync(path.join(output,'living-history.json'),historyBytes);fs.writeFileSync(path.join(output,'living-history.sha256'),historyPin+'\n');
      const savedHistory=JSON.parse(historyBytes);assert.equal(savedHistory.versions.length,3);assert.equal(savedHistory.branches.length,2);
-     await durableHistory.appendSnapshot({expectedHistoryPin:rootHistoryPin,historyText:historyBytes.toString('utf8'),historyPin});
+     // A second, independent browser context and filesystem host publish the
+     // exact same proposed history from the retained root. Its append ack is lost.
+     const secondContext=await browser.newContext({viewport:{width:360,height:800}});
+     try{
+      const secondPage=await secondContext.newPage(),secondHost=await openDurableInvestigationHistory(durableDir);
+      let secondWrites=0,secondReads=0;
+      secondPage.on('pageerror',e=>errors.push(e.message));secondPage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+      await secondPage.exposeFunction('__sutraHistoryHostCall',async ({operation,payload})=>{
+       try{
+        if(operation==='read_snapshot'){secondReads++;return {ok:true,snapshot:await secondHost.read(payload.expectedHistoryPin)};}
+        if(operation==='append_snapshot'){secondWrites++;await secondHost.appendSnapshot(payload);return null;}
+        throw Error('UNEXPECTED_SECOND_SESSION_OPERATION');
+       }catch(e){return {ok:false,error:String(e?.message??'HISTORY_HOST_FAILURE')};}
+      });
+      await secondPage.addInitScript(()=>{Object.defineProperty(globalThis,'sutraHistoryHost',{value:Object.freeze({version:1,call:(operation,payload)=>globalThis.__sutraHistoryHostCall({operation,payload})}),configurable:false,writable:false});});
+      await secondPage.goto(origin);await secondPage.locator('#review-open').click();
+      await secondPage.locator('#review-history-panel > summary').click();
+      await secondPage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
+      await secondPage.locator('#review-history-pin').fill(historyPin);await secondPage.locator('#review-history-import').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-status').dataset.state==='history_ready'&&!document.querySelector('#review-reset').disabled);
+      await secondPage.locator('#review-history-durable-panel > summary').click();
+      await secondPage.locator('#review-history-durable-pin').fill(rootHistoryPin);await secondPage.locator('#review-history-durable-read').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready'&&!document.querySelector('#review-reset').disabled);
+      assert.match(await secondPage.locator('#review-history-durable-status').innerText(),/is different and was not replaced/);
+      assert.equal(await secondPage.locator('#review-history-digest').innerText(),historyPin);
+      await secondPage.locator('#review-history-durable-append').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='unknown'&&!document.querySelector('#review-reset').disabled);
+      assert.equal(await secondPage.locator('#review-history-durable-pin').inputValue(),historyPin);
+      assert.equal(await secondPage.locator('#review-history-durable-append').isDisabled(),true);
+      await secondPage.locator('#review-history-durable-read').click();
+      await secondPage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready'&&!document.querySelector('#review-reset').disabled);
+      assert.match(await secondPage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);
+      assert.equal(secondWrites,1);assert.equal(secondReads,2);
+     }finally{await secondContext.close();}
      const localBeforeStale=await samplePage.locator('#review-history-digest').innerText();assert.equal(localBeforeStale,historyPin);
      await samplePage.locator('#review-history-durable-append').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='stale');
      assert.equal(await samplePage.locator('#review-history-digest').innerText(),localBeforeStale);assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/No retry/);
      await samplePage.locator('#review-history-durable-pin').fill(historyPin);await samplePage.locator('#review-history-durable-read').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
-     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);assert.equal(initializationWrites,1);assert.equal(appendWrites,1);assert.equal(historyReads,3);
+     // Explicit adoption and undo use real replayed bytes from the same disk store;
+     // neither may change the editable draft or publish anything to the host.
+     const draftQuestion=await samplePage.locator('#review-question').inputValue();
+     await samplePage.locator('#review-history-fork-name').fill('local_unsaved');
+     await samplePage.locator('#review-history-fork').click();await sampleState('history_ready');
+     const divergentPin=await samplePage.locator('#review-history-digest').innerText();assert.notEqual(divergentPin,historyPin);
+     await samplePage.locator('#review-history-durable-read').click();await sampleState('history_durable_ready');
+     assert.match(await samplePage.locator('#review-history-durable-detail').innerText(),/local_unsaved/);
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),divergentPin);
+     await samplePage.locator('#review-history-durable-reload').click();
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);
+     assert.equal(await samplePage.locator('#review-question').inputValue(),draftQuestion);
+     await samplePage.locator('#review-history-durable-undo').focus();await samplePage.keyboard.press('Enter');
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),divergentPin);
+     assert.equal(await samplePage.locator('#review-question').inputValue(),draftQuestion);
+     assert.equal((await durableHistory.read(historyPin)).digest,historyPin);
+     assert.equal(appendWrites,1);assert.equal(historyReads,4);
      await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
      await samplePage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
      await samplePage.locator('#review-history-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-history-import').click();await sampleState('refused');assert.match(await samplePage.locator('#review-history-digest').innerText(),/No history/);
@@ -1217,6 +1284,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.match(await tablePage.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
    const mappedQuestion='Is current revenue not less than prior revenue?';
    await fill('question',mappedQuestion);await click('seal');await state('sealed');
+   await tablePage.locator('#review-hybrid-panel > summary').click();
+   await tablePage.locator('#review-hybrid-sources').selectOption('ledger');await click('hybrid-prepare');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-pin').textContent.startsWith('sha256:'));
+   const hp=JSON.parse(await tablePage.locator('#review-hybrid-packet').inputValue()),hpin=await tablePage.locator('#review-hybrid-pin').innerText();
+   assert.equal(hp.question,mappedQuestion);assert.equal(hp.sources.length,1);assert.equal(hp.sources[0].id,'ledger');
+   const hresponse={version:1,packetDigest:hpin,disposition:'ALTERNATIVES',alternatives:[{id:'comparison',meaning:'Current revenue at least prior revenue',questionSpans:[{start:0,end:mappedQuestion.length,quote:mappedQuestion}],evidenceSpans:[{sourceId:'ledger',start:0,end:hp.sources[0].text.length,quote:hp.sources[0].text}],facets:[{family:'negation_scope',interpretation:'not less than means greater than or equal to'}],operation:{mode:'DIRECT_COMPARISON',operator:'>=',roles:{left:'new_rev',right:'old_rev'}},missingContext:[]}],clarifications:[]};
+   await fill('hybrid-response',JSON.stringify(hresponse));assert.ok(await tablePage.locator('#review-hybrid-evaluate').isDisabled());await tablePage.locator('#review-hybrid-approve').check();await click('hybrid-evaluate');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-result').textContent.includes('CONDITIONALLY_SATISFIED'));
+   const hr=JSON.parse(await tablePage.locator('#review-hybrid-result').textContent());assert.equal(hr.alternatives[0].decisionAuthority,'NONE');assert.equal(hr.alternatives[0].computation.status,'CONDITIONALLY_SATISFIED');
+   const forged=JSON.parse(JSON.stringify(hresponse));forged.alternatives[0].evidenceSpans[0].quote='invented';await fill('hybrid-response',JSON.stringify(forged));await click('hybrid-evaluate');
+   await tablePage.waitForFunction(()=>document.querySelector('#review-hybrid-status').textContent.startsWith('Response refused'));assert.ok(await tablePage.locator('#review-hybrid-export').isDisabled());
+   await tablePage.locator('#review-hybrid-sources').selectOption([]);assert.equal(await tablePage.locator('#review-hybrid-packet').inputValue(),'');assert.ok(await tablePage.locator('#review-hybrid-evaluate').isDisabled());await tablePage.locator('#review-hybrid-panel > summary').click();
    await tablePage.locator('#review-question-path-panel > summary').click();
    async function capture(side,name){await tablePage.locator('#review-question-path-text').evaluate((el,name)=>{el.focus();const i=el.value.indexOf(name);el.setSelectionRange(i,i+name.length);},name);await click('question-path-'+side);}
    await capture('left','current revenue');await capture('right','prior revenue');
@@ -1405,6 +1484,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await click('transaction-preview');await state('transaction_preview');
    assert.match(await loc('transaction-result').innerText(),/operating_cash · TARGET_INPUT_RESELECTED.*CONDITIONALLY_REFUTED/);
    assert.match(await loc('transaction-result').innerText(),/after_capital · TARGET_INPUT_MISSING.*BLOCKED_MISSING_INPUT/);
+   assert.match(await loc('transaction-result').innerText(),/Independent full child replay agrees/);assert.match(await loc('transaction-result').innerText(),/\d+ arithmetic operations executed · \d+ outcomes reused/);
    assert.equal(await loc('semantic-pin').innerText(),parentPin);assert.equal(await loc('transaction-export').isDisabled(),true);
    await loc('transaction-source').selectOption('cash_report');assert.equal(await loc('transaction-apply').isDisabled(),true);
    await click('transaction-preview');await state('transaction_preview');const planPin=await loc('transaction-plan-pin').innerText();
@@ -1517,7 +1597,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
-  const guideStarted=Date.now();await guidePage.goto(origin);
+  // Serve only immutable built assets; no API, inference, search, or host bridge can respond.
+  // The actual Chromium journey must not even attempt a non-static request.
+  const guideBlocked=[];
+  await guidePage.route('**/*',route=>{
+   const request=route.request(),url=new URL(request.url());
+   const file=url.pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+url.pathname);
+   if(request.method()==='GET'&&url.origin===origin&&file.startsWith(dist+path.sep)&&fs.existsSync(file)&&fs.statSync(file).isFile())return route.continue();
+   guideBlocked.push({method:request.method(),origin:url.origin,pathname:url.pathname});return route.abort();
+  });
+  const guideStarted=Date.now();await guidePage.goto(origin+'/?surface=debugger');
   const primary=guidePage.locator('#debug-guide-next');
   const checkFirstScreen=async name=>{
    await guidePage.evaluate(()=>scrollTo(0,0));
@@ -1574,7 +1663,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await guideStep('withdraw','plan-observe','UNDERDETERMINED');
   await guideStep('plan-observe','capsule-export','REFUTED');
   assert.equal(await guidePage.locator('#debug-guide-proof').getAttribute('hidden'),'');
-  assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);await guidePage.close();
+  assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);assert.deepEqual(guideBlocked,[],'no model, search or host request attempted');await guidePage.close();
+  console.log('PASS: complete deterministic worked example with static-only transport, zero attempted dynamic or third-party requests.');
   const worldPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),worldErrors=[],worldExternal=[];
   worldPage.on('pageerror',e=>worldErrors.push(e.message));worldPage.on('request',r=>{if(new URL(r.url()).origin!==origin)worldExternal.push(r.url());});
   await worldPage.goto(origin);await worldPage.locator('#debug-manual > summary').click();
@@ -1645,7 +1735,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   console.log('PASS: actual static offline verifier and digest downloads match the built source artifacts; no external request.');
   console.log('PASS: five exact target thresholds; original evidence, result and separate control remain unchanged; conflicting evidence survives rule change; four real sensitivity exports.');
   console.log('PASS: all eight world rows, exact blocker values, copy invariance, withdrawal deltas, fresh guide ceremony and five real world trace exports.');
-  const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();
+  const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin+'/?surface=debugger');await desktopGuide.locator('#debug-guide-next').click();
   await desktopGuide.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
   const desktopRect=await desktopGuide.locator('#debug-guide-next').boundingBox();assert.ok(desktopRect&&desktopRect.y+desktopRect.height<=900);
   await desktopGuide.screenshot({path:path.join(output,'guide-desktop-supported.png'),fullPage:false});await desktopGuide.close();

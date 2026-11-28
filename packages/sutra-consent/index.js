@@ -13,8 +13,8 @@ function dataRecord(value,keys,code){
   }
   return out;
 }
-function dataLabels(value){
-  if(!Array.isArray(value)||value.length<1||value.length>12)fail('DISCLOSURE','Disclosure must list one to twelve public field labels.');
+function dataLabels(value,max=12){
+  if(!Array.isArray(value)||value.length<1||value.length>max)fail('DISCLOSURE','Disclosure must list one to '+max+' public field labels.');
   const descriptors=Object.getOwnPropertyDescriptors(value);
   if(Reflect.ownKeys(descriptors).length!==value.length+1)fail('DISCLOSURE','Disclosure must be a dense data array.');
   return Array.from({length:value.length},(_,i)=>{
@@ -145,7 +145,7 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
     exportEvents(){return events.map(event=>({...event,disclosure:[...event.disclosure]}));}
   });
 }
-async function readBoundedJson(response,maxBytes,signal){
+async function readBoundedJson(response,maxBytes,signal,withDigest=false){
   let reader;
   try{
     check(signal);
@@ -160,14 +160,19 @@ async function readBoundedJson(response,maxBytes,signal){
       if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       bytes.set(value,total);total+=value.byteLength;
     }
-    try{return parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,total)),{maxChars:maxBytes,maxDepth:32});}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
+    const exactBytes=bytes.subarray(0,total);let value;
+    try{value=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(exactBytes),{maxChars:maxBytes,maxDepth:32});}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
+    if(!withDigest)return value;
+    const hash=await raceAbort(()=>crypto.subtle.digest('SHA-256',exactBytes),signal);check(signal);
+    return Object.freeze({value,sha256:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join(''),bytes:total});
   } finally {
     if(reader){cancelBody(reader);try{reader.releaseLock();}catch{}}
     else cancelBody(response?.body);
   }
 }
-export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal,timeoutMs=5000}={}){
+export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal,timeoutMs=5000,withDigest=false}={}){
   if(!inspector||typeof inspector.perform!=='function')fail('INSPECTOR','A consent inspector is required.');
+  if(typeof withDigest!=='boolean')fail('CONTACT_DIGEST','Digest capture must be explicitly selected.');
   if(!Number.isInteger(maxBytes)||maxBytes<1||maxBytes>65536)fail('CONTACT_SIZE','Response limit must be within 1–65536 bytes.');
   if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>5000)fail('CONTACT_TIMEOUT','Approved GET timeout must be within 1–5000 ms.');
   check(signal);
@@ -192,7 +197,7 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
       }catch(error){if(active?.aborted||error instanceof ConsentError&&error.code==='CANCELLED')throw cancelled();fail('CONTACT_FETCH','Approved contact could not be fetched.');}
       check(active);
       if(response.redirected||response.url&&response.url!==target.href)fail('CONTACT_REDIRECT','Approved contact changed its exact resource.');
-      handedOff=true;return await readBoundedJson(response,maxBytes,active);
+      handedOff=true;return await readBoundedJson(response,maxBytes,active,withDigest);
     }catch(error){if(deadline.signal.aborted&&!parent?.aborted)fail('CONTACT_TIMEOUT','Approved GET exceeded its network deadline.');throw error;}
     finally{clearTimeout(timer);finished=true;if(!handedOff)cancelBody(received?.body);}
   },{signal});
@@ -206,7 +211,7 @@ export function normalizeDisclosureIntent(input){
   if(typeof input.operation!=='string'||!disclosureOperationPattern.test(input.operation))fail('DISCLOSURE_INTENT','Disclosure operation must be a bounded identifier.');
   const destination=publicText(input.destination,'Destination',1024);
   const purpose=publicText(input.purpose,'Purpose',240);
-  const disclosure=dataLabels(input.disclosure);
+  const disclosure=dataLabels(input.disclosure,16);
   if(new Set(disclosure).size!==disclosure.length)fail('DISCLOSURE','Disclosure labels must be unique.');
   if(typeof input.planPin!=='string'||!disclosurePinPattern.test(input.planPin))fail('DISCLOSURE_PIN','Disclosure intent requires an exact SHA-256 plan pin.');
   let preview;
@@ -247,14 +252,13 @@ export function createDisclosureConsentInspector({decide,onEvent,now=()=>new Dat
   async function perform(input,effect,{signal,onEvent:observe}={}){
     if(typeof effect!=='function')fail('CONTACT_EFFECT','Approved disclosure operation must be callable.');
     const active=combine(controller.signal,signal),approval=await authorize(input,{signal:active,onEvent:observe});check(active);
-    try{
-      const value=await raceAbort(()=>effect(approval.intent,active),active);check(active);
-      record(approval.intent,'outcome',{status:'completed',scope:'once'},observe);return value;
-    }catch(error){
-      record(approval.intent,'outcome',{status:'failed',scope:'once'},observe);
-      if(error instanceof ConsentError)throw error;
-      throw error;
-    }
+    let value;
+    try{value=await raceAbort(()=>effect(approval.intent,active),active);check(active);}
+    catch(error){record(approval.intent,'outcome',{status:'failed',scope:'once'},observe);throw error;}
+    record(approval.intent,'outcome',{status:'completed',scope:'once'},observe);
+    // A synchronous observer may revoke the session while recording completion.
+    // The effect completed, but its result must not cross the publication fence.
+    check(active);return value;
   }
   return Object.freeze({
     authorize,perform,

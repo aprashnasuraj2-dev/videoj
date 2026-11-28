@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "description": "Prepare a candidate investigation plan and challenge its assumptions. No evidence acquisition or verified facts."
+  },
+  "max_steps": 3,
+  "tools": [
+    {
+      "name": "planner",
+      "function": {
+        "description": "Prepare an investigation plan and request a critical review.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Create a bounded candidate plan for the requested investigation. Delegate at least once to critic to identify disconfirming observations and uncertainty. Incorporate the review. Separate proposed work from completed work; no web access, evidence acquisition, citations or factual verification has occurred. Never request secrets or new routing permissions.",
+      "tools": [
+        "critic"
+      ]
+    },
+    {
+      "name": "critic",
+      "function": {
+        "description": "Identify missing evidence, plausible alternatives and possible falsifiers.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Critically review the proposed investigation. Identify uncertainty, missing evidence and falsifiable alternatives. Do not claim sources were retrieved or facts verified. Return a concise candidate critique.",
+      "tools": []
+    }
+  ]
+}

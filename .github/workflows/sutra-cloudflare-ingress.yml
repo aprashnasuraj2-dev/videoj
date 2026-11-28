@@ -23,10 +23,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test deploy/sutra-pages/ingress.test.mjs
+      - run: node --test deploy/sutra-pages/ingress.test.mjs deploy/sutra-pages/check-public.test.mjs deploy/sutra-pages/candidate-fingerprint.test.mjs
+      - name: Validate strict quota wire boundary
+        run: node --test services/sutra-api/test/quota-wire.test.mjs services/sutra-api/test/inference.test.mjs
       - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
-        run: node services/sutra-api/test-local/quota-runtime.mjs
-      - name: Build independent static candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node services/sutra-api/test-local/quota-runtime.mjs | tee "$RUNNER_TEMP/sutra-workerd-load.log"
+          node --input-type=module -e 'import fs from "node:fs";import assert from "node:assert/strict";const p=process.env.RUNNER_TEMP;const rows=fs.readFileSync(p+"/sutra-workerd-load.log","utf8").split("\n").filter(s=>s.startsWith("WORKERD_LOAD "));assert.equal(rows.length,1);const x=JSON.parse(rows[0].slice(13));assert.equal(x.concurrentClients,20);assert.equal(x.statusCounts[200]+x.statusCounts[429],20);assert.equal(x.providerContacts,x.statusCounts[200]);assert.equal(x.freshStopProbeContacts,0);assert.equal(x.finalContacts,0);assert.ok(x.p95Ms>=x.p50Ms);fs.writeFileSync(p+"/sutra-workerd-load.json",JSON.stringify(x,null,2)+"\n")'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-workerd-load
+          path: ${{ runner.temp }}/sutra-workerd-load.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Build independent static candidates with synthetic credential-leak canaries
+        env:
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_PROVIDER00000000000000000001
+          VITE_SUTRA_BUILD_SECRET_CANARY: SUTRA_BUILD_SECRET_CANARY_VITE0000000000000000000001
         run: |
           npm --prefix apps/sutra ci
           npm ci --prefix apps/sutra-v2
@@ -37,6 +52,8 @@ jobs:
           node deploy/sutra-pages/prepare.mjs
           node deploy/sutra-pages/verify-build.mjs
       - name: Compile private Worker and Pages Functions without deployment
+        env:
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_WORKER000000000000000000001
         shell: bash
         run: |
           set -euo pipefail
@@ -45,3 +62,49 @@ jobs:
           cd deploy/sutra-pages
           npx --yes wrangler@4.166.0 pages functions build functions --outfile "$RUNNER_TEMP/sutra-pages-functions.mjs"
           test -s "$RUNNER_TEMP/sutra-pages-functions.mjs"
+      - name: Record and locally restore candidate artifact identity (no deployment)
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision="$(git rev-parse HEAD)"
+          dir="$RUNNER_TEMP/sutra-retained-candidate"
+          mkdir -p "$dir"
+          node deploy/sutra-pages/candidate-fingerprint.mjs create "$revision" "$dir/fingerprint.json" "$dir/fingerprint.sha256" deploy/sutra-pages/dist apps/sutra-peer/dist "$RUNNER_TEMP/sutra-private-worker" "$RUNNER_TEMP/sutra-pages-functions.mjs" services/sutra-api/wrangler.private.jsonc
+          cp -a deploy/sutra-pages/dist "$dir/pages"
+          cp -a apps/sutra-peer/dist "$dir/guide"
+          cp -a "$RUNNER_TEMP/sutra-private-worker" "$dir/worker"
+          cp "$RUNNER_TEMP/sutra-pages-functions.mjs" "$dir/functions.mjs"
+          cp services/sutra-api/wrangler.private.jsonc "$dir/policy.jsonc"
+          node deploy/sutra-pages/candidate-fingerprint.mjs verify "$revision" "$dir/fingerprint.json" "$dir/fingerprint.sha256" "$dir/pages" "$dir/guide" "$dir/worker" "$dir/functions.mjs" "$dir/policy.jsonc" > "$dir/restoration.json"
+          cat "$dir/restoration.json"
+      - name: Rebuild static candidates from the same exact revision and compare every retained byte
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          SUTRA_PROVIDER_KEY: SUTRA_BUILD_SECRET_CANARY_PROVIDER00000000000000000001
+          VITE_SUTRA_BUILD_SECRET_CANARY: SUTRA_BUILD_SECRET_CANARY_VITE0000000000000000000001
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+          dir="$RUNNER_TEMP/sutra-retained-candidate"
+          { node --version; npm --version; rustc --version; python3 --version; sha256sum apps/sutra-v2/package-lock.json apps/sutra/package-lock.json; } > "$dir/toolchain.txt"
+          rm -rf apps/sutra-v2/dist apps/sutra-peer/dist deploy/sutra-pages/dist
+          node apps/sutra-v2/build.mjs
+          npm --prefix apps/sutra-peer run build
+          node deploy/sutra-pages/prepare.mjs
+          node deploy/sutra-pages/verify-build.mjs
+          node deploy/sutra-pages/candidate-fingerprint.mjs verify "$EXPECTED_REVISION" "$dir/fingerprint.json" "$dir/fingerprint.sha256" deploy/sutra-pages/dist apps/sutra-peer/dist "$dir/worker" "$dir/functions.mjs" "$dir/policy.jsonc" > "$dir/rebuild-verification.json"
+          cat "$dir/rebuild-verification.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-retained-candidate
+          include-hidden-files: true
+          path: ${{ runner.temp }}/sutra-retained-candidate/
+          retention-days: 30
+      - name: Observe deployed public artifacts without inference or credentials (diagnostic, not promotion)
+        run: node deploy/sutra-pages/check-public.mjs --observe > "$RUNNER_TEMP/sutra-public-observation.json" && cat "$RUNNER_TEMP/sutra-public-observation.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-public-observation
+          path: ${{ runner.temp }}/sutra-public-observation.json
+          retention-days: 7

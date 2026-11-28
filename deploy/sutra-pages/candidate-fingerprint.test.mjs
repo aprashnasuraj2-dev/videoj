@@ -1,0 +1,49 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp,mkdir,writeFile,rm,cp,symlink} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createHash} from 'node:crypto';
+import {fingerprint,encode,verifyFingerprint,assertNoSecret} from './candidate-fingerprint.mjs';
+test('retained candidate verifies after local restoration; fails on missing, changed, extra, wrong revision and untrusted manifest',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'sutra-retain-'));
+ try{
+  const roots={},restored={};const revision='a'.repeat(40);
+  for(const name of ['pages','guide','worker','functions','policy']){
+   roots[name]=join(dir,name);await mkdir(roots[name]);await writeFile(join(roots[name],'content'),name);
+   restored[name]=join(dir,'restored-'+name);await cp(roots[name],restored[name],{recursive:true});
+  }
+  const manifest=encode(await fingerprint(revision,roots)),pin=createHash('sha256').update(manifest).digest('hex'),input={manifest,pin,revision,roots:restored};
+  assert.equal((await verifyFingerprint(input)).status,'matched');
+  await assert.rejects(verifyFingerprint({...input,revision:'b'.repeat(40)}),/Revision mismatch/);
+  await assert.rejects(verifyFingerprint({...input,pin:'0'.repeat(64)}),/Manifest digest mismatch/);
+  await writeFile(join(restored.pages,'content'),'changed');await assert.rejects(verifyFingerprint(input),/Candidate bytes/);
+  await writeFile(join(restored.pages,'content'),'pages');await writeFile(join(restored.guide,'extra'),'extra');await assert.rejects(verifyFingerprint(input),/Candidate bytes/);
+  await rm(join(restored.guide,'extra'));await rm(join(restored.worker,'content'));await assert.rejects(verifyFingerprint(input),/Empty component/);
+  await writeFile(join(restored.worker,'content'),'worker');await symlink(join(restored.worker,'content'),join(restored.worker,'link'));await assert.rejects(verifyFingerprint(input),/Symbolic link/);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('credential content in any retained component refuses before fingerprint or restore without echoing value',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'sutra-content-'));const revision='a'.repeat(40);
+ try{
+  const roots={};for(const name of ['pages','guide','worker','functions','policy']){roots[name]=join(dir,name);await mkdir(roots[name]);await writeFile(join(roots[name],'ordinary.txt'),'ordinary nonsecret fixture');}
+  const baseline=encode(await fingerprint(revision,roots)),pin=createHash('sha256').update(baseline).digest('hex');
+  const token='SUTRA_BUILD_SECRET_CANARY_'+'Z'.repeat(32);
+  for(const [name,root] of Object.entries(roots)){
+   const file=join(root,'ordinary.txt');await writeFile(file,Buffer.concat([Buffer.from([0,255,1]),Buffer.from(token)]));
+   const safe=e=>e.message.includes('potential embedded credential')&&e.message.includes(name)&&!e.message.includes(token);
+   await assert.rejects(fingerprint(revision,roots),safe);await assert.rejects(verifyFingerprint({manifest:baseline,pin,revision,roots}),safe);
+   await writeFile(file,'ordinary nonsecret fixture');
+  }
+  assert.equal((await verifyFingerprint({manifest:baseline,pin,revision,roots})).status,'matched');
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('quoted config credential values refuse while ordinary task identifiers remain admissible',()=>{
+ const token='A'.repeat(32);
+ for(const value of [JSON.stringify({SUTRA_PROVIDER_KEY:token}),JSON.stringify({CLOUDFLARE_API_TOKEN:token}),'GROQ_API_KEY='+token]){
+  assert.throws(()=>assertNoSecret(Buffer.from(value),'ordinary.json'),e=>e.message.includes('literal-secret-assignment')&&!e.message.includes(token));
+ }
+ assert.doesNotThrow(()=>assertNoSecret(Buffer.from('task-'+token),'ordinary.json'));
+});

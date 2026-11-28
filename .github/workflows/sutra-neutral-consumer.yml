@@ -4,6 +4,8 @@ on:
     paths:
       - 'tools/sutra-neutral-consumer/**'
       - 'apps/sutra-peer/**'
+      - 'apps/sutra/package.json'
+      - 'apps/sutra/package-lock.json'
       - 'packages/sutra-runtime/**'
       - '.github/workflows/sutra-neutral-consumer.yml'
   workflow_dispatch:
@@ -26,3 +28,10 @@ jobs:
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
       - run: node tools/sutra-neutral-consumer/browser.cjs
+      - name: Retain neutral conformance report and network trace
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-neutral-reference-conformance
+          path: apps/sutra/test-output/neutral-conformance.json
+          if-no-files-found: error

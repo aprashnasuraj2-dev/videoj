@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "SUTRA — Living Knowledge System",
+  "short_name": "SUTRA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f0e8",
+  "theme_color": "#101711",
+  "icons": [
+    {
+      "src": "sutra-orbit.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ring map",
+      "url": "./#map"
+    },
+    {
+      "name": "Agent swarm",
+      "url": "./#swarm"
+    },
+    {
+      "name": "Investigation",
+      "url": "./#investigation"
+    }
+  ]
+}

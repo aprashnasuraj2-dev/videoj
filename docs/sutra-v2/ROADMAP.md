@@ -2,6 +2,8 @@
 
 > **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
 
+**Event Horizon frontend enhancement (2026-11-28):** [Detailed scoped register](EVENT-HORIZON.md) · [Machine-readable mirror](event-horizon-register.json). Dependency-driven incremental enhancement of inherited runtime, proof and interface; existing broad gate IDs and status retained. This roadmap remains a broad dependency register, not a second execution queue.
+
 This is the broad phase/dependency and engineering-gate register; it is not an execution queue. The original requirement IDs, descriptions, checkboxes and historical evidence remain in [CHECKLIST.md](CHECKLIST.md), [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); see [roadmap.json](roadmap.json) for structured records and crosswalk. Historical checkboxes are not equivalent to formal verification. New gates close only with their own observed evidence. P0 = blocking safety/correctness; P1 = product/verification; P2 = deferred/conditional. Risk is independent of priority. No percentage-complete metric.
 
 ## Phase 00 — Repository integrity and reproducibility

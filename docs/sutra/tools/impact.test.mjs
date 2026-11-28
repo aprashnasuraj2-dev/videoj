@@ -209,3 +209,24 @@ test('validation snapshot workflows map to their live canonical verification sui
  assert.deepEqual(benchmark.affectedSuites,['v2-knowledge-verification']);
  assert.deepEqual(benchmark.requiredWorkflows,['Validate SUTRA knowledge kernel']);
 });
+
+test('autonomous research is explicitly mapped to its dedicated verification workflow',()=>{const r=classifyChangedFiles(['packages/sutra-research/research-supervisor.js','apps/sutra-v2/autonomous-research.mjs','.github/workflows/sutra-autonomous-research.yml'],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('v2-autonomous-research'));assert.ok(r.requiredWorkflows.includes('SUTRA autonomous research'));});
+
+
+test('release reconciliation inventory is exactly mapped and cannot exempt unknown JSON',()=>{
+ const r=classifyChangedFiles(['docs/sutra-v2/release-integration-inventory.json'],map);
+ assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+ assert.deepEqual(r.requiredWorkflows,['Validate SUTRA knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-inventory.json'],map).unmapped,['docs/sutra-v2/unknown-inventory.json']);
+});
+
+test('dated ref snapshot is explicitly mapped without a wildcard JSON exception',()=>{assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/release-ref-snapshot-20261128.json'],map).unmapped,[]);assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/release-ref-snapshot-unreviewed.json'],map).unmapped,['docs/sutra-v2/release-ref-snapshot-unreviewed.json']);});
+
+test('exact dated semantic and dependency receipts classified without broad waiver',()=>{const r=classifyChangedFiles(["docs/sutra-v2/deployment-baseline-recheck-20261128.json","docs/sutra-v2/evaluation/critical-semantic-execution-20261128.json","docs/sutra-v2/evaluation/dependency-inventory-20261128.json"],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'));assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/unreviewed-receipt.json'],map).unmapped,['docs/sutra-v2/evaluation/unreviewed-receipt.json']);});
+
+test('Event Horizon register is explicitly classified without allowing unknown JSON',()=>{
+ const r=classifyChangedFiles(['docs/sutra-v2/event-horizon-register.json'],map);
+ assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA knowledge kernel'));
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/event-horizon-unknown.json'],map).unmapped,['docs/sutra-v2/event-horizon-unknown.json']);
+});

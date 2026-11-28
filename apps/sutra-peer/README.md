@@ -9,7 +9,7 @@ Independent static package for the SUTRA peer publication surface.
 - Current content is an engineering fixture. Actual rights-cleared lesson corpus provenance and factual review are pending.
 - Proposed production origin is configuration only; nothing here proves deployment, HTTPS/CORS behavior or independent adoption.
 
-`npm run build` produces `dist/` with only the static page/config/source assets and public agent files. `npm run preview` serves that build on loopback and adds permissive CORS only to files under `/agents/` for local cross-origin testing.
+`npm run build` produces `dist/` with only the static page/config/source assets and public agent files. `npm run preview` serves that build on loopback and adds credentialless CORS only to the three exact published agent artifacts (GET/HEAD and narrow preflight; no write methods or symlink reads) for local cross-origin testing.
 
 The caller and proposed peer production origins are under the same project owner. That disclosure prevents a two-origin test from being misrepresented as independent community adoption.
 

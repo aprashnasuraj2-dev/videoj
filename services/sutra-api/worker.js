@@ -142,7 +142,7 @@ export default {async fetch(request,env){
  else if(path==='/api/status'&&request.method==='GET'){
   let contractId=null;if(inferenceStatus(env)){try{contractId=await inferenceContractId(env);}catch{}}
   const configured=!!contractId;
-  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode,inferenceContractId:contractId}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
+  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode,provider:inferenceBackend(env).provider,inferenceContractId:contractId}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
  }
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));

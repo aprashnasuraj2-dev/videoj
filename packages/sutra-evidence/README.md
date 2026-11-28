@@ -33,3 +33,7 @@ Unknown receipt properties are rejected, including fields named for credentials/
 CLI exit codes: 0 accepted at the reported level; 1 invalid receipt/catalog; 2 usage, unreadable/oversized input or malformed JSON. The CLI supports files up to 2 MiB each; the API bounds catalog count to 10,000 but the host must also bound transport bytes.
 
 The JavaScript API accepts ordinary plain/null-prototype records and dense arrays, not custom prototypes, accessors, hidden fields, symbols or serialization hooks. Descriptor checks do not invoke ordinary getters; this is not a sandbox for Proxy traps or arbitrary caller code. Parse untrusted wire JSON before validation. Matching cue lists are capped at 10,000 entries.
+
+### Portable Web Annotation media export
+
+`import { exportMediaAnnotation } from '@sutra/evidence/annotation'` accepts a receipt and an independently supplied `{sources, media}` mapping. `media` contains exactly `sourceId, mediaHash, url, type, format`; the URL must be exact HTTPS without credentials, query or fragment. Catalog-matched quote/interval and matching media hash are prerequisites. The output has a W3C Web Annotation-shaped record with a Media Fragments temporal selector, a link, and catalog provenance; it never retrieves media or claims independent byte verification, source truth, or publisher identity. Millisecond precision and a 24-hour interval bound apply. This recovers the portable export aspect of legacy PR #48 without shipping old learner UI or source media.

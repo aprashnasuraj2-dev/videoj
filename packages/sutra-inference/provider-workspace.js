@@ -17,7 +17,42 @@ const closed=(x,keys)=>{
  const own=Reflect.ownKeys(x);
  return own.length===keys.length&&own.every(k=>typeof k==='string'&&keys.includes(k));
 };
+// Cancel local publication immediately; an uncooperative transport may still consume resources.
+async function raceTransport(start,signal){
+ if(signal?.aborted)stop('CANCELLED');
+ if(!signal)return start();
+ let cancel;const aborted=new Promise((_,reject)=>{cancel=()=>reject(new ProviderWorkspaceError('CANCELLED'));signal.addEventListener('abort',cancel,{once:true});});
+ try{return await Promise.race([Promise.resolve().then(()=>{if(signal.aborted)stop('CANCELLED');return start();}),aborted]);}
+ finally{signal.removeEventListener('abort',cancel);}
+}
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
+const capabilityPattern=/^[a-z][a-z0-9-]{0,31}(?:\.[a-z][a-z0-9-]{0,31}){1,3}$/;
+const dense=x=>Array.isArray(x)&&Object.getPrototypeOf(x)===Array.prototype&&Reflect.ownKeys(x).length===x.length+1&&Array.from({length:x.length},(_,i)=>i).every(i=>{const d=Object.getOwnPropertyDescriptor(x,String(i));return d?.enumerable&&Object.hasOwn(d,'value');});
+const capabilityList=(value,{allowEmpty=false}={})=>{
+ if(!Array.isArray(value)||value.length>(allowEmpty?16:8)||!dense(value)||(!allowEmpty&&value.length<1)||value.some(x=>typeof x!=='string'||!capabilityPattern.test(x))||new Set(value).size!==value.length)stop('CAPABILITY');
+ return Object.freeze([...value]);
+};
+function normalizeCapabilityCatalog(catalog){
+ if(!Array.isArray(catalog)||catalog.length<1||catalog.length>8||!dense(catalog))stop('CONFIG');
+ return catalog.map(entry=>{
+  if(!plain(entry))stop('CONFIG');
+  const descriptors=Object.getOwnPropertyDescriptors(entry),keys=Reflect.ownKeys(entry);
+  if(keys.some(k=>typeof k!=='string')||!(keys.length===3||keys.length===4)||!['id','label','models'].every(k=>keys.includes(k))||keys.some(k=>!['id','label','models','capabilities'].includes(k))||Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'||!d.enumerable||!Object.hasOwn(d,'value')))stop('CONFIG');
+  const id=descriptors.id.value,label=descriptors.label.value,models=descriptors.models.value;
+  if(!Array.isArray(models)||models.length<1||models.length>16||!dense(models))stop('CONFIG');
+  const declared=Object.create(null);
+  if(keys.includes('capabilities')){
+   const raw=descriptors.capabilities.value;
+   if(!plain(raw))stop('CAPABILITY');
+   const names=Reflect.ownKeys(raw);
+   if(names.length>models.length)stop('CAPABILITY');
+   const d=Object.getOwnPropertyDescriptors(raw);
+   if(names.some(k=>typeof k!=='string'||!d[k]?.enumerable||!Object.hasOwn(d[k],'value'))||Object.values(d).some(x=>typeof x.get==='function'||typeof x.set==='function')||!Array.isArray(models)||names.some(model=>!models.includes(model)))stop('CAPABILITY');
+   for(const model of names)declared[model]=capabilityList(d[model].value,{allowEmpty:true});
+  }
+  return Object.freeze({vault:Object.freeze({id,label,models}),declared:Object.freeze(declared)});
+ });
+}
 
 function sanitizeProviderValue(value,isSecret,{depth=0,budget={chars:0,nodes:0}}={}){
  if(depth>12||++budget.nodes>512)stop('PROVIDER_RESULT');
@@ -48,7 +83,9 @@ function sanitizeProviderValue(value,isSecret,{depth=0,budget={chars:0,nodes:0}}
 }
 
 export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimits,leaseTicks=45000,randomBytes,transports=[],clock=()=>Math.floor(globalThis.performance?.now()??Date.now())}={}){
- const vault=createEphemeralCredentialVault({catalog,randomBytes});
+ const normalizedCatalog=normalizeCapabilityCatalog(catalog);
+ const vault=createEphemeralCredentialVault({catalog:normalizedCatalog.map(x=>x.vault),randomBytes});
+ const capabilitiesByProvider=new Map(normalizedCatalog.map(x=>[x.vault.id,x.declared]));
  const ledger=createProviderBudgetLedger({global:globalLimits,profiles:[],leaseTicks,randomBytes});
  if(!plain(defaultProfileLimits)||!Array.isArray(transports)||transports.length>vault.providers.length||typeof clock!=='function')stop('CONFIG');
  const providerIds=new Set(vault.providers.map(p=>p.id)),transportById=new Map();
@@ -66,6 +103,17 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
  let lastTick=-1;
  const readClock=()=>{const now=clock();if(!Number.isSafeInteger(now)||now<0||now<lastTick)stop('CLOCK');lastTick=now;return now;};
  const admitOperation=operation=>sanitizeProviderValue(operation,vault.containsSecret);
+ const negotiateCapabilities=input=>{
+  if(!closed(input,['handle','model','required']))stop('CAPABILITY');
+  const profile=profileMeta(input.handle),model=input.model,required=capabilityList(input.required);
+  if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
+  const declared=capabilitiesByProvider.get(profile.providerId)?.[model]??Object.freeze([]);
+  if(required.some(x=>!declared.includes(x)))stop('CAPABILITY_MISSING');
+  // Match PR #65's full exported-record canary boundary, including the model.
+  // Local declaration matching must not disclose any live credential.
+  admitOperation({model,required,declared});
+  return Object.freeze({version:'sutra-model-capabilities/v1',profileId:profile.profileId,providerId:profile.providerId,model,required,declared,authority:'HOST_DECLARED_UNVERIFIED'});
+ };
  // All live credentials participate in the canary check. A credential-set
  // change during a dispatch invalidates that request's publication boundary.
  // Do not retain removed credential bytes merely to detect subsequent echoes.
@@ -82,6 +130,7 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     keys.some(k=>!['providerId','label','credential','limits'].includes(k))||
     Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'))stop('PROFILE');
    const providerId=descriptors.providerId.value,label=descriptors.label.value,credential=descriptors.credential.value;
+   if(typeof credential==='string'&&credential.length>=8&&[...capabilitiesByProvider.values()].some(declared=>Object.values(declared).some(tokens=>tokens.some(token=>token.includes(credential)))))stop('PROFILE');
    const profileLimits=keys.includes('limits')?descriptors.limits.value:defaultProfileLimits;
    let added;
    try{
@@ -108,15 +157,21 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     ...profile,budget:snapshot.profiles.find(row=>row.profileId===profile.profileId)
    })));
   },
+  // Host-only proof of opaque handle identity; no credential is exposed.
+  describeRoute(handle){return profileMeta(handle);},
   budgetSnapshot(){return ledger.snapshot();},
   // Trusted scheduler hint only. Actual reservations remain authoritative.
   dispatchCapacity(){ledger.prune(readClock());return ledger.snapshot();},
   // Trusted adapter pre-encoding check, before escaping or serializing data.
   admitOperation,
+  // Local declaration matching only: no provider discovery, credential release,
+  // budget reservation or performance/truth claim occurs here.
+  negotiateCapabilities,
   // A host-held fence spans downstream decoding and asynchronous computation.
   // It captures only an opaque generation, never a credential or handle.
   capturePublicationFence(){const observed=profileSetToken;return ()=>{if(observed!==profileSetToken)stop('PROFILE_SET_CHANGED');};},
-  async execute(input={}){
+  async execute(input={}, {signal}={}){
+   if(signal?.aborted)stop('CANCELLED');
    if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation']))stop('REQUEST');
    const {handle,model,inputBytes,maxOutputTokens,operation}=input;
    const profile=profileMeta(handle);
@@ -127,9 +182,10 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now:readClock()});}
    catch(error){if(error instanceof BudgetLedgerError)stop(error.code==='PROFILE_DISABLED'?'PROFILE_DISABLED':'BUDGET');throw error;}
    try{
-    const raw=await vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
+    const raw=await raceTransport(()=>vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
      providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:checkedOperation
-    })));
+    }),{signal})),signal);
+    if(signal?.aborted)stop('CANCELLED');
     // A removed profile may not publish a late result. No asynchronous gap
     // between the handle check, all-profile canary scan, settlement and return.
     vault.describe(handle);

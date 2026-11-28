@@ -65,3 +65,12 @@ test('native Ollama request goes over literal loopback without credentials; alte
  for(const options of [{num_predict:-1},{num_predict:31},{num_predict:32,temperature:1}])await assert.rejects(local.exchange(wire(r,{bodyText:JSON.stringify({...seen[0].body,options})})),/BODY/);
  assert.equal(seen.length,1);assert.throws(()=>createLoopbackModelExchange({routes:[{...r,authMode:'anthropic-key'}]}),/ROUTE/);
 });
+
+test('per-task abort destroys an in-flight loopback socket without closing the entire exchange',async t=>{
+ let entered,closed;const started=new Promise(r=>entered=r),ended=new Promise(r=>closed=r);let count=0;
+ const base=await server(t,(_req,res)=>{count++;if(count===1){res.once('close',closed);entered();}else json(res,open('second'));});
+ const r=route(base),local=createLoopbackModelExchange({routes:[r],deadlineMs:1000});t.after(()=>local.close());
+ const c=new AbortController(),pending=local.exchange(wire(r),{signal:c.signal});await started;c.abort();await assert.rejects(pending,/CANCELLED/);await ended;
+ await assert.rejects(local.exchange(wire(r),{signal:c.signal}),/CANCELLED/);assert.equal(count,1);
+ assert.equal((await local.exchange(wire(r))).status,200);assert.equal(count,2);
+});

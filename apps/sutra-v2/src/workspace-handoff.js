@@ -15,3 +15,10 @@ function channel(){
 }
 export const reviewedContractHandoff=channel();
 export const investigationHandoff=channel();
+
+// Explicitly offered evaluated version for local hybrid operator export; not a grant.
+export const hybridVersionHandoff=channel();
+
+// One ephemeral offer, bound to exact source ID and text. Not automatically admitted.
+let researchSource=null;
+export const researchSourceHandoff=Object.freeze({offer(candidate){researchSource=structuredClone(candidate);},read(){return researchSource;},clear(){researchSource=null;}});

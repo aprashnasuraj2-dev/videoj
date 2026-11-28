@@ -1,0 +1,63 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {admitManifest,authorizeResearch,digest} from '../research-session.js';
+import {createResearchModelBroker} from '../model-broker.js';
+import {runAutonomousResearch} from '../research-supervisor.js';
+const defaultModel={vendor:'groq',model:'fixture-model',maxInputBytes:16384,maxOutputTokens:1024,estimatedMaxCostMicros:1000};
+const manifest=(providers=[],overrides=[])=>({schema:'sutra-autonomous-research/v1',objective:'Explain battery storage costs',scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false},budget:{maxSearches:3,maxDocuments:6,maxLinkDepth:0,maxDurationSeconds:60,maxDownloadBytes:8388608,maxCostMicros:20000,maxModelCalls:3},providers,modelPolicy:{allowPublicEvidenceDisclosure:true,models:[defaultModel,...overrides]}});
+function setup(p,answer){
+ const raw=JSON.stringify(p),a=authorizeResearch(raw,{approvedPlanPin:admitManifest(raw).planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true});
+ const requests=[],calls=[];
+ const modelBroker=createResearchModelBroker({authorization:a,credentials:{groq:'fixture-groq-key',gemini:'fixture-gemini-key'},exchangeFactory:({routes})=>({close(){},async exchange(req){
+  const body=JSON.parse(req.bodyText),input=JSON.parse(body.messages.at(-1).content);requests.push({req,input});
+  const v=answer(input,requests.length);
+  return {status:200,bodyText:JSON.stringify({choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(v)}}],usage:{completion_tokens:32}})};
+ }})});
+ const run=(providers={})=>runAutonomousResearch({authorization:a,modelBroker,providers,readDocument:async url=>{calls.push(url);a.reserve('document',{bytes:262144});const text='Battery storage costs were USD 100 million in 2025.';return {url,text,textDigest:digest(text),rawDigest:digest(text),links:[],mediaType:'text/plain'};}});
+ return {a,requests,calls,run,close(){modelBroker.close();a.close();}};
+}
+test('one selected model resolves all roles; optional second model is selected from the shared pool',()=>{
+ const p=admitManifest(JSON.stringify(manifest())).plan;
+ assert.equal(p.modelPolicy.webAccess,'on_demand');assert.equal(p.modelPolicy.reviewMode,'same_configured_model_self_review');assert.equal(new Set(p.modelPolicy.roles.map(r=>r.model)).size,1);
+ const p2=admitManifest(JSON.stringify(manifest([],[{...defaultModel,vendor:'gemini',model:'other-model'}]))).plan;
+ assert.equal(p2.modelPolicy.roles.find(r=>r.role==='spark').vendor,'gemini');assert.equal(p2.modelPolicy.reviewMode,'different_configured_models_independence_unproven');
+});
+test('simple model task runs with no search key or provider, no fictitious citations',async()=>{
+ const f=setup(manifest(),()=>({webAction:'answer_without_web',answer:'Battery storage stores energy for later use.'}));
+ try{const r=await f.run();assert.equal(r.terminationReason,'model_answer_without_web');assert.equal(r.usage.searches,0);assert.equal(r.modelOnlyAnswer.sourceStatus,'NO_WEB_EVIDENCE');assert.equal(r.intelligence,null);assert.equal(f.requests.length,1);assert.equal(f.calls.length,0);}finally{f.close();}
+});
+test('model requests web only through configured host; unavailable capability is explicit',async()=>{
+ const f=setup(manifest(),()=>({webAction:'search',queries:[{suffix:'annual public data',questionId:'primary'}]}));
+ try{const r=await f.run();assert.equal(r.terminationReason,'web_access_unavailable');assert.equal(r.usage.searches,0);assert.equal(r.modelOnlyAnswer,null);}finally{f.close();}
+});
+test('same single model executes planning, acquisition-directed synthesis and self-review',async()=>{
+ const f=setup(manifest([{id:'brave',estimatedMaxCostMicros:1000}]),(input,n)=>{
+  if(n===1)return {webAction:'search',queries:[{suffix:'annual data',questionId:'primary'}]};
+  if(n===2){const e=input.evidence[0];return {claims:[{statement:'A source reports battery costs.',kind:'reported',citations:[{passageId:e.passageId,quote:e.quote}]}],gaps:[]};}
+  const c=input.claims[0],e=input.evidence[0];return {reviews:[{claimId:c.claimId,verdict:'supported',reason:'The excerpt reports the figure.',citations:[{passageId:e.passageId,quote:e.quote}]}],conflicts:[]};
+ });
+ try{const r=await f.run({brave:{search:async q=>{assert.match(q,/annual data/);return [{url:'https://public.org/report'}];}}});assert.equal(r.usage.searches,1);assert.equal(r.usage.modelCalls,3);assert.equal(r.intelligence.reviewMode,'same_configured_model_self_review');assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');assert.equal(r.modelOnlyAnswer,null);assert.equal(new Set(f.requests.map(x=>x.req.model)).size,1);}finally{f.close();}
+});
+
+test('pool rejects duplicate routes and mixed avatar assignment fields',()=>{
+ const p=manifest([],[defaultModel]);assert.throws(()=>admitManifest(JSON.stringify(p)),/MODEL_POOL/);
+ const q=manifest();q.modelPolicy.roles=[];assert.throws(()=>admitManifest(JSON.stringify(q)),/MODEL_POLICY/);
+ const three=admitManifest(JSON.stringify(manifest([],[{...defaultModel,vendor:'gemini',model:'second'},{...defaultModel,vendor:'openrouter',model:'third'}]))).plan;
+ assert.deepEqual(three.modelPolicy.roles.map(r=>r.model),['fixture-model','second','third']);
+});
+test('on-demand public URL retrieval works with one LLM and no search key when scope permits',async()=>{
+ const p=manifest();p.scope.allowModelPublicUrls=true;
+ const f=setup(p,(input,n)=>{
+  if(n===1){assert.equal(input.webCapabilities.searchAvailable,false);assert.equal(input.webCapabilities.openPublicUrls,true);return {webAction:'open_public_urls',urls:['https://public.org/report']};}
+  if(n===2){const e=input.evidence[0];return {claims:[{statement:'A source reports battery costs.',kind:'reported',citations:[{passageId:e.passageId,quote:e.quote}]}],gaps:[]};}
+  const c=input.claims[0],e=input.evidence[0];return {reviews:[{claimId:c.claimId,verdict:'supported',reason:'The excerpt reports the figure.',citations:[{passageId:e.passageId,quote:e.quote}]}],conflicts:[]};
+ });
+ try{const r=await f.run();assert.equal(r.usage.searches,0);assert.deepEqual(f.calls,['https://public.org/report']);assert.equal(r.modelWebActions.length,1);assert.equal(r.intelligence.claims[0].truthStatus,'UNVERIFIED');}finally{f.close();}
+});
+test('model URL actions require scope and reject private or opaque URLs before document I/O',async()=>{
+ for(const [allow,url] of [[false,'https://public.org/report'],[true,'https://127.0.0.1/private'],[true,'https://public.org/?token=secret']]){
+  const p=manifest();p.scope.allowModelPublicUrls=allow;
+  const f=setup(p,()=>({webAction:'open_public_urls',urls:[url]}));
+  try{const r=await f.run();assert.equal(f.calls.length,0);assert.equal(r.terminationReason,'model_web_decision_invalid');}finally{f.close();}
+ }
+});

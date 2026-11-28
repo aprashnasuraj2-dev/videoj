@@ -1,0 +1,38 @@
+name: SUTRA credentialed live search smoke
+on:
+  workflow_dispatch:
+    inputs:
+      approve:
+        description: 'Approve two paid public searches with the checked-in fixed smoke objective and estimated reservations'
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  live-search:
+    if: github.ref == 'refs/heads/main' && inputs.approve == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    environment: sutra-live-research
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preview pinned smoke plan
+        run: |
+          node apps/sutra-v2/live-search-smoke.mjs --plan < packages/sutra-research/fixtures/live-smoke-manifest.json > /tmp/sutra-plan.json
+      - name: Credentialed smoke (no PR execution)
+        env:
+          SUTRA_SEARCH_BRAVE: ${{ secrets.SUTRA_SEARCH_BRAVE }}
+          SUTRA_SEARCH_TAVILY: ${{ secrets.SUTRA_SEARCH_TAVILY }}
+        run: |
+          PIN="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/sutra-plan.json")).planPin')"
+          node apps/sutra-v2/live-search-smoke.mjs --execute-live-smoke --approve-public-contact --approve-estimated-cost --approve-plan "$PIN" < packages/sutra-research/fixtures/live-smoke-manifest.json > /tmp/sutra-search-smoke.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-live-search-smoke
+          path: /tmp/sutra-search-smoke.json
+          retention-days: 7

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "scenario": "US battery storage capacity additions: forecast-to-reported outcome",
+  "audience": "Energy infrastructure analyst monitoring a deployment threshold",
+  "sourceRights": {
+    "publisher": "U.S. Energy Information Administration",
+    "reusePolicy": "https://www.eia.gov/about/copyrights_reuse.php",
+    "attribution": "U.S. Energy Information Administration, Today in Energy",
+    "scope": "Short article text excerpts only; no logos, images or third-party material."
+  },
+  "observedDate": "2026-11-28",
+  "qualification": "Exact UTF-8 excerpt bytes transcribed from the public article text, not full raw HTML or a SUTRA transport receipt. Same publisher, distinct publication dates; not independent corroboration. The second article reports observed additions rather than correcting the earlier forecast. Figures rounded as published. This is an explicit scenario substitution, not a claim that either article is false.",
+  "sources": [
+    {
+      "publicationDate": "2024-01-09",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=61202",
+      "kind": "forecast",
+      "excerpt": "Developers plan to add another 15 GW in 2024",
+      "excerptDigest": "sha256:328d3a7615c7b299007125687534e5be38ac38d11288a1b5b2c6aceef9f80bb9",
+      "token": "15"
+    },
+    {
+      "publicationDate": "2025-03-12",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=64705",
+      "kind": "reported outcome",
+      "excerpt": "Generators added 10.4 GW of new battery storage capacity in 2024",
+      "excerptDigest": "sha256:0a991b2c695eb9639009b669d6f6275001c21500b079d34a5b2baf72fca23355",
+      "token": "10.4"
+    }
+  ],
+  "analystThreshold": {
+    "text": "Analyst review threshold: 12 GW in 2024. Planned additions are not observed outcomes.",
+    "digest": "sha256:401a6464810083c54452f2cc2a475094475ab57ba3126ec0a38d808434545c68",
+    "token": "12",
+    "rule": "Hypothetical monitoring threshold, chosen as 80% of the rounded 15 GW forecast; not an EIA policy."
+  },
+  "expected": {
+    "before": "CONDITIONALLY_SATISFIED",
+    "after": "CONDITIONALLY_REFUTED",
+    "decisionConsequence": "Flag the threshold for analyst review; forecast scenario is 3 GW above threshold and reported outcome is 1.6 GW below. No automatic operational or financial action.",
+    "decisionAuthority": "NONE"
+  }
+}

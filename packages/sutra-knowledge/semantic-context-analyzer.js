@@ -1,0 +1,110 @@
+import {temporalContextEvidence} from './semantic-temporal-context.js';
+import {prioritizeSemanticReview} from './semantic-review-priority.js';
+// Bounded structural/contextual semantic review. This module does not compile answers or grant authority.
+export const VERSION='sutra-semantic-context-analyzer/v1';
+export const FAMILIES=Object.freeze(['entity_identity','metric_definition','numerator','denominator','reporting_period','population','geography','units','scaling','sign','absolute_vs_relative','percentage_vs_percentage_point','aggregation','negation_scope','quantifier_scope','conditional_scope','baseline_selection','measurement_assumptions','modality','causal_vs_observational']);
+const INVISIBLE=/[\u200b\u200c\u200d\u2060\ufeff]/u;
+const INJECTION=/\b(?:ignore|disregard|override|bypass)\b.{0,32}\b(?:instructions?|rules?|polic(?:y|ies)|prompts?|guards?|system|developer)\b|\b(?:system|developer)\s+(?:prompt|message)\b/i;
+const RELATION='(?:not greater than|not less than|no more than|no less than|greater than|higher than|less than|lower than|at least|at most|equal to)';
+const COMPUTATIONAL_TRAILING=new RegExp('^is\\s+.+?\\s+'+RELATION+'\\s+.+?\\s+(?:because|if|unless|provided|while|although|but)\\b','i');
+const MONTH='(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
+const ABSOLUTE_TIME=new RegExp('\\b(?:18|19|20)\\d{2}\\b|\\b'+MONTH+'\\s+\\d{1,2}(?:st|nd|rd|th)?(?:,?\\s+(?:18|19|20)\\d{2})?\\b','ig');
+const RELATIVE_TIME=/\b(?:currently|current|today|tomorrow|yesterday|now|latest|newest|recently|this\s+(?:year|month|week|quarter|season)|next\s+(?:year|month|week|quarter|season|election|summer|winter)|last\s+(?:year|month|week|quarter|season|election|time)|as\s+of\s+now|so\s+far|to\s+date|former|caretaker)\b/i;
+const DYNAMIC_ROLE=/\b(?:president|prime\s+minister|governor|mayor|ceo|chair(?:person|man)?|captain|coach|director|manager|leader|owner|principal|commander|head\s+of|job\s+title|works?\s+for|member\s+of|cabinet|phone\s+number|fax\s+number)\b/i;
+const DYNAMIC_QUANTITY=/\b(?:population|price|cost|salary|wage|revenue|sales|market\s+share|exchange\s+rate|interest\s+rate|subscribers?|students?|employees?|members?|attendance|score|points?|wins?|losses|goals?|podium\s+finishes|record|rank|ranking|percentage|percent|rate|how\s+many|how\s+much)\b/i;
+const SUPERLATIVE=/\b(?:most|least|highest|lowest|largest|smallest|fastest|best|worst|top|record|only|first|last)\b/i;
+const CHANGE=/\b(?:change|changed|difference|increase|increased|decrease|decreased|growth|grew|fell|rose|improve|improved|decline|declined)\b/i;
+const RATIO=/\b(?:ratio|proportion|rate|percent|percentage|share)\b/i;
+const QUANT=/\b(?:all|any|each|every|exactly|some|none|both|either|neither|at\s+least|at\s+most)\b/i;
+const INDEFINITE=/\b(?:a|an|a\s+few|few|several)\b/i;
+const EXISTENTIAL=/\b(?:some|any)\b/i;
+const UNIVERSAL=/\b(?:all|each|every|both)\b/i;
+const NUMBER_TOKEN=/\b(?:(?:exactly|at\s+least|at\s+most|more\s+than|less\s+than)\s+)?(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|\d+)(?:\s+thousand)?\b/ig;
+const QADV=/\b(?:always|usually|sometimes|frequently|often|occasionally|rarely|never)\b/i;
+const NEG=/\b(?:not|no|none|without|except|neither|didn't|doesn't|don't|wasn't|weren't|isn't|aren't|cannot|can't)\b/i;
+const CONDITIONAL=/\b(?:if|unless|when|assuming|provided|only\s+if|as\s+long\s+as)\b/i;
+const GEO=/\b(?:global|world|country|region|province|district|state|city|municipality|metro|metropolitan|rural|urban|market|facility|site|upstream|downstream)\b/i;
+const SCALE=/\b(?:thousand|million|billion|trillion|mn|bn)\b/i;
+const AGG=/\b(?:sum|total|average|mean|median|weighted|aggregate|across)\b/i;
+const MEASURE=/\b(?:reported|measured|estimated|approximate|adjusted|nominal|real|raw|calibrated|observed|seasonally\s+adjusted|intention-to-treat|completers?)\b/i;
+const MODAL=/\b(?:may|might|must|should|could|can|significant|likely|possible|required|rated|demonstrated)\b/i;
+const CAUSAL=/\b(?:cause|caused|because|due\s+to|impact|effect|led\s+to|resulted\s+in|attribut(?:e|ed|able))\b/i;
+const UNIT=/\b(?:mm|cm|m|km|kg|g|tonnes?|hours?|ms|seconds?|usd|eur|gbp|kwh|mwh|gwh|mw|gw|degrees?\s+c(?:elsius)?|percent(?:age)?\s+points?)\b/i;
+const BARE_MEASURE=/\b(?:deflection|displacement|energy|output|latency|temperature|clearance|capacity|weight|length|distance|time|cost|price|salary|revenue|profit|yield|rate)\b/i;
+const CONTEXT_PAIRS=Object.freeze([
+ ['parent','subsidiary','entity_identity'],['metro','rural','geography'],['upstream','downstream','geography'],
+ ['operating profit','net income','metric_definition'],['process uptime','availability','metric_definition'],['gross','net','metric_definition'],
+ ['raw','calibrated','measurement_assumptions'],['raw','calibration','measurement_assumptions'],['nominal','real','measurement_assumptions'],
+ ['budget','actual','baseline_selection'],['calendar','fiscal','reporting_period'],
+ ['completers','intention-to-treat','population'],['weighted','unweighted','aggregation'],
+ ['domestic','international','population'],['eventual','without rework','metric_definition']
+]);
+const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+const signal=(family,state,reason)=>({family,state,reason,decisionAuthority:'NONE'});
+const reviewState=s=>s==='REVIEW_REQUIRED'||s==='EXPLICIT_OR_REVIEW';
+function textOfSources(sources){
+ if(!Array.isArray(sources)||sources.length>8)return '';
+ let out='';
+ for(const s of sources){if(!s||typeof s.text!=='string')continue;out+=(out?'\n':'')+s.text.slice(0,16384);if(out.length>=65536)break;}
+ return out.slice(0,65536);
+}
+function pairSignals(text){
+ const q=text.toLowerCase(),out=[];
+ for(const [a,b,family] of CONTEXT_PAIRS)if(q.includes(a)&&q.includes(b))out.push({family,left:a,right:b});
+ return out;
+}
+export function analyzeSemanticContext({question,sources=[],aliasCollisions=[],typeCollisions=[]}={}){
+ if(typeof question!=='string'||!question.trim()||question.length>8192)throw TypeError('SEMANTIC_CONTEXT_QUESTION');
+ const q=question.replace(/\s+/g,' ').trim(),lower=q.toLowerCase(),sourceText=textOfSources(sources),sourceLower=sourceText.toLowerCase();
+ const hidden=INVISIBLE.test(q),injection=INJECTION.test(q),trailing=COMPUTATIONAL_TRAILING.test(lower);
+ const admission=hidden||injection||trailing?'REFUSE':'REVIEW';
+ const refusalReason=hidden?'INVISIBLE_CONTROL':injection?'INSTRUCTION_INJECTION':trailing?'COMPUTATIONAL_TRAILING_CLAUSE':null;
+ const temporalEvidence=temporalContextEvidence(question,sources),absolute=[...new Set([...question.matchAll(ABSOLUTE_TIME)].filter(m=>!temporalEvidence.questionAnchors.some(a=>a.start>=m.index&&a.start<m.index+m[0].length&&['IDENTIFIER_OR_QUANTITY','INVALID_DATE'].includes(a.kind))).map(m=>m[0]))],relative=RELATIVE_TIME.test(lower);
+ const dynamicRole=DYNAMIC_ROLE.test(lower),dynamicQuantity=DYNAMIC_QUANTITY.test(lower),superlative=SUPERLATIVE.test(lower);
+ const implicitDynamic=!absolute.length&&!relative&&(dynamicRole||dynamicQuantity||superlative||temporalEvidence.implicitState||temporalEvidence.sourcePeriodContrast);
+ const temporalAnchor=temporalEvidence.invalidDate?'INVALID_DATE':absolute.length&&relative?'MIXED_ABSOLUTE_RELATIVE':absolute.length?'EXPLICIT_ABSOLUTE':relative?'EXPLICIT_RELATIVE':implicitDynamic?'IMPLICIT_DYNAMIC':'UNSPECIFIED';
+ const contextPairs=pairSignals(sourceLower),contextFamilies=new Set(contextPairs.map(x=>x.family));
+ const sourceFlags={
+  entityIdentity:/\b(?:identically\s+named|same\s+name|namesake)\b/i.test(sourceLower),
+  alternativeEntitySet:/\bdo\s+you\s+mean\b.{1,512}\bor\b/i.test(sourceLower),
+  numerator:/\bdenominator\b.{0,48}\b(?:fixed|same|constant)\b/i.test(sourceLower)||/\bboth\b.{0,32}\b(?:use|using|share)\b.{0,24}\b\d+\b/i.test(sourceLower),
+  reportingPeriod:/\b(?:month-to-date|year-to-date|quarter-to-date|calendar[- ]year|fiscal[- ]year|reporting\s+date)\b/i.test(sourceLower),
+  units:/\b(?:unit|units)\b.{0,48}\b(?:omitted|unspecified|missing|unknown|unclear)\b/i.test(sourceLower)||/\bthreshold(?:'s)?\b.{0,48}\b(?:unit|units)\b.{0,24}\b(?:omitted|unspecified|missing)\b/i.test(sourceLower),
+  scaling:/\b(?:thousands?|millions?|billions?)\b.{0,60}\b(?:or|versus|vs\.?)\b.{0,60}\b(?:thousands?|millions?|billions?)\b/i.test(sourceLower)||/\b(?:multiplier|scale|table\s+header)\b.{0,48}\b(?:omitted|unspecified|missing|unclear)\b/i.test(sourceLower),
+  sign:/\b(?:signed|downwards?|upwards?|negative\s+displacement|positive\s+displacement)\b/i.test(sourceLower),
+  percentageConvention:/\bpercent\b.{0,80}\b(?:relative|points?)\b|\b(?:reporting|percentage)\s+convention\b.{0,32}\b(?:unclear|ambiguous)\b/i.test(sourceLower),
+  baseline:/\b(?:original\s+budget|last\s+year(?:'s)?|approved\s+design|latest\s+revision|prior\s+baseline|current\s+baseline)\b/i.test(sourceLower),
+  measurement:/\b(?:calibrat(?:e|ed|ion)|raw\s+(?:sensor|reading|value)|nominal\b.{0,80}\b(?:real|inflation|cpi)|cost-of-living\s+index)\b/i.test(sourceLower),
+  causality:/\b(?:causal\s+(?:identification|effect|design)|counterfactual|untreated\s+(?:comparison|control)|adjustment\s+for\s+selection|concurrent\b.{0,48}\b(?:launch|intervention|change))\b/i.test(sourceLower)
+ };
+ const ratio=RATIO.test(lower),change=CHANGE.test(lower),quantifier=QUANT.test(lower),indefinite=INDEFINITE.test(lower),existential=EXISTENTIAL.test(lower),universal=UNIVERSAL.test(lower),numberCount=(lower.match(NUMBER_TOKEN)||[]).length,cardinal=numberCount>0,quantificationalAdverb=QADV.test(lower),negation=NEG.test(lower),conditional=CONDITIONAL.test(lower),geo=GEO.test(lower),scopeInteraction=(numberCount>=2)||(cardinal&&(universal||indefinite||existential||negation))||(universal&&(indefinite||existential||negation))||(negation&&(indefinite||existential||universal||cardinal))||(quantificationalAdverb&&(indefinite||existential||cardinal));
+ const numeric=/\b\d+(?:\.\d+)?\b/.test(lower),unit=UNIT.test(lower),aggregate=AGG.test(lower);
+ const diagnostics=[];
+ diagnostics.push(signal('entity_identity',aliasCollisions.length||contextFamilies.has('entity_identity')||sourceFlags.entityIdentity||sourceFlags.alternativeEntitySet||/\b(?:he|she|they|it|former|latter|this\s+(?:person|company|group)|that\s+(?:person|company|group))\b/i.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL',aliasCollisions.length?'Declared alias has multiple bindings.':contextFamilies.has('entity_identity')||sourceFlags.entityIdentity?'Source context contains competing entity identities or qualifiers.':sourceFlags.alternativeEntitySet?'Source context explicitly presents alternative entities; the utterance must be resolved against that candidate set.':'No structural entity-identity conflict detected.'));
+ diagnostics.push(signal('metric_definition',typeCollisions.length||contextFamilies.has('metric_definition')?'REVIEW_REQUIRED':'NO_SIGNAL',typeCollisions.length?'Declared alias crosses binding types.':contextFamilies.has('metric_definition')?'Source context presents contrasting metric definitions.':'No structural metric-definition contrast detected.'));
+ diagnostics.push(signal('numerator',ratio?'EXPLICIT_OR_REVIEW':sourceFlags.numerator?'REVIEW_REQUIRED':'NO_SIGNAL',ratio?'Ratio-like construction requires a reviewed numerator.':sourceFlags.numerator?'Source context fixes a denominator while leaving competing numerator events/counts material.':'No ratio-like construction detected.'));
+ diagnostics.push(signal('denominator',ratio?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',ratio?'Ratio-like construction requires a reviewed denominator or baseline.':'No ratio-like construction detected.'));
+ diagnostics.push(signal('reporting_period',temporalAnchor==='EXPLICIT_ABSOLUTE'?'EXPLICIT_OR_REVIEW':temporalAnchor==='UNSPECIFIED'?(sourceFlags.reportingPeriod?'REVIEW_REQUIRED':'NO_SIGNAL'):'REVIEW_REQUIRED',temporalAnchor==='INVALID_DATE'?'Invalid calendar date requires review.':temporalEvidence.sourcePeriodContrast&&temporalAnchor==='IMPLICIT_DYNAMIC'?'Question-linked source clauses contain different reporting years; the intended period is unresolved.':temporalAnchor==='IMPLICIT_DYNAMIC'?'Time-varying role, quantity or ranking lacks an explicit time anchor.':temporalAnchor==='EXPLICIT_RELATIVE'?'Relative time expression requires a reference time.':temporalAnchor==='MIXED_ABSOLUTE_RELATIVE'?'Absolute and relative temporal cues coexist and require scope review.':temporalAnchor==='EXPLICIT_ABSOLUTE'?'Explicit absolute time anchor detected: '+absolute.join(', '):contextFamilies.has('reporting_period')?'Source context contrasts reporting periods.':sourceFlags.reportingPeriod?'Source context contains a reporting-period boundary that the question does not resolve.':'No temporal anchor requirement detected.'));
+ if(contextFamilies.has('reporting_period')&&diagnostics.at(-1).state==='NO_SIGNAL')diagnostics[diagnostics.length-1]=signal('reporting_period','REVIEW_REQUIRED','Source context contrasts reporting periods.');
+ diagnostics.push(signal('population',quantifier||/\b(?:population|customers?|users?|tickets?|shares?|participants?|students?|orders?|items?|pieces?|groups?|plants?|sites?)\b/i.test(lower)||contextFamilies.has('population')?'REVIEW_REQUIRED':'NO_SIGNAL',contextFamilies.has('population')?'Source context contrasts evaluated populations.':'Population or quantifier scope must remain explicit.'));
+ diagnostics.push(signal('geography',geo||contextFamilies.has('geography')?'REVIEW_REQUIRED':'NO_SIGNAL',contextFamilies.has('geography')?'Source context contains contrasting geographic scopes.':'Geographic scope signal from the utterance.'));
+ diagnostics.push(signal('units',unit?'EXPLICIT_OR_REVIEW':numeric&&BARE_MEASURE.test(lower)||sourceFlags.units?'REVIEW_REQUIRED':'NO_SIGNAL',unit?'Explicit unit wording remains bound to reviewed quantities.':sourceFlags.units?'Source context explicitly leaves a unit unspecified.':numeric&&BARE_MEASURE.test(lower)?'Bare numeric measurement may depend on an unstated unit.':'No unit-dependent numeric comparison detected.'));
+ diagnostics.push(signal('scaling',SCALE.test(lower)||sourceFlags.scaling?'REVIEW_REQUIRED':'NO_SIGNAL',sourceFlags.scaling?'Source context contains competing or omitted scale multipliers.':'Scale multipliers are never silently normalized.'));
+ diagnostics.push(signal('sign',change&&!/\b(?:absolute|magnitude|signed)\b/i.test(lower)||sourceFlags.sign?'REVIEW_REQUIRED':'NO_SIGNAL',sourceFlags.sign?'Source context exposes a signed-direction convention.':'Change wording can depend on signed versus magnitude interpretation.'));
+ diagnostics.push(signal('absolute_vs_relative',change&&!/\b(?:percent|percentage|relative|point|absolute|magnitude|signed)\b/i.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL','Unqualified change can denote absolute difference or relative change.'));
+ diagnostics.push(signal('percentage_vs_percentage_point',sourceFlags.percentageConvention?'REVIEW_REQUIRED':/percentage\s+points?|\bpp\b/i.test(lower)?'EXPLICIT_POINTS':/\b(?:percent|percentage)\b/i.test(lower)?'EXPLICIT_RELATIVE':'NO_SIGNAL',sourceFlags.percentageConvention?'Source context explicitly leaves percent versus percentage-point convention unresolved.':'Percent and percentage-point change remain distinct.'));
+ diagnostics.push(signal('aggregation',aggregate||contextFamilies.has('aggregation')?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',contextFamilies.has('aggregation')?'Source context contrasts aggregation rules.':'Aggregation method and weighting remain explicit.'));
+ diagnostics.push(signal('negation_scope',negation&&(quantifier||indefinite||/\b(?:and|or)\b/i.test(lower))?'REVIEW_REQUIRED':negation?'EXPLICIT_OR_REVIEW':'NO_SIGNAL','Negation is reviewed compositionally with quantifiers, indefinites and conjunctions.'));
+ diagnostics.push(signal('quantifier_scope',scopeInteraction?'REVIEW_REQUIRED':'NO_SIGNAL',scopeInteraction?'Multiple scope-bearing operators overlap in the utterance.':'No overlapping scope-bearing operator structure detected.'));
+ diagnostics.push(signal('conditional_scope',conditional?'REVIEW_REQUIRED':'NO_SIGNAL','Conditional clauses define applicability and scope.'));
+ diagnostics.push(signal('baseline_selection',sourceFlags.baseline?'REVIEW_REQUIRED':change||/\b(?:from|versus|vs\.?|compared\s+with|relative\s+to)\b/i.test(lower)||contextFamilies.has('baseline_selection')?'EXPLICIT_OR_REVIEW':'NO_SIGNAL',sourceFlags.baseline||contextFamilies.has('baseline_selection')?'Source context presents competing baselines.':'Change/comparison wording requires an explicit baseline.'));
+ diagnostics.push(signal('measurement_assumptions',MEASURE.test(lower)||contextFamilies.has('measurement_assumptions')||sourceFlags.measurement?'REVIEW_REQUIRED':'NO_SIGNAL',contextFamilies.has('measurement_assumptions')||sourceFlags.measurement?'Source context contrasts measurement conventions.':'Measurement qualifiers remain obligations.'));
+ diagnostics.push(signal('modality',MODAL.test(lower)?'REVIEW_REQUIRED':'NO_SIGNAL','Modal wording is not converted into probability or observed capability.'));
+ diagnostics.push(signal('causal_vs_observational',CAUSAL.test(lower)||sourceFlags.causality?'REVIEW_REQUIRED':'NO_SIGNAL',sourceFlags.causality?'Source context exposes a causal-identification limitation or missing counterfactual.':'Causal wording requires causal evidence or study design.'));
+ const reviewPrompts=diagnostics.filter(x=>reviewState(x.state)).map(x=>x.family).map(f=>({
+  family:f,prompt:f==='reporting_period'?'Which time point or reporting period applies?':f==='entity_identity'?'Which entity does the reference denote?':f==='metric_definition'?'Which metric definition applies?':f==='population'?'Which population is included?':f==='baseline_selection'?'Which baseline is authoritative?':f==='causal_vs_observational'?'Is the claim observational or causal?':'Confirm '+f.replaceAll('_',' ')+' before adopting a meaning.'
+ }));
+ const profile={temporalAnchor,absoluteTimeAnchors:absolute,relativeTime:relative,implicitDynamic,dynamicRole,dynamicQuantity,superlative,change,ratio,quantifier,indefinite,existential,universal,numberCount,cardinal,quantificationalAdverb,scopeInteraction,negation,conditional,geography:geo,aggregate,sourceContextPairs:contextPairs,sourceContextFlags:sourceFlags,temporalEvidence};
+ const reviewPriority=prioritizeSemanticReview({diagnostics,profile,aliasCollisions,typeCollisions,admission});
+ return freeze({version:VERSION,admission,refusalReason,utteranceKind:/\?$/.test(q)?'QUESTION':'STATEMENT',profile,diagnostics,reviewPrompts,reviewPriority,decisionAuthority:'NONE',qualification:'Deterministic structural/contextual review only. Signals identify obligations; they do not establish intended meaning, truth, causality, or executable computation.'});
+}

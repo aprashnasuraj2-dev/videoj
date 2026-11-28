@@ -12,7 +12,7 @@ export async function restoreReviewedSourceDraft(versionText,versionPin){
  // Browser textarea normalizes CR and CRLF; this adapter refuses rather than
  // silently editing pinned source bytes. The historical export remains intact.
  if(contract.question.text.length>1000||[contract.question,...contract.sources].some(s=>s.text.includes('\r')))fail('TEXTAREA_PROFILE');
- const sources=contract.sources.map(({id,text,lineage})=>({id,text,lineage}));
+ const sources=contract.sources.map(({id,text,lineage,provenance})=>({id,text,lineage,...(provenance?{provenance}:{})}));
  const docs=new Map(sources.map(s=>[s.id,s.text]));
  const bindings=contract.bindings.map(b=>{
   const span=b.span,text=docs.get(span.sourceId);
@@ -39,7 +39,7 @@ export async function reviseReviewedSourceDraft(draftText,sourceId,replacementTe
  const previous=draft.sources.find(s=>s.id===sourceId);
  if(!previous||previous.text===replacementText)fail('SOURCE_CHANGE_REQUIRED');
  const invalidated=draft.bindings.filter(b=>b.sourceId===sourceId).map(b=>b.id);
- const next={...draft,sources:draft.sources.map(s=>s.id===sourceId?{...s,text:replacementText}:s),bindings:draft.bindings.filter(b=>b.sourceId!==sourceId)};
+ const next={...draft,sources:draft.sources.map(s=>s.id===sourceId?{id:s.id,text:replacementText,lineage:s.lineage}:s),bindings:draft.bindings.filter(b=>b.sourceId!==sourceId)};
  await sealReviewedDraft(JSON.stringify(next));
  return freeze({draft:next,sourceId,invalidatedBindingIds:invalidated,retainedBindingIds:next.bindings.map(b=>b.id),qualification:'Every binding on the changed source is invalidated, even when its token is unchanged. Reselect exact numeric tokens and types before sealing; no automatic remapping.'});
 }

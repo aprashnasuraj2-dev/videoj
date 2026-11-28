@@ -1,3 +1,4 @@
+import {readQuotaJson} from './quota-wire.js';
 // Internal Durable Object: atomic daily/client/resource admission and active leases.
 // A reservation consumes its full requested resource allowance even on ambiguous failure.
 export const MAX_INPUT_BYTES=33792; // 32 KiB validated client body plus bounded server fields.
@@ -27,7 +28,7 @@ export class InferenceQuota{
   if(request.method!=='POST')return new Response('',{status:404});
   const pathname=new URL(request.url).pathname;
   if(!['/reserve','/release','/source-read'].includes(pathname))return new Response('',{status:404});
-  let input;try{const text=await request.text();if(text.length>512)throw Error();input=JSON.parse(text);}catch{return new Response('',{status:400});}
+  let input;try{input=await readQuotaJson(request);}catch{return new Response('',{status:400});}
   if(pathname==='/source-read'){
    const limits=sourceQuotaLimits(this.env);
    if(!limits||!map(input)||Object.keys(input).length!==3||typeof input.day!=='string'||!Number.isSafeInteger(input.admitUntil)||typeof input.clientKey!=='string'||!/^[a-f0-9]{64}$/.test(input.clientKey))return new Response('',{status:limits?400:503});

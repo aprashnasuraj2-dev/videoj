@@ -1,0 +1,107 @@
+// Standalone public-research consent; never restores authority from a report.
+import {createHash} from 'node:crypto';
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
+const fail=code=>{throw Object.assign(Error('Research refused: '+code),{code});};
+export const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
+const exact=(o,keys)=>o!==null&&typeof o==='object'&&Object.getPrototypeOf(o)===Object.prototype&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
+const bounded=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
+const modelApprovals=new WeakSet();
+export function assertModelAuthorization(a){assertResearchAuthorization(a);if(!modelApprovals.has(a))fail('MODEL_DISCLOSURE_APPROVAL');}
+const grants=new WeakSet(),restored=new WeakMap(),claimed=new WeakSet();
+export function claimResearchRun(a){assertResearchAuthorization(a);if(claimed.has(a))fail('CONSUMED');claimed.add(a);}
+export function researchResumeState(a){assertResearchAuthorization(a);return restored.has(a)?structuredClone(restored.get(a)):null;}
+export function assertResearchAuthorization(a){if(!a||!grants.has(a))fail('AUTHORIZATION');a.assertActive();}
+export const secretLike=s=>/(?:\b(?:sk-(?:proj-)?|tvly-|gsk_|AQ\.|gh[pousr]_|github_pat_|AKIA|AIza)[A-Za-z0-9_-]{12,}|\b(?:password|api[_ -]?key|secret|authorization)\s*[:=]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.test(s);
+export function admitManifest(text){
+ if(typeof text!=='string'||Buffer.byteLength(text)>16384)fail('MANIFEST');
+ let p;try{p=parseUniqueJson(text,{maxChars:16384,maxDepth:8});}catch{fail('MANIFEST');}
+ const hasModels=Object.hasOwn(p??{},'modelPolicy');
+ if(!exact(p,['schema','objective','scope','budget','providers',...(hasModels?['modelPolicy']:[])])||p.schema!=='sutra-autonomous-research/v1'||typeof p.objective!=='string'||p.objective.trim()!==p.objective||!p.objective||p.objective.length>1000||secretLike(p.objective)||/[\u0000-\u001f\u007f]/.test(p.objective))fail('OBJECTIVE');
+ const scopeKeys=['publicWeb','queryDisclosureAllowed','allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'];
+ if(Object.hasOwn(p.scope??{},'allowCrossOriginLinks'))scopeKeys.push('allowCrossOriginLinks');
+ if(Object.hasOwn(p.scope??{},'allowPdf'))scopeKeys.push('allowPdf');
+ for(const key of ['allowRedirects','allowPublicQueryParameters','allowModelPublicUrls','allowJsRendering','allowDirectPublicUrls'])if(Object.hasOwn(p.scope??{},key))scopeKeys.push(key);
+ if(p.scope.allowJsRendering===true&&(p.scope.allowRedirects!==true||p.scope.allowCrossOriginLinks!==true))fail('SCOPE');
+  if(!exact(p.scope,scopeKeys)||Object.hasOwn(p.scope,'allowCrossOriginLinks')&&typeof p.scope.allowCrossOriginLinks!=='boolean'||Object.hasOwn(p.scope,'allowPdf')&&typeof p.scope.allowPdf!=='boolean'||['allowRedirects','allowPublicQueryParameters','allowModelPublicUrls','allowJsRendering','allowDirectPublicUrls'].some(k=>Object.hasOwn(p.scope,k)&&typeof p.scope[k]!=='boolean')||p.scope.publicWeb!==true||p.scope.queryDisclosureAllowed!==true||['allowPrivateNetworks','allowAuthentication','allowExternalWrites','privateEvidenceDisclosureAllowed'].some(k=>p.scope[k]!==false))fail('SCOPE');
+ const limits={maxSearches:[2,30],maxDocuments:[1,60],maxLinkDepth:[0,3],maxDurationSeconds:[5,1200],maxDownloadBytes:[65536,52428800],maxCostMicros:[1,1000000]};
+ if(hasModels)limits.maxModelCalls=[3,30];
+ if(!exact(p.budget,Object.keys(limits))||Object.entries(limits).some(([k,[a,b]])=>!bounded(p.budget[k],a,b)))fail('BUDGET');
+ if(!Array.isArray(p.providers)||p.providers.length<(p.scope?.allowDirectPublicUrls===true||hasModels&&((p.modelPolicy?.webAccess==='on_demand')||((Object.hasOwn(p.modelPolicy??{},'defaultModel')||Object.hasOwn(p.modelPolicy??{},'models'))&&p.modelPolicy.webAccess===undefined))?0:1)||p.providers.length>8||new Set(p.providers.map(x=>x?.id)).size!==p.providers.length||p.providers.some(x=>!exact(x,['id','estimatedMaxCostMicros'])||!['brave','tavily','openalex','crossref','europepmc','semanticscholar','arxiv','wikipedia'].includes(x.id)||!bounded(x.estimatedMaxCostMicros,1,1000000)))fail('PROVIDERS');
+ let modelPolicy;
+ if(hasModels){
+  const m=p.modelPolicy,pool=Object.hasOwn(m??{},'models'),compact=Object.hasOwn(m??{},'defaultModel'),explicitWeb=Object.hasOwn(m??{},'webAccess'),roleKeys=['bot','orb','spark'];
+  const keys=['allowPublicEvidenceDisclosure',...(pool?['models']:[]),...(compact?['defaultModel']:[]),...(Object.hasOwn(m??{},'roles')?['roles']:[]),...(explicitWeb?['webAccess']:[]),...(Object.hasOwn(m??{},'reviewEnabled')?['reviewEnabled']:[])];
+  if(!exact(m,keys)||(Object.hasOwn(m,'reviewEnabled')&&(!pool||typeof m.reviewEnabled!=='boolean'))||m.allowPublicEvidenceDisclosure!==true||pool&&(compact||Object.hasOwn(m,'roles'))||!pool&&!compact&&!Object.hasOwn(m,'roles'))fail('MODEL_POLICY');
+  const webAccess=m.webAccess??(pool||compact?'on_demand':'always');
+  if(!['on_demand','always'].includes(webAccess))fail('MODEL_WEB_ACCESS');
+  const fields=['vendor','model','maxInputBytes','maxOutputTokens','estimatedMaxCostMicros'];
+  const valid=r=>['openai','anthropic','gemini','groq','openrouter'].includes(r.vendor)&&typeof r.model==='string'&&!secretLike(r.model)&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(r.model)&&bounded(r.maxInputBytes,4096,65536)&&bounded(r.maxOutputTokens,128,4096)&&bounded(r.estimatedMaxCostMicros,1,1000000);
+  let resolved,models;
+  if(pool){
+   if(!Array.isArray(m.models)||m.models.length<1||m.models.length>3||m.models.some(r=>!exact(r,fields)||!valid(r))||new Set(m.models.map(r=>r.vendor+'\0'+r.model)).size!==m.models.length)fail('MODEL_POOL');
+   models=m.models.map(r=>Object.freeze({...r}));
+   // Internal execution policy, not user-to-avatar binding. Preferred model first;
+   // a separately selected model can challenge its synthesis. Never silently fall back.
+   const preferred=models[0],synthesis=models.length===3?models[1]:preferred,review=models.length>1?models.at(-1):synthesis;
+   resolved=[preferred,synthesis,review].map((r,i)=>Object.freeze({...r,role:roleKeys[i]}));
+  }else{
+   // Compatibility for previously exported engineering manifests only.
+   if(compact&&(!exact(m.defaultModel,fields)||!valid(m.defaultModel)))fail('MODEL_DEFAULT');
+   const entries=m.roles??[];
+   if(!Array.isArray(entries)||entries.length>3||!compact&&entries.length!==3)fail('MODEL_POLICY');
+   const roles=new Map();
+   for(const r of entries){
+    if(!exact(r,['role',...fields])||!roleKeys.includes(r.role)||roles.has(r.role)||!valid(r))fail('MODEL_ROLE');
+    roles.set(r.role,r);
+   }
+   resolved=roleKeys.map(role=>Object.freeze({...m.defaultModel,...roles.get(role),role}));
+   models=[...new Map(resolved.map(({role,...r})=>[r.vendor+'\0'+r.model,Object.freeze(r)])).values()];
+  }
+  const orb=resolved.find(r=>r.role==='orb'),spark=resolved.find(r=>r.role==='spark');
+  const reviewMode=m.reviewEnabled===false?'review_disabled':orb.model==='openrouter/free'||spark.model==='openrouter/free'?'dynamic_router_independence_unproven':orb.vendor===spark.vendor&&orb.model===spark.model?'same_configured_model_self_review':orb.model===spark.model?'same_model_id_different_route':'different_configured_models_independence_unproven';
+  if(m.reviewEnabled===false)resolved=resolved.filter(r=>r.role!=='spark');
+  modelPolicy=Object.freeze({allowPublicEvidenceDisclosure:true,webAccess,models:Object.freeze(models),roles:Object.freeze(resolved),reviewMode});
+ }
+ const plan=Object.freeze({...p,...(modelPolicy?{modelPolicy}:{}),scope:Object.freeze(p.scope),budget:Object.freeze(p.budget),providers:Object.freeze(p.providers.map(Object.freeze))});
+ return Object.freeze({plan,planPin:digest(text),costPolicy:'operator-supplied estimates; not a vendor invoice guarantee'});
+}
+function admitResume(text,expected,p){
+ if(typeof text!=='string'||Buffer.byteLength(text)>32*1024*1024||typeof expected!=='string'||!/^sha256:[0-9a-f]{64}$/.test(expected))fail('RESUME_PIN');
+ let envelope,s;try{envelope=JSON.parse(text);if(envelope?.schema!=='sutra-checkpoint-envelope/v1'||envelope.digest!==expected||typeof envelope.payload!=='string'||digest(envelope.payload)!==expected)fail('RESUME_PIN');s=JSON.parse(envelope.payload);}catch{fail('RESUME_PIN');}
+ if(s?.schema!=='sutra-autonomous-research-checkpoint/v1'||s.planPin!==p.planPin||s.authority!=='NONE'||s.state!=='paused'||s.pending!==null||typeof s.sessionId!=='string'||!/^research_[0-9a-f-]{36}$/.test(s.sessionId)||!bounded(s.sequence,1,100000)||!['search','documents'].includes(s.phase)||!bounded(s.slots,0,2)||s.phase==='search'&&s.slots!==0||!bounded(s.startedAt,0,Number.MAX_SAFE_INTEGER)||s.expiresAt!==s.startedAt+p.plan.budget.maxDurationSeconds*1000)fail('RESUME_STATE');
+ const b=p.plan.budget,u=s.usage;
+ if(!exact(u,['searches','documents','reservedBytes','reservedCostMicros'])||!bounded(u.searches,0,b.maxSearches)||!bounded(u.documents,0,b.maxDocuments)||!bounded(u.reservedBytes,0,b.maxDownloadBytes)||!bounded(u.reservedCostMicros,0,b.maxCostMicros)||!Array.isArray(s.queries)||s.queries.length!==u.searches||!Array.isArray(s.documents)||s.documents.length>u.documents||!Array.isArray(s.passages)||s.passages.length>s.documents.length*8||!Array.isArray(s.frontier)||s.frontier.length>240||!Array.isArray(s.seen)||s.seen.length>5000||!Array.isArray(s.domainAttempts)||s.domainAttempts.length>500||!Array.isArray(s.failures)||s.failures.length>500)fail('RESUME_STATE');
+ let cost=0;for(const q of s.queries){const provider=p.plan.providers.find(x=>x.id===q?.provider);if(!provider||typeof q.query!=='string'||!q.query.startsWith(p.plan.objective)||q.query.length>1200||secretLike(q.query))fail('RESUME_STATE');cost+=provider.estimatedMaxCostMicros;}
+ if(cost!==u.reservedCostMicros||u.reservedBytes<u.searches*262144+u.documents*(p.plan.scope.allowPdf===true?1048576:262144))fail('RESUME_USAGE');
+ return s;
+}
+export function authorizeResearch(manifest,{approvedPlanPin,approvePublicContact=false,approveEstimatedCost=false,approveModelDisclosure=false,signal,clock=()=>Date.now(),resumeText,resumePin,absoluteDeadline}={}){
+ // Input re-admission avoids accepting a caller-forged mutable manifest object.
+ const p=admitManifest(manifest);
+ if(approvedPlanPin!==p.planPin||approvePublicContact!==true||approveEstimatedCost!==true)fail('APPROVAL');
+ if(p.plan.modelPolicy&&approveModelDisclosure!==true)fail('MODEL_DISCLOSURE_APPROVAL');
+ // Model-aware durable resume requires a distinct ledger and state transition schema.
+ if(p.plan.modelPolicy&&(resumeText!==undefined||resumePin!==undefined))fail('MODEL_RESUME_UNSUPPORTED');
+ const prior=resumeText!==undefined||resumePin!==undefined?admitResume(resumeText,resumePin,p):null;
+ const c=new AbortController(),now=clock(),started=prior?.startedAt??now,expires=prior?.expiresAt??(absoluteDeadline??(started+p.plan.budget.maxDurationSeconds*1000));
+ if(!Number.isSafeInteger(now)||!Number.isSafeInteger(expires)||absoluteDeadline!==undefined&&(prior||expires>started+p.plan.budget.maxDurationSeconds*1000)||now<started||now>=expires)fail('INACTIVE');
+ const cancel=()=>c.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
+ const timer=setTimeout(cancel,expires-now);timer.unref?.();
+ let closed=false;const usage=prior?{...prior.usage}:{searches:0,documents:0,reservedBytes:0,reservedCostMicros:0,...(p.plan.modelPolicy?{modelCalls:0,modelInputBytes:0,modelOutputTokensReserved:0}:{})};
+ function assertActive(){if(closed||c.signal.aborted||clock()>=expires)fail('INACTIVE');}
+ // Reservations are synchronous and conservative: failures are not refunded.
+ function reserve(kind,{bytes,costMicros=0}={}){
+  assertActive();if(!bounded(bytes,1,52428800)||!bounded(costMicros,0,1000000)||!['search','document','robots'].includes(kind))fail('RESERVATION');
+  const b=p.plan.budget,tail=p.plan.modelPolicy?.roles.filter(r=>r.role!=='bot')??[],heldBytes=tail.length*262144,heldCost=tail.reduce((n,r)=>n+r.estimatedMaxCostMicros,0),k=kind==='search'?'searches':kind==='document'?'documents':null;
+  if(k&&usage[k]>=b[k==='searches'?'maxSearches':'maxDocuments']||usage.reservedBytes+bytes+heldBytes>b.maxDownloadBytes||usage.reservedCostMicros+costMicros+heldCost>b.maxCostMicros)fail('BUDGET_EXHAUSTED');
+  if(k)usage[k]++;usage.reservedBytes+=bytes;usage.reservedCostMicros+=costMicros;
+ }
+ function reserveModel(role,inputBytes){
+  assertActive();const r=p.plan.modelPolicy?.roles.find(x=>x.role===role),b=p.plan.budget;
+  if(!r||!bounded(inputBytes,1,r.maxInputBytes))fail('MODEL_RESERVATION');
+  const held=p.plan.modelPolicy.roles.filter(x=>role==='bot'?x.role!=='bot':role==='orb'?x.role==='spark':false),heldCost=held.reduce((n,x)=>n+x.estimatedMaxCostMicros,0);
+  if(usage.modelCalls+1+held.length>b.maxModelCalls||usage.reservedBytes+262144*(1+held.length)>b.maxDownloadBytes||usage.reservedCostMicros+r.estimatedMaxCostMicros+heldCost>b.maxCostMicros)fail('MODEL_BUDGET_EXHAUSTED');
+  usage.modelCalls++;usage.modelInputBytes+=inputBytes;usage.modelOutputTokensReserved+=r.maxOutputTokens;usage.reservedBytes+=262144;usage.reservedCostMicros+=r.estimatedMaxCostMicros;
+ }
+ const grant=Object.freeze({...p,startedAt:started,expiresAt:expires,signal:c.signal,assertActive,reserve,reserveModel,usage:()=>Object.freeze({...usage}),close(){closed=true;cancel();clearTimeout(timer);signal?.removeEventListener('abort',cancel);}});grants.add(grant);if(p.plan.modelPolicy)modelApprovals.add(grant);if(prior)restored.set(grant,prior);return grant;
+}
