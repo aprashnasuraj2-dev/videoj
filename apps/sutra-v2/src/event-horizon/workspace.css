@@ -1,0 +1,46 @@
+/* Event Horizon: self-contained, system fonts and no external assets. */
+#eh-workspace{--eh-bg:#101922;--eh-panel:#172630;--eh-line:#3b5661;--eh-ink:#e8f1ef;--eh-muted:#bdcdd0;--eh-accent:#a9e5b3;background:var(--eh-bg);color:var(--eh-ink);border:1px solid var(--eh-line);border-radius:12px;padding:clamp(12px,2.5vw,24px);margin:0 0 18px;overflow-wrap:anywhere}
+#eh-workspace *{min-width:0;box-sizing:border-box}
+#eh-workspace h2,#eh-workspace h3,#eh-workspace h4{color:var(--eh-ink);margin:5px 0 9px;line-height:1.25}
+#eh-workspace h2{font-size:clamp(1.35rem,3vw,2.25rem);letter-spacing:-.035em}
+#eh-workspace .eh-kicker{font:700 .68rem ui-monospace,monospace;letter-spacing:.1em;color:var(--eh-accent)!important}
+#eh-workspace .eh-copy,#eh-workspace small{color:var(--eh-muted);font-size:.82rem;line-height:1.5}
+#eh-workspace .eh-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+#eh-workspace .eh-mark{color:var(--eh-accent);font:600 .72rem ui-monospace,monospace;border:1px solid var(--eh-line);padding:8px;max-width:140px;border-radius:5px}
+#eh-workspace .eh-controls{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end;margin:14px 0}
+#eh-workspace .eh-field{display:grid;gap:5px;color:var(--eh-muted);font-size:.76rem}
+#eh-workspace input,#eh-workspace select,#eh-workspace button{max-width:100%;min-height:44px;background:var(--eh-panel);color:var(--eh-ink);border:1px solid var(--eh-line);border-radius:6px;padding:8px;font:inherit}
+#eh-workspace button{cursor:pointer;font-size:.84rem}
+#eh-workspace button:hover,#eh-workspace button[aria-pressed=true]{border-color:var(--eh-accent);color:var(--eh-accent)}
+#eh-workspace :is(button,input,select,summary):focus-visible{outline:3px solid #f6c779;outline-offset:2px}
+#eh-workspace .eh-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+#eh-workspace .eh-metric{padding:10px 8px;border-top:1px solid var(--eh-line)}
+#eh-workspace .eh-metric strong{display:block;color:var(--eh-accent);font:700 clamp(1rem,2vw,1.5rem) ui-monospace,monospace;margin-top:5px}
+#eh-workspace .eh-status{color:var(--eh-accent);font-weight:650;font-size:.9rem}
+#eh-workspace .eh-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start}
+#eh-workspace .eh-canvas{min-height:180px;border:1px solid var(--eh-line);border-radius:8px;background:radial-gradient(ellipse at 50% 45%,#21343b,#0b121a);overflow:auto}
+#eh-workspace .eh-canvas svg{display:block;width:100%;height:auto;min-width:260px}
+#eh-workspace .eh-canvas [data-entity]{cursor:pointer}
+#eh-workspace .eh-canvas [data-selected=true]>circle:first-child{stroke:#fff;stroke-width:3;stroke-opacity:1}
+#eh-workspace .eh-empty{display:grid;align-content:center;justify-items:center;text-align:center;padding:20px;min-height:180px}
+#eh-workspace .eh-empty-glyph{font-size:3rem;line-height:1;color:var(--eh-accent)}
+#eh-workspace .eh-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:6px;max-height:340px;overflow:auto;padding:3px}
+#eh-workspace .eh-entity{text-align:left;display:grid;gap:3px;overflow-wrap:anywhere}
+#eh-workspace .eh-entity strong{font-size:.84rem}
+#eh-workspace .eh-right{background:var(--eh-panel);border:1px solid var(--eh-line);border-radius:8px;padding:12px}
+#eh-workspace .eh-right button{display:block;width:100%;text-align:left;margin:5px 0}
+#eh-workspace .eh-state{color:var(--eh-accent);font-size:.84rem}
+#eh-workspace .eh-details{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:6px;font-size:.76rem}
+#eh-workspace .eh-details dt{color:var(--eh-muted)}
+#eh-workspace .eh-details dd{margin:0;color:var(--eh-ink);overflow-wrap:anywhere}
+#eh-workspace .eh-timeline{margin:14px 0;border-top:1px solid var(--eh-line);padding-top:12px}
+#eh-workspace .eh-timeline summary{color:var(--eh-ink);cursor:pointer;min-height:44px;padding:8px 0}
+#eh-workspace .eh-timeline ol{max-height:260px;overflow:auto;padding-left:24px}
+#eh-workspace .eh-timeline li{padding:6px 0;color:var(--eh-muted);font-size:.8rem}
+#eh-workspace .eh-timeline li span{display:block}
+#sutra-orbit[data-mode=universe] .orb-stage{grid-template-columns:minmax(0,1fr)}
+#sutra-orbit[data-mode=universe] .orb-visual{border-right:0}
+#sutra-orbit[data-mode=universe] .orb-side,#sutra-orbit[data-mode=universe] .orb-stage-head,#sutra-orbit[data-mode=universe] #orb-map,#sutra-orbit[data-mode=universe] .orb-map-foot,#sutra-orbit[data-mode=universe] #orb-roster,#sutra-orbit[data-mode=universe] #orb-list-wrap{display:none}
+#sutra-orbit:not([data-mode=universe]) #eh-workspace{display:none}
+@media(max-width:760px){#eh-workspace .eh-split{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-head{flex-direction:column}#eh-workspace .eh-mark{max-width:100%}#eh-workspace .eh-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-controls .eh-field:first-child{grid-column:1/-1}}
+@media(max-width:390px){#eh-workspace .eh-controls,#eh-workspace .eh-metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#eh-workspace .eh-canvas svg{min-width:0}#eh-workspace .eh-details{grid-template-columns:minmax(0,1fr)}#eh-workspace .eh-head{gap:5px}}
