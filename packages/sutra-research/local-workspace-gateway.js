@@ -18,7 +18,7 @@ const costPolicy=Object.freeze({maxSearches:6,maxDocuments:12,maxLinkDepth:2,max
 const autonomousBudget=Object.freeze({maxSearches:5,maxDocuments:10,maxLinkDepth:1,maxDurationSeconds:180,maxDownloadBytes:8388608,maxCostMicros:40000});
 export function createLocalResearchGateway({modelCredentials={},searchCredentials={},configure,clock=()=>Date.now(),enableObscura=false,obscuraBinaryPath}={}){
  const modelKeys=Object.fromEntries(Object.keys(MODEL_PROFILES).filter(v=>keyPresent(modelCredentials[v])).map(v=>[v,modelCredentials[v]]));
- const searchKeys=Object.fromEntries(['brave','tavily'].filter(v=>keyPresent(searchCredentials[v])).map(v=>[v,searchCredentials[v]]));
+ const searchKeys=Object.fromEntries(['brave','tavily','openalex','semanticscholar'].filter(v=>keyPresent(searchCredentials[v])).map(v=>[v,searchCredentials[v]]));
  const vendors=Object.keys(modelKeys),searchBackends=Object.keys(createSearchProviders({credentials:searchKeys})),mode=configure?'injected_fixture':'local_host_transport';
   const obscuraRenderer=enableObscura===true?createObscuraRenderer({binaryPath:obscuraBinaryPath}):null;
  let previewed=null,current=null,closed=false;
