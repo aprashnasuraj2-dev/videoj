@@ -13,6 +13,7 @@ import {mountNotebook} from './notebook-view.js';
 import {createLazyViews,createCoalescedRefresh} from './view-lifecycle.js';
 import {mountScenarioView} from './scenario-view.js';
 import {mountRunArchive} from './run-archive-view.js';
+import {mountWorkspaceNavigation} from './workspace-navigation.js';
 import {publishTaskExecution} from '../execution-channel.js';
 const E=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const S=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -62,9 +63,10 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
  const timeline=E('details',undefined,'eh-timeline');timeline.append(E('summary','Recorded event timeline'));const eventList=E('ol'),replayControls=E('div',undefined,'eh-replay-controls'),replayInput=E('input'),replayText=E('p',undefined,'eh-state');replayInput.type='range';replayInput.min='0';replayInput.step='1';replayInput.id='eh-replay-sequence';replayControls.append(field('Recorded event sequence',replayInput),replayText);timeline.append(replayControls,eventList);
  const footer=E('p','Visualization does not execute agents, grant consent, or verify factual truth. Use the existing research, review and proof controls to perform operations.','eh-copy');
  const objectiveSlot=E('div',undefined,'eh-objective-slot');objectiveSlot.id='eh-objective-slot';objectiveSlot.hidden=true;
- const tabs=E('nav',undefined,'eh-tabs');tabs.setAttribute('aria-label','Adaptive workspace views');
- const runtime=E('div');runtime.id='eh-runtime';runtime.append(controls,counters,status,qualification,split,timeline,footer);
- section.append(head,objectiveSlot,tabs,runtime);root.prepend(section);
+ const navSlot=E('div',undefined,'eh-navigation-slot');
+ const runtime=E('div');runtime.id='eh-runtime';const runtimeOptions=E('details',undefined,'eh-runtime-options');runtimeOptions.append(E('summary','Run selection, layout and filters'),controls);
+ runtime.append(status,counters,split,runtimeOptions,qualification,timeline,footer);
+ section.append(head,objectiveSlot,navSlot,runtime);root.prepend(section);
  let selection=null,selectedRun='empty',latestObservedId=null,autoFollow=true,graph=emptyGraph(),destroyed=false,active=true,viewMode='runtime',localSequence=0;
  const localRuns=new Map(),designedRuns=new Map(),placements=[];
  let designedSequence=0;
@@ -180,7 +182,8 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   {id:'archive',name:'Run archive',panelId:'eh-run-archive',mount:()=>mountRunArchive(section,{feed})},
   {id:'notebook',name:'Notebook',panelId:'eh-notebook',mount:()=>{const instance=mountNotebook(section);if(latestKnowledge)instance.update(latestKnowledge);return instance;}}
  ];
- const viewError=E('p','','eh-state');viewError.hidden=true;viewError.setAttribute('role','status');tabs.after(viewError);
+ const navigation=mountWorkspaceNavigation(navSlot,viewDefinitions,{onSelect:switchView});
+ const viewError=E('p','','eh-state');viewError.hidden=true;viewError.setAttribute('role','status');navSlot.after(viewError);
  const registry=createLazyViews(viewDefinitions,{
   makePlaceholder(entry){
    const placeholder=E('div');placeholder.id=entry.panelId;placeholder.hidden=true;placeholder.dataset.lazyView='pending';
@@ -195,12 +198,9 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   const instance=registry.show(next);
   if(!instance)return;
   viewMode=next;viewError.hidden=true;
-  for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.view===next));
+  navigation.select(next);
   if(!active)registry.suspend();
   if(next==='runtime')refresh();
- }
- for(const entry of viewDefinitions){
-  const b=button(entry.name,()=>switchView(entry.id));b.dataset.view=entry.id;b.setAttribute('aria-controls',entry.panelId);tabs.append(b);
  }
  function setActive(value){
   active=!!value;
@@ -218,6 +218,6 @@ export function mountAdaptiveWorkspace(root,{feed,openTool,openWorkflow}){
   observeResearch(e,mode){if(research.accept(e,mode))refresh(research.snapshot().id);},
   endResearch(status){research.end(status);refresh(research.snapshot()?.id);},
   setActive,attachObjective,updateKnowledge(state){latestKnowledge=state;registry.instance('knowledge')?.update(state);registry.instance('notebook')?.update(state);},
-  destroy(){destroyed=true;coalesced.destroy();registry.destroy();unsubscribe();section.remove();}
+  destroy(){destroyed=true;coalesced.destroy();registry.destroy();navigation.destroy();unsubscribe();section.remove();}
  });
 }

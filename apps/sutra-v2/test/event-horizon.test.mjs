@@ -513,3 +513,14 @@ test('external tools and unconfigured routes are refused before model calls',asy
  await assert.rejects(prepareDesignedExecution({...f,definition:composeProfile('single',1),objective:'Draft'}));
  assert.equal(f.requests.length,1);
 });
+
+import {workspaceCommands,searchWorkspaceCommands} from '../src/event-horizon/workspace-navigation.js';
+test('workspace navigation preserves all registered tools and ranks exact local searches',()=>{
+ const commands=workspaceCommands([{id:'proof',name:'Proof workbench'},{id:'notebook',name:'Notebook'},{id:'designer',name:'Network designer'},{id:'extra',name:'Extra'}]);
+ assert.equal(commands.length,4);
+ assert.equal(searchWorkspaceCommands(commands,'receipt')[0].id,'proof');
+ assert.equal(searchWorkspaceCommands(commands,'agent build')[0].id,'designer');
+ assert.equal(searchWorkspaceCommands(commands,'extra')[0].id,'extra');
+ assert.equal(searchWorkspaceCommands(commands,'impossible').length,0);
+ assert.throws(()=>workspaceCommands([{id:'a',name:'A'},{id:'a',name:'B'}]));
+});

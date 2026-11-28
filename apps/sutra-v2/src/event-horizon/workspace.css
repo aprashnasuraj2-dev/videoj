@@ -598,3 +598,171 @@
  white-space:pre-wrap;
  overflow-wrap:anywhere;
 }
+
+/* Release-oriented hierarchy: primary objective, current workspace, runtime
+   status and topology before optional graph controls. No hidden feature paths. */
+#eh-workspace .eh-tabs{
+ display:grid;
+ gap:8px;
+ padding:8px 0 12px;
+}
+#eh-workspace .eh-nav-control{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ flex-wrap:wrap;
+}
+#eh-workspace .eh-nav-current{
+ display:grid;
+ gap:2px;
+ flex:1 1 240px;
+}
+#eh-workspace .eh-nav-current>small:first-child{
+ font:600 .64rem ui-monospace,monospace;
+ letter-spacing:.09em;
+ color:var(--eh-accent);
+}
+#eh-workspace .eh-nav-current>strong{
+ font-size:1.05rem;
+}
+#eh-workspace .eh-nav-groups{
+ display:grid;
+ grid-template-columns:minmax(0,4fr) minmax(0,4fr) minmax(0,3fr);
+ gap:8px;
+}
+#eh-workspace .eh-nav-group{
+ display:grid;
+ align-content:start;
+ gap:5px;
+ padding:7px;
+ border:1px solid var(--eh-line);
+ border-radius:8px;
+ background:#12212a;
+}
+#eh-workspace .eh-nav-label{
+ font:600 .67rem ui-monospace,monospace;
+ letter-spacing:.06em;
+ color:var(--eh-muted);
+}
+#eh-workspace .eh-nav-items{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:4px;
+}
+#eh-workspace .eh-nav-items>button{
+ text-align:left;
+ padding:7px;
+ min-height:44px;
+ overflow-wrap:anywhere;
+ line-height:1.2;
+}
+#eh-workspace .eh-nav-items>button[aria-pressed=true]{
+ box-shadow:inset 3px 0 var(--eh-accent);
+}
+#eh-workspace .eh-runtime-options{
+ margin:12px 0;
+ padding:0 10px;
+ border:1px solid var(--eh-line);
+ border-radius:8px;
+}
+#eh-workspace .eh-runtime-options summary{
+ cursor:pointer;
+ min-height:44px;
+ padding:11px 0;
+ color:var(--eh-muted);
+ font-size:.86rem;
+}
+#eh-workspace .eh-command-dialog{
+ width:min(540px,calc(100% - 24px));
+ max-height:calc(100dvh - 24px);
+ margin:auto;
+ border:1px solid var(--eh-accent);
+ border-radius:12px;
+ background:var(--eh-bg);
+ color:var(--eh-ink);
+ padding:18px;
+ box-shadow:0 20px 80px #0009;
+ overflow:auto;
+}
+#eh-workspace .eh-command-dialog::backdrop{
+ background:#070d13c9;
+}
+#eh-workspace .eh-command-dialog>input{
+ width:100%;
+}
+#eh-workspace .eh-command-results{
+ display:grid;
+ gap:5px;
+ max-height:min(45vh,380px);
+ overflow:auto;
+ padding:3px;
+ margin:10px 0;
+}
+#eh-workspace .eh-command-item{
+ display:grid;
+ text-align:left;
+ gap:4px;
+}
+#eh-workspace .eh-command-item[data-highlight=true]{
+ border-color:var(--eh-accent);
+ background:#244139;
+}
+#eh-workspace .eh-command-dialog:not([open]){
+ display:none;
+}
+#eh-workspace .eh-metrics{
+ margin:8px 0;
+}
+#eh-workspace .eh-metric{
+ padding:8px;
+ background:#13232c;
+ border:1px solid var(--eh-line);
+ border-radius:7px;
+}
+#eh-workspace .eh-empty{
+ min-height:145px;
+}
+#eh-workspace .eh-empty-glyph{
+ font-size:2.1rem;
+}
+@media(min-width:1000px){
+ #sutra-orbit[data-mode=universe] .orb-mast{
+  padding:14px 20px;
+ }
+ #sutra-orbit[data-mode=universe] .orb-mast h1{
+  font-size:clamp(1.65rem,3vw,2.6rem);
+ }
+ #sutra-orbit[data-mode=universe] .orb-mast .orb-lede{
+  margin:6px 0;
+ }
+ #sutra-orbit[data-mode=universe] .orb-entry-actions{
+  margin-top:8px;
+ }
+ #eh-workspace .eh-head h2{
+  font-size:1.65rem;
+ }
+ #eh-workspace .eh-head .eh-copy{
+  margin:4px 0;
+ }
+ #eh-workspace .eh-nav-items{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
+@media(max-width:760px){
+ #eh-workspace .eh-nav-groups{
+  grid-template-columns:minmax(0,1fr);
+ }
+ #eh-workspace .eh-nav-group{
+  padding:6px;
+ }
+ #eh-workspace .eh-nav-items{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+ #eh-workspace .eh-nav-current{
+  flex-basis:100%;
+ }
+ #eh-workspace .eh-nav-control>button{
+  width:100%;
+ }
+}
