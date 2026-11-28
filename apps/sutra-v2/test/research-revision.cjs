@@ -20,7 +20,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  await p.locator('.orb-route-grid .orb-route').filter({has:p.getByRole('heading',{name:'Groq',exact:true})}).getByLabel('Model ID',{exact:true}).fill('chosen-model');
  await p.locator('#orb-nav').getByRole('button',{name:'Ring map',exact:true}).click();
  await p.locator('#orb-autonomous-objective').fill('Compare battery storage costs in 2025');await p.locator('#orb-autonomous-prepare').click();await p.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='previewed');assert.equal(calls.length,0);assert.equal(reads.length,0);
- await p.locator('#orb-autonomous-approve').check();await p.locator('#orb-autonomous-start').click();await p.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='closed');
+ // A prepared scope is not permission. Revoking a checked approval must close the dispatch control again.
+ const approval=p.locator('#orb-autonomous-approve'),start=p.locator('#orb-autonomous-start');
+ assert.equal(await start.isDisabled(),true);await approval.check();assert.equal(await start.isEnabled(),true);await approval.uncheck();assert.equal(await start.isDisabled(),true);
+ assert.equal(calls.length,0);assert.equal(reads.length,0);
+ await approval.check();await p.locator('#orb-autonomous-start').click();await p.waitForFunction(()=>document.querySelector('#orb-autonomous-status').dataset.state==='closed');
  assert.equal(reads.length,2);assert.equal(calls.length,4);assert.match(await p.locator('#orb-autonomous-result').innerText(),/Competing evidence — unresolved/);
  const competing=p.getByRole('button',{name:'Review competing citation',exact:true});assert.equal(await competing.count(),2);
  const sourceIds=[];const sourceByToken=new Map();
