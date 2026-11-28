@@ -15,7 +15,7 @@ function fixture(){
  }})})})});
  return {gateway,calls};
 }
-const approval=p=>({approvedPlanPin:p.planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true});
+const approval=p=>({approvedPlanPin:p.planPin,approvalId:p.approvalId,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true});
 const input={objective:'Explain batteries',models:[{vendor:'groq',model:'chosen-model'}]};
 test('one model in local workspace; exact one-shot approval and actual supervisor events',async()=>{
  const {gateway:g,calls}=fixture();try{
@@ -52,4 +52,36 @@ test('credential-shaped inputs refuse before preview; multiline objectives norma
   assert.throws(()=>g.preview({objective:'Test',models:[{vendor:'groq',model:'gsk_abcdefghijklmnop'}]}),/SENSITIVE_INPUT/);
   const p=g.preview({...input,objective:'Explain\n battery storage'});assert.equal(p.objective,'Explain battery storage');assert.equal(calls.length,0);
  }finally{g.close();}
+});
+
+test('identical plan digest cannot replay an old preview approval, and expiry blocks dispatch',()=>{
+ let now=0;const g=createLocalResearchGateway({modelCredentials,clock:()=>now});try{
+  const a=g.preview(input),b=g.preview(input);assert.equal(a.planPin,b.planPin);assert.notEqual(a.approvalId,b.approvalId);
+  assert.throws(()=>g.start(approval(a)),/APPROVAL/);now=b.expiresAt;assert.throws(()=>g.start(approval(b)),/APPROVAL/);
+ }finally{g.close();}
+});
+test('actual loopback HTTP isolates preview and run capabilities, expires tokens, and refuses old sessions after restart',async()=>{
+ let now=1000;const dir=await mkdtemp(join(tmpdir(),'sutra-capability-isolation-'));await writeFile(join(dir,'index.html'),'<h1>fixture</h1>');
+ const first=fixture(),app=createResearchWorkspaceServer({gateway:first.gateway,dist:dir,port:0,clock:()=>now});let other;
+ try{
+  const origin=await app.listen(),caps=async(base=origin)=>{const r=await fetch(base+'/api/research/capabilities');assert.equal(r.headers.get('cache-control'),'no-store');assert.equal(r.headers.has('access-control-allow-origin'),false);return r.json();};
+  const a=await caps(),b=await caps();assert.notEqual(a.sessionToken,b.sessionToken);
+  const call=(route,token,value,base=origin)=>fetch(base+'/api/research/'+route,{method:value===undefined?'GET':'POST',headers:{'x-sutra-session':token,...(value===undefined?{}:{origin:base,'content-type':'application/json'})},...(value===undefined?{}:{body:JSON.stringify(value)})});
+  const p=await (await call('preview',a.sessionToken,input)).json();
+  assert.equal((await call('start',b.sessionToken,approval(p))).status,403);assert.equal(first.calls.length,0);
+  const q=await (await call('preview',b.sessionToken,input)).json();assert.equal(q.planPin,p.planPin);assert.notEqual(q.approvalId,p.approvalId);
+  assert.equal((await call('start',a.sessionToken,approval(p))).status,403);
+  assert.equal((await call('start',b.sessionToken,approval(p))).status,400);assert.equal(first.calls.length,0);
+  const started=await call('start',b.sessionToken,approval(q));assert.equal(started.status,202);const run=await started.json();
+  assert.equal((await call('status?id='+run.sessionId,a.sessionToken)).status,403);assert.equal((await call('cancel',a.sessionToken,{sessionId:run.sessionId})).status,403);
+  assert.equal((await call('status?id='+run.sessionId+'&id='+run.sessionId,b.sessionToken)).status,400);
+  let state;for(let i=0;i<100;i++){const res=await call('status?id='+run.sessionId,b.sessionToken);assert.equal(res.status,200);state=await res.json();if(state.state!=='running')break;await delay(10);}
+  assert.equal(state.state,'closed');assert.equal(first.calls.length,1);assert.ok(!JSON.stringify(state).includes(b.sessionToken));
+  now=b.sessionTokenExpiresAt;assert.equal((await call('status?id='+run.sessionId,b.sessionToken)).status,403);
+  const c=await caps();assert.notEqual(c.sessionToken,b.sessionToken);assert.equal((await call('status?id='+run.sessionId,c.sessionToken)).status,403);
+  const second=fixture();other=createResearchWorkspaceServer({gateway:second.gateway,dist:dir,port:0,clock:()=>now});const next=await other.listen();
+  assert.equal((await call('status?id='+run.sessionId,c.sessionToken,undefined,next)).status,403);
+  const fresh=await caps(next);assert.equal((await call('status?id='+run.sessionId,fresh.sessionToken,undefined,next)).status,403);
+  assert.equal(second.calls.length,0);assert.equal(first.calls.length,1);
+ }finally{await other?.close();await app.close();await rm(dir,{recursive:true,force:true});}
 });

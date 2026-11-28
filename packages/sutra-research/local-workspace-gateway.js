@@ -24,8 +24,8 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
   if(secretLike(JSON.stringify(input))||[...Object.values(modelKeys),...Object.values(searchKeys)].some(key=>JSON.stringify(input).includes(key)))fail('SENSITIVE_INPUT');
   const raw=JSON.stringify({schema:'sutra-autonomous-research/v1',objective:input.objective.trim().replace(/\s+/gu,' '),scope:{publicWeb:true,queryDisclosureAllowed:true,allowPrivateNetworks:false,allowAuthentication:false,allowExternalWrites:false,privateEvidenceDisclosureAllowed:false,allowCrossOriginLinks:true,allowRedirects:true,allowPublicQueryParameters:false,allowModelPublicUrls:true},budget:{...costPolicy},providers:searchBackends.map(id=>({id,estimatedMaxCostMicros:5000})),modelPolicy:{allowPublicEvidenceDisclosure:true,models:input.models.map(m=>({...m,maxInputBytes:32768,maxOutputTokens:2048,estimatedMaxCostMicros:10000}))}});
   const p=admitManifest(raw),expiresAt=clock()+120000;
-  previewed={raw,pin:p.planPin,expiresAt};
-  return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,authority:'NONE'};
+  const approvalId=randomUUID();previewed={raw,pin:p.planPin,approvalId,expiresAt};
+  return {schema:'sutra-local-research-preview/v1',planPin:p.planPin,approvalId,expiresAt,objective:p.plan.objective,models:p.plan.modelPolicy.models,webAccess:p.plan.modelPolicy.webAccess,searchBackends,scope:p.plan.scope,budget:p.plan.budget,costPolicy:p.costPolicy,reviewMode:p.plan.modelPolicy.reviewMode,authority:'NONE'};
  }
  async function execute(s,raw){
   let a,host;
@@ -43,7 +43,7 @@ export function createLocalResearchGateway({modelCredentials={},searchCredential
  }
  function start(input){
   check();if(active(current))fail('RUN_ACTIVE');
-  if(!exact(input,['approvedPlanPin','approvePublicContact','approveEstimatedCost','approveModelDisclosure'])||input.approvePublicContact!==true||input.approveEstimatedCost!==true||input.approveModelDisclosure!==true||!previewed||input.approvedPlanPin!==previewed.pin||clock()>=previewed.expiresAt)fail('APPROVAL');
+  if(!exact(input,['approvedPlanPin','approvalId','approvePublicContact','approveEstimatedCost','approveModelDisclosure'])||input.approvePublicContact!==true||input.approveEstimatedCost!==true||input.approveModelDisclosure!==true||!previewed||input.approvedPlanPin!==previewed.pin||input.approvalId!==previewed.approvalId||clock()>=previewed.expiresAt)fail('APPROVAL');
   const raw=previewed.raw;previewed=null;
   const s={sessionId:'research_'+randomUUID(),planPin:input.approvedPlanPin,state:'running',events:[],controller:new AbortController(),report:null,reportPin:null,reason:null};
   current=s;void execute(s,raw);return {sessionId:s.sessionId,planPin:s.planPin,state:s.state,mode};

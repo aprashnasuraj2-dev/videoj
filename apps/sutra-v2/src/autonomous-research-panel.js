@@ -29,7 +29,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
  function reset(){if(running)return;epoch++;plan=null;report=null;browserReceipt=null;cancelRequested=false;session=null;preview.hidden=true;preview.replaceChildren();approve.checked=false;result.replaceChildren();state('Prepare a fresh investigation using the shared model pool.','idle');sync();}
  function selectedModels(){return getModels().map(x=>({vendor:x.vendor,model:x.model}));}
  async function request(path,{method='GET',data,publicRequest=false}={}){
-  const response=await fetch('/api/research/'+path,{method,cache:'no-store',credentials:'same-origin',headers:{...(publicRequest?{}:{'X-Sutra-Session':token}),...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
+  const response=await fetch('/api/research/'+path,{method,cache:'no-store',credentials:'same-origin',headers:{...(publicRequest&&!token?{}:{'X-Sutra-Session':token}),...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
   if(!response.headers.get('content-type')?.includes('application/json'))throw Error('HOST_UNAVAILABLE');
   const value=await response.json();if(!response.ok)throw Error(value?.error??'HOST_UNAVAILABLE');return value;
  }
@@ -76,7 +76,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
   if(prepare.disabled)return;reset();const ticket=epoch;busy=true;sync();state('Reading local host capabilities…','preparing');
   try{
    const models=selectedModels();if(!models.length||models.length>3)throw Error('MODEL_SELECTION');
-   const caps=await request('capabilities',{publicRequest:true});if(caps?.schema!=='sutra-local-research-capabilities/v1'||typeof caps.sessionToken!=='string')throw Error('HOST_UNAVAILABLE');
+   const caps=await request('capabilities',{publicRequest:true});if(caps?.schema!=='sutra-local-research-capabilities/v1'||typeof caps.sessionToken!=='string'||!/^[a-f0-9]{64}$/.test(caps.sessionToken))throw Error('HOST_UNAVAILABLE');
    token=caps.sessionToken;mode=caps.mode;
    if(models.some(m=>!caps.configuredModelVendors.includes(m.vendor)))throw Error('MODEL_CREDENTIAL');
    const p=await request('preview',{method:'POST',data:{objective:objective.value.trim().replace(/\s+/gu,' '),models}});
@@ -101,7 +101,7 @@ export function createAutonomousResearchPanel(root,{getModels,openConnections,on
    // A changed pool or question invalidates the prepared request before dispatch.
    const current=selectedModels();if(JSON.stringify(current)!==JSON.stringify(p.models.map(({vendor,model})=>({vendor,model})))||objective.value.trim().replace(/\s+/gu,' ')!==p.objective)throw Error('PLAN_CHANGED');
    if(Date.now()>=p.expiresAt)throw Error('APPROVAL_EXPIRED');
-   const s=await request('start',{method:'POST',data:{approvedPlanPin:p.planPin,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true}});
+   const s=await request('start',{method:'POST',data:{approvedPlanPin:p.planPin,approvalId:p.approvalId,approvePublicContact:true,approveEstimatedCost:true,approveModelDisclosure:true}});
    if(ticket!==epoch)return;session=s;cursor=0;reconnects=0;plan=null;running=true;onState(true);state((mode==='injected_fixture'?'TEST FIXTURE':'LOCAL HOST')+' · investigation started','running');void poll(ticket);
   }catch(e){if(ticket===epoch){plan=null;state('Launch refused or status unknown: '+reason(e),'refused');}}
   finally{if(ticket===epoch){busy=false;sync();}}
